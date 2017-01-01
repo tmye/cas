@@ -21,6 +21,26 @@ use TmyeDeviceBundle\Entity\UpdateEntity;
 
 class DefaultController extends StatsController
 {
+    public function formatInt($value){
+        $value = (string)$value;
+        $value_lenght = strlen($value);
+        if ($value_lenght >= 4) {
+            $number_of_points = $value_lenght % 3;
+            $value_tab = str_split($value);
+            $str = "";
+            $cpt=0;
+            for ($i=$value_lenght-1;$i>=0;$i--){
+                if($cpt==3){
+                    $cpt=0;
+                    $str = $value_tab[$i].".".$str;
+                }else{
+                    $str = $value_tab[$i]."".$str;
+                }
+                $cpt++;
+            }
+        }
+        return $str;
+    }
 
     /**
      * @Route("/functionTest", name="functionTest")
@@ -35,11 +55,10 @@ class DefaultController extends StatsController
             echo "<br>".$perm->getDescription()."<br>";
         }*/
 
-
-        return new Response(date("Y-m-d H:i:s",1523484000));
+        //return new Response(date("Y-m-d H:i:s",1523484000));
         //return new Response(date("Y-m-d H:i:s",(new \DateTime())->getTimestamp()));
         //return new Response(strtotime("2018-04-12 08:35"));
-        //return new Response(md5("ebenezer10"));
+        return new Response($this->formatInt(12253008000000));
     }
 
     /**
@@ -707,7 +726,7 @@ class DefaultController extends StatsController
 
             $donnees = $this->userStatsAction($request,$emp,$fromDate,$toDate);
             $donnees = json_decode($donnees->getContent(),true);
-            $finalSalary = $empDataFormated["salaryFinal"];
+            $finalSalary = ((int)$employe->getSalary())/30;
             $finalSalaryPerHour = $finalSalary/24;
             $finalSalaryPerMin = $finalSalaryPerHour/60;
             //print_r($empDataFormated);
@@ -715,15 +734,15 @@ class DefaultController extends StatsController
             $lastName = $employe->getLastName();
             $permissions = sizeof($donnees["permissionData"]["retardStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["absenceStats"]);
 
-            $header = array('Nom', 'Prenom(s)', 'Absences', 'Permissions','Retards','Departs');
+            $header = array('Nom', 'Prenom(s)', 'Absences', 'Permissions','Retards','Departs','Auth incomp');
             $data = array(
-                array($name,$lastName,$donnees["absences"],$permissions,$donnees["retards"],$donnees["departs"]),
+                array($name,$lastName,$donnees["absences"],$permissions,$donnees["retards"],$donnees["departs"],"-"),
             );
             $data2 = array(
-                array("Pertes en temps","",$donnees["absences"]*24,0,$donnees["tpr"],$donnees["tpd"]),
+                array("Pertes en temps","",$donnees["absences"]*24,0,$donnees["tpr"],$donnees["tpd"],null),
             );
             $data3 = array(
-                array("Pertes en argent","",$donnees["absences"]*$finalSalary,0,$donnees["tpr"]*$finalSalaryPerMin,$donnees["tpd"]*$finalSalaryPerMin),
+                array("Pertes en argent (FCFA)","",$donnees["absences"]*$finalSalary,0,$donnees["tpr"]*$finalSalaryPerMin,$donnees["tpd"]*$finalSalaryPerMin,null),
             );
 
             $pdf->FancyTable($header,$data,$data2,$data3);
