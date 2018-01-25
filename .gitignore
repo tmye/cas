@@ -40,5 +40,9 @@
 # Backup entities generated with doctrine:generate:entities command
 **/Entity/*~
 
+# self abiguime
 .idea/*
 vendor/*
+
+/.idea/*
+/vendor/*
