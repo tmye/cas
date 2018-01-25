@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col l9 offset-l3">
+            <h5>Nouvel Employé</h5>
+
+            <!-- Petites sections carrées -->
+
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Formulaire d'ajout d'un nouvel employé</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <form class="col l12">
+                                        <div class="row row-no-margin">
+                                            <div class="input-field col s12">
+                                                <div class="row row-no-margin">
+                                                    <div class="col l6">
+                                                        <span>Nom <span class="red-text">*</span></span>
+                                                        <br>
+                                                        <input type="text" class="input-customized" placeholder="Nom">
+                                                    </div>
+                                                    <div class="col l6">
+                                                        <span>Prénom <span class="red-text">*</span></span>
+                                                        <br>
+                                                        <input type="text" class="input-customized" placeholder="Prénoms">
+                                                    </div>
+                                                </div>
+                                                <div class="row row-no-margin">
+                                                    <div class="col l6">
+                                                        <span>Email <span class="red-text">*</span></span>
+                                                        <br>
+                                                        <input type="email" class="input-customized" placeholder="Email">
+                                                    </div>
+                                                    <div class="col l6">
+                                                        <span>Naissance <span class="red-text">*</span></span>
+                                                        <br>
+                                                        <input type="text" class="datepicker input-customized" placeholder="Date de naissance">
+                                                    </div>
+                                                </div>
+                                                <div class="row row-no-margin">
+                                                    <div class="col l6">
+                                                        <span>Adresse <span class="red-text">*</span></span>
+                                                        <br>
+                                                        <input type="text" class="input-customized" placeholder="Adresse">
+                                                    </div>
+                                                    <div class="col l6">
+                                                        <span>Téléphone <span class="red-text">*</span></span>
+                                                        <br>
+                                                        <input type="text" class="input-customized" placeholder="Téléphone">
+                                                    </div>
+                                                </div>
+                                                <div class="row row-no-margin">
+                                                    <div class="col l6">
+                                                        <span>Personne à prévenir en cas d'urgence <span class="red-text">*</span></span>
+                                                        <br>
+                                                        <input type="text" class="input-customized" placeholder="Personne à prévenir">
+                                                    </div>
+                                                    <div class="col l6">
+                                                        <span>Numéro en cas d'urgence <span class="red-text">*</span></span>
+                                                        <br>
+                                                        <input type="text" class="input-customized" placeholder="Numéro en cas d'urgence">
+                                                    </div>
+                                                </div>
+                                                <div class="row row-no-margin">
+                                                    <div class="col l6">
+                                                        <span>Salaire brut <span class="red-text">*</span></span>
+                                                        <br>
+                                                        <input type="text" class="input-customized" placeholder="Salaire brut">
+                                                    </div>
+                                                    <div class="col l6">
+                                                        <span>Date d'emploi <span class="red-text">*</span></span>
+                                                        <br>
+                                                        <input type="text" class="input-customized" placeholder="Date d'emploi">
+                                                    </div>
+                                                </div>
+                                                <div class="row row-no-margin">
+                                                    <div class="col l6">
+                                                        <span>Fonction <span class="red-text">*</span></span>
+                                                        <br>
+                                                        <input type="text" class="input-customized" placeholder="Fonction">
+                                                    </div>
+                                                    <div class="col l6">
+                                                        <span>Département <span class="red-text">*</span></span>
+                                                        <br>
+                                                        <select class="input-customized browser-default">
+                                                            <option value="" selected>Département</option>
+                                                            <option value="1">Dep 1</option>
+                                                            <option value="2">Dep 2</option>
+                                                            <option value="3">Dep 3</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="row row-no-margin">
+                                                    <div class="col l6">
+                                                        <span>Heure de travail <span class="red-text">*</span></span>
+                                                        <br>
+                                                        <select class="input-customized browser-default">
+                                                            <option value="" selected>Heure de travail</option>
+                                                            <option value="1">H 1</option>
+                                                            <option value="2">H 2</option>
+                                                            <option value="3">H 3</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col l6">
+                                                        <span class="right" style="margin-top: 20px">
+                                                            <input type="submit" value="Confirmer" class="btn-perso-historique">
+                                                            <input type="reset" value="Réinitialiser" class="btn-perso-historique grey lighten-2">
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}

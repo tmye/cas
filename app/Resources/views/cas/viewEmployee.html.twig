@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col l9 offset-l3">
+            <h5>Informations sur un employé</h5>
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">
+                                <div class="col l6">
+                                    <span>Veuillez choisir le département <span class="red-text">*</span></span>
+                                </div>
+                                <div class="col l6">
+                                    <select class="input-customized browser-default">
+                                        <option value="" selected>Département</option>
+                                        <option value="1">Dep 1</option>
+                                        <option value="2">Dep 2</option>
+                                        <option value="3">Dep 3</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <div class="col l12">
+                                        <table class="bordered striped">
+                                            <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Nom et prénoms</th>
+                                                <th>Fonction</th>
+                                                <th>Salaire</th>
+                                                <th>Téléphone</th>
+                                                <th>Adresse</th>
+                                                <th>Date d'emploi</th>
+                                                <th>Edit</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>Alvin</td>
+                                                <td>Game developper</td>
+                                                <td>100.000</td>
+                                                <td>93097886</td>
+                                                <td>Agoè Entreprise de l'union</td>
+                                                <td>11/13/2017</td>
+                                                <td>
+                                                    <button class="blue simple-button-decoration"><span class="fa fa-pencil white-text"></span></button>
+                                                    <button class="red simple-button-decoration"><span class="fa fa-trash-o white-text"></span></button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>2</td>
+                                                <td>Alvin</td>
+                                                <td>Game developper</td>
+                                                <td>100.000</td>
+                                                <td>93097886</td>
+                                                <td>Agoè Entreprise de l'union</td>
+                                                <td>11/13/2017</td>
+                                                <td>
+                                                    <button class="blue simple-button-decoration"><span class="fa fa-pencil white-text"></span></button>
+                                                    <button class="red simple-button-decoration"><span class="fa fa-trash-o white-text"></span></button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>3</td>
+                                                <td>Alvin</td>
+                                                <td>Game developper</td>
+                                                <td>100.000</td>
+                                                <td>93097886</td>
+                                                <td>Agoè Entreprise de l'union</td>
+                                                <td>11/13/2017</td>
+                                                <td>
+                                                    <button class="blue simple-button-decoration"><span class="fa fa-pencil white-text"></span></button>
+                                                    <button class="red simple-button-decoration"><span class="fa fa-trash-o white-text"></span></button>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}

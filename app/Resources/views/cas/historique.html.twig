@@ -1,0 +1,116 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col l9 offset-l3">
+            <h5>Historiques</h5>
+
+            <!-- Petites sections carrées -->
+
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Historique de présences</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <form class="col l12">
+                                        <div class="row row-no-margin">
+                                            <div class="input-field col s12">
+                                                <div class="row row-no-margin">
+                                                    <div class="col l6">
+                                                        <span>Veuillez sélectionner le département de votre choix</span>
+                                                    </div>
+                                                    <div class="col l6">
+                                                        <select class="input-customized browser-default">
+                                                            <option value="" selected>Département</option>
+                                                            <option value="1">Dep 1</option>
+                                                            <option value="2">Dep 2</option>
+                                                            <option value="3">Dep 3</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row row-no-margin">
+                                            <div class="input-field col s12">
+                                                <div class="row row-no-margin">
+                                                    <div class="col l6">
+                                                        <span>Veuillez sélectionner la date de votre choix</span>
+                                                    </div>
+                                                    <div class="col l6">
+                                                        <input type="text" class="datepicker input-customized" style="width: 98%">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row row-no-margin">
+                                            <div class="input-field col s12">
+                                                <div class="row row-no-margin">
+                                                    <div class="col l12">
+                                                        <input type="submit" value="Rechercher" class="right btn-perso-historique">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Section du classement des tops -->
+
+            <div class="row">
+                <div class="col l12">
+                    <h5>Résultats de votre recherche</h5>
+                    <br>
+                    <table class="bordered striped">
+                        <thead>
+                        <tr>
+                            <th>Nom et prénoms</th>
+                            <th>Fonction</th>
+                            <th>Arrivée</th>
+                            <th>Début pause</th>
+                            <th>Fin pause</th>
+                            <th>Départ</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr>
+                            <td>Alvin</td>
+                            <td>Informatique</td>
+                            <td>8h05</td>
+                            <td>12:00</td>
+                            <td>14:00</td>
+                            <td>17:33</td>
+                        </tr>
+                        <tr>
+                            <td>Alan</td>
+                            <td>Informatique</td>
+                            <td>8h05</td>
+                            <td>12:00</td>
+                            <td>14:00</td>
+                            <td>17:33</td>
+                        </tr>
+                        <tr>
+                            <td>Jonathan</td>
+                            <td>Informatique</td>
+                            <td>8h05</td>
+                            <td>12:00</td>
+                            <td>14:00</td>
+                            <td>17:33</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}

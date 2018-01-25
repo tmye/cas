@@ -2,12 +2,162 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}C.A.S - {% endblock %}</title>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+        <link rel="stylesheet" href="{{ asset('css/style.css') }}">
         {% block stylesheets %}{% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
+    <div class="row">
+        <div class="col l2">
+            <ul id="nav-mobile" class="side-nav fixed">
+                <li class="center" style="background-image: url({{ asset('img/background_spot.jpg') }});padding-top: 20px">
+                    <img src="{{ asset('img/avatar.jpg')}}" alt="avatar" class="circle">
+                    <p class="p-greeting white-text">Bonjour Mr Smith</p>
+                    <p class="white-text">Votre license expire le 31/01/2018</p>
+                </li>
+                <br>
+                <div class="row">
+                    <div class="col l10 offset-l1">
+                        <ul class="collapsible" data-collapsible="accordion">
+                            <li>
+                                <div class="collapsible-header active valign-wrapper">
+                                    <span class="fa fa-home"></span>
+                                    <a href="{{ path('homepage') }}" style="margin-left: 4px;color: inherit">Accueil</a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="collapsible-header valign-wrapper">
+                                    <span class="fa fa-file-text-o"></span>
+                                    <span style="margin-left: 4px">Présences</span>
+                                </div>
+                                <div class="collapsible-body nav-collapsible-body">
+                                    <a href="{{ path("historique") }}" class="collapsible-links">Historiques</a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="collapsible-header valign-wrapper">
+                                    <span class="fa fa-line-chart"></span>
+                                    <span style="margin-left: 4px">Statistiques</span>
+                                </div>
+                                <div class="collapsible-body nav-collapsible-body">
+                                    <a href="{{ path("viewDepStat") }}" class="collapsible-links">Départements</a>
+                                    <br>
+                                    <a href="{{ path("viewPersStat") }}" class="collapsible-links">Personnelles</a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="collapsible-header valign-wrapper">
+                                    <span class="fa fa-file"></span>
+                                    <span style="margin-left: 4px">Permissions</span>
+                                </div>
+                                <div class="collapsible-body nav-collapsible-body">
+                                    <a href="#" class="collapsible-links">Liste</a>
+                                    <br>
+                                    <a href="#" class="collapsible-links">Demander</a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="collapsible-header active valign-wrapper">
+                                    <span class="fa fa-home"></span>
+                                    <a href="#" style="margin-left: 4px;color: inherit">Départements</a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="collapsible-header valign-wrapper">
+                                    <span class="fa fa-user"></span>
+                                    <span style="margin-left: 4px">Employés</span>
+                                </div>
+                                <div class="collapsible-body nav-collapsible-body">
+                                    <a href="{{ path("addEmployee") }}" class="collapsible-links">Ajouter</a>
+                                    <br>
+                                    <a href="{{ path("viewEmployee") }}" class="collapsible-links">Informations</a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="collapsible-header valign-wrapper">
+                                    <span class="fa fa-wrench"></span>
+                                    <span style="margin-left: 4px">Réglages</span>
+                                </div>
+                                <div class="collapsible-body nav-collapsible-body">
+                                    <a href="{{ path("imageVeille") }}" class="collapsible-links">Images de veille</a>
+                                    <br>
+                                    <a href="#" class="collapsible-links">Heures de travails</a>
+                                    <br>
+                                    <a href="#" class="collapsible-links">Machines enrégistrées</a>
+                                    <br>
+                                    <a href="#" class="collapsible-links">Synchroniser</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </ul>
+        </div>
+        <div>
+            <nav class="teal col l10" style="background-image: url({{ asset('img/background_spot.jpg') }})">
+                <div class="row">
+                    <div class="col l11 offset-l1">
+                        <div class="nav-wrapper">
+                            <a href="#" class="brand-logo">
+
+                                <!-- <button class="hide-on-large-only"> btn </button> -->
+                                <span>logo c.a.s</span>
+                            </a>
+                            <!-- Structure du menu deroulant au cas ou on serait sur mobile -->
+
+                            <ul class="side-nav" id="mobile-demo">
+
+                                <?php
+                            include "includes/side-nav.html";
+                            ?>
+                                <li><a href="#">Mon compte</a></li>
+                                <li><a href="#">Déconnexion</a></li>
+                            </ul>
+                            <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+
+                            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                                <li style="margin-right: 20px">
+                                <span href="#" class="black-links valign-wrapper">
+                                    <img src="{{ asset('img/arm2.png') }}" alt="armoirie" class="circle img-armoirie">
+                                    <span class="white-text" style="margin-left: 5px">Ministère des Postes et de l'Economie Numérique</span>
+                                </span>
+                                </li>
+
+                                <!-- Structure du menu deroulant -->
+
+                                <ul id="menu-deroulant" class="dropdown-content">
+                                    <li class="valign-wrapper">
+                                        <span class="icon-user-md"></span>
+                                        <a href="#!">Mon compte</a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li class="valign-wrapper">
+                                        <span class="icon-off"></span>
+                                        <a href="#!">Déconnexion</a>
+                                    </li>
+                                </ul>
+                                <li><a href="#" class="dropdown-button" data-activates="menu-deroulant"><span class="icon-user"></span> John Smith</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
         {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
+
+    <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous">
+
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <script src="{{ asset('js/script.js') }}"></script>
+    <script src="https://use.fontawesome.com/4f517cd7b4.js"></script>
+    {% block javascripts %}{% endblock %}
     </body>
 </html>

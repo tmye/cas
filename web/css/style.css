@@ -1,0 +1,120 @@
+html
+{
+    font-weight: 300 !important;
+}.primary-color
+{
+    background-color: #e0e0e0 !important;
+    color: #000;
+}
+.black-links
+{
+    color: #000 !important;
+}
+.accent
+{
+    background-color: #607d8b;
+}
+.img-armoirie{
+    width: 50px !important;
+    height: 50px !important;
+}
+.background
+{
+    width: 100%;
+    height: 400px;
+}
+.p-greeting
+{
+    border: solid 2px #ccc;
+    width: 50%;
+    margin: auto;
+    padding: 4px 10px;
+    border-radius: 4px;
+}
+.p-greeting:hover
+{
+    background-color: rgba(120,120,120,0.5);
+}
+.logo
+{
+    height: 50px !important;
+}
+.btn-perso1
+{
+    margin-top: -40px;
+    margin-right: 15px;
+    border: solid 1px rgba(0,0,0,0.2);
+    background-color: teal;
+    color: #fff;
+    padding: 4px 15px;
+    border-radius: 7px;
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+}
+.btn-perso-historique
+{
+    border: solid 1px rgba(0,0,0,0.2);
+    background-color: teal;
+    color: #fff;
+    padding: 7px 15px;
+    border-radius: 4px;
+}
+#menu-deroulant
+{
+    width: 200px !important;
+}
+#menu-deroulant li
+ {
+    width: 200px !important;
+}
+.badge
+{
+    border-radius: 10px;
+}
+.nav-collapsible-body
+{
+    padding-left: 20px !important;
+}
+.collapsible-links
+{
+}
+.material-icons
+{
+    font-size: 100px;
+}
+.top
+{
+    display: inline-block;
+    vertical-align: top;
+}
+.user-info-home
+{
+    position: relative;
+    left: 5px;
+    top: -3px;
+}
+.lien-detail
+{
+    border: solid 1px rgba(0,0,0,0.2);
+    display: block;
+    width: 100%;
+    border-radius: 4px;
+}
+.row-no-margin{
+    margin-bottom: 0px !important;
+}
+.input-customized
+{
+    border: solid 1px rgba(0,0,0,0.2) !important;
+    border-radius: 3px !important;
+    height: 35px !important;
+    padding-left: 2% !important;
+}
+.simple-button-decoration
+{
+    border: solid 1px rgba(0,0,0,0.2);
+    border-radius: 3px;
+}
+.preview
+{
+    width: 100%;
+}

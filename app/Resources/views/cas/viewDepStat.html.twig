@@ -1,0 +1,183 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col l9 offset-l3">
+            <h5>Statistiques</h5>
+
+            <!-- Petites sections carrées -->
+
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Choisissez les paramètres</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <form class="col l12">
+                                        <div class="row row-no-margin">
+                                            <div class="input-field col s12">
+                                                <div class="row row-no-margin">
+                                                    <div class="col l6">
+                                                        <span>Veuillez sélectionner le département de votre choix</span>
+                                                        <br>
+                                                        <select class="input-customized browser-default">
+                                                            <option value="" selected>Département</option>
+                                                            <option value="1">Dep 1</option>
+                                                            <option value="2">Dep 2</option>
+                                                            <option value="3">Dep 3</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col l6">
+                                                        <span style="position: relative;top: 15px;">
+                                                            <input type="checkbox" id="tech" />
+                                                            <label for="tech">Tech</label>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <br>
+                                                <div class="row row-no-margin">
+                                                    <div class="col l6">
+                                                        <span>Veuillez sélectionner la durée de votre choix</span>
+                                                        <br>
+                                                        <input type="text" class="datepicker input-customized" placeholder="DU">
+                                                    </div>
+                                                    <span> - </span>
+                                                    <div class="col l6">
+                                                        <input type="text" class="datepicker input-customized" placeholder="AU">
+                                                    </div>
+                                                </div>
+                                                <div class="row row-no-margin">
+                                                    <div class="col l6">
+                                                    </div>
+                                                    <div class="col l6">
+                                                        <span class="right" style="margin-top: 20px">
+                                                            <input type="submit" value="Valider" class="btn-perso-historique">
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col l10 offset-l1">
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col l10 offset-l1">
+                    <canvas id="myChart2"></canvas>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col l10 offset-l1">
+                    <canvas id="myChart3"></canvas>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col l10 offset-l1">
+                    <canvas id="myChart4"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset("js/Chart.min.js") }}"></script>
+    <script>
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'bar',
+
+            // The data for our dataset
+            data: {
+                labels: [16028.0, 16028.2, 16028.4, 16028.6, 16028.8, 16029.0, 16029.2, 16029.4, 16029.6, 16029.8, 16030.0],
+                datasets: [{
+                    label: "Statistiques des pertes retards estimés en temps",
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    data: [16029.0],
+                }]
+            },
+
+            // Configuration options go here
+            options: {
+            }
+        });
+    </script>
+    <script>
+        var ctx = document.getElementById('myChart2').getContext('2d');
+        var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'bar',
+
+            // The data for our dataset
+            data: {
+                labels: [16028.0, 16028.2, 16028.4, 16028.6, 16028.8, 16029.0, 16029.2, 16029.4, 16029.6, 16029.8, 16030.0],
+                datasets: [{
+                    label: "Statistiques des pertes retards estimés en argent",
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    data: [16029.0],
+                }]
+            },
+
+            // Configuration options go here
+            options: {
+            }
+        });
+    </script>
+    <script>
+        var ctx = document.getElementById('myChart3').getContext('2d');
+        var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'bar',
+
+            // The data for our dataset
+            data: {
+                labels: [16028.0, 16028.2, 16028.4, 16028.6, 16028.8, 16029.0, 16029.2, 16029.4, 16029.6, 16029.8, 16030.0],
+                datasets: [{
+                    label: "Statistiques des pertes départs estimés en temps",
+                    backgroundColor: 'skyblue',
+                    borderColor: 'skyblue',
+                    data: [16029.0],
+                }]
+            },
+
+            // Configuration options go here
+            options: {
+            }
+        });
+    </script>
+    <script>
+        var ctx = document.getElementById('myChart4').getContext('2d');
+        var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'bar',
+
+            // The data for our dataset
+            data: {
+                labels: [16028.0, 16028.2, 16028.4, 16028.6, 16028.8, 16029.0, 16029.2, 16029.4, 16029.6, 16029.8, 16030.0],
+                datasets: [{
+                    label: "Statistiques des pertes départs estimés en argent",
+                    backgroundColor: 'skyblue',
+                    borderColor: 'skyblue',
+                    data: [16029.0],
+                }]
+            },
+
+            // Configuration options go here
+            options: {
+            }
+        });
+    </script>
+{% endblock %}

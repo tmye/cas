@@ -1,0 +1,415 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col l9 offset-l3">
+            <h5>Statistiques</h5>
+
+            <!-- Petites sections carrées -->
+
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Choisissez les paramètres</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <form class="col l12">
+                                        <div class="row row-no-margin">
+                                            <div class="input-field col s12">
+                                                <div class="row row-no-margin">
+                                                    <div class="col l6">
+                                                        <span>Veuillez sélectionner le département de votre choix</span>
+                                                        <br>
+                                                        <select class="input-customized browser-default">
+                                                            <option value="" selected>Département</option>
+                                                            <option value="1">Dep 1</option>
+                                                            <option value="2">Dep 2</option>
+                                                            <option value="3">Dep 3</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col l6">
+                                                        <span>Veuillez sélectionner l'employé</span>
+                                                        <br>
+                                                        <select class="input-customized browser-default">
+                                                            <option value="" selected>Employé</option>
+                                                            <option value="1">Emp 1</option>
+                                                            <option value="2">Emp 2</option>
+                                                            <option value="3">Emp 3</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <br>
+                                                <div class="row row-no-margin">
+                                                    <div class="col l6">
+                                                        <span>Veuillez sélectionner la durée de votre choix</span>
+                                                        <br>
+                                                        <input type="text" class="datepicker input-customized" placeholder="DU">
+                                                    </div>
+                                                    <span> - </span>
+                                                    <div class="col l6">
+                                                        <input type="text" class="datepicker input-customized" placeholder="AU">
+                                                    </div>
+                                                </div>
+                                                <div class="row row-no-margin">
+                                                    <div class="col l6">
+                                                    </div>
+                                                    <div class="col l6">
+                                                        <span class="right" style="margin-top: 20px">
+                                                            <input type="submit" value="Valider" class="btn-perso-historique">
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <h5>Statistiques de l'employé</h5>
+            <div class="row">
+                <div class="col l12">
+                    <table class="card table bordered striped condensed centered">
+                        <tr>
+                            <td colspan="2">Nom : <span>Abiguime Arlaki Ulrich</span></td>
+                            <td>Salaire : 96.000 FCFA</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <span>11/10/2017</span>
+                                <br>
+                                au
+                                <br>
+                                <span>30/12/2017</span>
+                            </td>
+                            <td>
+                                =
+                                <br>
+                                <span>259.200 FCFA</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="center">Absences</th>
+                            <th class="center">Départs</th>
+                            <th class="center">Retards prématurés</th>
+                        </tr>
+                        <tr>
+                            <td>81</td>
+                            <td>18</td>
+                            <td>27</td>
+                        </tr>
+                        <tr>
+                            <th colspan="3" class="center">Total Temps Perdu</th>
+                        </tr>
+                        <tr>
+                            <td>-</td>
+                            <td>7h39min</td>
+                            <td>26h11min</td>
+                        </tr>
+                        <tr>
+                            <th colspan="3" class="center">Total d'argent Perdu</th>
+                        </tr>
+                        <tr>
+                            <td>259.200 FCFA</td>
+                            <td>4.896 FCFA</td>
+                            <td>16.757 FCFA</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">=280.853 FCFA (108.35%)</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col l6">
+                    <span>Diagramme cumulé des absences</span>
+                    <canvas id="myPieChart" class="card">
+                    </canvas>
+                </div>
+                <div class="col l6">
+                    <span>Diagramme des absences</span>
+                    <canvas id="myChart" class="card">
+                    </canvas>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col l6">
+                    <span>Départs prématurés de 12H00</span>
+                    <table class="card table bordered centered striped highlight responsive-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Heure de départ</th>
+                                <th>Lapse</th>
+                            </tr>
+                        </thead>
+                        <tr>
+                            <td>24/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>23/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>21/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>20/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>19/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>18/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>17/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>16/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>15/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>14/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>13/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>11/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>10/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col l6">
+                    <span>Départs prématurés de 18H00</span>
+                    <table class="card table bordered centered striped highlight responsive-table">
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Heure de départ</th>
+                            <th>Lapse</th>
+                        </tr>
+                        </thead>
+                        <tr>
+                            <td>24/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>23/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>21/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>20/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>19/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>18/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>17/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>16/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>15/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>14/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>13/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>11/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                        <tr>
+                            <td>10/11/2017</td>
+                            <td>10:22</td>
+                            <td>1h38min</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col l12">
+                    <sp>Diagramme des départs prématurés de 12H00</sp>
+                    <canvas id="m-chart" class="card"></canvas>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col l12">
+                    <sp>Diagramme des départs prématurés de 18H00</sp>
+                    <canvas id="n-chart" class="card"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset("js/Chart.min.js") }}"></script>
+    <script>
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'bar',
+
+            // The data for our dataset
+            data: {
+                labels: [0, 20, 40, 60, 80, 90],
+                datasets: [{
+                    label: "Absences",
+                    backgroundColor: 'orange',
+                    borderColor: 'orange',
+                    data: [81],
+                }],
+                labels : ["Absences"]
+            },
+
+            // Configuration options go here
+            options: {
+                title:{
+                    display:true,
+                    text: "Diagramme des absences"
+                },
+                scales: {
+                    xAxes: [{
+                        barPercentage: 0.2
+                    }]
+                }
+            }
+        });
+    </script>
+    <script>
+        var ctx = document.getElementById('myPieChart').getContext('2d');
+        var myPieChart = new Chart(ctx,{
+            type: 'pie',
+            data: {
+                datasets: [{
+                    label: "Absences",
+                    backgroundColor: ['#ff6384', '#36a2eb'],
+                    data: [459,1571],
+                }],
+                labels : [
+                    'Cumul des retards en minuite',
+                    'Cumul des départs avnt l\'heure en minuite'
+                ]
+            },
+        });
+    </script>
+    <script>
+        var ctx = document.getElementById('m-chart').getContext('2d');
+        var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'line',
+
+            // The data for our dataset
+            data: {
+                labels: [0, 20, 40, 60, 80,100,120],
+                datasets: [{
+                    label: "Absences",
+                    backgroundColor: 'rgba(0,0,0,0)',
+                    borderColor: '#36a2eb',
+                    data: [2,34,45,13,56,85,45,12,65,35,27,24,25],
+                }],
+                labels : ['24/11/2017','23/11/2017','21/11/2017','20/11/2017','19/11/2017','18/11/2017','17/11/2017','16/11/2017','15/11/2017','14/11/2017','13/11/2017','11/11/2017','10/11/2017',]
+            },
+
+            // Configuration options go here
+            options: {
+                title:{
+                    display:true,
+                    text: "Diagramme des départs prématurés de 12H00"
+                }
+            }
+        });
+    </script>
+    <script>
+        var ctx = document.getElementById('n-chart').getContext('2d');
+        var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'line',
+
+            // The data for our dataset
+            data: {
+                labels: [0, 20, 40, 60, 80,100,120],
+                datasets: [{
+                    label: "Absences",
+                    backgroundColor: 'rgba(0,0,0,0)',
+                    borderColor: '#ff6384',
+                    data: [25,24,27,35,65,12,45,85,56,13,45,34,2],
+                }],
+                labels : ['24/11/2017','23/11/2017','21/11/2017','20/11/2017','19/11/2017','18/11/2017','17/11/2017','16/11/2017','15/11/2017','14/11/2017','13/11/2017','11/11/2017','10/11/2017',]
+            },
+
+            // Configuration options go here
+            options: {
+                title:{
+                    display:true,
+                    text: "Diagramme des départs prématurés de 18H00"
+                }
+            }
+        });
+    </script>
+{% endblock %}
