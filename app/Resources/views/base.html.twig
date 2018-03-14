@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{% block title %}C.A.S - {% endblock %}</title>
+
+        <link rel="stylesheet" href="{{ asset('materialize/css/materialize.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+        <link rel="stylesheet" href="{{ asset('web-fonts-with-css/css/fontawesome-all.min.css') }}">
+        {% block stylesheets %}{% endblock %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    </head>
+    <body>
+    <div class="row">
+        <div class="col l2">
+            <ul id="nav-mobile" class="side-nav fixed" style="background-color: #f9f9f9">
+                <p class="blue_band">Navigation</p>
+                <div class="row">
+                    <div class="col l10 offset-l1">
+                        <ul class="collapsible" data-collapsible="accordion">
+                            <li>
+                                <div class="center">Connecté en tant que:</div>
+                                <div class="grey lighten-3" style="padding: 5px 10px;border-radius: 5px">
+                                    {% if app.user is defined and app.user is not null %}
+                                        <img src="{{ asset('uploads/img/')~app.user.picPath }}" alt="user_image" class="circle middle-align user_extra_small_picture" style="width: 35px">
+                                    {% endif %}
+                                    <span class="middle-align">
+                                        {% if app.user is defined and app.user is not null %}
+                                            {{ app.user.surname~" "~app.user.lastName }}
+                                        {% endif %}
+                                    </span>
+                                    <div>
+                                        <span class="fa fa-laptop"></span>
+                                        Privilèges :
+                                        {% if app.user is defined and app.user is not null %}
+                                            {{ app.user.roles[0] }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </li>
+                            <br>
+                            <li>
+                                <div class="collapsible-header active valign-wrapper">
+                                    <span class="fa fa-home icons"></span>
+                                    <a href="{{ path('homepage') }}" style="margin-left: 4px;color: inherit">Accueil</a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="collapsible-header valign-wrapper">
+                                    <span class="fa fa-file-alt icons"></span>
+                                    <span style="margin-left: 4px">Présences</span>
+                                </div>
+                                <div class="collapsible-body nav-collapsible-body">
+                                    <a href="{{ path("historique") }}" class="collapsible-links">Historiques</a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="collapsible-header valign-wrapper">
+                                    <span class="fa fa-chart-bar icons"></span>
+                                    <span style="margin-left: 4px">Statistiques</span>
+                                </div>
+                                <div class="collapsible-body nav-collapsible-body">
+                                    <a href="{{ path("depStat") }}" class="collapsible-links">Départements</a>
+                                    <br>
+                                    <a href="{{ path("persStat") }}" class="collapsible-links">Personnelles</a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="collapsible-header valign-wrapper">
+                                    <span class="fa fa-file icons"></span>
+                                    <span style="margin-left: 4px">Permissions</span>
+                                </div>
+                                <div class="collapsible-body nav-collapsible-body">
+                                    <a href="{{ path('viewPermission') }}" class="collapsible-links">Liste</a>
+                                    <br>
+                                    <a href="{{ path('addPermission') }}" class="collapsible-links">Demander</a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="collapsible-header active valign-wrapper">
+                                    <span class="fa fa-home icons"></span>
+                                    <a href="{{ path("departement") }}" style="margin-left: 4px;color: inherit">Départements</a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="collapsible-header valign-wrapper">
+                                    <span class="fa fa-user icons"></span>
+                                    <span style="margin-left: 4px">Employés</span>
+                                </div>
+                                <div class="collapsible-body nav-collapsible-body">
+                                    <a href="{{ path("addEmployee") }}" class="collapsible-links">Ajouter</a>
+                                    <br>
+                                    <a href="{{ path("viewEmployee") }}" class="collapsible-links">Informations</a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="collapsible-header valign-wrapper">
+                                    <span class="fa fa-wrench icons"></span>
+                                    <span style="margin-left: 4px">Réglages</span>
+                                </div>
+                                <div class="collapsible-body nav-collapsible-body">
+                                    <a href="{{ path("imageVeille") }}" class="collapsible-links">Images de veille</a>
+                                    <br>
+                                    <a href="#" class="collapsible-links">Heures de travails</a>
+                                    <br>
+                                    <a href="#" class="collapsible-links">Machines enrégistrées</a>
+                                    <br>
+                                    <a href="#" class="collapsible-links">Synchroniser</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </ul>
+        </div>
+        <div>
+            <nav class="col right l12 white black-text" style="position: fixed;z-index:998;height: 52.5px;line-height: 52.5px">
+                <div class="row">
+                    <div class="col l9 offset-l3">
+                        <div class="nav-wrapper">
+                            <a href="#" class="black-text">
+                                <span class="black-text">Ministère des postes et de l'économie numérique</span>
+                                <span class="right black-text">Expiration : 13/07/2019</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <br><br><br>
+        {% block body %}{% endblock %}
+
+    <script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
+    <script src="{{ asset('materialize/js/materialize.min.js') }}"></script>
+    <script src="{{ asset('js/script.js') }}"></script>
+    {% block javascripts %}{% endblock %}
+    </body>
+</html>

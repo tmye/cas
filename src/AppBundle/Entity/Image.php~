@@ -1,0 +1,66 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Image
+ *
+ * @ORM\Table(name="image")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ImageRepository")
+ */
+class Image
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="pic_path", type="string", length=255, unique=true)
+     */
+    private $picPath;
+
+    private $file;
+
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set picPath
+     *
+     * @param string $picPath
+     * @return Image
+     */
+    public function setPicPath($picPath)
+    {
+        $this->picPath = $picPath;
+
+        return $this;
+    }
+
+    /**
+     * Get picPath
+     *
+     * @return string 
+     */
+    public function getPicPath()
+    {
+        return $this->picPath;
+    }
+}

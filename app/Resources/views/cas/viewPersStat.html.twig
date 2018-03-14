@@ -1,0 +1,500 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col l9 offset-l3">
+            <h5>Statistiques</h5>
+
+            <!-- <div id="modal1" class="modal modal-loading" style="overflow: hidden">
+                <div class="modal-content" style="overflow: hidden">
+                    <p class="center" style="margin-top: 150px"><img src="{{ asset("img/ajax_loaders/ajax-loading.gif") }}" style="height: 50px"> </p>
+                </div>
+            </div> -->
+
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Choisissez les paramètres</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <form class="col l12">
+                                        <div class="row row-no-margin">
+                                            <div class="input-field col s12">
+                                                <div class="row" id="errorContainer">
+                                                    <div class="col l12">
+                                                        <span class="red-text"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="row row-no-margin">
+                                                    <div class="col l6">
+                                                        <span>Veuillez sélectionner le département de votre choix</span>
+                                                        <br>
+                                                        <select id="depSelect" class="input-customized browser-default">
+                                                            <option value="" selected>Département</option>
+                                                            {% for dep in listDep %}
+                                                                <option value="{{ dep.id }}">{{ dep.name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="col l6">
+                                                        <span>Veuillez sélectionner l'employé</span>
+                                                        <br>
+                                                        <select id="empSelect" class="input-customized browser-default">
+                                                            <option value='' selected>Employé</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <br>
+                                                <div class="row row-no-margin">
+                                                    <div class="col l6">
+                                                        <span>Veuillez sélectionner la durée de votre choix</span>
+                                                        <br>
+                                                        <input id="fromDate" type="text" class="datepicker input-customized" placeholder="DU">
+                                                    </div>
+                                                    <span> - </span>
+                                                    <div class="col l6">
+                                                        <input id="toDate" type="text" class="datepicker input-customized" placeholder="AU">
+                                                    </div>
+                                                </div>
+                                                <div class="row row-no-margin">
+                                                    <div class="col l6">
+                                                    </div>
+                                                    <div class="col l6">
+                                                        <span class="right" style="margin-top: 20px">
+                                                            <input type="button" id="submitButton" value="Valider" class="btn-perso-historique">
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div id="containerMustBeHidden" style="display: none">
+            <h5>Statistiques de l'employé</h5>
+                <div class="row">
+                    <div class="col l12">
+                        <table class="card table bordered striped condensed centered">
+                            <tr>
+                                <td colspan="2">Nom : <span id="nameSpan"></span></td>
+                                <td>Salaire : <span id="salarySpan"></span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <span id="fromDateSpan"></span>
+                                    <br>
+                                    au
+                                    <br>
+                                    <span id="toDateSpan"></span>
+                                </td>
+                                <td>
+                                    =
+                                    <br>
+                                    <span id="totalSalarySpan"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="center">Absences</th>
+                                <th class="center">Retards</th>
+                                <th class="center">Départs prématurés</th>
+                            </tr>
+                            <tr>
+                                <td><span id="absenceSpan"></span></td>
+                                <td><span id="retardSpan"></span></td>
+                                <td><span id="departSpan"></span></td>
+                            </tr>
+                            <tr>
+                                <th colspan="3" class="center">Total Temps Perdu</th>
+                            </tr>
+                            <tr>
+                                <td>-</td>
+                                <td><span id="tprSpan"></span> min</td>
+                                <td><span id="tpdSpan"></span> min</td>
+                            </tr>
+                            <tr>
+                                <th colspan="3" class="center">Total d'argent Perdu</th>
+                            </tr>
+                            <tr>
+                                <td><span id="spaSpan"></span> FCFA</td>
+                                <td><span id="sprSpan"></span> FCFA</td>
+                                <td><span id="spdSpan"></span> FCFA</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">=<span id="tapSpan"></span> FCFA (<span id="papSpan"></span>%)</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col l6">
+                        <span>Diagramme cumulé des absences</span>
+                        <canvas id="myPieChart" class="card">
+                        </canvas>
+                    </div>
+                    <div class="col l6">
+                        <span>Diagramme des absences</span>
+                        <canvas id="myChart" class="card">
+                        </canvas>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col l6">
+                        <span>Départs prématurés de 12H00</span>
+                        <table class="card table bordered centered striped highlight responsive-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Heure de départ</th>
+                                    <th>Lapse</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabDepartsPrematures12">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col l6">
+                        <span>Départs prématurés de 18H00</span>
+                        <table class="card table bordered centered striped highlight responsive-table">
+                            <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Heure de départ</th>
+                                <th>Lapse</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tabDepartsPrematures17">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col l12">
+                        <sp>Diagramme des départs prématurés de 12H00</sp>
+                        <canvas id="m-chart" class="card"></canvas>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col l12">
+                        <sp>Diagramme des départs prématurés de 18H00</sp>
+                        <canvas id="n-chart" class="card"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset("js/Chart.min.js") }}"></script>
+    <script>
+        var tempsPerduRetards = 0;
+        $(function(){
+            //alert("appel de la fonction");
+            $('#modal1').modal({
+                dismissible: false, // Modal can be dismissed by clicking outside of the modal
+            });
+            $('#modal1').modal('open');
+            /* Création de la fonction qui permet de renvoyer le jour */
+
+            function returnJour(date) {
+                var days = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+                var theDate = new Date(date);
+                var dayName = days[theDate.getDay()];
+
+                return dayName;
+
+            }
+
+            /* Création de la fonction de chargement des données de l'employé sélectionné */
+            function loadSelectedEmpData(id) {
+
+                var abs = 0;
+
+                // fonction d'ajout de date
+                Date.prototype.addDays = function(days) {
+                    var dat = new Date(this.valueOf());
+                    dat.setDate(dat.getDate() + days);
+                    return dat;
+                }
+                $.ajax({
+                    type: 'GET',
+                    url: "returnOneEmployee/"+id,
+                    success: function(data) {
+                        var res = JSON.parse(data);
+                        //alert("Le résultat : "+res.emp["id"]);
+                        var employeeId = res.emp["id"];
+                        var fullName = res.emp["surname"]+" "+res.emp["middleName"]+" "+res.emp["lastName"];
+                        var salary = res.emp["salary"];
+                        var fromDate = $("#fromDate").val();
+                        var fFromDate = new Date($("#fromDate").val());
+                        var toDate = $("#toDate").val();
+                        var fToDate = new Date($("#toDate").val());
+
+                        var timeDiff = Math.abs(fToDate.getTime() - fFromDate.getTime());
+                        var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                        diffDays +=1;
+                        var totalSalary = (salary/30)*diffDays;
+                        var salaryPerDay = (salary/30);
+                        var salaryPerMin = (((salary/30)/24)/60);
+
+                        tempsPerduRetards = data.tpr;
+
+                        // Intervalle de retard
+                        var interval = 30*60; // 1800
+
+                        $("#nameSpan").text(fullName);
+                        $("#salarySpan").text(salary);
+                        $("#fromDateSpan").text(fromDate);
+                        $("#toDateSpan").text(toDate);
+                        $("#totalSalarySpan").text(totalSalary);
+
+                        // Recuperation des autres informations
+                        $.ajax({
+                            type: 'POST',
+                            url: "userStats",
+                            data: {'empId':employeeId,'dateFrom':fromDate,'dateTo':toDate,'interval':interval},
+                            success: function (data) {
+                                $("#containerMustBeHidden").attr("style","display:block");
+                                $("#absenceSpan").text(data.absences);
+                                $("#retardSpan").text(data.retards);
+                                $("#departSpan").text(data.departs);
+                                $("#tprSpan").text(Math.ceil(data.tpr));
+                                $("#tpdSpan").text(Math.ceil(data.tpd));
+                                alert("Salaire = : "+salary);
+                                alert("Salaire journalier = : "+salary/30);
+                                alert("Salaire horraire = : "+(salary/30)/24);
+                                alert("Salaire par minuite = : "+((salary/30)/24)/60);
+                                alert("Le tout devrait faire = : "+(((salary/30)/24)/60)*data.tpd);
+                                alert("Temps perdu depart = : "+data.tpd);
+                                $("#sprSpan").text(Math.ceil(salaryPerMin*data.tpr));
+                                $("#spdSpan").text(Math.ceil(salaryPerMin*data.tpd));
+                                $("#spaSpan").text(Math.ceil(salaryPerDay*data.nbreAbsences));
+                                var stp = (salaryPerMin*data.tpr)+(salaryPerMin*data.tpd)+(salaryPerDay*data.nbreAbsences);
+                                $("#tapSpan").text(Math.ceil(stp));
+                                $("#papSpan").text(Math.ceil((stp/salary)*100));
+                                alert("avant");
+                                //var res = JSON.parse(data.test);
+                                alert("apres");
+                                console.log(data.pauseStats);
+                                alert("longueur = "+data.pauseStats.length);
+                                alert(data.finStats);
+
+                                // Boucle pour remplir les tableau
+
+                                var pauseDatas = [];
+                                var pauseLabels = [];
+                                var finDatas = [];
+                                var finLabels = [];
+                                $("#tabDepartsPrematures12").html("");
+                                for(var j=0;j < data.pauseStats.length;j++){
+                                    pauseDatas.push(data.pauseStats[j].temps);
+                                    pauseLabels.push(data.pauseStats[j].date);
+                                    $("#tabDepartsPrematures12").append(
+                                        "<tr>"+
+                                            "<td>"+data.pauseStats[j].date+"</td>"+
+                                            "<td>"+data.pauseStats[j].heureDepart+"</td>"+
+                                            "<td>"+data.pauseStats[j].temps+" Min</td>"+
+                                        "</tr>"
+                                    );
+                                }
+                                $("#tabDepartsPrematures17").html("");
+                                for(var k=0;k < data.finStats.length;k++){
+                                    finDatas.push(data.finStats[k].temps);
+                                    finLabels.push(data.finStats[k].date);
+                                    $("#tabDepartsPrematures17").append(
+                                        "<tr>"+
+                                        "<td>"+data.finStats[k].date+"</td>"+
+                                        "<td>"+data.finStats[k].heureDepart+"</td>"+
+                                        "<td>"+data.finStats[k].temps+" Min</td>"+
+                                        "</tr>"
+                                    );
+                                }
+
+                                // Les diagrammes
+                                // Diagramme circulaire des absences
+                                var ctx = document.getElementById('myPieChart').getContext('2d');
+                                var myPieChart = new Chart(ctx,{
+                                    type: 'pie',
+                                    data: {
+                                        datasets: [{
+                                            label: "Absences",
+                                            backgroundColor: ['#ff6384', '#36a2eb'],
+                                            data: [data.tpr,data.tpd],
+                                        }],
+                                        labels : [
+                                            'Cumul des retards en minuite',
+                                            'Cumul des départs avnt l\'heure en minuite'
+                                        ]
+                                    },
+                                });
+                                // Diagramme à bandes des absences
+                                var ctx = document.getElementById('myChart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'bar',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [],
+                                        datasets: [{
+                                            label: "Absences",
+                                            backgroundColor: 'orange',
+                                            borderColor: 'orange',
+                                            data: [data.nbreAbsences],
+                                        }],
+                                        labels : ["Absences"]
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des absences"
+                                        },
+                                        scales: {
+                                            xAxes: [{
+                                                barPercentage: 0.2
+                                            }]
+                                        }
+                                    }
+                                });
+
+                                // Diagramme linéaire
+
+                                var ctx = document.getElementById('m-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#36a2eb',
+                                            data: pauseDatas,
+                                        }],
+                                        labels : pauseLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des départs prématurés de 12H00"
+                                        }
+                                    }
+                                });
+
+                                var ctx = document.getElementById('n-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [0, 20, 40, 60, 80,100,120],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#ff6384',
+                                            data: finDatas,
+                                        }],
+                                        labels: finLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des départs prématurés de 18H00"
+                                        }
+                                    }
+                                });
+                            },
+                            error: function (msg) {
+                                alert(msg);
+                            }
+                        });
+                    },
+                    error: function(msg) {
+                        alert("erreur"); }
+                });
+                // On affiche les données
+            }
+
+
+            var len = {{ listEmployee | length }};
+            var tab = [];
+            {% for el in listEmployee %}
+                tab.push({depId:"{{ el.departement.id }}",id:"{{ el.id }}",ccid:"{{ el.employeeCcid }}",surname:"{{ el.surname }}",middleName:"{{ el.middleName }}", lastName:"{{ el.lastName }}"});
+            {% endfor %}
+            console.log("Test");
+            console.log(tab);
+            $("#depSelect").change(function(){
+                /* On vide le contenu de la table */
+                $("#empSelect").html("");
+                /* On récupère le département sélectionné */
+                var selectedDep = $("#depSelect").val();
+                for(var i=0;i<len;i++){
+                    //alert("L'id dep est "+res.employees[i].departement.id);
+                    /* On vérifie si oui ou nom cet employé appartient au département
+                     * Si oui on l'affiche
+                     * Sinon on l'ignore tout simplement
+                     */
+                    var currentEmpDepId = tab[i].depId;
+                    if(currentEmpDepId == selectedDep){
+                        $("#empSelect").append("" +
+                            "<option value="+tab[i].id+">" +tab[i].ccid+" "+tab[i].lastName+" "+tab[i].surname+"</option>"
+                        );
+                    }
+                }
+            });
+
+            $("#submitButton").click(function () {
+                var dateFrom = new Date($("#fromDate").val()).getTime();
+                var dateTo = new Date($("#toDate").val()).getTime();
+                alert(dateFrom+" Vs "+dateTo);
+                if($("#depSelect").val()!=""){
+                    if($("#empSelect").val()!=""){
+                        if($("#fromDate").val()!=""){
+                            if($("#toDate").val()!=""){
+                                alert("condition : "+(dateFrom == dateTo));
+                                if(dateFrom < dateTo || dateFrom == dateTo){
+                                    $("#errorContainer").hide();
+                                    loadSelectedEmpData($("#empSelect").val());
+                                }else {
+                                    $("#errorContainer").show();
+                                    $("#errorContainer div span").text("Erreur : La date de début ne peut pas etre superieur à la date de fin");
+                                    $("#containerMustBeHidden").attr("style","display:none");
+                                }
+                            }else {
+                                $("#errorContainer").show();
+                                $("#errorContainer div span").text("Erreur : veuillez choisir une date de fin valide");
+                                $("#containerMustBeHidden").attr("style","display:none");
+                            }
+                        }else{
+                            $("#errorContainer").show();
+                            $("#errorContainer div span").text("Erreur : veuillez choisir une date de début valide");
+                            $("#containerMustBeHidden").attr("style","display:none");
+                        }
+                    }else{
+                        $("#errorContainer").show();
+                        $("#errorContainer div span").text("Erreur : veuillez choisir un employé");
+                        $("#containerMustBeHidden").attr("style","display:none");
+                    }
+                }else{
+                    $("#errorContainer").show();
+                    $("#errorContainer div span").text("Erreur : veuillez choisir un département");
+                    $("#containerMustBeHidden").attr("style","display:none");
+                }
+            });
+        });
+    </script>
+{% endblock %}
