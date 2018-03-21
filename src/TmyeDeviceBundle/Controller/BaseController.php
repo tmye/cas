@@ -16,7 +16,6 @@ use Symfony\Component\Routing\Generator\UrlGenerator;
 class BaseController extends Controller
 {
 
-
     private $logger = 0;
 
     protected function processForm(\Symfony\Component\HttpFoundation\Request $request, \Symfony\Component\Form\Form $form)
