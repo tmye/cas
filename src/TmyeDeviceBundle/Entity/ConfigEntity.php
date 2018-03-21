@@ -1,6 +1,6 @@
 <?php
 
-namespace Tmye\DeviceBundle\Entity;
+namespace TmyeDeviceBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 

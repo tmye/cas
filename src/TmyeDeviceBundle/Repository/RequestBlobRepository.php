@@ -1,6 +1,6 @@
 <?php
 
-namespace Tmye\DeviceBundle\Repository;
+namespace TmyeDeviceBundle\Repository;
 
 /**
  * RequestBlobRepository

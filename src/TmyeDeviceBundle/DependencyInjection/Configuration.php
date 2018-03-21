@@ -1,6 +1,6 @@
 <?php
 
-namespace Tmye\DeviceBundle\DependencyInjection;
+namespace TmyeDeviceBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;

@@ -1,9 +1,9 @@
 <?php
 
-namespace Tmye\DeviceBundle\Controller;
+namespace TmyeDeviceBundle\Controller;
 
 
-use GuzzleHttp\Message\Request;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 
@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Generator\UrlGenerator;
  * Date: 16/02/2017
  * Time: 1:12 AM
  */
-class BaseController extends \Symfony\Bundle\FrameworkBundle\Controller\Controller
+class BaseController extends Controller
 {
 
 
@@ -111,11 +111,11 @@ class BaseController extends \Symfony\Bundle\FrameworkBundle\Controller\Controll
     }
 
     protected function RequestBlobRepo () {
-        return $this->getDoctrine()->getRepository("Tmye:DeviceBundle:RequestBlob");
+        return $this->getDoctrine()->getRepository("TmyeDeviceBundle:DeviceBundle:RequestBlob");
     }
 
     protected function PubsRepo () {
-        return $this->getDoctrine()->getRepository("Tmye:DeviceBundle:DevicePubPic");
+        return $this->getDoctrine()->getRepository("TmyeDeviceBundle:DeviceBundle:DevicePubPic");
     }
 
    /* protected function AdminRepo () {
@@ -127,7 +127,7 @@ class BaseController extends \Symfony\Bundle\FrameworkBundle\Controller\Controll
     }*/
 
     protected function EmployeeRepo () {
-        return $this->getDoctrine()->getRepository("AppBundle:Employee");
+        return $this->getDoctrine()->getRepository("AppBundle:Employe");
     }
 
     protected function ClockinRecordRepo () {
@@ -139,19 +139,19 @@ class BaseController extends \Symfony\Bundle\FrameworkBundle\Controller\Controll
     }*/
 
     protected function MachineRepo () {
-        return $this->getDoctrine()->getRepository("Tmye:DeviceBundle:Machine");
+        return $this->getDoctrine()->getRepository("TmyeDeviceBundle:DeviceBundle:Machine");
     }
 
     protected function UpdateEntityRepo () {
-        return $this->getDoctrine()->getRepository("Tmye:DeviceBundle:UpdateEntity");
+        return $this->getDoctrine()->getRepository("TmyeDeviceBundle:DeviceBundle:UpdateEntity");
     }
 
     protected function OkidRepo () {
-        return $this->getDoctrine()->getRepository("Tmye:DeviceBundle:OkIdEntity");
+        return $this->getDoctrine()->getRepository("TmyeDeviceBundle:DeviceBundle:OkIdEntity");
     }
 
     protected function ConfigEntityRepo () {
-        return $this->getDoctrine()->getRepository("Tmye:DeviceBundle:ConfigEntity");
+        return $this->getDoctrine()->getRepository("TmyeDeviceBundle:DeviceBundle:ConfigEntity");
     }
 
     protected function getManager () {

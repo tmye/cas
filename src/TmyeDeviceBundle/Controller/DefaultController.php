@@ -1,6 +1,6 @@
 <?php
 
-namespace Tmye\DeviceBundle\Controller;
+namespace TmyeDeviceBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;

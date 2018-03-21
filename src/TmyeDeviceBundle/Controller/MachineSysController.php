@@ -6,17 +6,14 @@
  * Time: 12:26 PM
  */
 
-namespace Tyme\DeviceBundle\Controller;
+namespace TymeDeviceBundle\Controller;
 
-use FingerPrintBundle\Controller\BaseController;
-use FingerPrintBundle\Entity\Admin;
-use FingerPrintBundle\Entity\ClokinRecord;
-use FingerPrintBundle\Entity\ConfigEntity;
-use FingerPrintBundle\Entity\Employee;
-use FingerPrintBundle\Entity\OkIdEntity;
-use FingerPrintBundle\Entity\RequestBlob;
-use FingerPrintBundle\Entity\UpdateEntity;
-use FOS\RestBundle\Controller\FOSRestController;
+use AppBundle\Entity\ClockinRecord;
+use AppBundle\Entity\Employe;
+use TmyeDeviceBundle\Entity\ConfigEntity;
+use TmyeDeviceBundle\Entity\OkIdEntity;
+use TmyeDeviceBundle\Entity\UpdateEntity;
+use TymeDeviceBundle\Controller\BaseController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -25,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 
 
-class MachineSysController extends \Tmye\DeviceBundle\Controller\BaseController
+class MachineSysController extends \TmyeDeviceBundle\Controller\BaseController
 {
 
     /**
@@ -495,7 +492,7 @@ class MachineSysController extends \Tmye\DeviceBundle\Controller\BaseController
         */
 
         // save that a user has actually been recorded
-        $clockin = new ClokinRecord();
+        $clockin = new ClockinRecord();
         $clockin->setEmployeeId($resp['ccid']);
         $clockin->setTime((new \DateTime($resp['time']))->getTimestamp());
         $clockin->setVerify($resp['verify']);
@@ -504,7 +501,7 @@ class MachineSysController extends \Tmye\DeviceBundle\Controller\BaseController
 
         $employee =  $this->EmployeeRepo()->findOneById(intval($resp['ccid']));
 
-        if ($employee instanceof Employee && $employee != null) {
+        if ($employee instanceof Employe && $employee != null) {
 
             // get user dep id
             $clockin->setDepartementId(
@@ -670,7 +667,7 @@ class MachineSysController extends \Tmye\DeviceBundle\Controller\BaseController
                 'do' => 'update',
                 'data' => "user",
                 'ccid' => $e->getId(),
-                'name' => $e->getFirstname().' '.$e->getSurname(),
+                'name' => $e->getMiddleName().' '.$e->getSurname(),
                 'passwd' => md5("555"),
                 'deptid' => $e->getDepartementId(),
                 'auth' => $e->getAuth(),

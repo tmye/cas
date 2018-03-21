@@ -1,6 +1,6 @@
 <?php
 
-namespace Tmye\DeviceBundle;
+namespace TmyeDeviceBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
