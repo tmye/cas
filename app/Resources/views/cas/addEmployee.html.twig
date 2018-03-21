@@ -177,7 +177,7 @@
                                             </div>
                                             <div class="input-field col s4 center">
                                                 <span>Photo de profil</span>
-                                                {{ form_row(form.pic_path, {'attr': {'class':'fileInput','placeholder':'Le titre de la permission','style':'display:none'}}) }}
+                                                {{ form_row(form.picture, {'attr': {'class':'fileInput','placeholder':'Le titre de la permission','style':'display:none'}}) }}
                                                 <button id="previewButton" type="button" style="width: 180px;height: 30px;border: solid 1px rgba(0,0,0,0.2);margin-top: 20px">Choisir une image</button>
                                             </div>
                                             <div class="input-field col s4 center">
@@ -188,7 +188,7 @@
                                                 {% endif %}
                                             </div>
                                         </div>
-                                            {{ form_row(form.pic_path, {'attr': {'accept': '.gif,.jpg,.jpeg,.png'}}) }}
+                                            {{ form_row(form.picture, {'attr': {'accept': '.gif,.jpg,.jpeg,.png'}}) }}
                                             <br>
                                             {{ form_rest(form) }}
                                         {{ form_end(form) }}
@@ -219,7 +219,7 @@
                 }
             }
 
-            $("#form_pic_path").change(function() {
+            $(".fileInput").change(function() {
                 readURL(this);
             });
 

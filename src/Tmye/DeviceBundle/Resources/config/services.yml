@@ -1,4 +1,4 @@
 services:
 #    tmye_device.example:
-#        class: TmyeDeviceBundle\Example
+#        class: Tmye\DeviceBundle\Example
 #        arguments: ["@service_id", "plain_value", "%parameter%"]

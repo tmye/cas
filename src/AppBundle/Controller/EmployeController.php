@@ -59,7 +59,7 @@ class EmployeController extends Controller {
             ->add('last_name', TextType::class,array('label'=>' '))
             ->add('adress', TextType::class,array('label'=>' '))
             ->add('contact', TextType::class,array('label'=>' '))
-            ->add('pic_path', FileType::class,array('label'=>' '))
+            ->add('picture', FileType::class,array('label'=>' '))
             ->add('salary', IntegerType::class,array('label'=>' '))
             ->add('function', TextType::class,array('label'=>' '))
             ->add('hire_date', DateTimeType::class,array('widget'=>'single_text','label'=>' '))
@@ -86,13 +86,13 @@ class EmployeController extends Controller {
 
                 /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
 
-                $file = $employe->getPicPath();
+                $file = $employe->getPicture();
 
                 // Generate a unique name for the file before saving it
                 $file_extension = $file->guessExtension();
                 $fileName = $employe->getEmployeeCcid().'.'.$file->guessExtension();
 
-                $employe->setPicPath($fileName);
+                $employe->setPicture($fileName);
 
                 $em = $this->getDoctrine()->getManager();
 
@@ -108,7 +108,7 @@ class EmployeController extends Controller {
                 $fileName = $employe->getEmployeeCcid().'.'.$file->guessExtension();
                 $file->move('uploads/img', $fileName);
 
-                $employe->setPicPath($employe->getEmployeeCcid().'.'.$file_extension);
+                $employe->setPicture($employe->getEmployeeCcid().'.'.$file_extension);
                 $em->persist($employe);
                 $em->flush();
 
@@ -159,7 +159,7 @@ class EmployeController extends Controller {
             ->add('adress', TextType::class)
             ->add('contact', TextType::class)
             ->add('salary', IntegerType::class)
-            ->add('pic_path', FileType::class,array(
+            ->add('picture', FileType::class,array(
                 'data_class' => null
             ))
             ->add('function', TextType::class)
@@ -180,7 +180,7 @@ class EmployeController extends Controller {
 
                 /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
 
-                $file = $employe->getPicPath();
+                $file = $employe->getPicture();
 
                 // Generate a unique name for the file before saving it
                 $file_extension = $file->guessExtension();
@@ -191,7 +191,7 @@ class EmployeController extends Controller {
 
                 // Update the 'brochure' property to store the PDF file name
                 // instead of its contents
-                $employe->setPicPath($fileName);
+                $employe->setPicture($fileName);
 
 
                 $em = $this->getDoctrine()->getManager();
@@ -214,7 +214,7 @@ class EmployeController extends Controller {
         // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
         return $this->render('cas/addEmployee.html.twig', array(
             'form' => $form->createView(),
-            'picPath' => $employe->getPicPath()
+            'picture' => $employe->getPicture()
         ));
     }
 

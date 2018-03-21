@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 
 
-class MachineSysController extends \TmyeDeviceBundle\Controller\BaseController
+class MachineSysController extends BaseController
 {
 
     /**

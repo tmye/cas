@@ -71,9 +71,7 @@ class Employe implements UserInterface
 
     /**
      * @var string
-     *
      * @ORM\Column(name="salt", type="string", length=255)
-     * @Assert\NotBlank()
      */
     private $salt;
 
@@ -129,10 +127,26 @@ class Employe implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="pic_path", type="string", length=45)
+     * @ORM\Column(name="picture", type="string", length=45)
      * @Assert\NotBlank()
      */
-    private $picPath;
+    private $picture;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="auth", type="string", length=45)
+     * @Assert\NotBlank()
+     */
+    private $auth;
+
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="fingerprints", type="array", length=255)
+     * @Assert\NotBlank()
+     */
+    private $fingerprints = array();
 
     /**
      * @var int
@@ -184,6 +198,8 @@ class Employe implements UserInterface
     {
         $this->setUsername("user");
         $this->setRoles(array("ROLE_USER"));
+        $this->setFingerprints(array("ROLE_USER"));
+        $this->setAuth(0);
     }
     // Getters and Setters
 
@@ -361,29 +377,6 @@ class Employe implements UserInterface
     public function getContact()
     {
         return $this->contact;
-    }
-
-    /**
-     * Set picPath
-     *
-     * @param string $picPath
-     * @return Employe
-     */
-    public function setPicPath($picPath)
-    {
-        $this->picPath = $picPath;
-
-        return $this;
-    }
-
-    /**
-     * Get picPath
-     *
-     * @return string 
-     */
-    public function getPicPath()
-    {
-        return $this->picPath;
     }
 
     /**
@@ -640,5 +633,77 @@ class Employe implements UserInterface
     public function getRoles()
     {
         return $this->roles;
+    }
+
+    /**
+     * Set picture
+     *
+     * @param string $picture
+     *
+     * @return Employe
+     */
+    public function setPicture($picture)
+    {
+        $this->picture = $picture;
+
+        return $this;
+    }
+
+    /**
+     * Get picture
+     *
+     * @return string
+     */
+    public function getPicture()
+    {
+        return $this->picture;
+    }
+
+    /**
+     * Set auth
+     *
+     * @param string $auth
+     *
+     * @return Employe
+     */
+    public function setAuth($auth)
+    {
+        $this->auth = $auth;
+
+        return $this;
+    }
+
+    /**
+     * Get auth
+     *
+     * @return string
+     */
+    public function getAuth()
+    {
+        return $this->auth;
+    }
+
+    /**
+     * Set fingerprints
+     *
+     * @param array $fingerprints
+     *
+     * @return Employe
+     */
+    public function setFingerprints($fingerprints)
+    {
+        $this->fingerprints = $fingerprints;
+
+        return $this;
+    }
+
+    /**
+     * Get fingerprints
+     *
+     * @return array
+     */
+    public function getFingerprints()
+    {
+        return $this->fingerprints;
     }
 }

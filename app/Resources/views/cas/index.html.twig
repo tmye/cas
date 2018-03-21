@@ -11,7 +11,7 @@
                 <div class="col l3 m6 s12">
                     <ul class="collapsible" data-collapsible="accordion">
                         <li>
-                            <div class="collapsible-header active">Retards<span class="badge teal lighten-2 white-text">26</span></div>
+                            <div class="collapsible-header active">Retards<span class="badge teal lighten-2 white-text spanRetard"></span></div>
                             <div class="collapsible-body center">
                                 <a href="#" class="fa fa-th-list fa-4x red-text text-lighten-3"></a>
                             </div>
@@ -21,7 +21,7 @@
                 <div class="col l3 m6 s12">
                     <ul class="collapsible" data-collapsible="accordion">
                         <li>
-                            <div class="collapsible-header active">Départs<span class="badge teal lighten-2 white-text">13</span></div>
+                            <div class="collapsible-header active">Départs<span class="badge teal lighten-2 white-text spanDepart"></span></div>
                             <div class="collapsible-body center">
                                 <a href="#" class="fa fa-paper-plane fa-4x teal-text text-lighten-3"></a>
                             </div>
@@ -31,7 +31,7 @@
                 <div class="col l3 m6 s12">
                     <ul class="collapsible" data-collapsible="accordion">
                         <li>
-                            <div class="collapsible-header active">Permissions<span class="badge teal lighten-2 white-text">17</span></div>
+                            <div class="collapsible-header active">Permissions<span class="badge teal lighten-2 white-text spanPermission"></span></div>
                             <div class="collapsible-body center">
                                 <a href="#" class="fa fa-th-list fa-4x grey-text text-lighten-3"></a>
                             </div>
@@ -41,7 +41,7 @@
                 <div class="col l3 m6 s12">
                     <ul class="collapsible" data-collapsible="accordion">
                         <li>
-                            <div class="collapsible-header active">Absences<span class="badge teal lighten-2 white-text">26</span></div>
+                            <div class="collapsible-header active">Absences<span class="badge teal lighten-2 white-text spanAbsence"></span></div>
                             <div class="collapsible-body center">
                                 <a href="#" class="fa fa-th-list fa-4x blue-text text-lighten-3"></a>
                             </div>
@@ -56,74 +56,87 @@
                 <div class="col l6 m6 s12">
                     <h5>Top retardataires</h5>
                     <br>
-                    <div class="valignwrapper" style="padding-bottom: 30px">
-                        <i class="fa fa-user top"></i>
-                        <span class="top user-info-home">
-                            <span>Abessi Francis</span>
-                            <br>
-                            <span>1h05 min</span>
-                            <br>
-                            <span>Département informatique</span>
-                        </span>
-                    </div>
-                    <div class="valignwrapper" style="padding-bottom: 30px">
-                        <i class="fa fa-user top"></i>
-                        <span class="top user-info-home">
-                            <span>Abessi Francis</span>
-                            <br>
-                            <span>1h05 min</span>
-                            <br>
-                            <span>Département informatique</span>
-                        </span>
-                    </div>
-                    <div class="valignwrapper" style="padding-bottom: 30px">
-                        <i class="fa fa-user top"></i>
-                        <span class="top user-info-home">
-                            <span>Abessi Francis</span>
-                            <br>
-                            <span>1h05 min</span>
-                            <br>
-                            <span>Département informatique</span>
-                        </span>
-                    </div>
+                    <span class="info_container_retards">
+                    </span>
                 </div>
                 <div class="col l6 m6 s12">
                     <h5>Top départs prématurés</h5>
                     <br>
-                    <div class="valignwrapper" style="padding-bottom: 30px">
-                        <i class="fa fa-user top"></i>
-                        <span class="top user-info-home">
-                            <span>Abessi Francis</span>
-                            <br>
-                            <span>1h05 min</span>
-                            <br>
-                            <span>Département informatique</span>
-                        </span>
-                    </div>
-                    <div class="valignwrapper" style="padding-bottom: 30px">
-                        <i class="fa fa-user top"></i>
-                        <span class="top user-info-home">
-                            <span>Abessi Francis</span>
-                            <br>
-                            <span>1h05 min</span>
-                            <br>
-                            <span>Département informatique</span>
-                        </span>
-                    </div>
-                    <div class="valignwrapper" style="padding-bottom: 30px">
-                        <i class="fa fa-user top"></i>
-                        <span class="top user-info-home">
-                            <span>Abessi Francis</span>
-                            <br>
-                            <span>1h05 min</span>
-                            <br>
-                            <span>Département informatique</span>
-                        </span>
-                    </div>
+                    <span class="info_container_departs">
+                    </span>
                 </div>
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        // Recuperation des autres informations
+        $.ajax({
+            type: 'POST',
+            url: "homeStats",
+            success: function (data) {
+                //console.log(data);
+                $(".spanRetard").text(data.retards);
+                $(".spanDepart").text(data.departs);
+                $(".spanPermission").text(data.permissions);
+                $(".spanAbsence").text(data.absences);
+
+                var tailleClassRet = Object.keys(data.classementRetard).length;
+                var tailleClassDep = Object.keys(data.classementDepart).length;
+                console.log(data.classementDepart);
+
+                var cpt =0;
+                $.each(data.classementDepart,function (arrayID) {
+                    $(".info_container_departs").append("" +
+                        "<div class='valignwrapper' style='padding-bottom: 30px'>\n" +
+                        "    <i class='fa fa-user top'></i>\n" +
+                        "    <span class='top user-info-home'>\n" +
+                        "        <span>"+data.classementDepart[arrayID]["name"]+"</span>\n" +
+                        "        <br>\n" +
+                        "        <span>"+data.classementDepart[arrayID]["cumul"]+"</span> min\n" +
+                        "        <br>\n" +
+                        "        <span>"+data.classementDepart[arrayID]["dep"]+"</span>\n" +
+                        "    </span>\n" +
+                        "</div>");
+                    console.log("Index : "+arrayID);
+                    cpt++;
+                });
+
+                $.each(data.classementRetard,function (arrayID) {
+                    $(".info_container_departs").append("" +
+                        "<div class='valignwrapper' style='padding-bottom: 30px'>\n" +
+                        "    <i class='fa fa-user top'></i>\n" +
+                        "    <span class='top user-info-home'>\n" +
+                        "        <span>"+data.classementRetard[arrayID]["name"]+"</span>\n" +
+                        "        <br>\n" +
+                        "        <span>"+data.classementRetard[arrayID]["cumul"]+"</span> min\n" +
+                        "        <br>\n" +
+                        "        <span>"+data.classementRetard[arrayID]["dep"]+"</span>\n" +
+                        "    </span>\n" +
+                        "</div>");
+                    console.log("Index : "+arrayID);
+                    cpt++;
+                });
+
+                console.log("taille du tableau de retards : "+tailleClassRet);
+                console.log("taille du tableau de departs : "+tailleClassDep);
+
+                // On vérifie s'il ya au moins 3 éléments avant de boucler
+
+                if(tailleClassDep >=3){
+                    for (var i=0;i<3;i++){
+
+                    }
+                }
+            },
+            error: function(msg) {
+                alert("erreur");
+            }
+        });
+    </script>
+
 {% endblock %}
 
 {% block stylesheets %}

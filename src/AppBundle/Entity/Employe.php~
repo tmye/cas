@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="employe")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\EmployeRepository")
  */
-class Employe
+class Employe implements UserInterface
 {
 
     /**
@@ -132,7 +132,23 @@ class Employe
      * @ORM\Column(name="pic_path", type="string", length=45)
      * @Assert\NotBlank()
      */
-    private $picPath;
+    private $picture;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="auth", type="string", length=45)
+     * @Assert\NotBlank()
+     */
+    private $auth;
+
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="fingerprints", type="array", length=255)
+     * @Assert\NotBlank()
+     */
+    private $fingerprints = array();
 
     /**
      * @var int
@@ -180,7 +196,11 @@ class Employe
 
 
 
-
+    public function __construct()
+    {
+        $this->setUsername("user");
+        $this->setRoles(array("ROLE_USER"));
+    }
     // Getters and Setters
 
     // Methode obligatoire de part l'interface qu'elle implémente
@@ -357,29 +377,6 @@ class Employe
     public function getContact()
     {
         return $this->contact;
-    }
-
-    /**
-     * Set picPath
-     *
-     * @param string $picPath
-     * @return Employe
-     */
-    public function setPicPath($picPath)
-    {
-        $this->picPath = $picPath;
-
-        return $this;
-    }
-
-    /**
-     * Get picPath
-     *
-     * @return string 
-     */
-    public function getPicPath()
-    {
-        return $this->picPath;
     }
 
     /**
@@ -564,5 +561,149 @@ class Employe
     public function getWorkingHour()
     {
         return $this->workingHour;
+    }
+
+    /**
+     * Set username.
+     *
+     * @param string $username
+     *
+     * @return Employe
+     */
+    public function setUsername($username)
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
+    /**
+     * Get username.
+     *
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * Set salt.
+     *
+     * @param string $salt
+     *
+     * @return Employe
+     */
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
+
+        return $this;
+    }
+
+    /**
+     * Get salt.
+     *
+     * @return string
+     */
+    public function getSalt()
+    {
+        return $this->salt;
+    }
+
+    /**
+     * Set roles.
+     *
+     * @param array $roles
+     *
+     * @return Employe
+     */
+    public function setRoles($roles)
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * Get roles.
+     *
+     * @return array
+     */
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    /**
+     * Set picture
+     *
+     * @param string $picture
+     *
+     * @return Employe
+     */
+    public function setPicture($picture)
+    {
+        $this->picture = $picture;
+
+        return $this;
+    }
+
+    /**
+     * Get picture
+     *
+     * @return string
+     */
+    public function getPicture()
+    {
+        return $this->picture;
+    }
+
+    /**
+     * Set auth
+     *
+     * @param string $auth
+     *
+     * @return Employe
+     */
+    public function setAuth($auth)
+    {
+        $this->auth = $auth;
+
+        return $this;
+    }
+
+    /**
+     * Get auth
+     *
+     * @return string
+     */
+    public function getAuth()
+    {
+        return $this->auth;
+    }
+
+    /**
+     * Set fingerprints
+     *
+     * @param array $fingerprints
+     *
+     * @return Employe
+     */
+    public function setFingerprints($fingerprints)
+    {
+        $this->fingerprints = $fingerprints;
+
+        return $this;
+    }
+
+    /**
+     * Get fingerprints
+     *
+     * @return array
+     */
+    public function getFingerprints()
+    {
+        return $this->fingerprints;
     }
 }

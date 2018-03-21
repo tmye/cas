@@ -1,0 +1,3 @@
+tmye_device_homepage:
+    path:     /
+    defaults: { _controller: TmyeDeviceBundle:Default:index }

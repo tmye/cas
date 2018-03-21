@@ -22,7 +22,7 @@
                                 <div class="center">Connecté en tant que:</div>
                                 <div class="grey lighten-3" style="padding: 5px 10px;border-radius: 5px">
                                     {% if app.user is defined and app.user is not null %}
-                                        <img src="{{ asset('uploads/img/')~app.user.picPath }}" alt="user_image" class="circle middle-align user_extra_small_picture" style="width: 35px">
+                                        <img src="{{ asset('uploads/img/')~app.user.picture }}" alt="user_image" class="circle middle-align user_extra_small_picture" style="width: 35px">
                                     {% endif %}
                                     <span class="middle-align">
                                         {% if app.user is defined and app.user is not null %}

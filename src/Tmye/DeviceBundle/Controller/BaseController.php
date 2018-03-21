@@ -1,7 +1,6 @@
 <?php
 
-namespace TmyeDeviceBundle\Controller;
-
+namespace TymeDeviceBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -117,13 +116,13 @@ class BaseController extends Controller
         return $this->getDoctrine()->getRepository("TmyeDeviceBundle:DeviceBundle:DevicePubPic");
     }
 
-   /* protected function AdminRepo () {
-        return $this->getDoctrine()->getRepository("AppBundle:Admin");
-    }*/
+    /* protected function AdminRepo () {
+         return $this->getDoctrine()->getRepository("AppBundle:Admin");
+     }*/
 
-  /*  protected function TokenRepo () {
-        return $this->getDoctrine()->getRepository("AppBundle:Token");
-    }*/
+    /*  protected function TokenRepo () {
+          return $this->getDoctrine()->getRepository("AppBundle:Token");
+      }*/
 
     protected function EmployeeRepo () {
         return $this->getDoctrine()->getRepository("AppBundle:Employe");
@@ -133,9 +132,9 @@ class BaseController extends Controller
         return $this->getDoctrine()->getRepository("AppBundle:ClockinRecord");
     }
 
-   /* protected function PermissionRepo () {
-        return $this->getDoctrine()->getRepository("AppBundle:Permission");
-    }*/
+    /* protected function PermissionRepo () {
+         return $this->getDoctrine()->getRepository("AppBundle:Permission");
+     }*/
 
     protected function MachineRepo () {
         return $this->getDoctrine()->getRepository("TmyeDeviceBundle:DeviceBundle:Machine");

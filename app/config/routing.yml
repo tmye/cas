@@ -1,12 +1,9 @@
-tmye_device:
-    resource: "@TmyeDeviceBundle/Controller/"
-    type:     annotation
-    prefix:   /
-
-
 app:
     resource: "@AppBundle/Controller/"
     type:     annotation
+tmye_device:
+    resource: "@TmyeDeviceBundle/Resources/config/routing.yml"
+    prefix:   /
 login:
     path: /login
     defaults:
