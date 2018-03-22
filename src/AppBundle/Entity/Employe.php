@@ -70,8 +70,9 @@ class Employe implements UserInterface
     private $password;
 
     /**
+     *
      * @var string
-     * @ORM\Column(name="salt", type="string", length=255)
+     * @ORM\Column(name="salt", type="string",  nullable=true, length=255)
      */
     private $salt;
 
@@ -227,7 +228,6 @@ class Employe implements UserInterface
     public function setEmployeeCcid($employeeCcid)
     {
         $this->employeeCcid = $employeeCcid;
-
         return $this;
     }
 

@@ -1,9 +1,15 @@
 app:
     resource: "@AppBundle/Controller/"
     type:     annotation
-tmye_device:
-    resource: "@TmyeDeviceBundle/Resources/config/routing.yml"
-    prefix:   /
+
+#tmye_device:
+#    resource: "@TmyeDeviceBundle/Resources/config/routing.yml"
+#    prefix:   /
+
+tmye_device_annotation:
+    resource: "@TmyeDeviceBundle/Controller"
+    type:     annotation
+
 login:
     path: /login
     defaults:
