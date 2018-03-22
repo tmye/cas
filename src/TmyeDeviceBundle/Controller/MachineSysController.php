@@ -491,8 +491,11 @@ class MachineSysController extends BaseController
 
         // save that a user has actually been recorded
         $clockin = new ClockinRecord();
-        $clockin->setEmployeeId($resp['ccid']);
-        $clockin->setTime((new \DateTime($resp['time']))->getTimestamp());
+
+//        $clockin->setEmployeeId($resp['ccid']);
+        $tmpEmp = $this->EmployeeRepo()->findOneById(intval($resp['ccid']));
+        $clockin->setEmploye($tmpEmp);
+        $clockin->setClockinTime((new \DateTime($resp['time']))->getTimestamp());
         $clockin->setVerify($resp['verify']);
         $clockin->setDeviceid($resp['sn']);
 
@@ -501,15 +504,16 @@ class MachineSysController extends BaseController
 
         if ($employee instanceof Employe && $employee != null) {
 
+            $tmpDepartemt = $this->DepartementRepo()->findOneById($employee->getDepartement()->getId());
             // get user dep id
-            $clockin->setDepartementId(
-                $employee->getDepartementId()
+            $clockin->setDepartement(
+                $tmpDepartemt
             );
         } else
             $clockin->setDepartementId(6);
 
         // save the picture inside a file
-        $filename = "employee_".$clockin->getEmployeeId()."_".time().'_'.$this->get("fingerprints.utils")->getToken(7).'.jpg';
+        $filename = "employee_".$clockin->getEmploye()->getId()."_".time().'_'.$this->get("fingerprints.utils")->getToken(7).'.jpg';
 
         // create a new file
         $filename = $this->base64_to_jpeg($resp['pic'], $filename, $this->getParameter('onregisterpics').DIRECTORY_SEPARATOR);

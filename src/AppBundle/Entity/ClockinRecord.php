@@ -35,11 +35,18 @@ class ClockinRecord
     private $departement;
 
     /**
-     * @var int
+     * @var string
      *
-     * @ORM\Column(name="deviceId", type="integer")
+     * @ORM\Column(name="deviceId", type="string", length=255)
      */
     private $deviceId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="pic", type="string", length=255)
+     */
+    private $pic;
 
     /**
      * @var int
@@ -47,6 +54,14 @@ class ClockinRecord
      * @ORM\Column(name="clockinTime", type="integer")
      */
     private $clockinTime;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="verify", type="integer")
+     */
+    private $verify;
+
 
     /**
      * @var \DateTime
@@ -74,7 +89,7 @@ class ClockinRecord
     /**
      * Set deviceId
      *
-     * @param integer $deviceId
+     * @param string $deviceId
      * @return ClockinRecord
      */
     public function setDeviceId($deviceId)
@@ -87,7 +102,7 @@ class ClockinRecord
     /**
      * Get deviceId
      *
-     * @return integer 
+     * @return string
      */
     public function getDeviceId()
     {
@@ -185,4 +200,53 @@ class ClockinRecord
     {
         return $this->departement;
     }
+
+    /**
+     * Set verify
+     *
+     * @param integer $verify
+     *
+     * @return ClockinRecord
+     */
+    public function setVerify($verify)
+    {
+        $this->verify = $verify;
+
+        return $this;
+    }
+
+    /**
+     * Get verify
+     *
+     * @return int
+     */
+    public function getVerify()
+    {
+        return $this->verify;
+    }
+
+    /**
+     * Set pic
+     *
+     * @param string $pic
+     *
+     * @return ClockinRecord
+     */
+    public function setPic($pic)
+    {
+        $this->pic = $pic;
+
+        return $this;
+    }
+
+    /**
+     * Get pic
+     *
+     * @return string
+     */
+    public function getPic()
+    {
+        return $this->pic;
+    }
+
 }

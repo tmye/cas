@@ -1,4 +1,20 @@
 services:
-#    tmye_device.example:
-#        class: Tmye\TmyeDeviceBundle\Example
+#    finger_print.example:
+#        class: FingerPrintBundle\Example
 #        arguments: ["@service_id", "plain_value", "%parameter%"]
+
+
+#    fingerprint_rest.controller.admin:
+#        class:  TmyeDeviceBundle\Controller\AdminController
+#        arguments: ['@doctrine.orm.entity_manager', '@fingerprint_rest.repo.admin', '@form.factory', '@router']
+#
+#    fingerprint_rest.repo.admin:
+#        class: TmyeDeviceBundle\Entity\AdminRepository
+#        factory: ['@doctrine.orm.default_entity_manager', getRepository]
+#        arguments:
+#            - FingerPrintBundle\Entity\Admin
+#
+
+    fingerprints.utils:
+        class: TmyeDeviceBundle\Services\UtilFunctions
+        arguments: []
