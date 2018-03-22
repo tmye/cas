@@ -20,3 +20,9 @@
 /.idea
 .idea
 .idea/*
+
+/web/fingerprints/*
+/web/onregisterpics/*
+/web/pub_covers/*
+/web/uploads/*
+/web/user_profile_pictures/*
