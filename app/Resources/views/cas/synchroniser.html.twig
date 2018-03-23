@@ -1,0 +1,322 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col l9 offset-l3">
+            <h5>Changer les images de veille</h5>
+
+            <!-- Petites sections carrées -->
+
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Images de veille</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <form class="col l12" id="main_form">
+                                        <p>
+                                            <input name="group1" value="1" type="radio" id="el1" />
+                                            <label for="el1">Toutes les machines</label>
+                                            <input name="group1" value="2" type="radio" id="el2" />
+                                            <label for="el2">Par départements</label>
+                                            <input name="group1" value="3" type="radio" id="el3" />
+                                            <label for="el3">Sélection unique</label>
+                                        </p>
+                                        <span id="type1">
+                                            <div class="row firstOne">
+                                                <div class="col l12">
+                                                    <h5>Toutes les machines</h5>
+                                                    <span>Cliquez sur une image pour choisir une autre</span>
+                                                </div>
+                                            </div>
+                                            <div class="row secondOne_1">
+                                                <div class="col l4 card firstImage">
+                                                    <input type="file" id="first_image_input_1" style="display: none">
+                                                    <img src="{{ asset("img/image_placeholder.jpg") }}" id="first_image_1" inputTag="first_image_input_1" class="preview preview2" alt="image">
+                                                </div>
+                                                <div class="col l4 card secondImage">
+                                                    <input type="file" id="second_image_input_1" style="display: none">
+                                                    <img src="{{ asset("img/image_placeholder.jpg") }}" id="second_image_1" inputTag="second_image_input_1" class="preview preview2" alt="image">
+                                                </div>
+                                                <div class="col l4 card thirdImage">
+                                                    <input type="file" id="third_image_input_1" style="display: none">
+                                                    <img src="{{ asset("img/image_placeholder.jpg") }}" id="third_image_1" inputTag="third_image_input_1" class="preview preview2" alt="image">
+                                                </div>
+                                            </div>
+                                            <div class="row thirdOne">
+                                                <div class="col l12 center">
+                                                    <input type="button" id="submit_button_1" value="Continuer" class="btn-perso-historique">
+                                                </div>
+                                            </div>
+                                        </span>
+                                        <span id="type2">
+                                            <div class="row firstOne">
+                                                <div class="col l12">
+                                                    <h5>Par départements</h5>
+                                                    <span>Choisissez le département</span>
+                                                    <select multiple="multiple" id="depSelected">
+                                                        {% for dep in departements %}
+                                                            <option value="{{ dep.id }}">{{ dep.name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <br>
+                                                    Cliquez sur une image pour choisir une autre
+                                                </div>
+                                            </div>
+                                            <div class="row secondOne_2">
+                                                <div class="col l4 card firstImage">
+                                                    <input type="file" id="first_image_input_2" style="display: none">
+                                                    <img src="{{ asset("img/image_placeholder.jpg") }}" id="first_image_2" inputTag="first_image_input_2" class="preview preview2" alt="image">
+                                                </div>
+                                                <div class="col l4 card secondImage">
+                                                    <input type="file" id="second_image_input_2" style="display: none">
+                                                    <img src="{{ asset("img/image_placeholder.jpg") }}" id="second_image_2" inputTag="second_image_input_2" class="preview preview2" alt="image">
+                                                </div>
+                                                <div class="col l4 card thirdImage">
+                                                    <input type="file" id="third_image_input_2" style="display: none">
+                                                    <img src="{{ asset("img/image_placeholder.jpg") }}" id="third_image_2" inputTag="third_image_input_2" class="preview preview2" alt="image">
+                                                </div>
+                                            </div>
+                                            <div class="row thirdOne">
+                                                <div class="col l12 center">
+                                                    <input type="button" id="submit_button_2" value="Continuer" class="btn-perso-historique">
+                                                </div>
+                                            </div>
+                                        </span>
+                                        <span id="type3">
+                                            <div class="row firstOne">
+                                                <div class="col l12">
+                                                    <h5>Sélection unique</h5>
+                                                    <span>Choisissez la machine correspondante</span>
+                                                    <select id="macSelected">
+                                                        {% for mac in machines %}
+                                                            <option value="{{ mac.machineId }}">{{ mac.name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <br>
+                                                    Cliquez sur une image pour choisir une autre
+                                                </div>
+                                            </div>
+                                            <div class="row secondOne_3">
+                                                <div class="col l4 card firstImage">
+                                                    <input type="file" id="first_image_input_3" style="display: none">
+                                                    <img src="{{ asset("img/image_placeholder.jpg") }}" id="first_image_3" inputTag="first_image_input_3" class="preview preview2" alt="image">
+                                                </div>
+                                                <div class="col l4 card secondImage">
+                                                    <input type="file" id="second_image_input_3" style="display: none">
+                                                    <img src="{{ asset("img/image_placeholder.jpg") }}" id="second_image_3" inputTag="second_image_input_3" class="preview preview2" alt="image">
+                                                </div>
+                                                <div class="col l4 card thirdImage">
+                                                    <input type="file" id="third_image_input_3" style="display: none">
+                                                    <img src="{{ asset("img/image_placeholder.jpg") }}" id="third_image_3" inputTag="third_image_input_3" class="preview preview2" alt="image">
+                                                </div>
+                                            </div>
+                                            <div class="row thirdOne">
+                                                <div class="col l12 center">
+                                                    <input type="button" id="submit_button_3" value="Continuer" class="btn-perso-historique">
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function () {
+            var selected = 0;
+
+            $("#type1").show();
+            $("#type2").hide();
+            $("#type3").hide();
+            $("input[type=radio][name=group1]").change(function () {
+                switch (this.value){
+                    case "1":
+                        $("#type1").show();
+                        $("#type2").hide();
+                        $("#type3").hide();
+                        selected = 1;
+                        break;
+                    case "2":
+                        $("#type1").hide();
+                        $("#type2").show();
+                        $("#type3").hide();
+                        selected = 2;
+                        break;
+                    case "3":
+                        $("#type1").hide();
+                        $("#type2").hide();
+                        $("#type3").show();
+                        selected = 3;
+                        break;
+                }
+
+                // Prévisualisation et requête ajax
+
+                var id;
+                $("#main_form .secondOne_"+selected).find("img").each(function () {
+                    var id = $(this).attr("id");
+                    var inputTag = $(this).attr("inputTag");
+                    console.log(id);
+                    $("#"+id).click(function () {
+                        $("#"+inputTag).click();
+                    });
+
+                    var input = document.getElementById(inputTag);
+                    $("#"+inputTag).change(function() {
+                        readURL(input,id);
+                    });
+                });
+
+
+                function readURL(input,id) {
+                    if (input.files && input.files[0]) {
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            $("#"+id).attr('src', e.target.result);
+                        };
+                        reader.readAsDataURL(input.files[0]);
+                    }
+                }
+
+                var temp = document.getElementById("first_image_input_QBC45");
+                $("#submit_button_1").click(function(){
+                    var formdata = new FormData();
+                    $("#main_form .secondOne_1").find("img").each(function () {
+                        var id = $(this).attr("id");
+                        var inputTag = $(this).attr("inputTag");
+                        var input = document.getElementById(inputTag);
+                        if(input.files[0]!=null){
+                            formdata.append(inputTag,input.files[0]);
+                        }
+                    });
+                    $.ajax({
+                        url: "{{ path('uploadCoverAll') }}",
+                        type: "POST",
+                        data: formdata,
+                        cache:false,
+                        contentType: false,
+                        processData: false,
+                        success: function(data) {
+                            alert(data);
+                        },
+                        error: function() {
+                            alert("Erreur");
+                        }
+                    });
+                });
+
+                /*
+                * Pour le second bouton
+                * Sélection par département
+                */
+
+                $("#submit_button_2").click(function(){
+                    var dep = $("#depSelected").val();
+                    var formdata = new FormData();
+                    formdata.append("depId",dep);
+                    $("#main_form .secondOne_2").find("img").each(function () {
+                        var id = $(this).attr("id");
+                        var inputTag = $(this).attr("inputTag");
+                        var input = document.getElementById(inputTag);
+                        if(input.files[0]!=null){
+                            formdata.append(inputTag,input.files[0]);
+                        }
+                    });
+
+                    console.log("Console : "+formdata.get("depId"));
+                    $.ajax({
+                        url: "{{ path('uploadCoverDep') }}",
+                        type: "POST",
+                        data: formdata,
+                        cache:false,
+                        contentType: false,
+                        processData: false,
+                        success: function(data) {
+                            //console.log(data);
+                            alert(data);
+                        },
+                        error: function() {
+                            alert("Erreur");
+                        }
+                    });
+                });
+
+
+                /*
+                * Pour le troisième bouton
+                * Sélection unique de machines
+                */
+
+                $("#submit_button_3").click(function(){
+                    var mac = $("#macSelected").val();
+                    var formdata = new FormData();
+                    formdata.append("macId",mac);
+                    $("#main_form .secondOne_3").find("img").each(function () {
+                        var id = $(this).attr("id");
+                        var inputTag = $(this).attr("inputTag");
+                        var input = document.getElementById(inputTag);
+                        if(input.files[0]!=null){
+                            formdata.append(inputTag,input.files[0]);
+                        }
+                    });
+
+                    console.log("Console : "+formdata.get("macId"));
+                    $.ajax({
+                        url: "{{ path('uploadCoverMac') }}",
+                        type: "POST",
+                        data: formdata,
+                        cache:false,
+                        contentType: false,
+                        processData: false,
+                        success: function(data) {
+                            //console.log(data);
+                            alert(data);
+                        },
+                        error: function() {
+                            alert("Erreur");
+                        }
+                    });
+                });
+
+                // On met les anciennes images
+
+                $("#macSelected").change(function () {
+                    var code = $(this).val();
+                    $.ajax({
+                        url: "{{ path('returnCoverMac') }}",
+                        type: "POST",
+                        data: {'code': code},
+                        success: function(data) {
+                            if(data !=0){
+                                var res = JSON.parse(data);
+                                console.log(data);
+                                console.log(res[0]);
+                                $("#first_image_3").attr("src","{{ asset("pub_covers/") }}"+res[0]);
+                                $("#second_image_3").attr("src","{{ asset("pub_covers/") }}"+res[1]);
+                                $("#third_image_3").attr("src","{{ asset("pub_covers/") }}"+res[2]);
+                            }else{
+                                alert("Aucune image pour cette machine !");
+                            }
+                        },
+                        error: function() {
+                            alert("Erreur");
+                        }
+                    });
+                });
+
+            });
+        });
+    </script>
+{% endblock %}
