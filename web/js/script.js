@@ -1,5 +1,4 @@
 $(function(){
-    $(".dropdown-button").dropdown();
     $('.collapsible').collapsible();
     $('.tap-target').tapTarget('open');
     $('.tap-target').tapTarget('close');
@@ -25,6 +24,5 @@ $(function(){
         ampmclickable: true, // make AM PM clickable
         aftershow: function(){} //Function for after opening timepicker
     });
-
     $('.modal').modal();
 });

@@ -1,0 +1,138 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col l9 offset-l3">
+            <h5>Synchronisation des départements</h5>
+
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Mise à jour des departements</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <form class="col l12" id="main_form">
+                                        <p>
+                                            <input name="group1" value="1" type="radio" id="el1" />
+                                            <label for="el1">Tous les departements</label>
+                                            <input name="group1" value="2" type="radio" id="el2" />
+                                            <label for="el2">Par machines</label>
+                                        </p>
+                                        <span id="type1">
+                                            <div class="row firstOne">
+                                                <div class="col l12">
+                                                    <p>Mettre à jour les departements</p>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col l12">
+                                                    <button type="button" id="updateForAll" class="synch-button green white-text">Mettre tout à jour</button>
+                                                    <button type="button" id="cancelForAll" class="synch-button red darken-2 white-text">Tout annuler</button>
+                                                </div>
+                                            </div>
+                                        </span>
+                                        <span id="type2">
+                                            <span>Choisissez le machine</span>
+                                            <select multiple="multiple" id="depSelected">
+                                                {% for mac in machines %}
+                                                    <option value="{{ mac.machineId }}">{{ mac.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <p>Mettre à jour les departements</p>
+                                            <button class="synch-button green white-text">Mettre à jour</button>
+                                            <button class="synch-button red darken-2 white-text">Annuler</button>
+                                        </span>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function () {
+            $('.dropdown-button').dropdown({
+                    inDuration: 300,
+                    outDuration: 225,
+                    constrainWidth: false, // Does not change width of dropdown to that of the activator
+                    hover: true, // Activate on hover
+                    gutter: 0, // Spacing from edge
+                    belowOrigin: false, // Displays dropdown below the button
+                    alignment: 'left', // Displays dropdown with edge aligned to the left of button
+                    stopPropagation: false // Stops event propagation
+                }
+            );
+        });
+    </script>
+    <script>
+        $(function () {
+            var selected = 0;
+
+            $("#type1").show();
+            $("#type2").hide();
+            $("#type3").hide();
+            $("input[type=radio][name=group1]").change(function () {
+                switch (this.value) {
+                    case "1":
+                        $("#type1").show();
+                        $("#type2").hide();
+                        $("#type3").hide();
+                        selected = 1;
+                        break;
+                    case "2":
+                        $("#type1").hide();
+                        $("#type2").show();
+                        $("#type3").hide();
+                        selected = 2;
+                        break;
+                    case "3":
+                        $("#type1").hide();
+                        $("#type2").hide();
+                        $("#type3").show();
+                        selected = 3;
+                        break;
+                }
+            });
+        });
+    </script>
+
+    <!-- Script pour les évenements de mise à jour -->
+    <script>
+        $(function () {
+            var tab = [];
+            $.each($("#depSelected").children(),function (arrayID) {
+                var el = $(this).attr("value");
+                //console.log("Index : "+arrayID+" Value : "+el);
+                tab.push(el);
+            });
+            console.log(tab);
+            //var data = {nom:"Ebenezer",age:21};
+            //var tab2 = [data,{nom:"Francis",age:21}];
+            //console.log(tab2);
+            $("#updateForAll").click(function () {
+                console.log("{{ departements | json_encode }}");
+                /*$.ajax({
+                    type: 'POST',
+                    url: " path('syncDep') ",
+                    data: {"deps":tab},
+                    success: function (data) {
+                        console.log(data);
+                    },
+                    error: function (msg) {
+                        alert("erreur");
+                        console.log(msg);
+                    }
+                });*/
+            });
+        });
+    </script>
+{% endblock %}

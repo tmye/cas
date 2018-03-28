@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col l9 offset-l3">
+            <h5>Synchroniser les paramètres</h5>
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Les images de veille</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <div class="col l4">
+                                        <img src="{{ asset("img/image_placeholder.jpg") }}" class="sync_img_preview">
+                                    </div>
+                                    <div class="col l4">
+                                        <img src="{{ asset("img/image_placeholder.jpg") }}" class="sync_img_preview">
+                                    </div>
+                                    <div class="col l4">
+                                        <img src="{{ asset("img/image_placeholder.jpg") }}" class="sync_img_preview">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Société</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <div class="col l4">
+                                        <img src="{{ asset("img/image_placeholder.jpg") }}" class="sync_img_preview">
+                                    </div>
+                                    <div class="col l4">
+                                        <img src="{{ asset("img/image_placeholder.jpg") }}" class="sync_img_preview">
+                                    </div>
+                                    <div class="col l4">
+                                        <img src="{{ asset("img/image_placeholder.jpg") }}" class="sync_img_preview">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Liste des employés</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <div class="col l4">
+                                        <img src="{{ asset("img/image_placeholder.jpg") }}" class="sync_img_preview">
+                                    </div>
+                                    <div class="col l4">
+                                        <img src="{{ asset("img/image_placeholder.jpg") }}" class="sync_img_preview">
+                                    </div>
+                                    <div class="col l4">
+                                        <img src="{{ asset("img/image_placeholder.jpg") }}" class="sync_img_preview">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}
