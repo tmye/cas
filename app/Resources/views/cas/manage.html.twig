@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col l9 offset-l3">
+            <h5>Gestion globale du système</h5>
+
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Gestion du système</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <form class="col l12" id="main_form">
+                                        <span id="type1">
+                                            <div class="row firstOne">
+                                                <div class="col l12">
+                                                    <span>Choisissez une action à effectuer</span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col l6">
+                                                    <a href="{{ path("manageEmployee") }}" style="color: inherit">
+                                                        <p class="manageActions">
+                                                            <span class="fa fa-user left" style="position: relative;top: 2px"></span>
+                                                            Mise à jour des employés
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                                <div class="col l6">
+                                                    <a href="{{ path("manageDepartement") }}" style="color: inherit">
+                                                        <p class="manageActions">
+                                                            <span class="fa fa-building left" style="position: relative;top: 2px"></span>
+                                                            Mise à jour des départements
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col l6">
+                                                    <a href="{{ path("manageEmpProfilePicture") }}" style="color: inherit">
+                                                        <p class="manageActions">
+                                                            <span class="fa fa-images left" style="position: relative;top: 2px"></span>
+                                                            Mise à jour des photos de profil des employés
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                                <div class="col l6">
+                                                    <a href="{{ path("pubCovers") }}" style="color: inherit">
+                                                        <p class="manageActions">
+                                                            <span class="fa fa-images left" style="position: relative;top: 2px"></span>
+                                                            Mise à jour des images publicitaires
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col l6">
+                                                    <a href="{{ path("manageEmpFingerprint") }}" style="color: inherit">
+                                                        <p class="manageActions">
+                                                            <span class="fa fa-hand-pointer left" style="position: relative;top: 2px"></span>
+                                                            Mise à jour des empreintes des employés
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                                <div class="col l6">
+                                                    <a href="{{ path("switch") }}" style="color: inherit">
+                                                        <p class="manageActions red">
+                                                            <span class="fa fa-laptop left" style="position: relative;top: 2px"></span>
+                                                            Gestion relative aux machines
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

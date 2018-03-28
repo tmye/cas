@@ -3,6 +3,7 @@
 namespace AppBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\BrowserKit\Response;
 
 /**
  * MachineRepository
@@ -12,4 +13,25 @@ use Doctrine\ORM\EntityRepository;
  */
 class MachineRepository extends EntityRepository
 {
+    public function machineByDep($depId){
+        $tabMac = array();
+        $macs = $this->_em->getRepository("AppBundle:Machine")->findAll();
+        foreach ($macs as $mac){
+            $dep = $mac->getDepartements();
+            foreach ($dep as $d){
+                if ($d->getId() == $depId){
+                    if(!in_array($mac->getMachineId(),$tabMac,true)){
+                        array_push($tabMac,$mac->getMachineId());
+                    }
+                }
+            }
+
+        }
+
+        /*$queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->where('m.departements=:depId');
+        $queryBuilder->setParameter('depId',$depId);*/
+
+        return $tabMac;
+    }
 }

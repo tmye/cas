@@ -10,4 +10,22 @@ namespace TmyeDeviceBundle\Repository;
  */
 class DevicePubPicRepository extends \Doctrine\ORM\EntityRepository
 {
+    /*
+     * Fonction de sélection personnelle
+     * Autheur : Ebenezer
+     * */
+
+    public function deviceByArray($devices){
+        $i=0;
+        $queryBuilder = $this->createQueryBuilder('d');
+        $queryBuilder->where('d.deviceid=:fId');
+        $queryBuilder->setParameter('fId',$devices[0]);
+        foreach ($devices as $devId){
+            $i++;
+            $queryBuilder->orWhere('d.deviceid=:id'.$i);
+            $queryBuilder->setParameter('id'.$i,$devId);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
 }
