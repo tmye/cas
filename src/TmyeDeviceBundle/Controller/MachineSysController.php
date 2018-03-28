@@ -36,9 +36,11 @@ class MachineSysController extends BaseController
             ['id' => 'ASC']
         );
 
+        /* group updateEntites by update types */
         $res['status'] = 1;
         $res['info'] = 'ok';
         $res['data'] = [];
+
 
         foreach ($all as &$item) {
 
@@ -69,9 +71,9 @@ class MachineSysController extends BaseController
                     $tmp = $this->getPubSetupContent(intval($tmp['index']));
                     $tmp['id'] = $item->getId();
                     array_push($res['data'], $tmp);
-//                    break;
                 }
             }
+
             if ($item->getType() == "dept") {
                 if ($item != null) {
 
@@ -147,10 +149,10 @@ class MachineSysController extends BaseController
     public function unixTimeSetupAction (Request $request) {
 
         $sn = $request->query->get("sn");
-        $all = $this->UpdateEntityRepo()->findBy([
-            'deviceId' => $sn,
-            'type' => 'time'
-        ]);
+        /*$all = $this->UpdateEntityRepo()->findBy([
+              'deviceId' => $sn,
+              'type' => 'time'
+          ]);*/
         $res['status'] = 1;
         $res['info'] = 'ok';
         $res['data']["timezone"] = "UTC";
@@ -586,11 +588,6 @@ class MachineSysController extends BaseController
         if ($id == 3)
             return $pic_slide_3;
 
-//        $res = [];
-//        array_push($res, $pic_slide_1);
-//        array_push($res, $pic_slide_2);
-//        array_push($res, $pic_slide_3);
-//        return $res;
     }
 
     private function getCompanyName()

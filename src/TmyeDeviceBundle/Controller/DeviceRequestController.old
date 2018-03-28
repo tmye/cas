@@ -1,0 +1,159 @@
+<?php
+
+namespace TmyeDeviceBundle\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class DeviceRequestController extends BaseController
+{
+    /**
+     * @Route("/api/data/get")
+     */
+    public function indexGetAction(Request $request)
+    {
+
+        /* check the id of the device */
+        $sn = trim($request->query->get("sn"));
+
+        /* check if there is anyupdate for this device ?
+            - departement update (fingerprints, name_list, pictures...)
+            - return cover pictures update
+        */
+        $all = $this->UpdateEntityRepo()->findBy(
+            ['deviceId' => $sn ],
+            ['id' => 'ASC']
+        );
+
+        /* as sending everything to the system maybe heavy, we can
+        establish a priority */
+
+        $res['status'] = 1;
+        $res['info'] = 'ok';
+        $res['data'] = [];
+
+        foreach ($all as &$item) {
+
+            if ($item->getType() == "reboot") {
+                if ($item != null) {
+                    $tmp = json_decode("{\"id\":\"0\",\"do\":\"cmd\",\"cmd\":\"reboot\"}", true);
+                    $tmp['id'] = $item->getId();
+                    array_push($res['data'], $tmp);
+                    break;
+                }
+            }
+            if ($item->getType() == "emp") {
+                if ($item != null) {
+                    $tmp = $this->getAllUsers($item->getId());
+                    $res['data'] = $tmp;
+                }
+            }
+            if ($item->getType() == "fingerprints") {
+                if ($item != null) {
+                    $tmp = $this->getAllFingerprints($item->getId());
+                    $res['data'] = $tmp;
+                    break;
+                }
+            }
+            if ($item->getType() == "pub") {
+                $tmp = json_decode($item->getContent(), true);
+                if ($tmp != []) {
+                    $tmp = $this->getPubSetupContent(intval($tmp['index']));
+                    $tmp['id'] = $item->getId();
+                    array_push($res['data'], $tmp);
+//                    break;
+                }
+            }
+            if ($item->getType() == "dept") {
+                if ($item != null) {
+
+                    if ($item->getContent() == "clear") {
+
+                        // clear the dept
+                        $tmp = [
+                            'id' => $item->getId(),
+                            'do' => 'delete',
+                            'data' => "dept",
+                            'dept' =>  $this->getAllDepartementsIdzOnly()
+                        ];
+                        array_push($res['data'], $tmp);
+
+
+                        // clear the employees
+//                        {id:”1006”,do:”delete”,data:[”user”,”fingerprint”,”face”,”headpic”,”clockin”,”pic”],ccid:[13245,8784,54878]}
+                        $tmp = [
+                            'id' => $item->getId(),
+                            'do' => 'delete',
+                            'data' => ["user", "fingerprint", "face", "headpic", "clockin", "pic"],
+                            'ccid' =>  $this->getAllEmployeesIdzOnly()
+                        ];
+                        array_push($res['data'], $tmp);
+
+
+                    } else {
+                        $tmp = [
+                            'id' => $item->getId(),
+                            'do' => 'update',
+                            'data' => "dept",
+                            'dept' =>  $this->getAllDepartements()
+                        ];
+                        array_push($res['data'], $tmp);
+                    }
+                }
+            }
+            if ($item->getType() == "pp") {
+                if ($item != null) {
+                    $tmp = $this->getProfilePictures($item->getId());
+                    $res['data'] = $tmp;
+                    break;
+                }
+            }
+            if ($item->getType() == "doclean") {
+                if ($item != null) {
+                    $tmp = [
+                        'id' => $item->getId(),
+                        'do' => 'delete',
+                        'data' => ["user","fingerprint", "face", "headpic", "clockin", "pic", "dept"]
+                    ];
+                    array_push($res['data'], $tmp);
+                }
+            }
+        }
+
+        /* this is the standard setup that doesn't move from here */
+        array_push($res['data'], $this->standardSetup());
+
+        // reset return values
+        if (intval(date("i", time()))%10 == 0)
+            $this->resetReturnValues();
+
+        $this->info("GETFF   ".$this->serialize($res));
+        return new Response($this->serialize($res));
+    }
+
+
+    /**
+     * @Route("/api/data/unixtime",name="machine_data_unixtime")
+     * @Method("GET")
+     */
+    public function unixTimeSetupAction (Request $request) {
+
+        $sn = $request->query->get("sn");
+        $all = $this->UpdateEntityRepo()->findBy([
+            'deviceId' => $sn,
+            'type' => 'time'
+        ]);
+        $res['status'] = 1;
+        $res['info'] = 'ok';
+        $res['data']["timezone"] = "UTC";
+        $res['data']["unixtime"] = time()-3600;
+        $res['data']["datetime"] = date("Y-m-d H:i:s",   $res['data']["unixtime"]);
+
+        $this->info($this->serialize($res));
+
+        return new Response($this->serialize($res));
+    }
+
+}
