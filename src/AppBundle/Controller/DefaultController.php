@@ -31,35 +31,6 @@ class DefaultController extends Controller
                 $resultat = move_uploaded_file($_FILES['third_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_1"]["name"]));
             }
 
-            $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
-            $found = 0;
-            $i = 0;
-
-            foreach ($devices as $mac){
-                while($found == 0 && $i < sizeof($donnees)){
-                    echo ("Comparaison : ".$donnees[$i]->getDeviceId() == $mac);
-                    if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="emp" && $donnees[$i]->getIsactive()==1){
-                        $found = 1;
-                    }else{
-                        echo "\n not found";
-                    }
-                    $i++;
-                }
-                echo "\n Found = :".$found;
-                if ($found == 0){
-                    // On met a jour le UpdateEntity
-                    $updateE = new UpdateEntity();
-                    $updateE->setDeviceId($mac);
-                    $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
-                    $updateE->setIsactive(true);
-                    $updateE->setType("pub");
-                    $updateE->setContent("");
-                    $em->persist($updateE);
-                }
-            }
-
-
-
             $em->flush();
         }
         //return new Response("Ok");
