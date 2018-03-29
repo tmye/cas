@@ -59,7 +59,11 @@ class EmployeController extends Controller {
             ->add('last_name', TextType::class,array('label'=>' '))
             ->add('adress', TextType::class,array('label'=>' '))
             ->add('contact', TextType::class,array('label'=>' '))
-            ->add('picture', FileType::class,array('label'=>' '))
+            ->add('picture', FileType::class,array(
+                'required'=>false,
+                'label'=>' ',
+                'data_class' => null
+            ))
             ->add('salary', IntegerType::class,array('label'=>' '))
             ->add('function', TextType::class,array('label'=>' '))
             ->add('hire_date', DateTimeType::class,array('widget'=>'single_text','label'=>' '))
@@ -86,13 +90,16 @@ class EmployeController extends Controller {
 
                 /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
 
+
                 $file = $employe->getPicture();
 
-                // Generate a unique name for the file before saving it
-                $file_extension = $file->guessExtension();
-                $fileName = $employe->getEmployeeCcid().'.'.$file->guessExtension();
+                if(isset($file) && !empty($file)){
+                    // Generate a unique name for the file before saving it
+                    $file_extension = $file->guessExtension();
+                    $fileName = $employe->getEmployeeCcid().'.'.$file->guessExtension();
 
-                $employe->setPicture($fileName);
+                    $employe->setPicture($fileName);
+                }
 
                 $em = $this->getDoctrine()->getManager();
 
@@ -105,12 +112,14 @@ class EmployeController extends Controller {
                 $employe->setUsername($employe->getEmployeeCcid());
                 // Maintenant qu'un a un CCID on modifie le nom du fichier avant de l'uploader
 
-                $fileName = $employe->getEmployeeCcid().'.'.$file->guessExtension();
-                $file->move('uploads/img', $fileName);
+                if(isset($file) && !empty($file)) {
+                    $fileName = $employe->getEmployeeCcid().'.'.$file->guessExtension();
+                    $file->move('uploads/img', $fileName);
 
-                $employe->setPicture($employe->getEmployeeCcid().'.'.$file_extension);
-                $em->persist($employe);
-                $em->flush();
+                    $employe->setPicture($employe->getEmployeeCcid().'.'.$file_extension);
+                    $em->persist($employe);
+                    $em->flush();
+                }
 
                 $request->getSession()->getFlashBag()->add('notice', 'Employé bien enregistrée.');
 
@@ -159,6 +168,7 @@ class EmployeController extends Controller {
             ->add('contact', TextType::class,array('label'=>' '))
             ->add('salary', IntegerType::class,array('label'=>' '))
             ->add('picture', FileType::class,array(
+                'required'=>false,
                 'label'=>' ',
                 'data_class' => null
             ))
