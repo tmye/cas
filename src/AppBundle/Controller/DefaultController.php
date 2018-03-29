@@ -11,6 +11,17 @@ class DefaultController extends Controller
 {
 
     /**
+     * @Route("/functionTest", name="functionTest")
+     */
+    public function functionTestAction(Request $request)
+    {
+        $res = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->machinesByDep(1);
+
+        print_r($res);
+        return new Response("OK");
+    }
+
+    /**
      * @Route("/uploadCoverAll", name="uploadCoverAll")
      */
     public function uploadCoverAllAction(Request $request)
@@ -33,7 +44,48 @@ class DefaultController extends Controller
 
             $em->flush();
         }
-        //return new Response("Ok");
+
+
+        // On met les informations dans la table update_entity
+        $em = $this->getDoctrine()->getManager();
+
+        $mac = $request->request->get("mac");
+        echo "Mac : ".$mac;
+
+        // Variables d'élimination de doublons
+        // Anciennes données
+        $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
+        //print_r($donnees);
+        $found = 0;
+        $i = 0;
+
+
+        /*
+         * On persiste les éléments en fonction du cas
+         * Mais bien en avant ça, on vérifie s'il n'ya pas
+         * déjà ces memes données dans la table.
+         */
+
+        while($found == 0 && $i < sizeof($donnees)){
+            if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="reboot" && $donnees[$i]->getIsactive()==1){
+                $found = 1;
+            }
+            //$session->getFlashBag()->add('passage : ',$donnees[$i]->getDeviceId());
+            $i++;
+        }
+        echo "\n Found = :".$found;
+        if ($found == 0){
+            $updateE = new UpdateEntity();
+            $updateE->setDeviceId($mac);
+            $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
+            $updateE->setIsactive(true);
+            $updateE->setType("pub");
+            $updateE->setContent("");
+
+            $em->persist($updateE);
+            $em->flush();
+        }
+
         return new Response("Image(s) uploadée(s)");
     }
 
@@ -252,19 +304,6 @@ class DefaultController extends Controller
         $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
         return $this->render('cas/manageEmployee.html.twig',array(
             "departements"=>$departements
-        ));
-    }
-
-    /**
-     * @Route("/manageDepartement",name="manageDepartement")
-     */
-    public function manageDepartementAction(Request $request)
-    {
-        $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
-        $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
-        return $this->render('cas/manageDepartement.html.twig',array(
-            "machines"=>$machines,
-            "departements"=>json_encode($departements)
         ));
     }
 }

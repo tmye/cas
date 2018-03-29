@@ -1,6 +1,14 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    <!-- hidden input -->
+    <div style="display: none">
+        <select id="depSelected">
+            {% for dep in departements %}
+                <option value="{{ dep.id }}">{{ dep.id }}</option>
+            {% endfor %}
+        </select>
+    </div>
     <div class="row">
         <div class="col l9 offset-l3">
             <h5>Synchronisation des informations des employés</h5>
@@ -13,56 +21,28 @@
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
                                     <form class="col l12" id="main_form">
-                                        <p>
-                                            <input name="group1" value="1" type="radio" id="el1" />
-                                            <label for="el1">Tous les employés</label>
-                                            <input name="group1" value="2" type="radio" id="el2" />
-                                            <label for="el2">Par départements</label>
-                                        </p>
                                         <span id="type1">
-                                            <div class="row">
-                                                <div class="col l12">
-                                                    <a href="#" class="dropdown-button synch-button" data-activates="dropdown1" style="color: inherit;padding: 3px 5px;background-image: linear-gradient(rgba(214,208,199,0.38),rgba(183,178,170,0.38))"><span class="fa fa-cog"></span> Options <span class="fa fa-caret-down"></span></a>
-                                                    <ul id="dropdown1" class="dropdown-content">
-                                                        <li id="updateForAll">
-                                                            <a href="#"><span class="fa fa-check"></span> Tout mettre à jour</a>
-                                                        </li>
-                                                        <li id="cancelForAll">
-                                                            <a href="#"><span class="fa fa-times red-text"></span> Tout annuler</a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <br>
-                                        </span>
-                                        <span id="type2">
-                                            <div class="row">
-                                                <div class="col l12">
-                                                    <a href="#" class="dropdown-button synch-button" data-activates="dropdown2" style="color: inherit;padding: 3px 5px;background-image: linear-gradient(rgba(214,208,199,0.38),rgba(183,178,170,0.38))"><span class="fa fa-cog"></span> Options <span class="fa fa-caret-down"></span></a>
-                                                    <ul id="dropdown2" class="dropdown-content">
-                                                        <li id="updateForDep">
-                                                            <a href="#"><span class="fa fa-check"></span> Tout mettre à jour</a>
-                                                        </li>
-                                                        <li id="cancelForDep">
-                                                            <a href="#"><span class="fa fa-times red-text"></span> Tout annuler</a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
                                             <div class="row firstOne">
                                                 <div class="col l12">
-                                                    <h5>Par départements</h5>
-                                                    <span>Choisissez le département</span>
-                                                    <select multiple="multiple" id="depSelected">
-                                                        {% for dep in departements %}
-                                                            <option value="{{ dep.id }}">{{ dep.name }}</option>
-                                                        {% endfor %}
-                                                    </select>
-                                                    <br>
-                                                    Changer l'état de toutes les machines d'un département donné
+                                                    <p>Mettre à jour les empreintes de tous les employés</p>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col l3">
+                                                    <div id="updateForAll" class="btn-floating btn-large waves-effect waves-light center green white-text thirdImage" style="padding: ">
+                                                        <span class="fa fa-sync"></span>
+                                                    </div>
+                                                    <span>Synchronisation</span>
+                                                </div>
+                                                <div class="col l4">
+                                                    <div id="cancelForAll" class="btn-floating btn-large waves-effect waves-light center red darken-4 white-text thirdImage" style="padding: ">
+                                                        <span class="fa fa-times-circle"></span>
+                                                    </div>
+                                                    <span>Annuler la synchronisation</span>
                                                 </div>
                                             </div>
                                         </span>
+                                                    Changer l'état de toutes les machines d'un département donné
                                     </form>
                                 </div>
                             </div>
@@ -93,38 +73,6 @@
             );
         });
     </script>
-    <script>
-        $(function () {
-            var selected = 0;
-
-            $("#type1").show();
-            $("#type2").hide();
-            $("#type3").hide();
-            $("input[type=radio][name=group1]").change(function () {
-                switch (this.value) {
-                    case "1":
-                        $("#type1").show();
-                        $("#type2").hide();
-                        $("#type3").hide();
-                        selected = 1;
-                        break;
-                    case "2":
-                        $("#type1").hide();
-                        $("#type2").show();
-                        $("#type3").hide();
-                        selected = 2;
-                        break;
-                    case "3":
-                        $("#type1").hide();
-                        $("#type2").hide();
-                        $("#type3").show();
-                        selected = 3;
-                        break;
-                }
-            });
-        });
-    </script>
-
     <!-- Script pour les évenements de mise à jour -->
     <script>
         $(function () {
@@ -143,29 +91,6 @@
                     type: 'POST',
                     url: "{{ path('syncEmpPP') }}",
                     data: {"deps":tab},
-                    success: function (data) {
-                        console.log(data);
-                    },
-                    error: function (msg) {
-                        alert("erreur");
-                        console.log(msg);
-                    }
-                });
-            });
-        });
-    </script>
-    <script>
-        $(function () {
-            var tab = [];
-            console.log(tab);
-            $("#updateForDep").click(function () {
-                var el = $("#depSelected").val();
-                tab.push(el);
-                console.log(el);
-                $.ajax({
-                    type: 'POST',
-                    url: "{{ path('syncEmpPP') }}",
-                    data: {"deps":el},
                     success: function (data) {
                         console.log(data);
                     },

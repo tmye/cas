@@ -1,6 +1,14 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    <!-- hidden input -->
+    <div style="display: none">
+        <select id="depSelected">
+            {% for dep in departements %}
+                <option value="{{ dep.id }}">{{ dep.id }}</option>
+            {% endfor %}
+        </select>
+    </div>
     <div class="row">
         <div class="col l9 offset-l3">
             <h5>Changer les images de veille</h5>
@@ -55,7 +63,7 @@
                                                 <div class="col l12">
                                                     <h5>Par départements</h5>
                                                     <span>Choisissez le département</span>
-                                                    <select multiple="multiple" id="depSelected">
+                                                    <select multiple="multiple" id="depSelected2">
                                                         {% for dep in departements %}
                                                             <option value="{{ dep.id }}">{{ dep.name }}</option>
                                                         {% endfor %}
@@ -223,7 +231,7 @@
                 */
 
                 $("#submit_button_2").click(function(){
-                    var dep = $("#depSelected").val();
+                    var dep = $("#depSelected2").val();
                     var formdata = new FormData();
                     formdata.append("depId",dep);
                     $("#main_form .secondOne_2").find("img").each(function () {
