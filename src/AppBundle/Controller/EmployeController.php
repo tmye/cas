@@ -209,12 +209,15 @@ class EmployeController extends Controller {
 
         }
 
+        $wh = $this->returnWorkingHoursAction();
+
         // À ce stade, le formulaire n'est pas valide car :
         // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
         // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
         return $this->render('cas/addEmployee.html.twig', array(
             'form' => $form->createView(),
-            'picture' => $employe->getPicture()
+            'picture' => $employe->getPicture(),
+            'whList'=>$wh
         ));
     }
 
@@ -246,6 +249,28 @@ class EmployeController extends Controller {
         $jsonContent = $serializer->serialize(['emp' => $emp],'json');
 
         return new Response($jsonContent);
+    }
+
+    /**
+     * @Route("/returnEmployees",name="returnEmployees")
+     */
+    public function returnEmployeesAction(Request $request)
+    {
+        $tab = array();
+        $em = $this->getDoctrine()->getManager();
+        $emp = $em->getRepository("AppBundle:Employe")->findAll();
+        foreach ($emp as $e){
+            $tempTab = [];
+            $tempTab["id"] = $e->getId();
+            $tempTab["surname"] = $e->getSurname();
+            $tempTab["middleName"] = $e->getMiddleName();
+            $tempTab["lastName"] = $e->getLastName();
+            $tempTab["dep"] = $e->getDepartement()->getId();
+            $tempTab["picPath"] = $e->getPicture();
+            array_push($tab,$tempTab);
+        }
+
+        return new JsonResponse($tab);
     }
 
     /**

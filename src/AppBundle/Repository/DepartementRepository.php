@@ -12,4 +12,20 @@ use Doctrine\ORM\EntityRepository;
  */
 class DepartementRepository extends EntityRepository
 {
+    public function machinesByDep($depId){
+        $tab = array();
+        $machines = $this->_em->getRepository("AppBundle:Machine")->findAll();
+        foreach ($machines as $mac){
+            $tabDeps = array();
+            $deps = $mac->getDepartements();
+            foreach ($deps as $d){
+                $tabDeps[]=$d->getId();
+            }
+            if(in_array($depId,$tabDeps)){
+                array_push($tab,$mac->getMachineId());
+            }
+        }
+
+        return $tab;
+    }
 }

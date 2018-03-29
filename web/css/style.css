@@ -218,8 +218,8 @@ html
 }
 .middle-align
 {
-    display: inline-block;
-    vertical-align: middle;
+    display: inline-block !important;
+    vertical-align: middle !important;
 }
 .icons
 {

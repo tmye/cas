@@ -70,35 +70,35 @@
                     type: 'GET',
                     url: link,
                     success: function(data) {
-                        var res = JSON.parse(data);
+                        console.log(data);
                         alert("Le résultat : "+data);
-                        alert("la longueur : "+res.employees.length);
+                        alert("la longueur : "+data.length);
                         /* Au changement d'un département,plus de requete.On ne fait que charger les données */
                         $("#depSelect").change(function(){
                             /* On vide le contenu de la table */
                             $("#rowsContainer").html("");
                             /* On récupère le département sélectionné */
                             var selectedDep = $("#depSelect").val();
-                            for(var i=0;i<res.employees.length;i++){
+                            for(var i=0;i<data.length;i++){
                                 //alert("L'id dep est "+res.employees[i].departement.id);
                                 /* On vérifie si oui ou nom cet employé appartient au département
                                  * Si oui on l'affiche
                                  * Sinon on l'ignore tout simplement
                                  */
-                                if(res.employees[i].departement.id == selectedDep){
-                                    var mDate = new Date(res.employees[i].hireDate.timestamp*1000).toLocaleDateString();
-                                    alert(mDate);
+                                if(data[i].dep == selectedDep){
+                                    //var mDate = new Date(data[i].hireDate.timestamp*1000).toLocaleDateString();
+                                    //alert(mDate);
                                     $("#rowsContainer").append("" +
                                         "<tr>" +
-                                        "<td>"+res.employees[i].id+"</td>" +
-                                        "<td><img src=\"{{ asset('uploads/img/') }}"+res.employees[i].picPath+"\" alt=\" profil_picture\" style=\"width:50px;height:50px\"></td>" +
-                                        "<td>"+res.employees[i].surname+" "+res.employees[i].lastName+"</td>" +
-                                        "<td>"+res.employees[i].function+"</td>" +
-                                        "<td>"+res.employees[i].salary+"</td>" +
-                                        "<td>"+res.employees[i].contact+"</td>" +
-                                        "<td>"+res.employees[i].adress+"</td>" +
-                                        "<td>"+mDate+"</td>" +
-                                        "<td><a href=\"editEmployee/"+res.employees[i].id+"\"><button class=\"white-text blue simple-button-decoration\"><span class=\"fa fa-pencil-alt\"></span></button></a> <button class=\"white-text red simple-button-decoration\" onclick=\"demander("+res.employees[i].id+")\"><span class=\"fa fa-trash\"></span></button></td>" +
+                                        "<td>"+data[i].id+"</td>" +
+                                        "<td><img src=\"{{ asset('uploads/img/') }}"+data[i].picPath+"\" alt=\" profil_picture\" style=\"width:50px;height:50px\"></td>" +
+                                        "<td>"+data[i].surname+" "+data[i].lastName+"</td>" +
+                                        "<td>Undefined</td>" +
+                                        "<td>Undefined</td>" +
+                                        "<td>Undefined</td>" +
+                                        "<td>Undefined</td>" +
+                                        "<td>Undefined</td>" +
+                                        "<td><a href=\"editEmployee/"+data[i].id+"\"><button class=\"white-text blue simple-button-decoration\"><span class=\"fa fa-pencil-alt\"></span></button></a> <button class=\"white-text red simple-button-decoration\" onclick=\"demander("+data[i].id+")\"><span class=\"fa fa-trash\"></span></button></td>" +
                                         "</tr>"
                                     );
                                 }

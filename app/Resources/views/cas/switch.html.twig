@@ -1,6 +1,14 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    <!-- hidden input -->
+    <div style="display: none">
+        <select id="depSelected">
+            {% for dep in departements %}
+                <option value="{{ dep.id }}">{{ dep.id }}</option>
+            {% endfor %}
+        </select>
+    </div>
     <div class="row">
         <div class="col l9 offset-l3">
             <h5>Changer l'état des machines</h5>
@@ -39,7 +47,7 @@
                                                 <div class="col l12">
                                                     <h5>Par départements</h5>
                                                     <span>Choisissez le département</span>
-                                                    <select multiple="multiple" id="depSelected">
+                                                    <select multiple="multiple" id="depSelected2">
                                                         {% for dep in departements %}
                                                             <option value="{{ dep.id }}">{{ dep.name }}</option>
                                                         {% endfor %}
@@ -154,13 +162,33 @@
             var tab = [];
             console.log(tab);
             $("#rebootForDep").click(function () {
-                var el = $("#depSelected").val();
+                var el = $("#depSelected2").val();
                 tab.push(el);
                 console.log(el);
                 $.ajax({
                     type: 'POST',
                     url: "{{ path('syncReboot') }}",
                     data: {"deps":el},
+                    success: function (data) {
+                        console.log(data);
+                    },
+                    error: function (msg) {
+                        alert("erreur");
+                        console.log(msg);
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        $(function () {
+            $("#rebootForMac").click(function () {
+                var el = $("#macSelected").val();
+                console.log("Element : "+el);
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('syncRebootByMac') }}",
+                    data: {"mac":el},
                     success: function (data) {
                         console.log(data);
                     },

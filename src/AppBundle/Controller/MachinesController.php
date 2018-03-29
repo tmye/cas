@@ -580,4 +580,52 @@ class MachinesController extends Controller
             echo "Je ne rentre jamais dedans";
         }
     }
+
+    /**
+     * @Route("/syncRebootByMac",name="syncRebootByMac")
+     */
+    public function syncRebootByMacAction(Request $request)
+    {
+
+        $em = $this->getDoctrine()->getManager();
+
+        $mac = $request->request->get("mac");
+        echo "Mac : ".$mac;
+
+        // Variables d'élimination de doublons
+        // Anciennes données
+        $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
+        //print_r($donnees);
+        $found = 0;
+        $i = 0;
+
+
+        /*
+         * On persiste les éléments en fonction du cas
+         * Mais bien en avant ça, on vérifie s'il n'ya pas
+         * déjà ces memes données dans la table.
+         */
+
+        while($found == 0 && $i < sizeof($donnees)){
+            if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="reboot" && $donnees[$i]->getIsactive()==1){
+                $found = 1;
+            }
+            //$session->getFlashBag()->add('passage : ',$donnees[$i]->getDeviceId());
+            $i++;
+        }
+        echo "\n Found = :".$found;
+        if ($found == 0){
+            $updateE = new UpdateEntity();
+            $updateE->setDeviceId($mac);
+            $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
+            $updateE->setIsactive(true);
+            $updateE->setType("reboot");
+            $updateE->setContent("");
+
+            $em->persist($updateE);
+            $em->flush();
+        }
+        //return new Response(json_encode($finalTab));
+        return new Response("OK");
+    }
 }
