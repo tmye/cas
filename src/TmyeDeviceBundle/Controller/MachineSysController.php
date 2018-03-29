@@ -38,7 +38,7 @@ class MachineSysController extends BaseController
         );
 
         var_dump($all);
-         exit;
+        exit;
 
         /*
             group updateEntites by update types and give a priority to the type clean
@@ -46,7 +46,6 @@ class MachineSysController extends BaseController
         $res['status'] = 1;
         $res['info'] = 'ok';
         $res['data'] = [];
-
 
         foreach ($all as &$item) {
 
@@ -399,6 +398,9 @@ class MachineSysController extends BaseController
      * @Method("GET")
      */
     public function doCleanSys (Request $request) {
+
+
+        /* clean all the machines on the system */
         $machines = $this->MachineRepo()->findAll();
         foreach ($machines as &$machine) {
 
@@ -593,7 +595,6 @@ class MachineSysController extends BaseController
         ];
         if ($id == 3)
             return $pic_slide_3;
-
     }
 
     private function getCompanyName()
@@ -617,6 +618,7 @@ class MachineSysController extends BaseController
         ];
         return $tmp;
     }
+
 
     /**
      * @return array of all departements
