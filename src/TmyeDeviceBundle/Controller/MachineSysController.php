@@ -33,10 +33,16 @@ class MachineSysController extends BaseController
         $sn = trim($request->query->get("sn"));
         $all = $this->UpdateEntityRepo()->findBy(
             ['deviceId' => $sn ],
-            ['id' => 'ASC']
+            ['id' => 'ASC'],
+            ['type' => 'DESC']
         );
 
-        /* group updateEntites by update types */
+        var_dump($all);
+         exit;
+
+        /*
+            group updateEntites by update types and give a priority to the type clean
+         */
         $res['status'] = 1;
         $res['info'] = 'ok';
         $res['data'] = [];
@@ -118,7 +124,7 @@ class MachineSysController extends BaseController
                     break;
                 }
             }
-            if ($item->getType() == "doclean") {
+            if ($item->getType() == "1doclean") {
                 if ($item != null) {
                     $tmp = [
                         'id' => $item->getId(),
@@ -397,7 +403,7 @@ class MachineSysController extends BaseController
         foreach ($machines as &$machine) {
 
             $up = new UpdateEntity();
-            $up->setType("doclean"); // profile pictures
+            $up->setType("1doclean"); // profile pictures
             $up->setDeviceId($machine->getDeviceId());
             $up->setContent("");
             $this->persist($up);
@@ -646,6 +652,7 @@ class MachineSysController extends BaseController
     private function getAllUsers($id)
     {
         /*{
+
     "id": "1001",
     "do": "update",
     "data": "user",
@@ -656,7 +663,8 @@ class MachineSysController extends BaseController
     "deptid": 11,
     "auth": 0,
     "faceexist": 0
-}*/
+
+        }*/
 
         $res = [];
         $empl = $this->EmployeeRepo()->findAll();
@@ -668,7 +676,7 @@ class MachineSysController extends BaseController
                 'ccid' => $e->getId(),
                 'name' => $e->getMiddleName().' '.$e->getSurname(),
                 'passwd' => md5("555"),
-                'deptid' => $e->getDepartementId(),
+                'deptid' => $e->getDepartement()->getId(),
                 'auth' => $e->getAuth(),
                 'faceexist' => 0
             ];
