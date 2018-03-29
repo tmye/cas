@@ -128,7 +128,7 @@ class Employe implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="picture", type="string", length=45)
+     * @ORM\Column(name="picture", type="string", length=45, nullable=true)
      */
     private $picture;
 
