@@ -319,4 +319,17 @@ class DefaultController extends Controller
             "machines"=>$machines
         ));
     }
+
+    /**
+     * @Route("/manageDepartement",name="manageDepartement")
+     */
+    public function manageDepartementAction(Request $request)
+    {
+        $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
+        $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+        return $this->render('cas/manageDepartement.html.twig',array(
+            "departements"=>$departements,
+            "machines"=>$machines
+        ));
+    }
 }
