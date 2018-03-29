@@ -113,7 +113,7 @@
     <script>
         function demander(theId) {
             var rep = confirm("Etes-vous sur de vouloir supprimer cet employé?");
-            var path = "/cas/web/app_dev.php/deleteEmployee/";
+            var path = "deleteEmployee/";
             path += theId;
             if(rep==true){
                 window.location.href = path;

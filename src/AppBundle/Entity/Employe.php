@@ -129,7 +129,6 @@ class Employe implements UserInterface
      * @var string
      *
      * @ORM\Column(name="picture", type="string", length=45)
-     * @Assert\NotBlank()
      */
     private $picture;
 
