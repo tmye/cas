@@ -107,10 +107,18 @@
     <!-- Script pour les évenements de mise à jour -->
     <script>
         $(function () {
+            var tab = [];
+            $.each($("#depSelected").children(),function (arrayID) {
+                var el = $(this).attr("value");
+                //console.log("Index : "+arrayID+" Value : "+el);
+                tab.push(el);
+            });
+            console.log(tab);
             $("#deleteForAll").click(function () {
                 $.ajax({
                     type: 'POST',
                     url: "{{ path('syncDeleteForAll') }}",
+                    data: {"deps":tab},
                     success: function (data) {
                         console.log(data);
                     },
