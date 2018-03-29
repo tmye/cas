@@ -137,7 +137,6 @@ class Employe implements UserInterface
      * @var string
      *
      * @ORM\Column(name="auth", type="string", length=45)
-     * @Assert\NotBlank()
      */
     private $auth;
 

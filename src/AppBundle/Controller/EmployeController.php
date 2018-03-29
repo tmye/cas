@@ -153,20 +153,28 @@ class EmployeController extends Controller {
 
         // On ajoute les champs de l'entité que l'on veut à notre formulaire
         $formBuilder
-            ->add('surname', TextType::class)
-            ->add('middle_name', TextType::class,array('required' => false))
-            ->add('last_name', TextType::class)
-            ->add('adress', TextType::class)
-            ->add('contact', TextType::class)
-            ->add('salary', IntegerType::class)
+            ->add('surname', TextType::class,array('label'=>' '))
+            ->add('middle_name', TextType::class,array('required' => false,'label'=>' '))
+            ->add('last_name', TextType::class,array('label'=>' '))
+            ->add('adress', TextType::class,array('label'=>' '))
+            ->add('contact', TextType::class,array('label'=>' '))
+            ->add('salary', IntegerType::class,array('label'=>' '))
             ->add('picture', FileType::class,array(
+                'label'=>' ',
                 'data_class' => null
             ))
-            ->add('function', TextType::class)
-            ->add('hire_date', DateType::class)
+            ->add('function', TextType::class,array('label'=>' '))
+            ->add('hire_date', DateTimeType::class,array('widget'=>'single_text','label'=>' '))
             ->add('departement',EntityType::class,array(
+                'label'=>' ',
                 'class' => 'AppBundle:Departement',
                 'choice_label' => 'name',
+                'multiple' => false,
+            ))
+            ->add('workingHour',EntityType::class,array(
+                'label'=>' ',
+                'class' => 'AppBundle:WorkingHours',
+                'choice_label' => 'code',
                 'multiple' => false,
             ))
             ->add('Modifier', SubmitType::class);
