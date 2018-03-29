@@ -93,6 +93,7 @@ class EmployeController extends Controller {
 
                 $file = $employe->getPicture();
 
+                print_r("test");
                 if(isset($file) && !empty($file)){
                     // Generate a unique name for the file before saving it
                     $file_extension = $file->guessExtension();
@@ -107,6 +108,7 @@ class EmployeController extends Controller {
                 $em->flush();
 
                 $last_id = $employe->getId();
+                echo("<br>Last id : ".$last_id);
                 $employe->setEmployeeCcid(10000 + $last_id);
 
                 $employe->setUsername($employe->getEmployeeCcid());
@@ -117,9 +119,9 @@ class EmployeController extends Controller {
                     $file->move('uploads/img', $fileName);
 
                     $employe->setPicture($employe->getEmployeeCcid().'.'.$file_extension);
-                    $em->persist($employe);
-                    $em->flush();
                 }
+                $em->persist($employe);
+                $em->flush();
 
                 $request->getSession()->getFlashBag()->add('notice', 'Employé bien enregistrée.');
 
