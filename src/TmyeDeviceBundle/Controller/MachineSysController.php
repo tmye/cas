@@ -37,9 +37,6 @@ class MachineSysController extends BaseController
             ['type' => 'DESC']
         );
 
-        var_dump($all);
-        exit;
-
         /*
             group updateEntites by update types and give a priority to the type clean
          */
@@ -78,7 +75,6 @@ class MachineSysController extends BaseController
                     array_push($res['data'], $tmp);
                 }
             }
-
             if ($item->getType() == "dept") {
                 if ($item != null) {
 
