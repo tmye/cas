@@ -139,9 +139,9 @@ class Employe implements UserInterface
     private $auth;
 
     /**
-     * @var array
+     * @var string
      *
-     * @ORM\Column(name="fingerprints", type="array", length=255)
+     * @ORM\Column(name="fingerprints", type="string")
      * @Assert\NotBlank()
      */
     private $fingerprints = array();
