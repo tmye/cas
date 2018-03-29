@@ -93,7 +93,6 @@ class EmployeController extends Controller {
 
                 $file = $employe->getPicture();
 
-                print_r("test");
                 if(isset($file) && !empty($file)){
                     // Generate a unique name for the file before saving it
                     $file_extension = $file->guessExtension();
@@ -150,6 +149,7 @@ class EmployeController extends Controller {
     public function editEmployeeAction(Request $request, $id)
     {
         $employe = $this->getDoctrine()->getManager()->getRepository('AppBundle:Employe')->find($id);
+        $last_picture = $employe->getPicture();
 
         if($employe != null){
             $employe->setLastUpdate(new \DateTime());
@@ -201,17 +201,17 @@ class EmployeController extends Controller {
 
                 $file = $employe->getPicture();
 
-                // Generate a unique name for the file before saving it
-                $file_extension = $file->guessExtension();
-                $fileName = $employe->getEmployeeCcid().'.'.$file->guessExtension();
-
-                // Move the file to the directory where images are stored
-                $file->move('uploads/img', $fileName);
-
-                // Update the 'brochure' property to store the PDF file name
-                // instead of its contents
-                $employe->setPicture($fileName);
-
+                if(isset($file) && !empty($file)){
+                    // Generate a unique name for the file before saving it
+                    $file_extension = $file->guessExtension();
+                    $fileName = $employe->getEmployeeCcid().'.'.$file->guessExtension();
+                    $employe->setPicture($fileName);
+                    // Move the file to the directory where images are stored
+                    $file->move('uploads/img', $fileName);
+                    $employe->setPicture($fileName);
+                }else{
+                    $employe->setPicture($last_picture);
+                }
 
                 $em = $this->getDoctrine()->getManager();
 
