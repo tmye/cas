@@ -306,4 +306,17 @@ class DefaultController extends Controller
             "departements"=>$departements
         ));
     }
+
+    /**
+     * @Route("/manageDeleteData",name="manageDeleteData")
+     */
+    public function manageDeleteDataAction(Request $request)
+    {
+        $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
+        $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+        return $this->render('cas/delete.html.twig',array(
+            "departements"=>$departements,
+            "machines"=>$machines
+        ));
+    }
 }

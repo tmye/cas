@@ -10,4 +10,11 @@ namespace TmyeDeviceBundle\Repository;
  */
 class UpdateEntityRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findByMachine($mac){
+        $queryBuilder = $this->createQueryBuilder('u');
+        $queryBuilder->where('u.deviceId = :deviceId');
+        $queryBuilder->setParameter('deviceId',$mac);
+
+        return $queryBuilder->getQuery()->getResult();
+    }
 }

@@ -628,4 +628,51 @@ class MachinesController extends Controller
         //return new Response(json_encode($finalTab));
         return new Response("OK");
     }
+
+    /**
+     * @Route("/syncDeleteForAll",name="syncDeleteForAll")
+     */
+    public function syncDeleteForAllAction(Request $request)
+    {
+
+        $em = $this->getDoctrine()->getManager();
+
+        // Variables d'élimination de doublons
+        // Anciennes données
+        $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
+        //print_r($donnees);
+
+        foreach ($donnees as $don){
+            $em->remove($don);
+        }
+        $em->flush();
+
+        //return new Response(json_encode($finalTab));
+        return new Response("Données supprimées");
+    }
+
+    /**
+     * @Route("/syncDeleteByMac",name="syncDeleteByMac")
+     */
+    public function syncDeleteByMacAction(Request $request)
+    {
+
+        $em = $this->getDoctrine()->getManager();
+
+        $mac = $request->request->get("mac");
+        echo "Mac : ".$mac;
+
+        // Variables d'élimination de doublons
+        // Anciennes données
+        $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findByMachine($mac);
+        //print_r($donnees);
+
+        foreach ($donnees as $don){
+            $em->remove($don);
+        }
+        $em->flush();
+
+        //return new Response(json_encode($finalTab));
+        return new Response("Données supprimées");
+    }
 }
