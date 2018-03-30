@@ -190,7 +190,6 @@ class MachinesController extends Controller
             // Anciennes données
         $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
         //print_r($donnees);
-        $found = 0;
         $i = 0;
         echo "\nlength : ".$len;
 
@@ -215,6 +214,7 @@ class MachinesController extends Controller
 
 
             foreach ($finalTab as $mac){
+                $found = 0;
                 echo "\n J'arrive meme ici et le found est : ".$found;
                 while($found == 0 && $i < sizeof($donnees)){
                     echo "\n size of donnees =: ".sizeof($donnees);
@@ -292,7 +292,6 @@ class MachinesController extends Controller
         // Anciennes données
         $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
         //print_r($donnees);
-        $found = 0;
         $i = 0;
         echo "\nlength : ".$len;
 
@@ -317,6 +316,7 @@ class MachinesController extends Controller
 
 
             foreach ($finalTab as $mac){
+                $found = 0;
                 echo "\n J'arrive meme ici et le found est : ".$found;
                 while($found == 0 && $i < sizeof($donnees)){
                     echo "\n size of donnees =: ".sizeof($donnees);
@@ -394,7 +394,6 @@ class MachinesController extends Controller
         // Anciennes données
         $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
         //print_r($donnees);
-        $found = 0;
         $i = 0;
         echo "\nlength : ".$len;
 
@@ -419,6 +418,7 @@ class MachinesController extends Controller
 
 
             foreach ($finalTab as $mac){
+                $found = 0;
                 echo "\n J'arrive meme ici et le found est : ".$found;
                 while($found == 0 && $i < sizeof($donnees)){
                     echo "\n size of donnees =: ".sizeof($donnees);
@@ -496,7 +496,6 @@ class MachinesController extends Controller
         // Anciennes données
         $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
         //print_r($donnees);
-        $found = 0;
         $i = 0;
         echo "\nlength : ".$len;
 
@@ -521,6 +520,7 @@ class MachinesController extends Controller
 
 
             foreach ($finalTab as $mac){
+                $found = 0;
                 echo "\n J'arrive meme ici et le found est : ".$found;
                 while($found == 0 && $i < sizeof($donnees)){
                     echo "\n size of donnees =: ".sizeof($donnees);
@@ -646,7 +646,6 @@ class MachinesController extends Controller
         // Anciennes données
         $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
         //print_r($donnees);
-        $found = 0;
         $i = 0;
         echo "\nlength : ".$len;
 
@@ -671,6 +670,7 @@ class MachinesController extends Controller
 
 
             foreach ($finalTab as $mac){
+            $found = 0;
                 echo "\n J'arrive meme ici et le found est : ".$found;
                 while($found == 0 && $i < sizeof($donnees)){
                     echo "\n size of donnees =: ".sizeof($donnees);
@@ -800,7 +800,6 @@ class MachinesController extends Controller
         // Anciennes données
         $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
         //print_r($donnees);
-        $found = 0;
         $i = 0;
         echo "\nlength : ".$len;
 
@@ -825,11 +824,12 @@ class MachinesController extends Controller
 
 
             foreach ($finalTab as $mac){
+                $found = 0;
                 echo "\n J'arrive meme ici et le found est : ".$found;
                 while($found == 0 && $i < sizeof($donnees)){
                     echo "\n size of donnees =: ".sizeof($donnees);
                     echo "\n isActive =: ".$donnees[$i]->getIsactive();
-                    echo ("Comparaison : ".$donnees[$i]->getDeviceId() == $mac);
+                    echo ("Comparaison : ".$donnees[$i]->getDeviceId()." vs ".$mac);
                     if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="dept" && $donnees[$i]->getIsactive()==1){
                         $found = 1;
                     }else{
