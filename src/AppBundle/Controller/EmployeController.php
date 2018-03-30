@@ -120,6 +120,7 @@ class EmployeController extends Controller {
                 if(isset($file) && !empty($file)) {
                     $fileName = $employe->getEmployeeCcid().'.'.$file->guessExtension();
                     $user_profile_pictures = $this->getParameter("user_profile_pictures");
+                    print_r($user_profile_pictures);
                     $file->move($user_profile_pictures, $fileName);
 
                     $employe->setPicture($employe->getEmployeeCcid().'.'.$file_extension);
@@ -350,7 +351,7 @@ class EmployeController extends Controller {
 
     private function getDefaultPicture()
     {
-        $employee_default_pic = $this->getParameter('web_dir').DIRECTORY_SEPARATOR."img/default-profile.png";
-        return $employee_default_pic;
+        //$employee_default_pic = $this->getParameter('web_dir').DIRECTORY_SEPARATOR."img/default-profile.png";
+        //return $employee_default_pic;
     }
 }

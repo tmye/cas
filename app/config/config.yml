@@ -34,6 +34,8 @@ framework:
 
 # Twig Configuration
 twig:
+    globals:
+        user_profile_pictures: "%user_profile_pictures%"
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
 

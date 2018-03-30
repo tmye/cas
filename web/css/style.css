@@ -271,8 +271,11 @@ html
 }
 .user_extra_small_picture
 {
-    width: 35px;
-    height: 35px;
+    width: 55px;
+    height: 55px;
+    padding: 4px;
+    border: 1px solid #fff;
+    background-color: #fff;
 }
 .sync_img_preview
 {

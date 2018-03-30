@@ -13,25 +13,29 @@
     <body>
     <div class="row">
         <div class="col l2">
-            <ul id="nav-mobile" class="side-nav fixed" style="background-color: #f9f9f9">
+            <ul id="nav-mobile" class="side-nav fixed" style="background-color: #2A3F54">
                 <p class="blue_band">Navigation</p>
                 <div class="row">
-                    <div class="col l10 offset-l1">
+                    <div class="col l10">
                         <ul class="collapsible" data-collapsible="accordion">
                             <li>
-                                <div class="center">Connecté en tant que:</div>
-                                <div class="grey lighten-3" style="padding: 5px 10px;border-radius: 5px">
+                                <div style="font-weight: 300 !important">
                                     {% if app.user is defined and app.user is not null %}
-                                        <img src="{{ asset('uploads/img/')~app.user.picture }}" alt="user_image" class="circle middle-align user_extra_small_picture" style="width: 35px">
+                                        <img src="{{ asset('uploads/img/')~app.user.picture }}" alt="user_image" class="circle middle-align user_extra_small_picture">
                                     {% endif %}
-                                    <span class="middle-align">
+                                    <span class="middle-align white-text" style="margin-left: 20px">
                                         {% if app.user is defined and app.user is not null %}
-                                            {{ app.user.surname~" "~app.user.lastName }}
+                                            {% if ("now" |date("H")) >=12 %}
+                                                {{ "Bonsoir, " }}
+                                            {% else %}
+                                                {{ "Bonjour, " }}
+                                            {% endif %}
+
+                                            {{ app.user.surname}}
                                         {% endif %}
                                     </span>
-                                    <div>
+                                    <div class="center white-text">
                                         <span class="fa fa-laptop"></span>
-                                        Privilèges :
                                         {% if app.user is defined and app.user is not null %}
                                             {{ app.user.roles[0] }}
                                         {% endif %}
@@ -42,13 +46,13 @@
                             <li>
                                 <div class="collapsible-header active valign-wrapper">
                                     <span class="fa fa-home icons"></span>
-                                    <a href="{{ path('homepage') }}" style="margin-left: 4px;color: inherit">Accueil</a>
+                                    <a href="{{ path('homepage') }}" style="margin-left: 4px;color: #fff">Accueil</a>
                                 </div>
                             </li>
                             <li>
                                 <div class="collapsible-header valign-wrapper">
                                     <span class="fa fa-file-alt icons"></span>
-                                    <span style="margin-left: 4px">Présences</span>
+                                    <span style="margin-left: 4px;color: #fff">Présences</span>
                                 </div>
                                 <div class="collapsible-body nav-collapsible-body">
                                     <a href="{{ path("historique") }}" class="collapsible-links">Historiques</a>
@@ -57,7 +61,7 @@
                             <li>
                                 <div class="collapsible-header valign-wrapper">
                                     <span class="fa fa-chart-bar icons"></span>
-                                    <span style="margin-left: 4px">Statistiques</span>
+                                    <span style="margin-left: 4px;color: #fff">Statistiques</span>
                                 </div>
                                 <div class="collapsible-body nav-collapsible-body">
                                     <a href="{{ path("depStat") }}" class="collapsible-links">Départements</a>
@@ -68,7 +72,7 @@
                             <li>
                                 <div class="collapsible-header valign-wrapper">
                                     <span class="fa fa-file icons"></span>
-                                    <span style="margin-left: 4px">Permissions</span>
+                                    <span style="margin-left: 4px;color: #fff">Permissions</span>
                                 </div>
                                 <div class="collapsible-body nav-collapsible-body">
                                     <a href="{{ path('viewPermission') }}" class="collapsible-links">Liste</a>
@@ -79,13 +83,13 @@
                             <li>
                                 <div class="collapsible-header active valign-wrapper">
                                     <span class="fa fa-home icons"></span>
-                                    <a href="{{ path("departement") }}" style="margin-left: 4px;color: inherit">Départements</a>
+                                    <a href="{{ path("departement") }}" style="margin-left: 4px;color: #fff">Départements</a>
                                 </div>
                             </li>
                             <li>
                                 <div class="collapsible-header valign-wrapper">
                                     <span class="fa fa-user icons"></span>
-                                    <span style="margin-left: 4px">Employés</span>
+                                    <span style="margin-left: 4px;color: #fff">Employés</span>
                                 </div>
                                 <div class="collapsible-body nav-collapsible-body">
                                     <a href="{{ path("addEmployee") }}" class="collapsible-links">Ajouter</a>
@@ -96,7 +100,7 @@
                             <li>
                                 <div class="collapsible-header valign-wrapper">
                                     <span class="fa fa-wrench icons"></span>
-                                    <span style="margin-left: 4px">Réglages</span>
+                                    <span style="margin-left: 4px;color: #fff">Réglages</span>
                                 </div>
                                 <div class="collapsible-body nav-collapsible-body">
                                     <a href="{{ path("pubCovers") }}" class="collapsible-links">Images de veille</a>
