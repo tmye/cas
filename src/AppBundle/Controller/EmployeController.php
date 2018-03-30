@@ -351,7 +351,7 @@ class EmployeController extends Controller {
 
     private function getDefaultPicture()
     {
-        //$employee_default_pic = $this->getParameter('web_dir').DIRECTORY_SEPARATOR."img/default-profile.png";
-        //return $employee_default_pic;
+        $employee_default_pic = $this->getParameter('web_dir').DIRECTORY_SEPARATOR."img/default-profile.png";
+        return $employee_default_pic;
     }
 }
