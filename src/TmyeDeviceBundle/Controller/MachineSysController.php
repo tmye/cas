@@ -548,7 +548,7 @@ class MachineSysController extends BaseController
         $tmp['do'] = 'update';
         $tmp['data'] = 'config';
         $tmp['name'] = $config->getSysname();
-        $tmp['company'] = $config->getCompany(); // company name
+        $tmp['company'] = $config->getCompany() . ' - '. $config->getSysname(); // company name
         $tmp['max'] = $config->getMax();
         $tmp['function'] = $config->getFunction();
         $tmp['delay'] = $config->getDelay();
