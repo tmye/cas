@@ -45,7 +45,7 @@ class EmployeController extends Controller {
         $employe->setLastUpdate(new \DateTime());
         $employe->setCreateDate(new \DateTime());
         $employe->setEmployeeCcid(10000);
-        $employe->setPassword("5555");
+        $employe->setPassword(md5($this->getParameter("default_password")));
         $employe->setPicture($this->getDefaultPicture());
         //$employe->setGodfatherCcid($this->getUser()->getId());
         $employe->setGodfatherCcid(0);
@@ -351,7 +351,7 @@ class EmployeController extends Controller {
 
     private function getDefaultPicture()
     {
-        $employee_default_pic = $this->getParameter('web_dir').DIRECTORY_SEPARATOR."img/default-profile.png";
+        $employee_default_pic = /*$this->getParameter('user_profile_pictures').*/ DIRECTORY_SEPARATOR."default-profile.png";
         return $employee_default_pic;
     }
 }

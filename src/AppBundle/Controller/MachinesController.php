@@ -681,7 +681,7 @@ class MachinesController extends Controller
                     echo "\n size of donnees =: ".sizeof($donnees);
                     echo "\n isActive =: ".$donnees[$i]->getIsactive();
                     echo ("Comparaison : ".$donnees[$i]->getDeviceId() == $mac);
-                    if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="doclean" && $donnees[$i]->getIsactive()==1){
+                    if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="1doclean" && $donnees[$i]->getIsactive()==1){
                         $found = 1;
                     }else{
                         echo "\n not found";
@@ -695,7 +695,7 @@ class MachinesController extends Controller
                     $updateE->setDeviceId($mac);
                     $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
                     $updateE->setIsactive(true);
-                    $updateE->setType("doclean");
+                    $updateE->setType("1doclean");
                     $updateE->setContent("");
 
                     $em->persist($updateE);
@@ -709,7 +709,7 @@ class MachinesController extends Controller
             // On persiste les éléments en fonction du cas
             foreach ($tab[0] as $mac){
                 while($found == 0 && $i < sizeof($donnees)){
-                    if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="doclean" && $donnees[$i]->getIsactive()==1){
+                    if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="1doclean" && $donnees[$i]->getIsactive()==1){
                         $found = 1;
                     }
                     //$session->getFlashBag()->add('passage : ',$donnees[$i]->getDeviceId());
@@ -721,7 +721,7 @@ class MachinesController extends Controller
                     $updateE->setDeviceId($mac);
                     $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
                     $updateE->setIsactive(true);
-                    $updateE->setType("doclean");
+                    $updateE->setType("1doclean");
                     $updateE->setContent("");
 
                     $em->persist($updateE);
@@ -765,7 +765,7 @@ class MachinesController extends Controller
          */
 
         while($found == 0 && $i < sizeof($donnees)){
-            if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="doclean" && $donnees[$i]->getIsactive()==1){
+            if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="1doclean" && $donnees[$i]->getIsactive()==1){
                 $found = 1;
             }
             //$session->getFlashBag()->add('passage : ',$donnees[$i]->getDeviceId());
@@ -777,7 +777,7 @@ class MachinesController extends Controller
             $updateE->setDeviceId($mac);
             $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
             $updateE->setIsactive(true);
-            $updateE->setType("doclean");
+            $updateE->setType("1doclean");
             $updateE->setContent("");
 
             $em->persist($updateE);

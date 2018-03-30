@@ -499,14 +499,14 @@ class MachineSysController extends BaseController
         $clockin = new ClockinRecord();
 
 //        $clockin->setEmployeeId($resp['ccid']);
-        $tmpEmp = $this->EmployeeRepo()->findOneById(intval($resp['ccid']));
+        $tmpEmp = $this->EmployeeRepo()->findOneByEmployeeCcid(intval($resp['ccid']));
         $clockin->setEmploye($tmpEmp);
         $clockin->setClockinTime((new \DateTime($resp['time']))->getTimestamp());
         $clockin->setVerify($resp['verify']);
         $clockin->setDeviceid($resp['sn']);
 
 
-        $employee =  $this->EmployeeRepo()->findOneById(intval($resp['ccid']));
+        $employee =  $this->EmployeeRepo()->findOneByEmployeeCcid(intval($resp['ccid']));
 
         if ($employee instanceof Employe && $employee != null) {
 
@@ -516,10 +516,10 @@ class MachineSysController extends BaseController
                 $tmpDepartemt
             );
         } else
-            $clockin->setDepartementId(6);
+            $clockin->setDepartementId($employee->getDepartement()->getId());
 
         // save the picture inside a file
-        $filename = "employee_".$clockin->getEmploye()->getId()."_".time().'_'.$this->get("fingerprints.utils")->getToken(7).'.jpg';
+        $filename = "employee_".$clockin->getEmploye()->getEmployeeCcid()."_".time().'_'.$this->get("fingerprints.utils")->getToken(7).'.jpg';
 
         // create a new file
         $filename = $this->base64_to_jpeg($resp['pic'], $filename, $this->getParameter('onregisterpics').DIRECTORY_SEPARATOR);
@@ -671,9 +671,9 @@ class MachineSysController extends BaseController
                 'id' => $id++,
                 'do' => 'update',
                 'data' => "user",
-                'ccid' => $e->getId(),
+                'ccid' => $e->getEmployeeCcid(),
                 'name' => $e->getMiddleName().' '.$e->getSurname(),
-                'passwd' => md5("555"),
+                'passwd' => $e->getPassword(),
                 'deptid' => $e->getDepartement()->getId(),
                 'auth' => $e->getAuth(),
                 'faceexist' => 0
@@ -720,7 +720,7 @@ class MachineSysController extends BaseController
                 'id' => $id++,
                 'do' => 'update',
                 'data' => 'fingerprint',
-                'ccid' => $employee->getId(),
+                'ccid' => $employee->getEmployeeCcid(),
                 'fingerprint' => $fingerprints
             ];
 
@@ -776,7 +776,7 @@ class MachineSysController extends BaseController
                 'id' => $id++,
                 'do' => 'update',
                 'data' => "headpic",
-                'ccid' => $employee->getId(),
+                'ccid' => $employee->getEmployeeCcid(),
                 'headpic' => $this->base64__($this->getParameter('user_profile_pictures').DIRECTORY_SEPARATOR.$employee->getPicture())
             ];
             array_push($res, $tmp);
@@ -807,9 +807,20 @@ class MachineSysController extends BaseController
         $res = [];
         $empl = $this->EmployeeRepo()->findAll();
         foreach ($empl as &$e) {
-            array_push($res, $e->getId());
+            array_push($res, $e->getEmployeeCcid());
         }
         return $res;
+    }
+
+
+    /**
+     * @Route("/testing",name="good_one")
+     * @Method("GET")
+     */
+    public function testingAction (Request $request) {
+
+
+        echo "good one ". md5('555'); exit;
     }
 
 
