@@ -141,10 +141,9 @@ class Employe implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="fingerprints", type="string")
-     * @Assert\NotBlank()
+     * @ORM\Column(name="fingerprints", type="string", nullable=true)
      */
-    private $fingerprints = array();
+    private $fingerprints;
 
     /**
      * @var int
@@ -196,7 +195,6 @@ class Employe implements UserInterface
     {
         $this->setUsername("user");
         $this->setRoles(array("ROLE_USER"));
-        $this->setFingerprints(array("ROLE_USER"));
         $this->setAuth(0);
     }
     // Getters and Setters
