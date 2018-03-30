@@ -46,6 +46,7 @@ class EmployeController extends Controller {
         $employe->setCreateDate(new \DateTime());
         $employe->setEmployeeCcid(10000);
         $employe->setPassword("5555");
+        $employe->setPicture($this->getDefaultPicture());
         //$employe->setGodfatherCcid($this->getUser()->getId());
         $employe->setGodfatherCcid(0);
 
@@ -92,6 +93,9 @@ class EmployeController extends Controller {
 
 
                 $file = $employe->getPicture();
+                if ($file == null) {
+                    $employe->setPicture($this->getDefaultPicture());
+                }
 
                 if(isset($file) && !empty($file)){
                     // Generate a unique name for the file before saving it
@@ -115,7 +119,8 @@ class EmployeController extends Controller {
 
                 if(isset($file) && !empty($file)) {
                     $fileName = $employe->getEmployeeCcid().'.'.$file->guessExtension();
-                    $file->move('uploads/img', $fileName);
+                    $user_profile_pictures = $this->getParameter("user_profile_pictures");
+                    $file->move($user_profile_pictures, $fileName);
 
                     $employe->setPicture($employe->getEmployeeCcid().'.'.$file_extension);
                 }
@@ -341,5 +346,11 @@ class EmployeController extends Controller {
         }
 
         return $tab;
+    }
+
+    private function getDefaultPicture()
+    {
+        $employee_default_pic = $this->getParameter('web_dir').DIRECTORY_SEPARATOR."img/default-profile.png";
+        return $employee_default_pic;
     }
 }
