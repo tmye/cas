@@ -277,6 +277,17 @@
                             alert("Erreur");
                         }
                     });
+                    $.ajax({
+                        url: "{{ path('syncPubCoverByDep') }}",
+                        type: "POST",
+                        data: {"deps":dep},
+                        success: function(data) {
+                            alert(data);
+                        },
+                        error: function() {
+                            alert("Erreur");
+                        }
+                    });
                 });
 
 
@@ -308,6 +319,17 @@
                         processData: false,
                         success: function(data) {
                             //console.log(data);
+                            alert(data);
+                        },
+                        error: function() {
+                            alert("Erreur");
+                        }
+                    });
+                    $.ajax({
+                        url: "{{ path('syncPubCoverByMac') }}",
+                        type: "POST",
+                        data: {"mac":mac},
+                        success: function(data) {
                             alert(data);
                         },
                         error: function() {
