@@ -41,6 +41,10 @@ class DefaultController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $devices = $this->getDoctrine()->getManager()->getRepository("TmyeDeviceBundle:DevicePubPic")->findAll();
+
+        $data = $request->request->get("data");
+        $tab = $request->request->get("tab");
+
         foreach ($devices as $dev){
             if(isset($_FILES["first_image_input_1"]["name"]) && !empty($_FILES["first_image_input_1"]["name"])){
                 $dev->setImage1($_FILES["first_image_input_1"]["name"]);
@@ -62,7 +66,8 @@ class DefaultController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $tabDeps = $request->request->get("deps");
+        $tabDeps = $_POST["deps"];
+        echo "Eben";
         $tab = $this->returnMachinesForSelectedDeps($tabDeps);
         // Pour éviter la duplication des données
         $len = sizeof($tab);

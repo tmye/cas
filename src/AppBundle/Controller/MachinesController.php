@@ -190,6 +190,7 @@ class MachinesController extends Controller
             // Anciennes données
         $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
         //print_r($donnees);
+        $found = 0;
         $i = 0;
         echo "\nlength : ".$len;
 
@@ -293,6 +294,7 @@ class MachinesController extends Controller
         $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
         //print_r($donnees);
         $i = 0;
+        $found = 0;
         echo "\nlength : ".$len;
 
         if($len >= 2){
@@ -395,6 +397,7 @@ class MachinesController extends Controller
         $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
         //print_r($donnees);
         $i = 0;
+        $found = 0;
         echo "\nlength : ".$len;
 
         if($len >= 2){
@@ -496,6 +499,7 @@ class MachinesController extends Controller
         // Anciennes données
         $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
         //print_r($donnees);
+        $found = 0;
         $i = 0;
         echo "\nlength : ".$len;
 
@@ -646,6 +650,7 @@ class MachinesController extends Controller
         // Anciennes données
         $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
         //print_r($donnees);
+        $found = 0;
         $i = 0;
         echo "\nlength : ".$len;
 
@@ -800,6 +805,7 @@ class MachinesController extends Controller
         // Anciennes données
         $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
         //print_r($donnees);
+        $found = 0;
         $i = 0;
         echo "\nlength : ".$len;
 
