@@ -190,6 +190,7 @@ class MachinesController extends Controller
             // Anciennes données
         $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
         //print_r($donnees);
+        $found = 0;
         $i = 0;
         echo "\nlength : ".$len;
 
@@ -293,6 +294,7 @@ class MachinesController extends Controller
         $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
         //print_r($donnees);
         $i = 0;
+        $found = 0;
         echo "\nlength : ".$len;
 
         if($len >= 2){
@@ -395,6 +397,7 @@ class MachinesController extends Controller
         $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
         //print_r($donnees);
         $i = 0;
+        $found = 0;
         echo "\nlength : ".$len;
 
         if($len >= 2){
@@ -496,6 +499,7 @@ class MachinesController extends Controller
         // Anciennes données
         $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
         //print_r($donnees);
+        $found = 0;
         $i = 0;
         echo "\nlength : ".$len;
 
@@ -646,6 +650,7 @@ class MachinesController extends Controller
         // Anciennes données
         $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
         //print_r($donnees);
+        $found = 0;
         $i = 0;
         echo "\nlength : ".$len;
 
@@ -800,6 +805,7 @@ class MachinesController extends Controller
         // Anciennes données
         $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
         //print_r($donnees);
+        $found = 0;
         $i = 0;
         echo "\nlength : ".$len;
 
@@ -883,5 +889,259 @@ class MachinesController extends Controller
         }else{
             echo "Je ne rentre jamais dedans";
         }
+    }
+
+    /**
+     * @Route("/syncPubCoverAll",name="syncPubCoverAll")
+     */
+    public function syncPubCoverAllAction(Request $request)
+    {
+
+        $em = $this->getDoctrine()->getManager();
+
+        $tabDeps = $request->request->get("deps");
+        $tab = $this->returnMachinesForSelectedDeps($tabDeps);
+        // Pour éviter la duplication des données
+        $len = sizeof($tab);
+
+        // Variables d'élimination de doublons
+        // Anciennes données
+        $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
+        //print_r($donnees);
+        $found = 0;
+        $i = 0;
+        echo "\nlength : ".$len;
+
+        if($len >= 2){
+            echo "\nJe suis dans le premier cas";
+            $finalTab = $tab[0];
+            for($cpt=0;$cpt<$len;$cpt++){
+                foreach ($tab[$cpt] as $t){
+                    if (!in_array($t,$tab[0],true)){
+                        array_push($finalTab,$t);
+                    }
+                }
+            }
+
+            print_r($finalTab);
+
+            /*
+             * On persiste les éléments en fonction du cas
+             * Mais bien en avant ça, on vérifie s'il n'ya pas
+             * déjà ces memes données dans la table.
+            */
+
+
+            foreach ($finalTab as $mac){
+                $found = 0;
+                echo "\n J'arrive meme ici et le found est : ".$found;
+                while($found == 0 && $i < sizeof($donnees)){
+                    echo "\n size of donnees =: ".sizeof($donnees);
+                    echo "\n isActive =: ".$donnees[$i]->getIsactive();
+                    echo ("Comparaison : ".$donnees[$i]->getDeviceId()." vs ".$mac);
+                    if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="pub" && $donnees[$i]->getIsactive()==1){
+                        $found = 1;
+                    }else{
+                        echo "\n not found";
+                    }
+                    //$session->getFlashBag()->add('passage : ',$donnees[$i]->getDeviceId());
+                    $i++;
+                }
+                echo "\n Found = :".$found;
+                if ($found == 0){
+                    $updateE = new UpdateEntity();
+                    $updateE->setDeviceId($mac);
+                    $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
+                    $updateE->setIsactive(true);
+                    $updateE->setType("pub");
+                    $updateE->setContent("");
+
+                    $em->persist($updateE);
+                    $em->flush();
+                }
+            }
+            //return new Response(json_encode($finalTab));
+            return new Response("OK");
+        }elseif($len == 1){
+            echo "Je suis dans le dernier cas";
+            // On persiste les éléments en fonction du cas
+            foreach ($tab[0] as $mac){
+                while($found == 0 && $i < sizeof($donnees)){
+                    if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="pub" && $donnees[$i]->getIsactive()==1){
+                        $found = 1;
+                    }
+                    //$session->getFlashBag()->add('passage : ',$donnees[$i]->getDeviceId());
+                    $i++;
+                }
+                echo "Found2 = :".$found;
+                if ($found == 0){
+                    $updateE = new UpdateEntity();
+                    $updateE->setDeviceId($mac);
+                    $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
+                    $updateE->setIsactive(true);
+                    $updateE->setType("pub");
+                    $updateE->setContent("");
+
+                    $em->persist($updateE);
+                    $em->flush();
+                }
+            }
+
+            //return new Response(json_encode($tab));
+            return new Response("OK pour le second cas");
+        }else{
+            echo "Je ne rentre jamais dedans";
+        }
+    }
+
+    /**
+     * @Route("/syncPubCoverByDep",name="syncPubCoverByDep")
+     */
+    public function syncPubCoverByDepAction(Request $request)
+    {
+
+        $em = $this->getDoctrine()->getManager();
+
+        $tabDeps = $request->request->get("deps");
+        $tab = $this->returnMachinesForSelectedDeps($tabDeps);
+        // Pour éviter la duplication des données
+        $len = sizeof($tab);
+
+        // Variables d'élimination de doublons
+        // Anciennes données
+        $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
+        //print_r($donnees);
+        $found = 0;
+        $i = 0;
+        echo "\nlength : ".$len;
+
+        if($len >= 2){
+            echo "\nJe suis dans le premier cas";
+            $finalTab = $tab[0];
+            for($cpt=0;$cpt<$len;$cpt++){
+                foreach ($tab[$cpt] as $t){
+                    if (!in_array($t,$tab[0],true)){
+                        array_push($finalTab,$t);
+                    }
+                }
+            }
+
+            print_r($finalTab);
+
+            /*
+             * On persiste les éléments en fonction du cas
+             * Mais bien en avant ça, on vérifie s'il n'ya pas
+             * déjà ces memes données dans la table.
+            */
+
+
+            foreach ($finalTab as $mac){
+                $found = 0;
+                echo "\n J'arrive meme ici et le found est : ".$found;
+                while($found == 0 && $i < sizeof($donnees)){
+                    echo "\n size of donnees =: ".sizeof($donnees);
+                    echo "\n isActive =: ".$donnees[$i]->getIsactive();
+                    echo ("Comparaison : ".$donnees[$i]->getDeviceId()." vs ".$mac);
+                    if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="pub" && $donnees[$i]->getIsactive()==1){
+                        $found = 1;
+                    }else{
+                        echo "\n not found";
+                    }
+                    //$session->getFlashBag()->add('passage : ',$donnees[$i]->getDeviceId());
+                    $i++;
+                }
+                echo "\n Found = :".$found;
+                if ($found == 0){
+                    $updateE = new UpdateEntity();
+                    $updateE->setDeviceId($mac);
+                    $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
+                    $updateE->setIsactive(true);
+                    $updateE->setType("pub");
+                    $updateE->setContent("");
+
+                    $em->persist($updateE);
+                    $em->flush();
+                }
+            }
+            //return new Response(json_encode($finalTab));
+            return new Response("OK");
+        }elseif($len == 1){
+            echo "Je suis dans le dernier cas";
+            // On persiste les éléments en fonction du cas
+            foreach ($tab[0] as $mac){
+                while($found == 0 && $i < sizeof($donnees)){
+                    if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="pub" && $donnees[$i]->getIsactive()==1){
+                        $found = 1;
+                    }
+                    //$session->getFlashBag()->add('passage : ',$donnees[$i]->getDeviceId());
+                    $i++;
+                }
+                echo "Found2 = :".$found;
+                if ($found == 0){
+                    $updateE = new UpdateEntity();
+                    $updateE->setDeviceId($mac);
+                    $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
+                    $updateE->setIsactive(true);
+                    $updateE->setType("pub");
+                    $updateE->setContent("");
+
+                    $em->persist($updateE);
+                    $em->flush();
+                }
+            }
+
+            //return new Response(json_encode($tab));
+            return new Response("OK pour le second cas");
+        }else{
+            echo "Je ne rentre jamais dedans";
+        }
+    }
+
+    /**
+     * @Route("/syncPubCoverByMac",name="syncPubCoverByMac")
+     */
+    public function syncPubCoverByMacAction(Request $request)
+    {
+
+        $em = $this->getDoctrine()->getManager();
+
+        $mac = $request->request->get("mac");
+        echo "Mac : ".$mac;
+
+        // Variables d'élimination de doublons
+        // Anciennes données
+        $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
+        //print_r($donnees);
+        $found = 0;
+        $i = 0;
+
+
+        /*
+         * On persiste les éléments en fonction du cas
+         * Mais bien en avant ça, on vérifie s'il n'ya pas
+         * déjà ces memes données dans la table.
+         */
+
+        while($found == 0 && $i < sizeof($donnees)){
+            if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="pub" && $donnees[$i]->getIsactive()==1){
+                $found = 1;
+            }
+            //$session->getFlashBag()->add('passage : ',$donnees[$i]->getDeviceId());
+            $i++;
+        }
+        echo "\n Found = :".$found;
+        if ($found == 0){
+            $updateE = new UpdateEntity();
+            $updateE->setDeviceId($mac);
+            $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
+            $updateE->setIsactive(true);
+            $updateE->setType("pub");
+            $updateE->setContent("");
+
+            $em->persist($updateE);
+            $em->flush();
+        }
+        //return new Response(json_encode($finalTab));
+        return new Response("OK");
     }
 }
