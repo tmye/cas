@@ -33,9 +33,13 @@ class MachineSysController extends BaseController
         $sn = trim($request->query->get("sn"));
         $all = $this->UpdateEntityRepo()->findBy(
             ['deviceId' => $sn ],
-            ['id' => 'ASC']
+            ['id' => 'ASC'],
+            ['type' => 'DESC']
         );
 
+        /*
+            group updateEntites by update types and give a priority to the type clean
+         */
         $res['status'] = 1;
         $res['info'] = 'ok';
         $res['data'] = [];
@@ -69,7 +73,6 @@ class MachineSysController extends BaseController
                     $tmp = $this->getPubSetupContent(intval($tmp['index']));
                     $tmp['id'] = $item->getId();
                     array_push($res['data'], $tmp);
-//                    break;
                 }
             }
             if ($item->getType() == "dept") {
@@ -116,7 +119,7 @@ class MachineSysController extends BaseController
                     break;
                 }
             }
-            if ($item->getType() == "doclean") {
+            if ($item->getType() == "1doclean") {
                 if ($item != null) {
                     $tmp = [
                         'id' => $item->getId(),
@@ -147,10 +150,10 @@ class MachineSysController extends BaseController
     public function unixTimeSetupAction (Request $request) {
 
         $sn = $request->query->get("sn");
-        $all = $this->UpdateEntityRepo()->findBy([
-            'deviceId' => $sn,
-            'type' => 'time'
-        ]);
+        /*$all = $this->UpdateEntityRepo()->findBy([
+              'deviceId' => $sn,
+              'type' => 'time'
+          ]);*/
         $res['status'] = 1;
         $res['info'] = 'ok';
         $res['data']["timezone"] = "UTC";
@@ -391,11 +394,14 @@ class MachineSysController extends BaseController
      * @Method("GET")
      */
     public function doCleanSys (Request $request) {
+
+
+        /* clean all the machines on the system */
         $machines = $this->MachineRepo()->findAll();
         foreach ($machines as &$machine) {
 
             $up = new UpdateEntity();
-            $up->setType("doclean"); // profile pictures
+            $up->setType("1doclean"); // profile pictures
             $up->setDeviceId($machine->getDeviceId());
             $up->setContent("");
             $this->persist($up);
@@ -585,12 +591,6 @@ class MachineSysController extends BaseController
         ];
         if ($id == 3)
             return $pic_slide_3;
-
-//        $res = [];
-//        array_push($res, $pic_slide_1);
-//        array_push($res, $pic_slide_2);
-//        array_push($res, $pic_slide_3);
-//        return $res;
     }
 
     private function getCompanyName()
@@ -614,6 +614,7 @@ class MachineSysController extends BaseController
         ];
         return $tmp;
     }
+
 
     /**
      * @return array of all departements
@@ -649,6 +650,7 @@ class MachineSysController extends BaseController
     private function getAllUsers($id)
     {
         /*{
+
     "id": "1001",
     "do": "update",
     "data": "user",
@@ -659,7 +661,8 @@ class MachineSysController extends BaseController
     "deptid": 11,
     "auth": 0,
     "faceexist": 0
-}*/
+
+        }*/
 
         $res = [];
         $empl = $this->EmployeeRepo()->findAll();
@@ -671,7 +674,7 @@ class MachineSysController extends BaseController
                 'ccid' => $e->getId(),
                 'name' => $e->getMiddleName().' '.$e->getSurname(),
                 'passwd' => md5("555"),
-                'deptid' => $e->getDepartementId(),
+                'deptid' => $e->getDepartement()->getId(),
                 'auth' => $e->getAuth(),
                 'faceexist' => 0
             ];
@@ -697,12 +700,13 @@ class MachineSysController extends BaseController
 
             $fingerprints = ["",""];
 
-            $fg = json_decode($employee->getFingerprints());
+            $fg =  json_decode($employee->getFingerprints());
 
             if ($fg[0] != "")
                 $fingerprints[0] = $this->base64__($fg[0], "f") ;
             else
             {}
+
 
             if ($fg[1] != "")
                 $fingerprints[1] = $this->base64__($fg[1], "f") ;
