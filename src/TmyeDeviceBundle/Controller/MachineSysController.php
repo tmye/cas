@@ -702,8 +702,11 @@ class MachineSysController extends BaseController
 
             $fg =  json_decode($employee->getFingerprints());
 
-            if ($fg[0] != "")
-                $fingerprints[0] = $this->base64__($fg[0], "f") ;
+            $this->info($fg[0]);
+
+            if ($fg[0] != "") {
+                $fingerprints[0] = $this->base64__($fg[0], "f");
+            }
             else
             {}
 

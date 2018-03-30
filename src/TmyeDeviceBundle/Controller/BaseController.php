@@ -42,9 +42,9 @@ class BaseController extends Controller
 
     protected function serialize($data)
     {
-       /* return $this->container->get('jms_serializer')
-            ->serialize($data, 'json');*/
-       return json_encode($data);
+        /* return $this->container->get('jms_serializer')
+             ->serialize($data, 'json');*/
+        return json_encode($data);
     }
 
     protected function deserialize($data)
@@ -78,7 +78,8 @@ class BaseController extends Controller
     protected function base64__($pathtopic, $type = "")
     {
 
-        $path = __DIR__ . DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR . $pathtopic;
+        $rootWebDir = $this->getParameter('web_dir');
+        $path = $rootWebDir . DIRECTORY_SEPARATOR . $pathtopic;
         if (file_exists($path) && !is_dir($path)) {
             $data = file_get_contents($path);
         } else {
@@ -91,6 +92,7 @@ class BaseController extends Controller
 
         $base64 = /*'data:image/' . $type . ';base64,' . */
             base64_encode($data);
+
         return $base64;
     }
 
