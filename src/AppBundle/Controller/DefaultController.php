@@ -129,7 +129,7 @@ class DefaultController extends Controller
 
         // Juste pour le débogage
         $t = array();
-        foreach ($devices as $de){
+        foreach ($devices as $de) {
             $t[] = $de->getId();
         }
 
