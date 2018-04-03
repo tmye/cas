@@ -12,7 +12,12 @@ use Doctrine\ORM\EntityRepository;
  */
 class EmployeRepository extends EntityRepository
 {
+    public function employeeByDep($depId){
+        $queryBuilder = $this->createQueryBuilder('e');
+        $queryBuilder->where('e.departement = :depId')->setParameter('depId',$depId);
 
+        return $queryBuilder->getQuery()->getResult();
+    }
 
     public function employeeSafe(){
         $queryBuilder = $this->createQueryBuilder('e');

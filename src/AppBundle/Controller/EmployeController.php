@@ -294,6 +294,7 @@ class EmployeController extends Controller {
             $tempTab["salary"] = $e->getSalary();
             $tempTab["contact"] = $e->getContact();
             $tempTab["adress"] = $e->getAdress();
+            $tempTab["fingerprint"] = $e->getFingerprints();
             $tempTab["hireDate"] = $e->getHireDate()->format('d-m-Y');
             $tempTab["dep"] = $e->getDepartement()->getId();
             $tempTab["picPath"] = $e->getPicture();

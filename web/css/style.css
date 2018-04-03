@@ -20,6 +20,16 @@ input
 {
     margin: 0px !important;
 }
+
+.collapsible-body-perso
+{
+    background-color: #172D44 !important;
+}
+.collapsible-body-perso a
+{
+    color: #fff;
+}
+
 /*
 * Style des pages
 */
@@ -224,12 +234,13 @@ html
 .icons
 {
     text-align: center;
-    background-color: rgba(128,132,133,0.69);
+    /*background-color: rgba(128,132,133,0.69);*/
+    background-color: teal;
     color: #fff;
-    padding: 2px;
-    width: 22px;
-    height: 22px;
-    border-radius: 5px;
+    padding: 5px;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
 }
 .h5_title
 {

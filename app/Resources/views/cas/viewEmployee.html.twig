@@ -36,7 +36,7 @@
                                                 <th>Salaire</th>
                                                 <th>Téléphone</th>
                                                 <th>Adresse</th>
-                                                <th>Date d'emploi</th>
+                                                <th>Empreintes</th>
                                                 <th>Edit</th>
                                             </tr>
                                             </thead>
@@ -95,7 +95,7 @@
                                         "<td>"+data[i].salary+"</td>" +
                                         "<td>"+data[i].contact+"</td>" +
                                         "<td>"+data[i].adress+"</td>" +
-                                        "<td>"+data[i].hireDate+"</td>" +
+                                        "<td>"+data[i].fingerprint+"</td>" +
                                         "<td><a href=\"editEmployee/"+data[i].id+"\"><button class=\"white-text blue simple-button-decoration\"><span class=\"fa fa-pencil-alt\"></span></button></a> <button class=\"white-text red simple-button-decoration\" onclick=\"demander("+data[i].id+")\"><span class=\"fa fa-trash\"></span></button></td>" +
                                         "</tr>"
                                     );

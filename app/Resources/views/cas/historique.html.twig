@@ -132,6 +132,15 @@
                             data: {id:$("#selectedDep").val(),date:$("#selectedDate").val()},
                             timeout: 0,
                             success: function(data) {
+                                console.log(data);
+                                // S'il n'y a aucun employé
+                                if(data == "null"){
+                                    $("#rowsContainer").append("" +
+                                        "<tr>" +
+                                        "<td colspan='9' class='center'><span>Aucun employé pour ce département</span></td>" +
+                                        "</tr>"
+                                    );
+                                }
                                 var res = JSON.parse(data.content);
                                 //alert(res.clockinRecord.length);
                                 //alert(data.content);

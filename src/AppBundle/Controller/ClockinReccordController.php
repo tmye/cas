@@ -376,36 +376,44 @@ class ClockinReccordController extends Controller
         $dISupD = $dSenceD+1800;
 
 
+        $dataTable = array();
+
         // On récupère les données appartenant au département sélectionné
 
         $don = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->history($dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
-        $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
-        foreach ($emp as $e){
-            $empTab[]=$e->getId();
+        $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($dep);
+
+
+        if(sizeof($emp)>0){
+            foreach ($emp as $e){
+                $empTab[]=$e->getId();
+            }
+
+            /*
+             * Maintenant il faut éliminer les doublons
+             */
+
+
+            $tabFinal = $this->elimineDoublon($don, $request);
+            $tabLength = sizeof($tabFinal);
+
+
+            // Toujours des echo de débogage
+            //print('Au total après le filtre de date : '.$j.'<br>');
+            //print('Au total dans le département: '.$i);
+
+            $encoders = array(new XmlEncoder(), new JsonEncoder());
+            $normalizers = array(new ObjectNormalizer());
+
+            $serializer = new Serializer($normalizers, $encoders);
+
+            $jsonContent = $serializer->serialize(['clockinRecord' => $tabFinal],'json');
+
+            $content = array("content"=>$jsonContent,"tabLength"=>$tabLength,"emp"=>$empTab);
+            return new JsonResponse($content);
+        }else{
+            return new Response("null");
         }
-
-        /*
-         * Maintenant il faut éliminer les doublons
-         */
-
-
-        $tabFinal = $this->elimineDoublon($don, $request);
-        $tabLength = sizeof($tabFinal);
-
-
-        // Toujours des echo de débogage
-        //print('Au total après le filtre de date : '.$j.'<br>');
-        //print('Au total dans le département: '.$i);
-
-        $encoders = array(new XmlEncoder(), new JsonEncoder());
-        $normalizers = array(new ObjectNormalizer());
-
-        $serializer = new Serializer($normalizers, $encoders);
-
-        $jsonContent = $serializer->serialize(['clockinRecord' => $tabFinal],'json');
-
-        $content = array("content"=>$jsonContent,"tabLength"=>$tabLength,"emp"=>$empTab);
-        return new JsonResponse($content);
     }
 
     /**

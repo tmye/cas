@@ -742,7 +742,7 @@ class MachineSysController extends BaseController
         $fingerprints = $resp['fingerprint'];
 
         // get employee
-        $employee = $this->EmployeeRepo()->find($resp['ccid']);
+        $employee = $this->EmployeeRepo()->findOneByEmployeeCcid($resp['ccid']);
 
         if ($employee == null)
             return;
@@ -788,7 +788,7 @@ class MachineSysController extends BaseController
 
         $profilePicture = $resp["headpic"];
         // get employee
-        $employee = $this->EmployeeRepo()->find($resp['ccid']);
+        $employee = $this->EmployeeRepo()->findOneByEmployeeCcid($resp['ccid']);
         if ($employee == null)
             return;
 
