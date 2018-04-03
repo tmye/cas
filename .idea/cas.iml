@@ -43,6 +43,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
 <<<<<<< HEAD
+<<<<<<< HEAD
       <library name="PHP" type="php">
         <CLASSES>
           <root url="file://$MODULE_DIR$/vendor/composer" />
@@ -116,12 +117,17 @@
           <root url="file://$MODULE_DIR$/vendor/symfony/symfony" />
           <root url="file://$MODULE_DIR$/vendor/twig/twig" />
 =======
+=======
+>>>>>>> 0bf00b859ca6a7d347a68f2be7d736a13c233c20
       <library name="PHP Runtime" type="php">
         <CLASSES>
           <root url="jar://$APPLICATION_HOME_DIR$/plugins/php/lib/php.jar!/stubs/standard" />
         </CLASSES>
         <SOURCES>
           <root url="jar://$APPLICATION_HOME_DIR$/plugins/php/lib/php.jar!/stubs/standard" />
+<<<<<<< HEAD
+>>>>>>> 0bf00b859ca6a7d347a68f2be7d736a13c233c20
+=======
 >>>>>>> 0bf00b859ca6a7d347a68f2be7d736a13c233c20
         </SOURCES>
       </library>
