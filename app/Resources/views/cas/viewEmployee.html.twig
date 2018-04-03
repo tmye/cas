@@ -78,6 +78,13 @@
                             /* On récupère le département sélectionné */
                             var selectedDep = $("#depSelect").val();
                             for(var i=0;i<data.length;i++){
+                                if(data[i].fingerprint != null){
+                                    console.log(data[i].fingerprint);
+                                    var fp = JSON.parse(data[i].fingerprint);
+                                    console.log("length : "+fp.length);
+                                }else{
+                                    alert("Cest nul");
+                                }
                                 //alert("L'id dep est "+res.employees[i].departement.id);
                                 /* On vérifie si oui ou nom cet employé appartient au département
                                  * Si oui on l'affiche
