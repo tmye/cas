@@ -19,9 +19,10 @@
 /.idea/*
 /.idea
 .idea
-.idea/*
+!/.idea/*
 .idea/cas.iml
-/.idea/cas.iml
+!/.idea/cas.iml
+
 
 /web/fingerprints/*
 /web/onregisterpics/*
