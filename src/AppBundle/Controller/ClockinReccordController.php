@@ -17,6 +17,9 @@ use Symfony\Component\Serializer\Serializer;
 
 class ClockinReccordController extends Controller
 {
+
+    static $min_laps = 120;
+
     /**
      * @Route("/test", name="test")
      */
@@ -43,6 +46,7 @@ class ClockinReccordController extends Controller
         */
         return new Response(strtotime("17 March 2018 17:29:00"));
     }
+
 
     /**
      * @Route("/randomClockinRecord", name="randomClockinRecord")
@@ -113,6 +117,8 @@ class ClockinReccordController extends Controller
      * ou false sinon
     */
     public function arrive(ClockinRecord $cR,$request){
+
+         // 30min
         $heureDebutNormal = "6:30:00";
         $heureFinNormal = "17:30:00";
         $dep = $request->request->get('id');
@@ -128,17 +134,17 @@ class ClockinReccordController extends Controller
         $dSenceA = $dd;
         $dSenceD = $df;
         // Borne inférieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
-        $hIInfA = $hSenceA-1800;
-        $hIInfD = $hSenceD-1800;
+        $hIInfA = $hSenceA- (ClockinReccordController::$min_laps * 60);
+        $hIInfD = $hSenceD- (ClockinReccordController::$min_laps * 60);
 
-        $dIInfA = $dSenceA-1800;
-        $dIInfD = $dSenceD-1800;
+        $dIInfA = $dSenceA- (ClockinReccordController::$min_laps * 60);
+        $dIInfD = $dSenceD- (ClockinReccordController::$min_laps * 60);
         // Borne superieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
-        $hISupA = $hSenceA+1800;
-        $dISupA = $dSenceA+1800;
+        $hISupA = $hSenceA+ (ClockinReccordController::$min_laps * 60);
+        $dISupA = $dSenceA+ (ClockinReccordController::$min_laps * 60);
 
-        $hISupD = $hSenceD+1800;
-        $dISupD = $dSenceD+1800;
+        $hISupD = $hSenceD+ (ClockinReccordController::$min_laps * 60);
+        $dISupD = $dSenceD+ (ClockinReccordController::$min_laps * 60);
 
         //echo "<br>test : ".strtotime("14 February 2018 6:25:00");
 
@@ -150,6 +156,8 @@ class ClockinReccordController extends Controller
     }
 
     public function pause(ClockinRecord $cR,$request){
+
+         // 30min
         $heureDebutNormal = "12:00:00";
         $heureFinNormal = "14:00:00";
         $dep = $request->request->get('id');
@@ -165,17 +173,17 @@ class ClockinReccordController extends Controller
         $dSenceA = $dd;
         $dSenceD = $df;
         // Borne inférieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
-        $hIInfA = $hSenceA-1800;
-        $hIInfD = $hSenceD-1800;
+        $hIInfA = $hSenceA- (ClockinReccordController::$min_laps * 60);
+        $hIInfD = $hSenceD- (ClockinReccordController::$min_laps * 60);
 
-        $dIInfA = $dSenceA-1800;
-        $dIInfD = $dSenceD-1800;
+        $dIInfA = $dSenceA- (ClockinReccordController::$min_laps * 60);
+        $dIInfD = $dSenceD- (ClockinReccordController::$min_laps * 60);
         // Borne superieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
-        $hISupA = $hSenceA+1800;
-        $dISupA = $dSenceA+1800;
+        $hISupA = $hSenceA+ (ClockinReccordController::$min_laps * 60);
+        $dISupA = $dSenceA+ (ClockinReccordController::$min_laps * 60);
 
-        $hISupD = $hSenceD+1800;
-        $dISupD = $dSenceD+1800;
+        $hISupD = $hSenceD+ (ClockinReccordController::$min_laps * 60);
+        $dISupD = $dSenceD+ (ClockinReccordController::$min_laps * 60);
 
         if($dIInfA <= $cR->getClockinTime() && $cR->getClockinTime() <= $dISupA){
             return true;
@@ -184,6 +192,8 @@ class ClockinReccordController extends Controller
         }
     }
     public function finPause(ClockinRecord $cR,$request){
+
+         // 30min
         $heureDebutNormal = "12:00:00";
         $heureFinNormal = "14:00:00";
         $dep = $request->request->get('id');
@@ -199,17 +209,17 @@ class ClockinReccordController extends Controller
         $dSenceA = $dd;
         $dSenceD = $df;
         // Borne inférieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
-        $hIInfA = $hSenceA-1800;
-        $hIInfD = $hSenceD-1800;
+        $hIInfA = $hSenceA- (ClockinReccordController::$min_laps * 60);
+        $hIInfD = $hSenceD- (ClockinReccordController::$min_laps * 60);
 
-        $dIInfA = $dSenceA-1800;
-        $dIInfD = $dSenceD-1800;
+        $dIInfA = $dSenceA- (ClockinReccordController::$min_laps * 60);
+        $dIInfD = $dSenceD- (ClockinReccordController::$min_laps * 60);
         // Borne superieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
-        $hISupA = $hSenceA+1800;
-        $dISupA = $dSenceA+1800;
+        $hISupA = $hSenceA+ (ClockinReccordController::$min_laps * 60);
+        $dISupA = $dSenceA+ (ClockinReccordController::$min_laps * 60);
 
-        $hISupD = $hSenceD+1800;
-        $dISupD = $dSenceD+1800;
+        $hISupD = $hSenceD+ (ClockinReccordController::$min_laps * 60);
+        $dISupD = $dSenceD+ (ClockinReccordController::$min_laps * 60);
 
         if($dIInfD <= $cR->getClockinTime() && $cR->getClockinTime() <= $dISupD){
             return true;
@@ -220,6 +230,8 @@ class ClockinReccordController extends Controller
 
     /* Fonction qui permet de créer des entrées dans le nouveau tableau */
     public function createEntry(Request $request,$recordTab,ClockinRecord $c){
+
+         // 30min
         if($this->arrive($c,$request)){
             $nom = $c->getEmploye()->getLastName();
             $prenom = $c->getEmploye()->getSurname();
@@ -268,6 +280,8 @@ class ClockinReccordController extends Controller
 
     /* Fonction qui permet de tester si un clockinTime est plus récent */
     public function plusRecent($recordTab,ClockinRecord $c){
+
+         // 30min
         if($c->getClockinTime() < $recordTab[$c->getEmploye()->getId()]["arrive"] ){
             return true;
         }else{
@@ -337,6 +351,9 @@ class ClockinReccordController extends Controller
      */
     public function findHistoriqueAction(Request $request)
     {
+
+         // 30min
+
         $heureDebutNormal = "6:30:00";
         $heureDebutPauseNormal = "12:00:00";
         $heureFinNormal = "17:30:00";
@@ -363,17 +380,17 @@ class ClockinReccordController extends Controller
         $dSenceD = $df;
 
 
-        $dIInfA = $dSenceA-1800;
-        $dIInfPD = $dSencePD-1800;
-        $dIInfD = $dSenceD-1800;
-        $dIInfPF = $dSencePF-1800;
+        $dIInfA = $dSenceA- (ClockinReccordController::$min_laps * 60);
+        $dIInfPD = $dSencePD- (ClockinReccordController::$min_laps * 60);
+        $dIInfD = $dSenceD- (ClockinReccordController::$min_laps * 60);
+        $dIInfPF = $dSencePF- (ClockinReccordController::$min_laps * 60);
         // Borne superieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
-        $dISupA = $dSenceA+1800;
-        $dISupPD = $dSencePD+1800;
-        $dISupPF = $dSencePF+1800;
+        $dISupA = $dSenceA+ (ClockinReccordController::$min_laps * 60);
+        $dISupPD = $dSencePD+ (ClockinReccordController::$min_laps * 60);
+        $dISupPF = $dSencePF+ (ClockinReccordController::$min_laps * 60);
 
-        $hISupD = $hSenceD+1800;
-        $dISupD = $dSenceD+1800;
+        $hISupD = $hSenceD+ (ClockinReccordController::$min_laps * 60);
+        $dISupD = $dSenceD+ (ClockinReccordController::$min_laps * 60);
 
 
         $dataTable = array();
