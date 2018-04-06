@@ -147,8 +147,6 @@
                                 var res = JSON.parse(data.content);
                                 console.log(res);
                                 console.log(res.clockinRecord[1][23].prenom);
-                                //alert(res.clockinRecord.length);
-                                //alert(data.content);
                                 var employees = [];
                                 $.each(res.clockinRecord,function (id) {
                                     employees.push(res.clockinRecord[id].id);
@@ -157,16 +155,10 @@
                                 console.log(res.clockinRecord[1][23].prenom);
                                 console.log(data.emp);
 
-                                //alert(employees);
-                                //alert(data.emp);
                                 var i=0;
                                 $.each(data.emp,function (arrayID) {
                                     i++;
                                     var empId = returnEmployeeId(arrayID,data.emp);
-                                    //alert(res.clockinRecord[arrayID][empId].id);
-                                    //alert("Element : "+data.emp[arrayID]);
-                                    //alert("Trancher : "+jQuery.inArray(data.emp[arrayID],employees));
-                                    alert(typeof (res.clockinRecord[arrayID][empId]));
                                     if(typeof (res.clockinRecord[arrayID][empId]) != "undefined"){
                                         //alert("finalement");
                                         switch (res.clockinRecord[arrayID][empId].type){

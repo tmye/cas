@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\Serializer;
 class ClockinReccordController extends Controller
 {
 
-    static $min_laps = 120;
+    static $min_laps = 180;
 
     /**
      * @Route("/test", name="test")
@@ -126,6 +126,7 @@ class ClockinReccordController extends Controller
         $empWH = json_decode($cR->getEmploye()->getWorkingHour()->getWorkingHour(),true);
         $heureDebutNormal = $empWH[$day][0]["beginHour"];
         $heureFinNormal = $empWH[$day][0]["endHour"];
+
         $dep = $request->request->get('id');
         $_date = $request->request->get('date');
 
@@ -164,6 +165,7 @@ class ClockinReccordController extends Controller
         $empWH = json_decode($cR->getEmploye()->getWorkingHour()->getWorkingHour(),true);
         $heureDebutNormal = $empWH[$day][0]["pauseBeginHour"];
         $heureFinNormal = $empWH[$day][0]["pauseEndHour"];
+
         $dep = $request->request->get('id');
         $_date = $request->request->get('date');
 
@@ -200,6 +202,7 @@ class ClockinReccordController extends Controller
         $empWH = json_decode($cR->getEmploye()->getWorkingHour()->getWorkingHour(),true);
         $heureDebutNormal = $empWH[$day][0]["pauseBeginHour"];
         $heureFinNormal = $empWH[$day][0]["pauseEndHour"];
+
         $dep = $request->request->get('id');
         $_date = $request->request->get('date');
 
@@ -283,7 +286,7 @@ class ClockinReccordController extends Controller
     /* Fonction qui permet de tester si un clockinTime est plus récent */
     public function plusRecent($recordTab,ClockinRecord $c){
 
-         // 30min
+        // 30min
         if($c->getClockinTime() < $recordTab[$c->getEmploye()->getId()]["arrive"] ){
             return true;
         }else{
@@ -361,6 +364,7 @@ class ClockinReccordController extends Controller
         $heureDebutPauseNormal = "12:00:00";
         $heureFinNormal = "17:30:00";
         $heureFinPauseNormal = "14:00:00";
+
         $dep = $request->request->get('id');
         $_date = $request->request->get('date');
         $day = date('N',strtotime($_date));
