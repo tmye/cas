@@ -146,13 +146,11 @@
                                 }
                                 var res = JSON.parse(data.content);
                                 console.log(res);
-                                console.log(res.clockinRecord[1][23].prenom);
                                 var employees = [];
                                 $.each(res.clockinRecord,function (id) {
                                     employees.push(res.clockinRecord[id].id);
                                 });
 
-                                console.log(res.clockinRecord[1][23].prenom);
                                 console.log(data.emp);
 
                                 var i=0;
