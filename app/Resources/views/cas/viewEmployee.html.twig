@@ -77,15 +77,15 @@
                             $("#rowsContainer").html("");
                             /* On récupère le département sélectionné */
                             var selectedDep = $("#depSelect").val();
-                            var arr = JSON.parse('[\"fingerprints\/employee_fingerprint23_1522427328_wO3vvK1.jpg\",\"fingerprints\/employee_fingerprint23_1522427328_BVujT46.jpg\"]');
-                            //console.log(arr);
+                            var arr = JSON.parse("[\"1\",\"jhsyts\"]");
+                            console.log(arr);
                             for(var i=0;i<data.length;i++){
                                 if(typeof (data[i].fingerprint) == "string"){
                                     //console.log(data[i].fingerprint);
                                     var str = data[i].fingerprint;
-                                    var strEscaped = str.replace(/"/g,"\\\"");
+                                    var strEscaped = str.replace(/"/g,'\"');
                                     console.log(strEscaped);
-                                    JSON.parse(strEscaped);
+                                    //JSON.parse(strEscaped);
                                 }
                                 //alert("L'id dep est "+res.employees[i].departement.id);
                                 /* On vérifie si oui ou nom cet employé appartient au département
