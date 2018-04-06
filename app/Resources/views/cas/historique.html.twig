@@ -2,7 +2,7 @@
 
 {% block body %}
     <div class="row">
-        <div class="col l9 offset-l3">
+        <div class="col l12">
             <h5>Historiques des présences</h5>
 
             <div class="row">
@@ -119,6 +119,9 @@
             }
         }
 
+        function returnEmployeeId(tabIndex,empTab) {
+            return empTab[tabIndex];
+        }
         $(function () {
             $("#historySearchButton").click(function () {
                 //alert($("#selectedDate").val());
@@ -142,6 +145,8 @@
                                     );
                                 }
                                 var res = JSON.parse(data.content);
+                                console.log(res);
+                                console.log(res.clockinRecord[1][23].prenom);
                                 //alert(res.clockinRecord.length);
                                 //alert(data.content);
                                 var employees = [];
@@ -149,72 +154,77 @@
                                     employees.push(res.clockinRecord[id].id);
                                 });
 
+                                console.log(res.clockinRecord[1][23].prenom);
+                                console.log(data.emp);
+
                                 //alert(employees);
                                 //alert(data.emp);
                                 var i=0;
                                 $.each(data.emp,function (arrayID) {
                                     i++;
-                                    //alert(res.clockinRecord[data.emp[arrayID]].id);
+                                    var empId = returnEmployeeId(arrayID,data.emp);
+                                    //alert(res.clockinRecord[arrayID][empId].id);
                                     //alert("Element : "+data.emp[arrayID]);
                                     //alert("Trancher : "+jQuery.inArray(data.emp[arrayID],employees));
-                                    if(jQuery.inArray(data.emp[arrayID],employees)!= -1){
+                                    alert(typeof (res.clockinRecord[arrayID][empId]));
+                                    if(typeof (res.clockinRecord[arrayID][empId]) != "undefined"){
                                         //alert("finalement");
-                                        switch (res.clockinRecord[data.emp[arrayID]].type){
+                                        switch (res.clockinRecord[arrayID][empId].type){
                                             case "1":
                                                 $("#rowsContainer").append("" +
                                                     "<tr>" +
-                                                    "<td>" + res.clockinRecord[data.emp[arrayID]].id + "</td>" +
-                                                    "<td>" + res.clockinRecord[data.emp[arrayID]].nom + " " + res.clockinRecord[data.emp[arrayID]].prenom + "</td>" +
-                                                    "<td>" + res.clockinRecord[data.emp[arrayID]].function + "</td>" +
-                                                    "<td>" + convertType(res.clockinRecord[data.emp[arrayID]].type) + "</td>" +
-                                                    "<td>" + res.clockinRecord[data.emp[arrayID]].quota + "</td>" +
-                                                    "<td><span class='redSpan_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[data.emp[arrayID]].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[data.emp[arrayID]].bH+"</span></td>" +
-                                                    "<td><span class='redSpanPauseBegin_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[data.emp[arrayID]].pause +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[data.emp[arrayID]].pBH+"</span></td>" +
-                                                    "<td><span class='redSpanPauseEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[data.emp[arrayID]].finPause +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[data.emp[arrayID]].pEH+"</span></td>" +
-                                                    "<td><span class='redSpanEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[data.emp[arrayID]].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[data.emp[arrayID]].eH+"</span></td>" +
+                                                    "<td>" + res.clockinRecord[arrayID][empId].id + "</td>" +
+                                                    "<td>" + res.clockinRecord[arrayID][empId].nom + " " + res.clockinRecord[arrayID][empId].prenom + "</td>" +
+                                                    "<td>" + res.clockinRecord[arrayID][empId].function + "</td>" +
+                                                    "<td>" + convertType(res.clockinRecord[arrayID][empId].type) + "</td>" +
+                                                    "<td>" + res.clockinRecord[arrayID][empId].quota + "</td>" +
+                                                    "<td><span class='redSpan_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].bH+"</span></td>" +
+                                                    "<td><span class='redSpanPauseBegin_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].pause +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].pBH+"</span></td>" +
+                                                    "<td><span class='redSpanPauseEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].finPause +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].pEH+"</span></td>" +
+                                                    "<td><span class='redSpanEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].eH+"</span></td>" +
                                                     "</tr>"
                                                 );
-                                                if(res.clockinRecord[data.emp[arrayID]].arrive > res.clockinRecord[data.emp[arrayID]].bH){
+                                                if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
                                                     $(".redSpan_1_"+i).css("color","red");
-                                                }else if(res.clockinRecord[data.emp[arrayID]].pause < res.clockinRecord[data.emp[arrayID]].pBH){
+                                                }else if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
                                                     $(".redSpanPauseBegin_1_"+i).css("color","red");
-                                                }else if(res.clockinRecord[data.emp[arrayID]].finPause > res.clockinRecord[data.emp[arrayID]].pEH){
+                                                }else if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
                                                     $(".redSpanPauseEnd_1_"+i).css("color","red");
-                                                }else if(res.clockinRecord[data.emp[arrayID]].depart < res.clockinRecord[data.emp[arrayID]].eH){
+                                                }else if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
                                                     $(".redSpanEnd_1_"+i).css("color","red");
                                                 }
                                                 break;
                                             case "2":
                                                 $("#rowsContainer").append("" +
                                                     "<tr>" +
-                                                    "<td>" + res.clockinRecord[data.emp[arrayID]].id + "</td>" +
-                                                    "<td>" + res.clockinRecord[data.emp[arrayID]].nom + " " + res.clockinRecord[data.emp[arrayID]].prenom + "</td>" +
-                                                    "<td>" + res.clockinRecord[data.emp[arrayID]].function + "</td>" +
-                                                    "<td>" + convertType(res.clockinRecord[data.emp[arrayID]].type) + "</td>" +
-                                                    "<td>" + res.clockinRecord[data.emp[arrayID]].quota + "</td>" +
-                                                    "<td><span class='redSpan_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[data.emp[arrayID]].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[data.emp[arrayID]].bH+"</span></td>" +
+                                                    "<td>" + res.clockinRecord[arrayID][empId].id + "</td>" +
+                                                    "<td>" + res.clockinRecord[arrayID][empId].nom + " " + res.clockinRecord[arrayID][empId].prenom + "</td>" +
+                                                    "<td>" + res.clockinRecord[arrayID][empId].function + "</td>" +
+                                                    "<td>" + convertType(res.clockinRecord[arrayID][empId].type) + "</td>" +
+                                                    "<td>" + res.clockinRecord[arrayID][empId].quota + "</td>" +
+                                                    "<td><span class='redSpan_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].bH+"</span></td>" +
                                                     "<td><span class='redSpanPauseBegin_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
                                                     "<td><span class='redSpanPauseEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
-                                                    "<td><span class='redSpanEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[data.emp[arrayID]].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[data.emp[arrayID]].eH+"</span></td>" +
+                                                    "<td><span class='redSpanEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].eH+"</span></td>" +
                                                     "</tr>"
                                                 );
-                                                if(res.clockinRecord[data.emp[arrayID]].arrive > res.clockinRecord[data.emp[arrayID]].bH){
+                                                if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
                                                     $(".redSpan_2_"+i).css("color","red");
-                                                }else if(res.clockinRecord[data.emp[arrayID]].pause < res.clockinRecord[data.emp[arrayID]].pBH){
+                                                }else if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
                                                     $(".redSpanPauseBegin_2_"+i).css("color","red");
-                                                }else if(res.clockinRecord[data.emp[arrayID]].finPause > res.clockinRecord[data.emp[arrayID]].pEH){
+                                                }else if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
                                                     $(".redSpanPauseEnd_2_"+i).css("color","red");
-                                                }else if(res.clockinRecord[data.emp[arrayID]].depart < res.clockinRecord[data.emp[arrayID]].eH){
+                                                }else if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
                                                     $(".redSpanEnd_2_"+i).css("color","red");
                                                 }
                                                 break;
                                             case "3":
                                                 $("#rowsContainer").append("" +
                                                     "<tr>" +
-                                                    "<td>" + res.clockinRecord[data.emp[arrayID]].id + "</td>" +
-                                                    "<td>" + res.clockinRecord[data.emp[arrayID]].nom + " " + res.clockinRecord[data.emp[arrayID]].prenom + "</td>" +
-                                                    "<td>" + res.clockinRecord[data.emp[arrayID]].function + "</td>" +
-                                                    "<td>" + convertType(res.clockinRecord[data.emp[arrayID]].type) + "</td>" +
+                                                    "<td>" + res.clockinRecord[arrayID][empId].id + "</td>" +
+                                                    "<td>" + res.clockinRecord[arrayID][empId].nom + " " + res.clockinRecord[arrayID][empId].prenom + "</td>" +
+                                                    "<td>" + res.clockinRecord[arrayID][empId].function + "</td>" +
+                                                    "<td>" + convertType(res.clockinRecord[arrayID][empId].type) + "</td>" +
                                                     "<td colspan='5' class='green lighten-2 white-text center'> Présent </td>" +
                                                     "</tr>"
                                                 );

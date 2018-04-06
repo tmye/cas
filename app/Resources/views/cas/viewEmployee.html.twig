@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     <div class="row">
-        <div class="col l9 offset-l3">
+        <div class="col l12">
             <h5>Informations sur un employé</h5>
             <div class="row">
                 <div class="col l12">
@@ -77,13 +77,15 @@
                             $("#rowsContainer").html("");
                             /* On récupère le département sélectionné */
                             var selectedDep = $("#depSelect").val();
+                            var arr = JSON.parse('[\"fingerprints\/employee_fingerprint23_1522427328_wO3vvK1.jpg\",\"fingerprints\/employee_fingerprint23_1522427328_BVujT46.jpg\"]');
+                            //console.log(arr);
                             for(var i=0;i<data.length;i++){
-                                if(data[i].fingerprint != null){
-                                    console.log(data[i].fingerprint);
-                                    var fp = JSON.parse(data[i].fingerprint);
-                                    console.log("length : "+fp.length);
-                                }else{
-                                    alert("Cest nul");
+                                if(typeof (data[i].fingerprint) == "string"){
+                                    //console.log(data[i].fingerprint);
+                                    var str = data[i].fingerprint;
+                                    var strEscaped = str.replace(/"/g,"\\\"");
+                                    console.log(strEscaped);
+                                    JSON.parse(strEscaped);
                                 }
                                 //alert("L'id dep est "+res.employees[i].departement.id);
                                 /* On vérifie si oui ou nom cet employé appartient au département

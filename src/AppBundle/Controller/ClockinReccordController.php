@@ -44,7 +44,13 @@ class ClockinReccordController extends Controller
         echo "<br>";
         echo $this->dateDayNameFrench(date('N',strtotime("21 March 2018 17:15:00")))."<br>";
         */
-        return new Response(strtotime("17 March 2018 17:29:00"));
+        //return new Response(strtotime("17 March 2018 17:29:00"));
+        echo date('d-m-Y H:i:s',1522423928)."<br>";
+        echo date('d-m-Y H:i:s',1522428015)."<br>";
+        echo date('d-m-Y H:i:s',1522389900)."<br>";
+        $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find(26);
+        $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
+        return new Response(strtotime("30 March 2018 08:05:00"));
     }
 
 
@@ -116,11 +122,18 @@ class ClockinReccordController extends Controller
      * Fonction booléenne qui renvoi true si un clockinTime est celui d'une heure d'arrivée
      * ou false sinon
     */
+<<<<<<< HEAD
+    public function arrive(ClockinRecord $cR,$day,$request){
+        $empWH = json_decode($cR->getEmploye()->getWorkingHour()->getWorkingHour(),true);
+        $heureDebutNormal = $empWH[$day][0]["beginHour"];
+        $heureFinNormal = $empWH[$day][0]["endHour"];
+=======
     public function arrive(ClockinRecord $cR,$request){
 
          // 30min
         $heureDebutNormal = "6:30:00";
         $heureFinNormal = "17:30:00";
+>>>>>>> f8b2e072d889d77b7c1118ddd1c2847bdb2cb91a
         $dep = $request->request->get('id');
         $_date = $request->request->get('date');
 
@@ -155,11 +168,18 @@ class ClockinReccordController extends Controller
         }
     }
 
+<<<<<<< HEAD
+    public function pause(ClockinRecord $cR,$day,$request){
+        $empWH = json_decode($cR->getEmploye()->getWorkingHour()->getWorkingHour(),true);
+        $heureDebutNormal = $empWH[$day][0]["pauseBeginHour"];
+        $heureFinNormal = $empWH[$day][0]["pauseEndHour"];
+=======
     public function pause(ClockinRecord $cR,$request){
 
          // 30min
         $heureDebutNormal = "12:00:00";
         $heureFinNormal = "14:00:00";
+>>>>>>> f8b2e072d889d77b7c1118ddd1c2847bdb2cb91a
         $dep = $request->request->get('id');
         $_date = $request->request->get('date');
 
@@ -191,11 +211,18 @@ class ClockinReccordController extends Controller
             return false;
         }
     }
+<<<<<<< HEAD
+    public function finPause(ClockinRecord $cR,$day,$request){
+        $empWH = json_decode($cR->getEmploye()->getWorkingHour()->getWorkingHour(),true);
+        $heureDebutNormal = $empWH[$day][0]["pauseBeginHour"];
+        $heureFinNormal = $empWH[$day][0]["pauseEndHour"];
+=======
     public function finPause(ClockinRecord $cR,$request){
 
          // 30min
         $heureDebutNormal = "12:00:00";
         $heureFinNormal = "14:00:00";
+>>>>>>> f8b2e072d889d77b7c1118ddd1c2847bdb2cb91a
         $dep = $request->request->get('id');
         $_date = $request->request->get('date');
 
@@ -229,10 +256,15 @@ class ClockinReccordController extends Controller
     }
 
     /* Fonction qui permet de créer des entrées dans le nouveau tableau */
+<<<<<<< HEAD
+    public function createEntry(Request $request,$day,$recordTab,ClockinRecord $c){
+        if($this->arrive($c,$day,$request)){
+=======
     public function createEntry(Request $request,$recordTab,ClockinRecord $c){
 
          // 30min
         if($this->arrive($c,$request)){
+>>>>>>> f8b2e072d889d77b7c1118ddd1c2847bdb2cb91a
             $nom = $c->getEmploye()->getLastName();
             $prenom = $c->getEmploye()->getSurname();
 
@@ -296,12 +328,12 @@ class ClockinReccordController extends Controller
         }
     }
 
-    public function miseAJour($recordTab,ClockinRecord $c,$request){
-        if($this->arrive($c,$request)){
+    public function miseAJour($recordTab,ClockinRecord $c,$day,$request){
+        if($this->arrive($c,$day,$request)){
             $recordTab[$c->getEmploye()->getId()]["arrive"] =date('H:i',$c->getClockinTime());
-        }elseif($this->pause($c,$request)){
+        }elseif($this->pause($c,$day,$request)){
             $recordTab[$c->getEmploye()->getId()]["pause"] =date('H:i',$c->getClockinTime());
-        }elseif($this->finPause($c,$request)){
+        }elseif($this->finPause($c,$day,$request)){
             $recordTab[$c->getEmploye()->getId()]["finPause"] =date('H:i',$c->getClockinTime());
         }else{
             $recordTab[$c->getEmploye()->getId()]["depart"] =date('H:i',$c->getClockinTime());
@@ -309,13 +341,13 @@ class ClockinReccordController extends Controller
         return $recordTab;
     }
 
-    private function elimineDoublon($donnees, Request $request){
+    private function elimineDoublon($donnees,$day, Request $request){
         $record = array();
         foreach ($donnees as $element){
             // Si cet identifiant existe déjà dans le tableau on fait des tests,
             // Sinon on crée une nouvelle entrée
             if(!($this->exist($record,$element->getEmploye()->getId()))){
-                $record = $this->createEntry($request,$record,$element);
+                $record = $this->createEntry($request,$day,$record,$element);
             }
 
             /*
@@ -323,14 +355,14 @@ class ClockinReccordController extends Controller
              * Si c'est une heure d'arrivée on fait un traitement
              * Sinon à ce stade ça ne peut qu'etre une heure de départ
             */
-            if($this->arrive($element,$request)){
+            if($this->arrive($element,$day,$request)){
                 /*
                  * On vérifie si ce clockinTime est plus récent
                  * Si c'est le cas on met à jour les données
                  * Sinon on zappe
                 */
                 if($this->plusRecent($record,$element)){
-                    $record = $this->miseAJour($record,$element,$request);
+                    $record = $this->miseAJour($record,$element,$day,$request);
                 }
             }else{
                 /*
@@ -339,7 +371,7 @@ class ClockinReccordController extends Controller
                  * Sinon on zappe
                 */
                 if($this->plusAncien($record,$element)){
-                    $record = $this->miseAJour($record,$element,$request);
+                    $record = $this->miseAJour($record,$element,$day,$request);
                 }
             }
         }
@@ -351,6 +383,8 @@ class ClockinReccordController extends Controller
      */
     public function findHistoriqueAction(Request $request)
     {
+<<<<<<< HEAD
+=======
 
          // 30min
 
@@ -358,10 +392,125 @@ class ClockinReccordController extends Controller
         $heureDebutPauseNormal = "12:00:00";
         $heureFinNormal = "17:30:00";
         $heureFinPauseNormal = "14:00:00";
+>>>>>>> f8b2e072d889d77b7c1118ddd1c2847bdb2cb91a
         $dep = $request->request->get('id');
         $_date = $request->request->get('date');
         $day = date('N',strtotime($_date));
         $day = $this->dateDayNameFrench(intval($day));
+
+
+        $dataTable = array();
+        $don = array();
+
+        $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($dep);
+
+
+        if(sizeof($emp)>0){
+            foreach ($emp as $e){
+                $empTab[]=$e->getId();
+                $empWH = json_decode($e->getWorkingHour()->getWorkingHour(),true);
+
+                $heureDebutNormal = $empWH[$day][0]["beginHour"];
+                $heureDebutPauseNormal = $empWH[$day][0]["pauseBeginHour"];
+                $heureFinNormal = $empWH[$day][0]["endHour"];
+                $heureFinPauseNormal = $empWH[$day][0]["pauseEndHour"];
+
+                //echo "\nBeginHour : ".$heureDebutNormal."\n";
+
+                $dd = strtotime($_date." ".$heureDebutNormal);
+                $dpd = strtotime($_date." ".$heureDebutPauseNormal);
+                $dpf = strtotime($_date." ".$heureFinPauseNormal);
+                $df = strtotime($_date." ".$heureFinNormal);
+
+                // L'heure à laquelle l'employé est sensé arriver
+                $hSenceA = strtotime(date("H:i",strtotime($dd)));
+                $hSencePD = strtotime(date("H:i",strtotime($dpd)));
+                $hSencePF = strtotime(date("H:i",strtotime($dpf)));
+                $hSenceD = strtotime(date("H:i",strtotime($df)));
+                // Timestamp de la dateheure à laquelle l'employé est sensé arriver
+                $dSenceA = $dd;
+                $dSencePD = $dpd;
+                $dSencePF = $dpf;
+                $dSenceD = $df;
+
+
+                $dIInfA = $dSenceA-1800;
+                $dIInfPD = $dSencePD-1800;
+                $dIInfD = $dSenceD-1800;
+                $dIInfPF = $dSencePF-1800;
+                // Borne superieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
+                $dISupA = $dSenceA+1800;
+                $dISupPD = $dSencePD+1800;
+                $dISupPF = $dSencePF+1800;
+
+                $hISupD = $hSenceD+1800;
+                $dISupD = $dSenceD+1800;
+
+                // On récupère les données appartenant au département sélectionné
+
+                $tempData = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empHistory($e->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
+
+                //Maintenant il faut éliminer les doublons
+                $don[] = $this->elimineDoublon($tempData,$day,$request);
+            }
+
+            /*
+            $d = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->findAll();
+            echo "\n Avant l'elimination de doublons :";
+            foreach ($d as $res){
+                echo "\n el :".$res->getId();
+            }
+
+            echo "\n Après l'elimination de doublons :";
+            $after = $this->elimineDoublon($d,$day,$request);
+            foreach ($after as $result){
+                print_r($result);
+            }
+
+
+            foreach ($don as $data){
+                echo "\n Passage de niveau 1 :";
+                print_r($data);
+            }
+            */
+
+            $tabLength = sizeof($don);
+
+
+
+            // Toujours des echo de débogage
+            //print('Au total après le filtre de date : '.$j.'<br>');
+            //print('Au total dans le département: '.$i);
+
+            $encoders = array(new XmlEncoder(), new JsonEncoder());
+            $normalizers = array(new ObjectNormalizer());
+
+            $serializer = new Serializer($normalizers, $encoders);
+
+            $jsonContent = $serializer->serialize(['clockinRecord' => $don],'json');
+
+            $content = array("content"=>$jsonContent,"emp"=>$empTab);
+
+            return new JsonResponse($content);
+        }else{
+            return new Response("null");
+        }
+    }
+
+    /**
+     * @Route("/returnHistorique", name="returnHistorique")
+     */
+    public function returnHistoriqueAction(Request $request)
+    {
+        $dep = $request->request->get('id');
+        $_date = $request->request->get('date');
+        $day = date('N',strtotime($_date));
+        $day = $this->dateDayNameFrench(intval($day));
+
+        $heureDebutNormal = "8:00:00";
+        $heureDebutPauseNormal = "12:00:00";
+        $heureFinNormal = "17:30:00";
+        $heureFinPauseNormal = "14:00:00";
 
         $dd = strtotime($_date." ".$heureDebutNormal);
         $dpd = strtotime($_date." ".$heureDebutPauseNormal);
@@ -393,44 +542,34 @@ class ClockinReccordController extends Controller
         $dISupD = $dSenceD+ (ClockinReccordController::$min_laps * 60);
 
 
+        $empTab = array();
+        $clockinRecordTab = array();
         $dataTable = array();
+        $empClockinRecordTab = array();
 
         // On récupère les données appartenant au département sélectionné
 
         $don = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->history($dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
         $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($dep);
-
-
-        if(sizeof($emp)>0){
-            foreach ($emp as $e){
-                $empTab[]=$e->getId();
+        foreach ($emp as $e){
+            //echo "\nEmployee id : ".$e->getId()."\n";
+            $clockinRecordTab = 0;
+            $empClockinRecordTab = array();
+            //echo "\nPour l'Employee id : ".$e->getId()."\n Le tableau est : ";
+            $empTab[] = $e->getSurname();
+            $clockinRecordTab = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empHistory($e->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
+            //echo "\nLa taille du résultat est : ".sizeof($clockinRecordTab)."\n";
+            foreach ($clockinRecordTab as $cr){
+                $empClockinRecordTab[] = $cr->getId();
             }
+            print_r($empTab);
+            print_r($empClockinRecordTab);
+            // Si le tableau n'est pas vide,on peut incrémenter
 
-            /*
-             * Maintenant il faut éliminer les doublons
-             */
-
-
-            $tabFinal = $this->elimineDoublon($don, $request);
-            $tabLength = sizeof($tabFinal);
-
-
-            // Toujours des echo de débogage
-            //print('Au total après le filtre de date : '.$j.'<br>');
-            //print('Au total dans le département: '.$i);
-
-            $encoders = array(new XmlEncoder(), new JsonEncoder());
-            $normalizers = array(new ObjectNormalizer());
-
-            $serializer = new Serializer($normalizers, $encoders);
-
-            $jsonContent = $serializer->serialize(['clockinRecord' => $tabFinal],'json');
-
-            $content = array("content"=>$jsonContent,"tabLength"=>$tabLength,"emp"=>$empTab);
-            return new JsonResponse($content);
-        }else{
-            return new Response("null");
+            $dataTable[] = $empClockinRecordTab;
         }
+
+        return new JsonResponse($dataTable);
     }
 
     /**

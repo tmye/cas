@@ -299,6 +299,10 @@ class EmployeController extends Controller {
             $tempTab["dep"] = $e->getDepartement()->getId();
             $tempTab["picPath"] = $e->getPicture();
             array_push($tab,$tempTab);
+
+            /*echo "\n".$e->getFingerprints()."\n";
+            $jsonVal = json_decode($e->getFingerprints(),true);
+            echo "\n".$jsonVal."\n";*/
         }
 
         return new JsonResponse($tab);

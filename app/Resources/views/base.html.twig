@@ -13,7 +13,7 @@
     <body>
     <div class="row">
         <div class="col l2">
-            <ul id="nav-mobile" class="side-nav fixed" style="background-color: #2A3F54">
+            <ul id="slide-out" class="side-nav" style="background-color: #2A3F54">
                 <p class="center white-text" style="">C.A.S</p>
                 <div class="row">
                     <div class="col l10">
@@ -114,29 +114,32 @@
                             <span class="fa fa-user"></span>
                             {% if app.user is defined and app.user is not null %}
                                 {{ app.user.roles[0] }}
+                                {% else %}
+                                {{ "Nothing to show" }}
                             {% endif %}
                         </span>
                     </div>
                 </div>
             </ul>
         </div>
+
         <div>
             <nav class="col right l12 white black-text" style="position: fixed;z-index:998;height: 52.5px;line-height: 52.5px">
-                <div class="row">
-                    <div class="col l9 offset-l3">
-                        <div class="nav-wrapper">
-                            <a href="#" class="black-text">
-                                <span class="black-text">Ministère des postes et de l'économie numérique</span>
-                                <span class="right black-text">Expiration : 13/07/2019</span>
-                            </a>
-                        </div>
-                    </div>
+                <div class="nav-wrapper">
+                    <a href="#" class="black-text">
+                        <span data-activates="slide-out" class="button-collapse fa fa-bars fa-2x" style="margin-top: 10px"></span>
+                        <img src="{{ asset("img/arm2.png") }}" class="middle-align" style="height: 40px">
+                        <span class="black-text middle-align">Ministère des postes et de l'économie numérique</span>
+                        <span class="right black-text">Expiration : 13/07/2019</span>
+                    </a>
                 </div>
             </nav>
         </div>
     </div>
     <br><br><br>
+    <div class="container">
         {% block body %}{% endblock %}
+    </div>
 
     <script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
     <script src="{{ asset('materialize/js/materialize.min.js') }}"></script>
