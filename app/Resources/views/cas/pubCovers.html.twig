@@ -224,7 +224,7 @@
                         contentType: false,
                         processData: false,
                         success: function(data) {
-                            alert(data);
+                            console.log(data);
                         },
                         error: function() {
                             alert("Erreur");
@@ -347,7 +347,7 @@
                         type: "POST",
                         data: {'code': code},
                         success: function(data) {
-                            if(data !=0){
+                            /*if(data !=0){
                                 var res = JSON.parse(data);
                                 console.log(data);
                                 console.log(res[0]);
@@ -357,6 +357,7 @@
                             }else{
                                 alert("Aucune image pour cette machine !");
                             }
+                            */
                         },
                         error: function() {
                             alert("Erreur");

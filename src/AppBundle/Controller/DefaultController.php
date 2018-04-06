@@ -6,6 +6,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use TmyeDeviceBundle\Entity\DevicePubPic;
 use TmyeDeviceBundle\Entity\UpdateEntity;
 
 class DefaultController extends Controller
@@ -28,25 +29,51 @@ class DefaultController extends Controller
     public function uploadCoverAllAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
+        $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
         $devices = $this->getDoctrine()->getManager()->getRepository("TmyeDeviceBundle:DevicePubPic")->findAll();
-        foreach ($devices as $dev){
-            if(isset($_FILES["first_image_input_1"]["name"]) && !empty($_FILES["first_image_input_1"]["name"])){
-                $dev->setImage1($_FILES["first_image_input_1"]["name"]);
-                $resultat = move_uploaded_file($_FILES['first_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_1"]["name"]));
-            }
-            if(isset($_FILES["second_image_input_1"]["name"]) && !empty($_FILES["second_image_input_1"]["name"])){
-                $dev->setImage2($_FILES["second_image_input_1"]["name"]);
-                $resultat = move_uploaded_file($_FILES['second_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_1"]["name"]));
-            }
-            if(isset($_FILES["third_image_input_1"]["name"]) && !empty($_FILES["third_image_input_1"]["name"])){
-                $dev->setImage3($_FILES["third_image_input_1"]["name"]);
-                $resultat = move_uploaded_file($_FILES['third_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_1"]["name"]));
-            }
 
-            $em->flush();
+        if ($devices != null){
+            foreach ($devices as $dev){
+                if(isset($_FILES["first_image_input_1"]["name"]) && !empty($_FILES["first_image_input_1"]["name"])){
+                    $dev->setImage1($_FILES["first_image_input_1"]["name"]);
+                    $resultat = move_uploaded_file($_FILES['first_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_1"]["name"]));
+                }
+                if(isset($_FILES["second_image_input_1"]["name"]) && !empty($_FILES["second_image_input_1"]["name"])){
+                    $dev->setImage2($_FILES["second_image_input_1"]["name"]);
+                    $resultat = move_uploaded_file($_FILES['second_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_1"]["name"]));
+                }
+                if(isset($_FILES["third_image_input_1"]["name"]) && !empty($_FILES["third_image_input_1"]["name"])){
+                    $dev->setImage3($_FILES["third_image_input_1"]["name"]);
+                    $resultat = move_uploaded_file($_FILES['third_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_1"]["name"]));
+                }
+
+                $em->flush();
+            }
+        }else{
+            foreach ($machines as $mac){
+                $dev = new DevicePubPic();
+                if(isset($_FILES["first_image_input_1"]["name"]) && !empty($_FILES["first_image_input_1"]["name"])){
+                    echo "\n I'm also here for 1 \n";
+                    $dev->setDeviceid($mac->getMachineId());
+                    $dev->setImage1($_FILES["first_image_input_1"]["name"]);
+                    $resultat = move_uploaded_file($_FILES['first_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_1"]["name"]));
+                }
+                if(isset($_FILES["second_image_input_1"]["name"]) && !empty($_FILES["second_image_input_1"]["name"])){
+                    $dev->setDeviceid($mac->getMachineId());
+                    $dev->setImage2($_FILES["second_image_input_1"]["name"]);
+                    $resultat = move_uploaded_file($_FILES['second_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_1"]["name"]));
+                }
+                if(isset($_FILES["third_image_input_1"]["name"]) && !empty($_FILES["third_image_input_1"]["name"])){
+                    $dev->setDeviceid($mac->getMachineId());
+                    $dev->setImage3($_FILES["third_image_input_1"]["name"]);
+                    $resultat = move_uploaded_file($_FILES['third_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_1"]["name"]));
+                }
+                $em->persist($dev);
+                $em->flush();
+            }
         }
 
-        return new Response("Image(s) uploadée(s)");
+        return new Response("Image(s) uploadée(s) xxxxxx");
     }
 
     /**
@@ -69,36 +96,45 @@ class DefaultController extends Controller
         // Maintenant que j'ai la liste des machines de ce département je peux faire les traitements
 
         $devices = $this->getDoctrine()->getManager()->getRepository("TmyeDeviceBundle:DevicePubPic")->deviceByArray($tab);
-
-        foreach ($devices as $dev){
-            if(isset($_FILES["first_image_input_2"]["name"]) && !empty($_FILES["first_image_input_2"]["name"])){
-                $dev->setImage1($_FILES["first_image_input_2"]["name"]);
-                $resultat = move_uploaded_file($_FILES['first_image_input_2']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_2"]["name"]));
+        if ($devices != null) {
+            foreach ($devices as $dev){
+                if(isset($_FILES["first_image_input_2"]["name"]) && !empty($_FILES["first_image_input_2"]["name"])){
+                    $dev->setDeviceid($mac->getMachineId());
+                    $dev->setImage1($_FILES["first_image_input_2"]["name"]);
+                    $resultat = move_uploaded_file($_FILES['first_image_input_2']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_2"]["name"]));
+                }
+                if(isset($_FILES["second_image_input_2"]["name"]) && !empty($_FILES["second_image_input_2"]["name"])){
+                    $dev->setDeviceid($mac->getMachineId());
+                    $dev->setImage2($_FILES["second_image_input_2"]["name"]);
+                    $resultat = move_uploaded_file($_FILES['second_image_input_2']['tmp_name'],"pub_covers/".basename($_FILES["second_image_input_2"]["name"]));
+                }
+                if(isset($_FILES["third_image_input_2"]["name"]) && !empty($_FILES["third_image_input_2"]["name"])){
+                    $dev->setDeviceid($mac->getMachineId());
+                    $dev->setImage3($_FILES["third_image_input_2"]["name"]);
+                    $resultat = move_uploaded_file($_FILES['third_image_input_2']['tmp_name'],"pub_covers/".basename($_FILES["third_image_input_2"]["name"]));
+                }
+                $em->flush();
             }
-            if(isset($_FILES["second_image_input_2"]["name"]) && !empty($_FILES["second_image_input_2"]["name"])){
-                $dev->setImage2($_FILES["second_image_input_2"]["name"]);
-                $resultat = move_uploaded_file($_FILES['second_image_input_2']['tmp_name'],"pub_covers/".basename($_FILES["second_image_input_2"]["name"]));
-            }
-            if(isset($_FILES["third_image_input_2"]["name"]) && !empty($_FILES["third_image_input_2"]["name"])){
-                $dev->setImage3($_FILES["third_image_input_2"]["name"]);
-                $resultat = move_uploaded_file($_FILES['third_image_input_2']['tmp_name'],"pub_covers/".basename($_FILES["third_image_input_2"]["name"]));
-            }
-            $em->flush();
-        }
-
-        /*if (isset($devices) && !empty($devices)){
-            $b = "true";
         }else{
-            $b = "false";
-        }*/
-
-        // Juste pour le débogage
-        $t = array();
-        foreach ($devices as $de){
-            $t[] = $de->getId();
+            foreach ($machines as $mac){
+                $dev = new DevicePubPic();
+                if(isset($_FILES["first_image_input_2"]["name"]) && !empty($_FILES["first_image_input_2"]["name"])){
+                    $dev->setImage1($_FILES["first_image_input_2"]["name"]);
+                    $resultat = move_uploaded_file($_FILES['first_image_input_2']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_2"]["name"]));
+                }
+                if(isset($_FILES["second_image_input_2"]["name"]) && !empty($_FILES["second_image_input_2"]["name"])){
+                    $dev->setImage2($_FILES["second_image_input_2"]["name"]);
+                    $resultat = move_uploaded_file($_FILES['second_image_input_2']['tmp_name'],"pub_covers/".basename($_FILES["second_image_input_2"]["name"]));
+                }
+                if(isset($_FILES["third_image_input_2"]["name"]) && !empty($_FILES["third_image_input_2"]["name"])){
+                    $dev->setImage3($_FILES["third_image_input_2"]["name"]);
+                    $resultat = move_uploaded_file($_FILES['third_image_input_2']['tmp_name'],"pub_covers/".basename($_FILES["third_image_input_2"]["name"]));
+                }
+                $em->persist($dev);
+                $em->flush();
+            }
         }
 
-        //return new Response(json_encode($_POST["depId"]));
         return new Response("Image(s) uploadée(s)");
     }
 
@@ -109,9 +145,29 @@ class DefaultController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+        $mac = $request->request->get("macId");
+        echo "\n Mac Id : ".$mac."\n";
         $devices = $this->getDoctrine()->getManager()->getRepository("TmyeDeviceBundle:DevicePubPic")->findBy(array("deviceid"=>$_POST["macId"]));
 
-        foreach ($devices as $dev){
+        if ($devices != null) {
+            foreach ($devices as $dev){
+                if(isset($_FILES["first_image_input_3"]["name"]) && !empty($_FILES["first_image_input_3"]["name"])){
+                    $dev->setImage1($_FILES["first_image_input_3"]["name"]);
+                    $resultat = move_uploaded_file($_FILES['first_image_input_3']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_3"]["name"]));
+                }
+                if(isset($_FILES["second_image_input_3"]["name"]) && !empty($_FILES["second_image_input_3"]["name"])){
+                    $dev->setImage2($_FILES["second_image_input_3"]["name"]);
+                    $resultat = move_uploaded_file($_FILES['second_image_input_3']['tmp_name'],"pub_covers/".basename($_FILES["second_image_input_3"]["name"]));
+                }
+                if(isset($_FILES["third_image_input_3"]["name"]) && !empty($_FILES["third_image_input_3"]["name"])){
+                    $dev->setImage3($_FILES["third_image_input_3"]["name"]);
+                    $resultat = move_uploaded_file($_FILES['third_image_input_3']['tmp_name'],"pub_covers/".basename($_FILES["third_image_input_3"]["name"]));
+                }
+                $em->flush();
+            }
+        }else{
+            $dev = new DevicePubPic();
+            $dev->setDeviceid($mac);
             if(isset($_FILES["first_image_input_3"]["name"]) && !empty($_FILES["first_image_input_3"]["name"])){
                 $dev->setImage1($_FILES["first_image_input_3"]["name"]);
                 $resultat = move_uploaded_file($_FILES['first_image_input_3']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_3"]["name"]));
@@ -124,16 +180,10 @@ class DefaultController extends Controller
                 $dev->setImage3($_FILES["third_image_input_3"]["name"]);
                 $resultat = move_uploaded_file($_FILES['third_image_input_3']['tmp_name'],"pub_covers/".basename($_FILES["third_image_input_3"]["name"]));
             }
+            $em->persist($dev);
             $em->flush();
         }
 
-        // Juste pour le débogage
-        $t = array();
-        foreach ($devices as $de) {
-            $t[] = $de->getId();
-        }
-
-        //return new Response(json_encode($t));
         return new Response("Image(s) uploadée(s)");
     }
 
