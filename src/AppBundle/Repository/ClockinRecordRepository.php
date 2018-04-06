@@ -15,8 +15,7 @@ class ClockinRecordRepository extends EntityRepository
 {
     public function history($depId,$bMin,$bMax,$pBMin,$pBMax,$pEMin,$pEMax,$eMin,$eMax){
         $queryBuilder = $this->createQueryBuilder('c');
-        $queryBuilder->where('c.departement = :id')->setParameter('id',$depId);
-        $queryBuilder->andWhere('c.clockinTime BETWEEN :bMin AND :bMax');
+        $queryBuilder->where('c.clockinTime BETWEEN :bMin AND :bMax');
         $queryBuilder->setParameter('bMin',$bMin);
         $queryBuilder->setParameter('bMax',$bMax);
         $queryBuilder->orWhere('c.clockinTime BETWEEN :eMin AND :eMax');
@@ -31,6 +30,58 @@ class ClockinRecordRepository extends EntityRepository
         $queryBuilder->orWhere('c.clockinTime BETWEEN :pEMin AND :pEMax');
         $queryBuilder->setParameter('pEMin',$pEMin);
         $queryBuilder->setParameter('pEMax',$pEMax);
+
+        $queryBuilder->andWhere('c.departement = :id')->setParameter('id',$depId);
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    public function empHistory($empId,$depId,$bMin,$bMax,$pBMin,$pBMax,$pEMin,$pEMax,$eMin,$eMax){
+        $queryBuilder = $this->createQueryBuilder('c');
+
+        $queryBuilder->where('c.clockinTime BETWEEN :bMin AND :bMax');
+        $queryBuilder->setParameter('bMin',$bMin);
+        $queryBuilder->setParameter('bMax',$bMax);
+        $queryBuilder->orWhere('c.clockinTime BETWEEN :eMin AND :eMax');
+        $queryBuilder->setParameter('eMin',$eMin);
+        $queryBuilder->setParameter('eMax',$eMax);
+
+        // Pour les pauses
+
+        $queryBuilder->orWhere('c.clockinTime BETWEEN :pBMin AND :pBMax');
+        $queryBuilder->setParameter('pBMin',$pBMin);
+        $queryBuilder->setParameter('pBMax',$pBMax);
+        $queryBuilder->orWhere('c.clockinTime BETWEEN :pEMin AND :pEMax');
+        $queryBuilder->setParameter('pEMin',$pEMin);
+        $queryBuilder->setParameter('pEMax',$pEMax);
+
+        $queryBuilder->andWhere('c.employe = :empId')->setParameter('empId',$empId);
+        $queryBuilder->andWhere('c.departement = :depId')->setParameter('depId',$depId);
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    public function empHistorySimple($empId,$depId,$bMin,$bMax,$pBMin,$pBMax,$pEMin,$pEMax,$eMin,$eMax){
+        $queryBuilder = $this->createQueryBuilder('c');
+
+        $queryBuilder->where('c.clockinTime BETWEEN :bMin AND :bMax');
+        $queryBuilder->setParameter('bMin',$bMin);
+        $queryBuilder->setParameter('bMax',$bMax);
+        $queryBuilder->orWhere('c.clockinTime BETWEEN :eMin AND :eMax');
+        $queryBuilder->setParameter('eMin',$eMin);
+        $queryBuilder->setParameter('eMax',$eMax);
+
+        // Pour les pauses
+
+        $queryBuilder->orWhere('c.clockinTime BETWEEN :pBMin AND :pBMax');
+        $queryBuilder->setParameter('pBMin',$pBMin);
+        $queryBuilder->setParameter('pBMax',$pBMax);
+        $queryBuilder->orWhere('c.clockinTime BETWEEN :pEMin AND :pEMax');
+        $queryBuilder->setParameter('pEMin',$pEMin);
+        $queryBuilder->setParameter('pEMax',$pEMax);
+
+        $queryBuilder->andWhere('c.employe = :empId')->setParameter('empId',$empId);
+        $queryBuilder->andWhere('c.departement = :depId')->setParameter('depId',$depId);
 
         return $queryBuilder->getQuery()->getResult();
     }

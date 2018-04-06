@@ -23,13 +23,16 @@ input
 
 .collapsible-body-perso
 {
-    background-color: #172D44 !important;
+    background-color: rgba(0,100,155,1) !important;
 }
 .collapsible-body-perso a
 {
     color: #fff;
 }
-
+.side-nav .collapsible-header.active
+{
+    background-color: #172D44 !important;
+}
 /*
 * Style des pages
 */
