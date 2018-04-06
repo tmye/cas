@@ -122,18 +122,11 @@ class ClockinReccordController extends Controller
      * Fonction booléenne qui renvoi true si un clockinTime est celui d'une heure d'arrivée
      * ou false sinon
     */
-<<<<<<< HEAD
     public function arrive(ClockinRecord $cR,$day,$request){
         $empWH = json_decode($cR->getEmploye()->getWorkingHour()->getWorkingHour(),true);
         $heureDebutNormal = $empWH[$day][0]["beginHour"];
         $heureFinNormal = $empWH[$day][0]["endHour"];
-=======
-    public function arrive(ClockinRecord $cR,$request){
 
-         // 30min
-        $heureDebutNormal = "6:30:00";
-        $heureFinNormal = "17:30:00";
->>>>>>> f8b2e072d889d77b7c1118ddd1c2847bdb2cb91a
         $dep = $request->request->get('id');
         $_date = $request->request->get('date');
 
@@ -168,18 +161,11 @@ class ClockinReccordController extends Controller
         }
     }
 
-<<<<<<< HEAD
     public function pause(ClockinRecord $cR,$day,$request){
         $empWH = json_decode($cR->getEmploye()->getWorkingHour()->getWorkingHour(),true);
         $heureDebutNormal = $empWH[$day][0]["pauseBeginHour"];
         $heureFinNormal = $empWH[$day][0]["pauseEndHour"];
-=======
-    public function pause(ClockinRecord $cR,$request){
 
-         // 30min
-        $heureDebutNormal = "12:00:00";
-        $heureFinNormal = "14:00:00";
->>>>>>> f8b2e072d889d77b7c1118ddd1c2847bdb2cb91a
         $dep = $request->request->get('id');
         $_date = $request->request->get('date');
 
@@ -211,18 +197,12 @@ class ClockinReccordController extends Controller
             return false;
         }
     }
-<<<<<<< HEAD
+
     public function finPause(ClockinRecord $cR,$day,$request){
         $empWH = json_decode($cR->getEmploye()->getWorkingHour()->getWorkingHour(),true);
         $heureDebutNormal = $empWH[$day][0]["pauseBeginHour"];
         $heureFinNormal = $empWH[$day][0]["pauseEndHour"];
-=======
-    public function finPause(ClockinRecord $cR,$request){
 
-         // 30min
-        $heureDebutNormal = "12:00:00";
-        $heureFinNormal = "14:00:00";
->>>>>>> f8b2e072d889d77b7c1118ddd1c2847bdb2cb91a
         $dep = $request->request->get('id');
         $_date = $request->request->get('date');
 
@@ -256,15 +236,8 @@ class ClockinReccordController extends Controller
     }
 
     /* Fonction qui permet de créer des entrées dans le nouveau tableau */
-<<<<<<< HEAD
     public function createEntry(Request $request,$day,$recordTab,ClockinRecord $c){
         if($this->arrive($c,$day,$request)){
-=======
-    public function createEntry(Request $request,$recordTab,ClockinRecord $c){
-
-         // 30min
-        if($this->arrive($c,$request)){
->>>>>>> f8b2e072d889d77b7c1118ddd1c2847bdb2cb91a
             $nom = $c->getEmploye()->getLastName();
             $prenom = $c->getEmploye()->getSurname();
 
@@ -313,7 +286,7 @@ class ClockinReccordController extends Controller
     /* Fonction qui permet de tester si un clockinTime est plus récent */
     public function plusRecent($recordTab,ClockinRecord $c){
 
-         // 30min
+        // 30min
         if($c->getClockinTime() < $recordTab[$c->getEmploye()->getId()]["arrive"] ){
             return true;
         }else{
@@ -383,16 +356,7 @@ class ClockinReccordController extends Controller
      */
     public function findHistoriqueAction(Request $request)
     {
-<<<<<<< HEAD
-=======
 
-         // 30min
-
-        $heureDebutNormal = "6:30:00";
-        $heureDebutPauseNormal = "12:00:00";
-        $heureFinNormal = "17:30:00";
-        $heureFinPauseNormal = "14:00:00";
->>>>>>> f8b2e072d889d77b7c1118ddd1c2847bdb2cb91a
         $dep = $request->request->get('id');
         $_date = $request->request->get('date');
         $day = date('N',strtotime($_date));
