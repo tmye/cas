@@ -21,7 +21,7 @@
                             <li>
                                 <div>
                                     {% if app.user is defined and app.user is not null %}
-                                        <img src="{{ asset('uploads/img/')~app.user.picture }}" alt="user_image" class="circle middle-align user_extra_small_picture">
+                                        <img src="{{ asset('/')~user_profile_pictures~'/'~app.user.picture }}" alt="user_image" class="circle middle-align user_extra_small_picture">
                                     {% endif %}
                                     <span class="middle-align white-text" style="margin-left: 20px">
                                         {% if app.user is defined and app.user is not null %}

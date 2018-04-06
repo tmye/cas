@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\Serializer;
 class ClockinReccordController extends Controller
 {
 
-    static $min_laps = 120;
+    static $min_laps = 180;
 
     /**
      * @Route("/test", name="test")
