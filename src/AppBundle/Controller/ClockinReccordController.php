@@ -336,6 +336,9 @@ class ClockinReccordController extends Controller
                 */
                 if($this->plusRecent($record,$element)){
                     $record = $this->miseAJour($record,$element,$day,$request);
+                }else{
+                    // Il faut quan meme le mettre à jour
+                    $record = $this->miseAJour($record,$element,$day,$request);
                 }
             }else{
                 /*
@@ -344,6 +347,9 @@ class ClockinReccordController extends Controller
                  * Sinon on zappe
                 */
                 if($this->plusAncien($record,$element)){
+                    $record = $this->miseAJour($record,$element,$day,$request);
+                }else{
+                    // Il faut quan meme le mettre à jour
                     $record = $this->miseAJour($record,$element,$day,$request);
                 }
             }
@@ -406,21 +412,26 @@ class ClockinReccordController extends Controller
                 $dSenceD = $df;
 
 
-                $dIInfA = $dSenceA-1800;
-                $dIInfPD = $dSencePD-1800;
-                $dIInfD = $dSenceD-1800;
-                $dIInfPF = $dSencePF-1800;
+                $dIInfA = $dSenceA-(ClockinReccordController::$min_laps * 60);
+                $dIInfPD = $dSencePD-(ClockinReccordController::$min_laps * 60);
+                $dIInfD = $dSenceD-(ClockinReccordController::$min_laps * 60);
+                $dIInfPF = $dSencePF-(ClockinReccordController::$min_laps * 60);
                 // Borne superieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
-                $dISupA = $dSenceA+1800;
-                $dISupPD = $dSencePD+1800;
-                $dISupPF = $dSencePF+1800;
+                $dISupA = $dSenceA+(ClockinReccordController::$min_laps * 60);
+                $dISupPD = $dSencePD+(ClockinReccordController::$min_laps * 60);
+                $dISupPF = $dSencePF+(ClockinReccordController::$min_laps * 60);
 
-                $hISupD = $hSenceD+1800;
-                $dISupD = $dSenceD+1800;
+                $hISupD = $hSenceD+(ClockinReccordController::$min_laps * 60);
+                $dISupD = $dSenceD+(ClockinReccordController::$min_laps * 60);
 
                 // On récupère les données appartenant au département sélectionné
 
                 $tempData = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empHistory($e->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
+
+                /*echo "\n Employé".$e->getSurname()."\n";
+                foreach ($tempData as $data){
+                    echo "\n Id de clockinRecord".$data->getId()."\n";
+                }*/
 
                 //Maintenant il faut éliminer les doublons
                 $don[] = $this->elimineDoublon($tempData,$day,$request);
