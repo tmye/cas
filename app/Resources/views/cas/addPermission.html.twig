@@ -54,7 +54,12 @@
 {% endblock %}
 
 {% block javascripts %}
-    {# Du javascript #}
+    <script>
+        // On s'attaque aux collapsibles
+        $(function () {
+            $(".navigation_collapsible").collapsible('open',3);
+        });
+    </script>
 {% endblock %}
 
 {% block stylesheets %}

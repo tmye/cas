@@ -62,50 +62,17 @@ class WorkingHoursController extends Controller
     public function editWorkingHourAction(Request $request, $id)
     {
         $wh = $this->getDoctrine()->getManager()->getRepository("AppBundle:WorkingHours")->find($id);
-        $whList = $this->getDoctrine()->getManager()->getRepository("AppBundle:WorkingHours")->findAll();
-
-        if($wh !=null){
-
-        }else{
-            throw new NotFoundHttpException("Le working hour ayant l'id ".$id."n'a pas été trouvé");
+        if($wh == null){
+            throw new NotFoundHttpException("Ce workingHour n'a pas été trouvé");
         }
-        // On crée le FormBuilder grâce au service form factory
-        $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $wh);
+        $tab = array();
 
-        // On ajoute les champs de l'entité que l'on veut à notre formulaire
-        $formBuilder->add('beginHour',TimeType::class,array('widget'=>'single_text','label'=>' '))
-            ->add('pauseBeginHour',TimeType::class,array('widget'=>'single_text','label'=>' ','required'=>false))
-            ->add('pauseEndHour',TimeType::class,array('widget'=>'single_text','label'=>' ','required'=>false))
-            ->add('endHour',TimeType::class,array('widget'=>'single_text','label'=>' '))
-            ->add('isFor',TextType::class,array('label'=>' '))
-            ->add('quota',IntegerType::class,array('label'=>' '))
-            ->add('Ajouter', SubmitType::class);
+        $json_wh = json_encode($wh->getWorkingHour());
+        $tab[] = ['id'=>$wh->getId(),'workingHour'=>(array)json_decode($wh->getWorkingHour())];
 
-        // À partir du formBuilder, on génère le formulaire
-
-        $form = $formBuilder->getForm();
-
-        if ($request->isMethod('POST')) {
-            $form->handleRequest($request);
-            if ($form->isValid()) {
-                $em = $this->getDoctrine()->getManager();
-
-                $em->persist($wh);
-                $em->flush();
-
-                $request->getSession()->getFlashBag()->add('notice', 'Enregistrement effectué.');
-
-                return new Response("Enregistrement effectué");
-            }
-
-        }
-
-        // À ce stade, le formulaire n'est pas valide car :
-        // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
-        // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
-        return $this->render('cas/addWorkingHour.html.twig', array(
-            'form' => $form->createView(),
-            'whList'=>$whList
+        return $this->render('cas/editWorkingHour.html.twig', array(
+            'wh'=>$wh,
+            'whJson'=>$json_wh
         ));
     }
 

@@ -15,10 +15,10 @@
     <div class="row">
         <div class="col l2">
             <ul id="slide-out" class="side-nav" style="background-color: #2A3F54">
-                <p class="center white-text" style="">C.A.S</p>
                 <div class="row">
                     <div class="col l10">
-                        <ul class="collapsible" style="font-weight: 100 !important" data-collapsible="accordion">
+                        <br>
+                        <ul class="collapsible navigation_collapsible" style="font-weight: 100 !important" data-collapsible="accordion">
                             <li>
                                 <div>
                                     {% if app.user is defined and app.user is not null %}
@@ -33,19 +33,22 @@
                                             {% endif %}
 
                                             {{ app.user.surname}}
+                                            <a href="{{ path('logout') }}" class="white-text" style="position: relative;left: 30px">
+                                                <span class="fa fa-power-off"></span>
+                                            </a>
                                         {% endif %}
                                     </span>
                                 </div>
                             </li>
                             <br>
                             <li>
-                                <div class="collapsible-header active valign-wrapper">
+                                <div class="collapsible-header valign-wrapper">
                                     <span class="fa fa-home icons"></span>
                                     <a href="{{ path('homepage') }}" style="margin-left: 4px;color: #fff">Accueil</a>
                                 </div>
                             </li>
-                            <li>
-                                <div class="collapsible-header valign-wrapper">
+                            <li class="">
+                                <div class="collapsible-header collapsible_historique valign-wrapper">
                                     <span class="fa fa-file-alt icons"></span>
                                     <span style="margin-left: 4px;color: #fff">Présences</span>
                                 </div>
@@ -76,7 +79,7 @@
                                 </div>
                             </li>
                             <li>
-                                <div class="collapsible-header active valign-wrapper">
+                                <div class="collapsible-header valign-wrapper">
                                     <span class="fa fa-building icons"></span>
                                     <a href="{{ path("departement") }}" style="margin-left: 4px;color: #fff">Départements</a>
                                 </div>
@@ -98,27 +101,25 @@
                                     <span style="margin-left: 4px;color: #fff">Réglages</span>
                                 </div>
                                 <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
-                                    <a href="{{ path("addWorkingHour") }}" class="collapsible-links">Heures de travails</a>
+                                    <a href="{{ path("addWorkingHour") }}" class="collapsible-links">Ajouter heure de travail</a>
                                     <br>
                                     <a href="{{ path("addMachine") }}" class="collapsible-links">Machines enrégistrées</a>
                                     <br>
                                     <a href="{{ path("manage") }}" class="collapsible-links">Gestion du système</a>
                                 </div>
                             </li>
+                            <li>
+                                <p class="white-text" style="margin-left: 20px">
+                                    Votre level d'administration est :
+
+                                    {% if app.user is defined and app.user is not null %}
+                                        {{ app.user.roles[0] }}
+                                    {% else %}
+                                        {{ "Nothing to show" }}
+                                    {% endif %}
+                                </p>
+                            </li>
                         </ul>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col l12 white-text" style="height:50px;line-height:50px;background-color: #172D44;position: fixed;bottom: 60px">
-                        <!-- <span class="center fa fa-power-off" style="color: #5A738E;display: inline-block;width: 25%"></span> -->
-                        <span style="display:inline-block;font-weight: 100">
-                            <span class="fa fa-user"></span>
-                            {% if app.user is defined and app.user is not null %}
-                                {{ app.user.roles[0] }}
-                                {% else %}
-                                {{ "Nothing to show" }}
-                            {% endif %}
-                        </span>
                     </div>
                 </div>
             </ul>

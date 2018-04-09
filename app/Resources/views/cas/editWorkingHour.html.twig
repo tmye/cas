@@ -9,7 +9,7 @@
                 <div class="col l12">
                     <ul class="collapsible" data-collapsible="accordion">
                         <li>
-                            <div class="collapsible-header">Ajouter un nouvel heure</div>
+                            <div class="collapsible-header active">Modification d'une heure de travail de travail ({{ wh.code }})</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
                                     <div class="col l12">
@@ -20,8 +20,11 @@
                                         <div class="row">
                                             <div class="input-field col s12">
                                                 <span>Nom de code</span>
-                                                <input type="text" id="code" class="input-customized">
+                                                <input type="text" value="{{ wh.code }}" id="code" class="input-customized">
                                             </div>
+                                            <p>
+                                                {{ wh.workingHour }}
+                                            </p>
                                         </div>
                                         <div class="row">
                                             <div class="col l2">
@@ -295,120 +298,6 @@
                                 </div>
                             </div>
                         </li>
-                        <li>
-                            <div class="collapsible-header active">Liste des heures de travail</div>
-                            <div class="collapsible-body" style="padding-bottom: 0px">
-                                <div class="row">
-                                    <div class="col l12">
-                                        <table class="bordered striped centered">
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Nom de code</th>
-                                                    <th>Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            {% for wh in whList %}
-                                                <tr>
-                                                    <td>{{ wh.id }}</td>
-                                                    <td>{{ wh.workingHour.code }}</td>
-                                                    {#<td>{% if wh.pauseBeginHour is not null %}{{ wh.pauseBeginHour | date("H:i") }}{% else %}{{ "-" }}{% endif %}</td>#}
-                                                    <td>
-                                                        <a href="{{ path("editWorkingHour",{'id':wh.id}) }}">
-                                                            <button class="simple-button-decoration blue"><span class="fa fa-pencil-alt white-text"></span></button>
-                                                        </a>
-                                                        <button data-target="modal-formulaire{{ wh.id }}" class="simple-button-decoration green lighten-2 machineDep modal-trigger" identify="{{ wh.id }}"><span class="fa fa-eye white-text"></span></button>
-                                                        <button class="simple-button-decoration red deleteWh" identify="{{ wh.id }}"><span class="fa fa-trash white-text"></span></button>
-                                                    </td>
-                                                </tr>
-                                                <div id="modal-formulaire{{ wh.id }}" class="modal modal-fixed-footer">
-                                                    <div class="modal-content">
-                                                        <h5>Détails de cette heure de travail</h5>
-                                                        <hr>
-                                                        <p>Détails supplémentaires</p>
-                                                        <div class="row">
-                                                            <div class="col s12">
-                                                                <ol>
-                                                                    <div class="row">
-                                                                        <div class="col l4">
-                                                                            <li>
-                                                                                Lundi
-                                                                                <ul>
-                                                                                    <li>Type : {{ wh.workingHour.lundi[0].type }}</li>
-                                                                                    <li>Quota horraire : {{ wh.workingHour.lundi[0].quota }}</li>
-                                                                                </ul>
-                                                                            </li>
-                                                                        </div>
-                                                                        <div class="col l4">
-                                                                            <li>
-                                                                                Mardi
-                                                                                <ul>
-                                                                                    <li>Type : {{ wh.workingHour.mardi[0].type }}</li>
-                                                                                    <li>Quota horraire : {{ wh.workingHour.mardi[0].quota }}</li>
-                                                                                </ul>
-                                                                            </li>
-                                                                        </div>
-                                                                        <div class="col l4">
-                                                                            <li>
-                                                                                Mercredi
-                                                                                <ul>
-                                                                                    <li>Type : {{ wh.workingHour.mercredi[0].type }}</li>
-                                                                                    <li>Quota horraire : {{ wh.workingHour.mercredi[0].quota }}</li>
-                                                                                </ul>
-                                                                            </li>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row">
-                                                                        <div class="col l4">
-                                                                            <li>
-                                                                                Jeudi
-                                                                                <ul>
-                                                                                    <li>Type : {{ wh.workingHour.jeudi[0].type }}</li>
-                                                                                    <li>Quota horraire : {{ wh.workingHour.jeudi[0].quota }}</li>
-                                                                                </ul>
-                                                                            </li>
-                                                                        </div>
-                                                                        <div class="col l4">
-                                                                            <li>
-                                                                                Vendredi
-                                                                                <ul>
-                                                                                    <li>Type : {{ wh.workingHour.vendredi[0].type }}</li>
-                                                                                    <li>Quota horraire : {{ wh.workingHour.vendredi[0].quota }}</li>
-                                                                                </ul>
-                                                                            </li>
-                                                                        </div>
-                                                                        <div class="col l4">
-                                                                            <li>
-                                                                                Samedi
-                                                                                <ul>
-                                                                                    <li>Type : {{ wh.workingHour.samedi[0].type }}</li>
-                                                                                    <li>Quota horraire : {{ wh.workingHour.samedi[0].quota }}</li>
-                                                                                </ul>
-                                                                            </li>
-                                                                        </div>
-                                                                        <div class="col l4">
-                                                                            <li>
-                                                                                Dimanche
-                                                                                <ul>
-                                                                                    <li>Type : {{ wh.workingHour.dimanche[0].type }}</li>
-                                                                                    <li>Quota horraire : {{ wh.workingHour.dimanche[0].quota }}</li>
-                                                                                </ul>
-                                                                            </li>
-                                                                        </div>
-                                                                    </div>
-                                                                </ol>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
                     </ul>
                 </div>
             </div>
@@ -419,6 +308,7 @@
 {% block javascripts %}
     <script>
         $(function(){
+            alert("{{ whJson }}");
 
             function desactive(jour){
                 $('#'+jour+'PBH').val('');
@@ -743,6 +633,12 @@
                     window.location.href = path;
                 }
             });
+        });
+    </script>
+    <script>
+        // On s'attaque aux collapsibles
+        $(function () {
+            $(".navigation_collapsible").collapsible('open',6);
         });
     </script>
 {% endblock %}
