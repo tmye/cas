@@ -57,6 +57,25 @@ class WorkingHoursController extends Controller
     }
 
     /**
+     * @Route("/updateWorkingHour", name="updateWorkingHour")
+     */
+    public function updateWorkingHourAction(Request $request)
+    {
+        $don = $request->request->get('json_s');
+        $code = $request->request->get('code');
+        $id = $request->request->get('id');
+
+        $em = $this->getDoctrine()->getManager();
+        $wh = $em->getRepository("AppBundle:WorkingHours")->find($id);
+
+        $wh->setCode($code);
+        $wh->setWorkingHour($don);
+        $em->flush();
+
+        return new Response(1);
+    }
+
+    /**
      * @Route("/editWorkingHour/{id}", name="editWorkingHour")
      */
     public function editWorkingHourAction(Request $request, $id)
@@ -67,10 +86,11 @@ class WorkingHoursController extends Controller
         }
         $tab = array();
 
-        $json_wh = json_encode($wh->getWorkingHour());
+        $json_wh = json_decode($wh->getWorkingHour(),true);
         $tab[] = ['id'=>$wh->getId(),'workingHour'=>(array)json_decode($wh->getWorkingHour())];
 
         return $this->render('cas/editWorkingHour.html.twig', array(
+            'id'=>$id,
             'wh'=>$wh,
             'whJson'=>$json_wh
         ));

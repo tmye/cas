@@ -13,6 +13,9 @@
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
                                     <div class="col l12">
+                                        <p>
+                                            {{ dump(id) }}
+                                        </p>
 
                                         <!-- Formulaire pour lundi -->
 
@@ -22,9 +25,6 @@
                                                 <span>Nom de code</span>
                                                 <input type="text" value="{{ wh.code }}" id="code" class="input-customized">
                                             </div>
-                                            <p>
-                                                {{ wh.workingHour }}
-                                            </p>
                                         </div>
                                         <div class="row">
                                             <div class="col l2">
@@ -39,24 +39,24 @@
                                             <div class="collapseSectionLundi">
                                                 <div class="input-field col l2">
                                                     <span>Début</span>
-                                                    <input type="text" id="lundiBH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["lundi"][0]["beginHour"] }}' id="lundiBH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Fin</span>
-                                                    <input type="text" id="lundiEH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["lundi"][0]["endHour"] }}' id="lundiEH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Début pause</span>
-                                                    <input type="text" id="lundiPBH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["lundi"][0]["pauseBeginHour"] }}' id="lundiPBH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Fin pause</span>
-                                                    <input type="text" id="lundiPEH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["lundi"][0]["pauseEndHour"] }}' id="lundiPEH" class="input-customized timepicker">
                                                 </div>
                                             </div>
                                             <div class="input-field col l2 quotaSectionLundi">
                                                 <span>Quota horraire</span>
-                                                <input type="number" id="lundiQuota" min="1" max="8" class="input-customized">
+                                                <input type="number" value='{{ whJson["lundi"][0]["quota"] }}' id="lundiQuota" min="1" max="8" class="input-customized">
                                             </div>
                                         </div>
 
@@ -76,24 +76,24 @@
                                             <div class="collapseSectionMardi">
                                                 <div class="input-field col l2">
                                                     <span>Début</span>
-                                                    <input type="text" id="mardiBH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["mardi"][0]["beginHour"] }}' id="mardiBH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Fin</span>
-                                                    <input type="text" id="mardiEH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["mardi"][0]["endHour"] }}' id="mardiEH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Début pause</span>
-                                                    <input type="text" id="mardiPBH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["mardi"][0]["pauseBeginHour"] }}' id="mardiPBH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Fin pause</span>
-                                                    <input type="text" id="mardiPEH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["mardi"][0]["pauseEndHour"] }}' id="mardiPEH" class="input-customized timepicker">
                                                 </div>
                                             </div>
                                             <div class="input-field col l2 quotaSectionMardi">
                                                 <span>Quota horraire</span>
-                                                <input type="number" id="mardiQuota" min="1" max="8" class="input-customized">
+                                                <input type="number" value='{{ whJson["mardi"][0]["quota"] }}' id="mardiQuota" min="1" max="8" class="input-customized">
                                             </div>
                                         </div>
 
@@ -113,24 +113,24 @@
                                             <div class="collapseSectionMercredi">
                                                 <div class="input-field col l2">
                                                     <span>Début</span>
-                                                    <input type="text" id="mercrediBH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["mercredi"][0]["beginHour"] }}' id="mercrediBH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Fin</span>
-                                                    <input type="text" id="mercrediEH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["mercredi"][0]["endHour"] }}' id="mercrediEH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Début pause</span>
-                                                    <input type="text" id="mercrediPBH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["mercredi"][0]["pauseBeginHour"] }}' id="mercrediPBH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Fin pause</span>
-                                                    <input type="text" id="mercrediPEH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["mercredi"][0]["pauseEndHour"] }}' id="mercrediPEH" class="input-customized timepicker">
                                                 </div>
                                             </div>
                                             <div class="input-field col s2 quotaSectionMercredi">
                                                 <span>Quota horraire</span>
-                                                <input type="number" id="mercrediQuota" min="1" max="8" class="input-customized">
+                                                <input type="number" value='{{ whJson["mercredi"][0]["quota"] }}' id="mercrediQuota" min="1" max="8" class="input-customized">
                                             </div>
                                         </div>
 
@@ -150,24 +150,24 @@
                                             <div class="collapseSectionJeudi">
                                                 <div class="input-field col l2">
                                                     <span>Début</span>
-                                                    <input type="text" id="jeudiBH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["jeudi"][0]["beginHour"] }}' id="jeudiBH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Fin</span>
-                                                    <input type="text" id="jeudiEH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["jeudi"][0]["pauseBeginHour"] }}' id="jeudiEH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Début pause</span>
-                                                    <input type="text" id="jeudiPBH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["jeudi"][0]["pauseBeginHour"] }}' id="jeudiPBH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Fin pause</span>
-                                                    <input type="text" id="jeudiPEH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["jeudi"][0]["pauseEndHour"] }}' id="jeudiPEH" class="input-customized timepicker">
                                                 </div>
                                             </div>
                                             <div class="input-field col s2 quotaSectionJeudi">
                                                 <span>Quota horraire</span>
-                                                <input type="number" id="jeudiQuota" min="1" max="8" class="input-customized">
+                                                <input type="number" value='{{ whJson["jeudi"][0]["quota"] }}' id="jeudiQuota" min="1" max="8" class="input-customized">
                                             </div>
                                         </div>
 
@@ -187,24 +187,24 @@
                                             <div class="collapseSectionVendredi">
                                                 <div class="input-field col l2">
                                                     <span>Début</span>
-                                                    <input type="text" id="vendrediBH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["vendredi"][0]["beginHour"] }}' id="vendrediBH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Fin</span>
-                                                    <input type="text" id="vendrediEH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["vendredi"][0]["endHour"] }}' id="vendrediEH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Début pause</span>
-                                                    <input type="text" id="vendrediPBH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["vendredi"][0]["pauseBeginHour"] }}' id="vendrediPBH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Fin pause</span>
-                                                    <input type="text" id="vendrediPEH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["vendredi"][0]["pauseEndHour"] }}' id="vendrediPEH" class="input-customized timepicker">
                                                 </div>
                                             </div>
                                             <div class="input-field col s2 quotaSectionVendredi">
                                                 <span>Quota horraire</span>
-                                                <input type="number" id="vendrediQuota" min="1" max="8" class="input-customized">
+                                                <input type="number" value='{{ whJson["vendredi"][0]["quota"] }}' id="vendrediQuota" min="1" max="8" class="input-customized">
                                             </div>
                                         </div>
 
@@ -228,24 +228,24 @@
                                             <div class="collapseSectionSamedi">
                                                 <div class="input-field col l2">
                                                     <span>Début</span>
-                                                    <input type="text" id="samediBH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["samedi"][0]["beginHour"] }}' id="samediBH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Fin</span>
-                                                    <input type="text" id="samediEH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["samedi"][0]["endHour"] }}' id="samediEH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Début pause</span>
-                                                    <input type="text" id="samediPBH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["samedi"][0]["pauseBeginHour"] }}' id="samediPBH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Fin pause</span>
-                                                    <input type="text" id="samediPEH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["samedi"][0]["pauseEndHour"] }}' id="samediPEH" class="input-customized timepicker">
                                                 </div>
                                             </div>
                                             <div class="input-field col s2 quotaSectionSamedi">
                                                 <span>Quota horraire</span>
-                                                <input type="number" id="samediQuota" min="1" max="8" class="input-customized">
+                                                <input type="number" value='{{ whJson["samedi"][0]["quota"] }}' id="samediQuota" min="1" max="8" class="input-customized">
                                             </div>
                                         </div>
 
@@ -269,31 +269,31 @@
                                             <div class="collapseSectionDimanche">
                                                 <div class="input-field col l2">
                                                     <span>Début</span>
-                                                    <input type="text" id="dimancheBH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["dimanche"][0]["beginHour"] }}' id="dimancheBH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Fin</span>
-                                                    <input type="text" id="dimancheEH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["dimanche"][0]["endHour"] }}' id="dimancheEH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Début pause</span>
-                                                    <input type="text" id="dimanchePBH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["dimanche"][0]["pauseBeginHour"] }}' id="dimanchePBH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Fin pause</span>
-                                                    <input type="text" id="dimanchePEH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["dimanche"][0]["pauseEndHour"] }}' id="dimanchePEH" class="input-customized timepicker">
                                                 </div>
                                             </div>
                                             <div class="input-field col s2 quotaSectionDimanche">
                                                 <span>Quota horraire</span>
-                                                <input type="number" id="dimancheQuota" min="1" max="8" class="input-customized">
+                                                <input type="number" value='{{ whJson["dimanche"][0]["quota"] }}' id="dimancheQuota" min="1" max="8" class="input-customized">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col l12">
-                                        <button id="btnSave">Enregistrer</button>
+                                        <button id="btnSave">Modifier</button>
                                     </div>
                                 </div>
                             </div>
@@ -308,8 +308,6 @@
 {% block javascripts %}
     <script>
         $(function(){
-            alert("{{ whJson }}");
-
             function desactive(jour){
                 $('#'+jour+'PBH').val('');
                 $('#'+jour+'PEH').val('');
@@ -354,7 +352,7 @@
                         $('.quotaSectionLundi input').css('background-color','#ccc');
 
                         reactive("lundi");
-                        reactiveHeure("lundi")
+                        reactiveHeure("lundi");
                         break;
                     case "2":
                         $('.quotaSectionLundi input').removeAttr('disabled');
@@ -594,21 +592,21 @@
     <script>
         $("#btnSave").click(function(){
             var obj = {"code":$("#code").val(),"lundi":[{"type":$("#form_type_lundi").val(),"quota":$("#lundiQuota").val(),"beginHour":$("#lundiBH").val(),"pauseBeginHour":$("#lundiPBH").val(),"pauseEndHour":$("#lundiPEH").val(),"endHour":$("#lundiEH").val()}],"mardi":[{"type":$("#form_type_mardi").val(),"quota":$("#mardiQuota").val(),"beginHour":$("#mardiBH").val(),"pauseBeginHour":$("#mardiPBH").val(),"pauseEndHour":$("#mardiPEH").val(),"endHour":$("#mardiEH").val()}],"mercredi":[{"type":$("#form_type_mercredi").val(),"quota":$("#mercrediQuota").val(),"beginHour":$("#mercrediBH").val(),"pauseBeginHour":$("#mercrediPBH").val(),"pauseEndHour":$("#mercrediPEH").val(),"endHour":$("#mercrediEH").val()}],"jeudi":[{"type":$("#form_type_jeudi").val(),"quota":$("#jeudiQuota").val(),"beginHour":$("#jeudiBH").val(),"pauseBeginHour":$("#jeudiPBH").val(),"pauseEndHour":$("#jeudiPEH").val(),"endHour":$("#jeudiEH").val()}],"vendredi":[{"type":$("#form_type_vendredi").val(),"quota":$("#vendrediQuota").val(),"beginHour":$("#vendrediBH").val(),"pauseBeginHour":$("#vendrediPBH").val(),"pauseEndHour":$("#vendrediPEH").val(),"endHour":$("#vendrediEH").val()}],"samedi":[{"type":$("#form_type_samedi").val(),"quota":$("#samediQuota").val(),"beginHour":$("#samediBH").val(),"pauseBeginHour":$("#samediPBH").val(),"pauseEndHour":$("#samediPEH").val(),"endHour":$("#samediEH").val()}],"dimanche":[{"type":$("#form_type_dimanche").val(),"quota":$("#dimancheQuota").val(),"beginHour":$("#dimancheBH").val(),"pauseBeginHour":$("#dimanchePBH").val(),"pauseEndHour":$("#dimanchePEH").val(),"endHour":$("#dimancheEH").val()}]};
-
+            var id = {{ id }};
+            console.log("Identity : "+id);
             alert(obj);
             alert("apres");
             console.log(obj);
             var json_string = JSON.stringify(obj);
             $.ajax({
                 type: 'POST',
-                url: 'persistWorkingHour',
-                data: { json_s:json_string,code:$("#code").val() },
+                url: "{{ path('updateWorkingHour') }}",
+                data: { json_s:json_string,code:$("#code").val(),id:id },
                 timeout: 0,
                 success:
                     function (data) {
                         if(data==1){
-                            alert("Enregistrement effectué avec succès");
-                            window.location.href = "addWorkingHour";
+                            alert("Modification effectué avec succès");
                         }else{
                             alert("Erreur inconnue");
                         }
@@ -639,6 +637,256 @@
         // On s'attaque aux collapsibles
         $(function () {
             $(".navigation_collapsible").collapsible('open',6);
+        });
+    </script>
+
+    <script>
+        // On prérempli les champs
+        $(function() {
+            function desactive(jour){
+                $('#'+jour+'PBH').val('');
+                $('#'+jour+'PEH').val('');
+                $('#'+jour+'PBH').attr('disabled','disabled');
+                $('#'+jour+'PBH').css('background-color','#ccc');
+                $('#'+jour+'PEH').attr('disabled','disabled');
+                $('#'+jour+'PEH').css('background-color','#ccc');
+            }
+            function desactiveTout(jour){
+                $('#'+jour+'BH').val('');
+                $('#'+jour+'EH').val('');
+                $('#'+jour+'BH').attr('disabled','disabled');
+                $('#'+jour+'BH').css('background-color','#ccc');
+                $('#'+jour+'EH').attr('disabled','disabled');
+                $('#'+jour+'EH').css('background-color','#ccc');
+                desactive(jour);
+
+            }
+            function reactive(jour){
+                $('#'+jour+'PBH').removeAttr('disabled');
+                $('#'+jour+'PBH').css('background-color','#fff');
+                $('#'+jour+'PEH').removeAttr('disabled');
+                $('#'+jour+'PEH').css('background-color','#fff');
+            }
+            function reactiveHeure(jour){
+                $('#'+jour+'BH').removeAttr('disabled');
+                $('#'+jour+'BH').css('background-color','#fff');
+                $('#'+jour+'EH').removeAttr('disabled');
+                $('#'+jour+'EH').css('background-color','#fff');
+            }
+
+            var wh = {{ whJson|json_encode|raw }};
+            console.log($("#form_type_lundi").val());
+            console.log(wh.lundi[0].type);
+            console.log(wh);
+
+            // Lundi
+            switch (wh.lundi[0].type){
+                case "1":
+                    $("#form_type_lundi").val("1");
+
+                    $('.quotaSectionLundi input').val('');
+                    $('.quotaSectionLundi input').attr('disabled','disabled');
+                    $('.quotaSectionLundi input').css('background-color','#ccc');
+
+                    reactive("lundi");
+                    reactiveHeure("lundi");
+                    break;
+                case "2":
+                    $("#form_type_lundi").val("2");
+
+                    $('.quotaSectionLundi input').removeAttr('disabled');
+                    $('.quotaSectionLundi input').css('background-color','#fff');
+
+                    desactive("lundi");
+                    reactiveHeure("lundi");
+                    break;
+                case "3":
+                    $("#form_type_lundi").val("3");
+
+                    $('.quotaSectionLundi input').val('');
+                    $('.quotaSectionLundi input').attr('disabled','disabled');
+                    $('.quotaSectionLundi input').css('background-color','#ccc');
+
+                    desactiveTout("lundi");
+                    break;
+            }
+
+            // Mardi
+            switch(wh.mardi[0].type){
+                case "1":
+                    $("#form_type_mardi").val("1");
+
+                    $('.quotaSectionMardi input').val('');
+                    $('.quotaSectionMardi input').attr('disabled','disabled');
+                    $('.quotaSectionMardi input').css('background-color','#ccc');
+
+                    reactive("mardi");
+                    reactiveHeure("mardi");
+                    break;
+                case "2":
+                    $("#form_type_mardi").val("2");
+
+                    $('.quotaSectionMardi input').removeAttr('disabled');
+                    $('.quotaSectionMardi input').css('background-color','#fff');
+
+                    desactive("mardi");
+                    reactiveHeure("mardi");
+                    break;
+                case "3":
+                    $("#form_type_mardi").val("3");
+
+                    $('.quotaSectionMardi input').val('');
+                    $('.quotaSectionMardi input').attr('disabled','disabled');
+                    $('.quotaSectionMardi input').css('background-color','#ccc');
+
+                    desactiveTout("mardi");
+                    break;
+            }
+
+            // Mercredi
+            switch(wh.mercredi[0].type){
+                case "1":
+                    $("#form_type_mercredi").val("1");
+
+                    $('.quotaSectionMercredi input').val('');
+                    $('.quotaSectionMercredi input').attr('disabled','disabled');
+                    $('.quotaSectionMercredi input').css('background-color','#ccc');
+                    reactive("mercredi");
+                    reactiveHeure("mercredi");
+                    break;
+                case "2":
+                    $("#form_type_mercredi").val("2");
+
+                    $('.quotaSectionMercredi input').removeAttr('disabled');
+                    $('.quotaSectionMercredi input').css('background-color','#fff');
+                    desactive("mercredi");
+                    reactiveHeure("mercredi");
+                    break;
+                case "3":
+                    $("#form_type_mercredi").val("3");
+
+                    $('.quotaSectionMercredi input').val('');
+                    $('.quotaSectionMercredi input').attr('disabled','disabled');
+                    $('.quotaSectionMercredi input').css('background-color','#ccc');
+                    desactiveTout("mercredi");
+                    break;
+            }
+
+            // Jeudi
+            switch(wh.jeudi[0].type){
+                case "1":
+                    $("#form_type_jeudi").val("1");
+
+                    $('.quotaSectionJeudi input').val('');
+                    $('.quotaSectionJeudi input').attr('disabled','disabled');
+                    $('.quotaSectionJeudi input').css('background-color','#ccc');
+                    reactive("jeudi");
+                    reactiveHeure("jeudi");
+                    break;
+                case "2":
+                    $("#form_type_jeudi").val("2");
+
+                    $('.quotaSectionJeudi input').removeAttr('disabled');
+                    $('.quotaSectionJeudi input').css('background-color','#fff');
+                    desactive("jeudi");
+                    reactiveHeure("jeudi");
+                    break;
+                case "3":
+                    $("#form_type_jeudi").val("3");
+
+                    $('.quotaSectionJeudi input').val('');
+                    $('.quotaSectionJeudi input').attr('disabled','disabled');
+                    $('.quotaSectionJeudi input').css('background-color','#ccc');
+                    desactiveTout("jeudi");
+                    break;
+            }
+
+            // Vendredi
+            switch(wh.vendredi[0].type){
+                case "1":
+                    $("#form_type_vendredi").val("1");
+
+                    $('.quotaSectionVendredi input').val('');
+                    $('.quotaSectionVendredi input').attr('disabled','disabled');
+                    $('.quotaSectionVendredi input').css('background-color','#ccc');
+                    reactive("vendredi");
+                    reactiveHeure("vendredi");
+                    break;
+                case "2":
+                    $("#form_type_vendredi").val("2");
+
+                    $('.quotaSectionVendredi input').removeAttr('disabled');
+                    $('.quotaSectionVendredi input').css('background-color','#fff');
+                    desactive("vendredi");
+                    reactiveHeure("vendredi");
+                    break;
+                case "3":
+                    $("#form_type_vendredi").val("3");
+
+                    $('.quotaSectionVendredi input').val('');
+                    $('.quotaSectionVendredi input').attr('disabled','disabled');
+                    $('.quotaSectionVendredi input').css('background-color','#ccc');
+                    desactiveTout("vendredi");
+                    break;
+            }
+
+            // Samedi
+            switch(wh.samedi[0].type){
+                case "1":
+                    $("#form_type_samedi").val("1");
+
+                    $('.quotaSectionSamedi input').val('');
+                    $('.quotaSectionSamedi input').attr('disabled','disabled');
+                    $('.quotaSectionSamedi input').css('background-color','#ccc');
+                    reactive("samedi");
+                    reactiveHeure("samedi");
+                    break;
+                case "2":
+                    $("#form_type_samedi").val("2");
+
+                    $('.quotaSectionSamedi input').removeAttr('disabled');
+                    $('.quotaSectionSamedi input').css('background-color','#fff');
+                    desactive("samedi");
+                    reactiveHeure("samedi");
+                    break;
+                case "3":
+                    $("#form_type_samedi").val("3");
+
+                    $('.quotaSectionSamedi input').val('');
+                    $('.quotaSectionSamedi input').attr('disabled','disabled');
+                    $('.quotaSectionSamedi input').css('background-color','#ccc');
+                    desactiveTout("samedi");
+                    break;
+            }
+
+            // Dimanche
+            switch(wh.dimanche[0].type){
+                case "1":
+                    $("#form_type_dimanche").val("1");
+
+                    $('.quotaSectionDimanche input').val('');
+                    $('.quotaSectionDimanche input').attr('disabled','disabled');
+                    $('.quotaSectionDimanche input').css('background-color','#ccc');
+                    reactive("dimanche");
+                    reactiveHeure("dimanche");
+                    break;
+                case "2":
+                    $("#form_type_dimanche").val("2");
+
+                    $('.quotaSectionDimanche input').removeAttr('disabled');
+                    $('.quotaSectionDimanche input').css('background-color','#fff');
+                    desactive("dimanche");
+                    reactiveHeure("dimanche");
+                    break;
+                case "3":
+                    $("#form_type_dimanche").val("3");
+
+                    $('.quotaSectionDimanche input').val('');
+                    $('.quotaSectionDimanche input').attr('disabled','disabled');
+                    $('.quotaSectionDimanche input').css('background-color','#ccc');
+                    desactiveTout("dimanche");
+                    break;
+            }
         });
     </script>
 {% endblock %}
