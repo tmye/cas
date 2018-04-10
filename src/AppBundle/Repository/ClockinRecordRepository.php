@@ -100,9 +100,9 @@ class ClockinRecordRepository extends EntityRepository
         }
     }
 
-    public function retard($emp,$date,$interval){
+    public function retard($emp,$date,$interval,$hAN){
 
-        $heureNormalArrive = (60*60*6)+(60*30); // Timestamp 60sec * 60min * 6heures + 30min = 6h30
+        $heureNormalArrive = $hAN; // Timestamp 60sec * 60min * 6heures + 30min = 6h30
 
         $queryBuilder = $this->createQueryBuilder('c');
         $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
