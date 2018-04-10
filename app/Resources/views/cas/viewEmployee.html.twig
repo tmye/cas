@@ -108,11 +108,17 @@
                                  */
                                 if(data[i].dep == selectedDep){
                                     //var mDate = new Date(data[i].hireDate.timestamp*1000).toLocaleDateString();
-                                    //alert(mDate);
+                                    // On choisi l'image par défaut si l'employé n'en a pas
+                                    var img = null;
+                                    if(data[i].picPath != null && data[i].picPath != ""){
+                                        img = '{{ asset(""~ user_profile_pictures)~"/" }}'+data[i].picPath;
+                                    }else {
+                                        img = '{{ asset("img/avatar.jpg") }}';
+                                    }
                                     $("#rowsContainer").append("" +
                                         "<tr>" +
                                         "<td>"+data[i].id+"</td>" +
-                                        "<td><img src=\"{{ asset(""~ user_profile_pictures)~"/" }}"+data[i].picPath+"\" alt=\" profil_picture\" style=\"width:50px;height:50px\"></td>" +
+                                        "<td><img src="+img+" alt=\" profil_picture\" style=\"width:50px;height:50px\"></td>" +
                                         "<td>"+data[i].surname+" "+data[i].lastName+"</td>" +
                                         "<td>"+data[i].function+"</td>" +
                                         "<td>"+data[i].salary+"</td>" +
