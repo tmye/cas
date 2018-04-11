@@ -198,6 +198,7 @@ class StatsController extends Controller
                     }
                     $retardPauseDiff = $cr->retardPause($employe,$theDay,$nowTime,$_total_time);
                     if($retardPauseDiff != null){
+                        $nowDate = date('d/m/Y',$nowTime);
                         //echo "\n J'ai detecte un retard de pause \n";
                         $retards++;
                         $sommeRetards +=$retardDiff;
@@ -245,6 +246,17 @@ class StatsController extends Controller
                         $retards++;
                         $sommeRetards +=$retardDiff;
                         $tempsPerdusRetards = $retardDiff/(60);
+                    }
+                    $retardPauseDiff = $cr->retardPause($employe,$theDay,$nowTime,$_total_time);
+                    if($retardPauseDiff != null){
+                        $nowDate = date('d/m/Y',$nowTime);
+                        //echo "\n J'ai detecte un retard de pause \n";
+                        $retards++;
+                        $sommeRetards +=$retardDiff;
+                        $tempsPerdusRetardsPause = $retardPauseDiff/(60);
+                        $tempsPerdusRetards+= $retardPauseDiff/(60);
+                        $ct = date('H:i',$retardDiff);
+                        $tabRetardsPause[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$tempsPerdusRetardsPause);
                     }
                     $departDiff = $cr->departPremature($employe,$nowTime,$interval);
                     if($departDiff != null){
