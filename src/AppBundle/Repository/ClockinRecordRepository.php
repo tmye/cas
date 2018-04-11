@@ -102,7 +102,46 @@ class ClockinRecordRepository extends EntityRepository
 
     public function retard($emp,$date,$interval,$hAN){
 
-        $heureNormalArrive = $hAN; // Timestamp 60sec * 60min * 6heures + 30min = 6h30
+        $heureNormalArrive = $hAN;
+
+        $queryBuilder = $this->createQueryBuilder('c');
+        $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
+        $queryBuilder->andWhere('c.clockinTime > :date');
+        $queryBuilder->setParameter('date',$date+$heureNormalArrive);
+        $queryBuilder->andWhere('c.clockinTime <= (:maxDate)');
+        $queryBuilder->setParameter('maxDate',$date+$heureNormalArrive+$interval);
+        $donn = $queryBuilder->getQuery()->getResult();
+        if($donn != null){
+            $ct = $donn[0]->getClockinTime();
+            $diff = $ct- ($date+$heureNormalArrive); // Timestamp
+            return $diff;
+        }else{
+            return 0;
+        }
+    }
+
+    public function retardPause($emp,$day,$date,$hAN){
+
+        $heureNormalArrive = $hAN;
+
+        $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
+        $heureDebutNormal = $empWH[$day][0]["pauseBeginHour"];
+        $heureFinNormal = $empWH[$day][0]["pauseEndHour"];
+
+        // Détermination de l'intervalle de pause
+
+        $pauseBeginHourExploded = explode(":",$heureDebutNormal);
+        $pauseEndHourExploded = explode(":",$heureFinNormal);
+
+        $pauseEndHourInMinutes =0;
+        $pauseBeginHourInMinutes =0;
+
+        if(sizeof($pauseBeginHourExploded)>1){
+            $pauseBeginHourInMinutes = (((int)$pauseBeginHourExploded[0])*60)+((int)$pauseBeginHourExploded[1]);
+            $pauseEndHourInMinutes = (((int)$pauseEndHourExploded[0])*60)+((int)$pauseEndHourExploded[1]);
+        }
+
+        $interval = (($pauseEndHourInMinutes - $pauseBeginHourInMinutes)/2)*60;
 
         $queryBuilder = $this->createQueryBuilder('c');
         $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);

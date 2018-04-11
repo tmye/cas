@@ -126,7 +126,9 @@ class StatsController extends Controller
         $tempsPerdusDeparts=0;
 
         $tabDepartsPause = array();
+        $tabRetardsPause = array();
         $tabDeparts = array();
+        $tabRetards = array();
         // On boucle sur les jours sélectionnés
         $i=0;
         for ($cpt=0;$cpt<=$days;$cpt++){
@@ -187,9 +189,22 @@ class StatsController extends Controller
                     }
                     $retardDiff = $cr->retard($employe,$nowTime,$interval,$_total_time);
                     if($retardDiff != null){
+                        $nowDate = date('d/m/Y',$nowTime);
                         $retards++;
                         $sommeRetards +=$retardDiff;
-                        $tempsPerdusRetards = $retardDiff/(60);
+                        $tempsPerdusRetards += $retardDiff/(60);
+                        $ct = date('H:i',$retardDiff);
+                        $tabRetards[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$tempsPerdusRetards);
+                    }
+                    $retardPauseDiff = $cr->retardPause($employe,$theDay,$nowTime,$_total_time);
+                    if($retardPauseDiff != null){
+                        //echo "\n J'ai detecte un retard de pause \n";
+                        $retards++;
+                        $sommeRetards +=$retardDiff;
+                        $tempsPerdusRetardsPause = $retardPauseDiff/(60);
+                        $tempsPerdusRetards+= $retardPauseDiff/(60);
+                        $ct = date('H:i',$retardDiff);
+                        $tabRetardsPause[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$tempsPerdusRetardsPause);
                     }
                     $departDiff = $cr->departPremature($employe,$nowTime,$interval);
                     if($departDiff != null){
@@ -272,7 +287,7 @@ class StatsController extends Controller
                     break;
             }
 
-            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts);
+            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts);
             $nowTime = $nowTime+86400;
         }
 
