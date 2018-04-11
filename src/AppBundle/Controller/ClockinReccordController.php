@@ -19,6 +19,7 @@ class ClockinReccordController extends Controller
 {
 
     static $min_laps = 180;
+    static $min_laps_pause = 30;
 
     /**
      * @Route("/test", name="test")
@@ -50,9 +51,9 @@ class ClockinReccordController extends Controller
         echo date('d-m-Y H:i:s',1522389900)."<br>";
         $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find(26);
         $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
-        return new Response(strtotime("30 March 2018 08:05:00"));
+        echo strtotime("30 March 2018 12:05:00")."<br>";
+        return new Response("OK");
     }
-
 
     /**
      * @Route("/randomClockinRecord", name="randomClockinRecord")
@@ -161,13 +162,29 @@ class ClockinReccordController extends Controller
         }
     }
 
-    public function pause(ClockinRecord $cR,$day,$request){
+
+    public function pause(ClockinRecord $cR,$day){
         $empWH = json_decode($cR->getEmploye()->getWorkingHour()->getWorkingHour(),true);
         $heureDebutNormal = $empWH[$day][0]["pauseBeginHour"];
         $heureFinNormal = $empWH[$day][0]["pauseEndHour"];
 
-        $dep = $request->request->get('id');
-        $_date = $request->request->get('date');
+        // Détermination de l'intervalle de pause
+
+        $pauseBeginHourExploded = explode(":",$heureDebutNormal);
+        $pauseEndHourExploded = explode(":",$heureFinNormal);
+
+        $pauseEndHourInMinutes =0;
+        $pauseBeginHourInMinutes =0;
+
+        if(sizeof($pauseBeginHourExploded)>1){
+            $pauseBeginHourInMinutes = (((int)$pauseBeginHourExploded[0])*60)+((int)$pauseBeginHourExploded[1]);
+            $pauseEndHourInMinutes = (((int)$pauseEndHourExploded[0])*60)+((int)$pauseEndHourExploded[1]);
+        }
+        //echo "\n test ======== ".$pauseEndHourInMinutes;
+        $hour_diff = ($pauseEndHourInMinutes - $pauseBeginHourInMinutes)/2;
+        //echo "\n Hour diff ======== ".$hour_diff;
+
+        $_date = date('d-m-Y',$cR->getClockinTime());
 
         $dd = strtotime($_date." ".$heureDebutNormal);
         $df = strtotime($_date." ".$heureFinNormal);
@@ -179,17 +196,17 @@ class ClockinReccordController extends Controller
         $dSenceA = $dd;
         $dSenceD = $df;
         // Borne inférieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
-        $hIInfA = $hSenceA- (ClockinReccordController::$min_laps * 60);
-        $hIInfD = $hSenceD- (ClockinReccordController::$min_laps * 60);
+        $hIInfA = $hSenceA- ($hour_diff * 60);
+        $hIInfD = $hSenceD- ($hour_diff * 60);
 
-        $dIInfA = $dSenceA- (ClockinReccordController::$min_laps * 60);
-        $dIInfD = $dSenceD- (ClockinReccordController::$min_laps * 60);
+        $dIInfA = $dSenceA- ($hour_diff * 60);
+        $dIInfD = $dSenceD- ($hour_diff * 60);
         // Borne superieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
-        $hISupA = $hSenceA+ (ClockinReccordController::$min_laps * 60);
-        $dISupA = $dSenceA+ (ClockinReccordController::$min_laps * 60);
+        $hISupA = $hSenceA+ ($hour_diff * 60);
+        $dISupA = $dSenceA+ ($hour_diff * 60);
 
-        $hISupD = $hSenceD+ (ClockinReccordController::$min_laps * 60);
-        $dISupD = $dSenceD+ (ClockinReccordController::$min_laps * 60);
+        $hISupD = $hSenceD+ ($hour_diff * 60);
+        $dISupD = $dSenceD+ ($hour_diff * 60);
 
         if($dIInfA <= $cR->getClockinTime() && $cR->getClockinTime() <= $dISupA){
             return true;
@@ -198,13 +215,28 @@ class ClockinReccordController extends Controller
         }
     }
 
-    public function finPause(ClockinRecord $cR,$day,$request){
+    public function finPause(ClockinRecord $cR,$day){
         $empWH = json_decode($cR->getEmploye()->getWorkingHour()->getWorkingHour(),true);
         $heureDebutNormal = $empWH[$day][0]["pauseBeginHour"];
         $heureFinNormal = $empWH[$day][0]["pauseEndHour"];
 
-        $dep = $request->request->get('id');
-        $_date = $request->request->get('date');
+        // Détermination de l'intervalle de pause
+
+        $pauseBeginHourExploded = explode(":",$heureDebutNormal);
+        $pauseEndHourExploded = explode(":",$heureFinNormal);
+
+        $pauseEndHourInMinutes =0;
+        $pauseBeginHourInMinutes =0;
+
+        if(sizeof($pauseBeginHourExploded)>1){
+            $pauseBeginHourInMinutes = (((int)$pauseBeginHourExploded[0])*60)+((int)$pauseBeginHourExploded[1]);
+            $pauseEndHourInMinutes = (((int)$pauseEndHourExploded[0])*60)+((int)$pauseEndHourExploded[1]);
+        }
+        //echo "\n test ======== ".$pauseEndHourInMinutes;
+        $hour_diff = ($pauseEndHourInMinutes - $pauseBeginHourInMinutes)/2;
+        //echo "\n Hour diff ======== ".$hour_diff;
+
+        $_date = date('d-m-Y',$cR->getClockinTime());
 
         $dd = strtotime($_date." ".$heureDebutNormal);
         $df = strtotime($_date." ".$heureFinNormal);
@@ -216,17 +248,17 @@ class ClockinReccordController extends Controller
         $dSenceA = $dd;
         $dSenceD = $df;
         // Borne inférieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
-        $hIInfA = $hSenceA- (ClockinReccordController::$min_laps * 60);
-        $hIInfD = $hSenceD- (ClockinReccordController::$min_laps * 60);
+        $hIInfA = $hSenceA- ($hour_diff * 60);
+        $hIInfD = $hSenceD- ($hour_diff * 60);
 
-        $dIInfA = $dSenceA- (ClockinReccordController::$min_laps * 60);
-        $dIInfD = $dSenceD- (ClockinReccordController::$min_laps * 60);
+        $dIInfA = $dSenceA- ($hour_diff * 60);
+        $dIInfD = $dSenceD- ($hour_diff * 60);
         // Borne superieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
-        $hISupA = $hSenceA+ (ClockinReccordController::$min_laps * 60);
-        $dISupA = $dSenceA+ (ClockinReccordController::$min_laps * 60);
+        $hISupA = $hSenceA+ ($hour_diff * 60);
+        $dISupA = $dSenceA+ ($hour_diff * 60);
 
-        $hISupD = $hSenceD+ (ClockinReccordController::$min_laps * 60);
-        $dISupD = $dSenceD+ (ClockinReccordController::$min_laps * 60);
+        $hISupD = $hSenceD+ ($hour_diff * 60);
+        $dISupD = $dSenceD+ ($hour_diff * 60);
 
         if($dIInfD <= $cR->getClockinTime() && $cR->getClockinTime() <= $dISupD){
             return true;
@@ -258,6 +290,27 @@ class ClockinReccordController extends Controller
             $eH = $wH[$day][0]["endHour"];
 
             $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"bH"=>$bH,"pBH"=>$pBH,"pEH"=>$pEH,"eH"=>$eH,"arrive"=>$arrive,"depart"=>0,"pause"=>0,"finPause"=>0);
+        }elseif($this->pause($c,$day)){
+            $nom = $c->getEmploye()->getLastName();
+            $prenom = $c->getEmploye()->getSurname();
+
+            $function = $c->getEmploye()->getFunction();
+            $wH = $c->getEmploye()->getWorkingHour()->getWorkingHour();
+            $wH = json_decode($wH,true);
+
+            $_date = $request->request->get('date');
+            $day = date('N',strtotime($_date));
+            $day = $this->dateDayNameFrench($day);
+            $pause = date('H:i',$c->getClockinTime());
+
+            $type = $wH[$day][0]["type"];
+            $quota = $wH[$day][0]["quota"];
+            $bH = $wH[$day][0]["beginHour"];
+            $pBH = $wH[$day][0]["pauseBeginHour"];
+            $pEH = $wH[$day][0]["pauseEndHour"];
+            $eH = $wH[$day][0]["endHour"];
+
+            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"bH"=>$bH,"pBH"=>$pBH,"pEH"=>$pEH,"eH"=>$eH,"arrive"=>0,"depart"=>0,"pause"=>$pause,"finPause"=>0);
         }else{
             $nom = $c->getEmploye()->getLastName();
             $prenom = $c->getEmploye()->getSurname();
@@ -304,7 +357,7 @@ class ClockinReccordController extends Controller
     public function miseAJour($recordTab,ClockinRecord $c,$day,$request){
         if($this->arrive($c,$day,$request)){
             $recordTab[$c->getEmploye()->getId()]["arrive"] =date('H:i',$c->getClockinTime());
-        }elseif($this->pause($c,$day,$request)){
+        }elseif($this->pause($c,$day)){
             $recordTab[$c->getEmploye()->getId()]["pause"] =date('H:i',$c->getClockinTime());
         }elseif($this->finPause($c,$day,$request)){
             $recordTab[$c->getEmploye()->getId()]["finPause"] =date('H:i',$c->getClockinTime());
@@ -428,15 +481,15 @@ class ClockinReccordController extends Controller
 
                 $tempData = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empHistory($e->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
 
-                /*echo "\n Employé".$e->getSurname()."\n";
-                foreach ($tempData as $data){
-                    echo "\n Id de clockinRecord".$data->getId()."\n";
+                /*foreach ($tempData as $t){
+                    echo "\n Clockin record ".$t->getId()." ::: Employé ".$t->getEmploye()->getSurname()."::: IsPauseHour ".$this->pauseDeTest($t,$t->getDepartement(),$day)." ::: Hour is ".date('H:i:s',$t->getClockinTime())."\n";
                 }*/
+
 
                 //Maintenant il faut éliminer les doublons
                 $don[] = $this->elimineDoublon($tempData,$day,$request);
-            }
 
+            }
 
             $tabLength = sizeof($don);
 
