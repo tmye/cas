@@ -245,7 +245,7 @@
                         tempsPerduRetards = data.tpr;
 
                         // Intervalle de retard
-                        var interval = 30*60; // 1800
+                        var interval = 180*60; // 10800
 
                         $("#nameSpan").text(fullName);
                         $("#salarySpan").text(salary);
@@ -259,6 +259,7 @@
                             url: "userStats",
                             data: {'empId':employeeId,'dateFrom':fromDate,'dateTo':toDate,'interval':interval},
                             success: function (data) {
+                                console.log(data);
                                 $("#containerMustBeHidden").attr("style","display:block");
                                 $("#absenceSpan").text(data.absences);
                                 $("#retardSpan").text(data.retards);

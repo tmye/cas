@@ -77,6 +77,14 @@ class StatsController extends Controller
         }
     }
 
+    public function debug_to_console( $data ) {
+        $output = $data;
+        if ( is_array( $output ) )
+            $output = implode( ',', $output);
+
+        echo "<script>console.log( 'Debug Objects: " . $output . "' );</script>";
+    }
+
     /**
      * @Route("/userStats",name="userStats")
     */
@@ -122,12 +130,34 @@ class StatsController extends Controller
         // On boucle sur les jours sélectionnés
         $i=0;
         for ($cpt=0;$cpt<=$days;$cpt++){
-
             $theDay = date('N',$nowTime);
             $theDay = $this->dateDayNameFrench($theDay);
             $type = $empWH[$theDay][0]["type"];
             $quota = $empWH[$theDay][0]["quota"];
             $quotaUtilisateur = $empWH[$theDay][0]["quota"];
+
+            $hAN = $empWH[$theDay][0]["beginHour"];
+            $_heure_debut = null;
+            $_minuites_debut = null;
+            $_time_heure_debut = null;
+            $_time_minuites_debut = null;
+
+            // Pour éviter les erreurs de "offset"
+            if(($hAN != null) && ($hAN !="")){
+                $_heure_debut = explode(':',$hAN)[0];
+                $_minuites_debut = explode(':',$hAN)[1];
+
+                $_time_heure_debut = ((int)$_heure_debut)*60*60;
+                $_time_minuites_debut =((int)$_minuites_debut)*60;
+
+                $_total_time = $_time_heure_debut+$_time_minuites_debut;
+            }
+
+            /*echo "\n Heures : ".$_heure_debut;
+            echo "\n Minuites : ".$_minuites_debut;
+            echo "\n Timestamp Heures : ".$_time_heure_debut;
+            echo "\n Timestamp Minuites : ".$_time_minuites_debut;
+            */
             $test = null;
 
             /*
@@ -155,7 +185,7 @@ class StatsController extends Controller
                         $tempsPerdusAbsences = $timePerdusAbsences/60;
                         $sommeAbsences +=$tempsPerdusAbsences;
                     }
-                    $retardDiff = $cr->retard($employe,$nowTime,$interval);
+                    $retardDiff = $cr->retard($employe,$nowTime,$interval,$_total_time);
                     if($retardDiff != null){
                         $retards++;
                         $sommeRetards +=$retardDiff;
@@ -195,7 +225,7 @@ class StatsController extends Controller
                         $tempsPerdusAbsences = ((int)$quota)*60;
                         $sommeAbsences +=$tempsPerdusAbsences;
                     }
-                    $retardDiff = $cr->retard($employe,$nowTime,$interval);
+                    $retardDiff = $cr->retard($employe,$nowTime,$interval,$_total_time);
                     if($retardDiff != null){
                         $retards++;
                         $sommeRetards +=$retardDiff;

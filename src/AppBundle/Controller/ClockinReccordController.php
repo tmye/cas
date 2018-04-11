@@ -437,33 +437,8 @@ class ClockinReccordController extends Controller
                 $don[] = $this->elimineDoublon($tempData,$day,$request);
             }
 
-            /*
-            $d = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->findAll();
-            echo "\n Avant l'elimination de doublons :";
-            foreach ($d as $res){
-                echo "\n el :".$res->getId();
-            }
-
-            echo "\n Après l'elimination de doublons :";
-            $after = $this->elimineDoublon($d,$day,$request);
-            foreach ($after as $result){
-                print_r($result);
-            }
-
-
-            foreach ($don as $data){
-                echo "\n Passage de niveau 1 :";
-                print_r($data);
-            }
-            */
 
             $tabLength = sizeof($don);
-
-
-
-            // Toujours des echo de débogage
-            //print('Au total après le filtre de date : '.$j.'<br>');
-            //print('Au total dans le département: '.$i);
 
             $encoders = array(new XmlEncoder(), new JsonEncoder());
             $normalizers = array(new ObjectNormalizer());
