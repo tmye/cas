@@ -449,63 +449,127 @@ class ClockinReccordController extends Controller
         }
 
         if(sizeof($emp)>0){
-            $empTab[]=$emp->getId();
-            $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
+            if(sizeof($emp)==1) {
+                $empTab[]=$emp->getId();
 
-            $heureDebutNormal = $empWH[$day][0]["beginHour"];
-            $heureDebutPauseNormal = $empWH[$day][0]["pauseBeginHour"];
-            $heureFinNormal = $empWH[$day][0]["endHour"];
-            $heureFinPauseNormal = $empWH[$day][0]["pauseEndHour"];
+                $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
 
-            //echo "\nBeginHour : ".$heureDebutNormal."\n";
+                $heureDebutNormal = $empWH[$day][0]["beginHour"];
+                $heureDebutPauseNormal = $empWH[$day][0]["pauseBeginHour"];
+                $heureFinNormal = $empWH[$day][0]["endHour"];
+                $heureFinPauseNormal = $empWH[$day][0]["pauseEndHour"];
 
-            $dd = strtotime($_date." ".$heureDebutNormal);
-            $dpd = strtotime($_date." ".$heureDebutPauseNormal);
-            $dpf = strtotime($_date." ".$heureFinPauseNormal);
-            $df = strtotime($_date." ".$heureFinNormal);
+                //echo "\nBeginHour : ".$heureDebutNormal."\n";
 
-            // L'heure à laquelle l'employé est sensé arriver
-            $hSenceA = strtotime(date("H:i",strtotime($dd)));
-            $hSencePD = strtotime(date("H:i",strtotime($dpd)));
-            $hSencePF = strtotime(date("H:i",strtotime($dpf)));
-            $hSenceD = strtotime(date("H:i",strtotime($df)));
-            // Timestamp de la dateheure à laquelle l'employé est sensé arriver
-            $dSenceA = $dd;
-            $dSencePD = $dpd;
-            $dSencePF = $dpf;
-            $dSenceD = $df;
+                $dd = strtotime($_date." ".$heureDebutNormal);
+                $dpd = strtotime($_date." ".$heureDebutPauseNormal);
+                $dpf = strtotime($_date." ".$heureFinPauseNormal);
+                $df = strtotime($_date." ".$heureFinNormal);
 
-
-            $dIInfA = $dSenceA-(ClockinReccordController::$min_laps * 60);
-            $dIInfPD = $dSencePD-(ClockinReccordController::$min_laps * 60);
-            $dIInfD = $dSenceD-(ClockinReccordController::$min_laps * 60);
-            $dIInfPF = $dSencePF-(ClockinReccordController::$min_laps * 60);
-            // Borne superieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
-            $dISupA = $dSenceA+(ClockinReccordController::$min_laps * 60);
-            $dISupPD = $dSencePD+(ClockinReccordController::$min_laps * 60);
-            $dISupPF = $dSencePF+(ClockinReccordController::$min_laps * 60);
-
-            $hISupD = $hSenceD+(ClockinReccordController::$min_laps * 60);
-            $dISupD = $dSenceD+(ClockinReccordController::$min_laps * 60);
-
-            // On récupère les données appartenant au département sélectionné
-
-            $tempData = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empHistory($emp->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
-
-            //Maintenant il faut éliminer les doublons
-            $don[] = $this->elimineDoublon($tempData,$day,$request);
+                // L'heure à laquelle l'employé est sensé arriver
+                $hSenceA = strtotime(date("H:i",strtotime($dd)));
+                $hSencePD = strtotime(date("H:i",strtotime($dpd)));
+                $hSencePF = strtotime(date("H:i",strtotime($dpf)));
+                $hSenceD = strtotime(date("H:i",strtotime($df)));
+                // Timestamp de la dateheure à laquelle l'employé est sensé arriver
+                $dSenceA = $dd;
+                $dSencePD = $dpd;
+                $dSencePF = $dpf;
+                $dSenceD = $df;
 
 
-            $tabLength = sizeof($don);
+                $dIInfA = $dSenceA-(ClockinReccordController::$min_laps * 60);
+                $dIInfPD = $dSencePD-(ClockinReccordController::$min_laps * 60);
+                $dIInfD = $dSenceD-(ClockinReccordController::$min_laps * 60);
+                $dIInfPF = $dSencePF-(ClockinReccordController::$min_laps * 60);
+                // Borne superieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
+                $dISupA = $dSenceA+(ClockinReccordController::$min_laps * 60);
+                $dISupPD = $dSencePD+(ClockinReccordController::$min_laps * 60);
+                $dISupPF = $dSencePF+(ClockinReccordController::$min_laps * 60);
 
-            $encoders = array(new XmlEncoder(), new JsonEncoder());
-            $normalizers = array(new ObjectNormalizer());
+                $hISupD = $hSenceD+(ClockinReccordController::$min_laps * 60);
+                $dISupD = $dSenceD+(ClockinReccordController::$min_laps * 60);
 
-            $serializer = new Serializer($normalizers, $encoders);
+                // On récupère les données appartenant au département sélectionné
 
-            $jsonContent = $serializer->serialize(['clockinRecord' => $don],'json');
+                $tempData = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empHistory($emp->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
 
-            $content = array("content"=>$jsonContent,"emp"=>$empTab);
+                //Maintenant il faut éliminer les doublons
+                $don[] = $this->elimineDoublon($tempData,$day,$request);
+
+
+                $tabLength = sizeof($don);
+
+                $encoders = array(new XmlEncoder(), new JsonEncoder());
+                $normalizers = array(new ObjectNormalizer());
+
+                $serializer = new Serializer($normalizers, $encoders);
+
+                $jsonContent = $serializer->serialize(['clockinRecord' => $don],'json');
+
+                $content = array("content"=>$jsonContent,"emp"=>$empTab);
+            }else{
+                foreach ($emp as $e){
+                    $empTab[]=$e->getId();
+
+                    $empWH = json_decode($e->getWorkingHour()->getWorkingHour(),true);
+
+                    $heureDebutNormal = $empWH[$day][0]["beginHour"];
+                    $heureDebutPauseNormal = $empWH[$day][0]["pauseBeginHour"];
+                    $heureFinNormal = $empWH[$day][0]["endHour"];
+                    $heureFinPauseNormal = $empWH[$day][0]["pauseEndHour"];
+
+                    //echo "\nBeginHour : ".$heureDebutNormal."\n";
+
+                    $dd = strtotime($_date." ".$heureDebutNormal);
+                    $dpd = strtotime($_date." ".$heureDebutPauseNormal);
+                    $dpf = strtotime($_date." ".$heureFinPauseNormal);
+                    $df = strtotime($_date." ".$heureFinNormal);
+
+                    // L'heure à laquelle l'employé est sensé arriver
+                    $hSenceA = strtotime(date("H:i",strtotime($dd)));
+                    $hSencePD = strtotime(date("H:i",strtotime($dpd)));
+                    $hSencePF = strtotime(date("H:i",strtotime($dpf)));
+                    $hSenceD = strtotime(date("H:i",strtotime($df)));
+                    // Timestamp de la dateheure à laquelle l'employé est sensé arriver
+                    $dSenceA = $dd;
+                    $dSencePD = $dpd;
+                    $dSencePF = $dpf;
+                    $dSenceD = $df;
+
+
+                    $dIInfA = $dSenceA-(ClockinReccordController::$min_laps * 60);
+                    $dIInfPD = $dSencePD-(ClockinReccordController::$min_laps * 60);
+                    $dIInfD = $dSenceD-(ClockinReccordController::$min_laps * 60);
+                    $dIInfPF = $dSencePF-(ClockinReccordController::$min_laps * 60);
+                    // Borne superieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
+                    $dISupA = $dSenceA+(ClockinReccordController::$min_laps * 60);
+                    $dISupPD = $dSencePD+(ClockinReccordController::$min_laps * 60);
+                    $dISupPF = $dSencePF+(ClockinReccordController::$min_laps * 60);
+
+                    $hISupD = $hSenceD+(ClockinReccordController::$min_laps * 60);
+                    $dISupD = $dSenceD+(ClockinReccordController::$min_laps * 60);
+
+                    // On récupère les données appartenant au département sélectionné
+
+                    $tempData = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empHistory($e->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
+
+                    //Maintenant il faut éliminer les doublons
+                    $don[] = $this->elimineDoublon($tempData,$day,$request);
+
+
+                    $tabLength = sizeof($don);
+
+                    $encoders = array(new XmlEncoder(), new JsonEncoder());
+                    $normalizers = array(new ObjectNormalizer());
+
+                    $serializer = new Serializer($normalizers, $encoders);
+
+                    $jsonContent = $serializer->serialize(['clockinRecord' => $don],'json');
+
+                    $content = array("content"=>$jsonContent,"emp"=>$empTab);
+                }
+            }
 
             if(!empty($emplo) && $emplo != null){
                 $array_of_quota = array();
