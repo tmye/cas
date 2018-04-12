@@ -81,8 +81,8 @@
                     <div class="col l12">
                         <table class="card table bordered striped condensed centered">
                             <tr>
-                                <td colspan="2">Nom : <span id="nameSpan"></span></td>
-                                <td>Salaire : <span id="salarySpan"></span></td>
+                                <td colspan="3">Nom : <span id="nameSpan"></span></td>
+                                <td colspan="2">Salaire : <span id="salarySpan"></span></td>
                             </tr>
                             <tr>
                                 <td colspan="2">
@@ -102,30 +102,38 @@
                                 <th class="center">Absences</th>
                                 <th class="center">Retards</th>
                                 <th class="center">Départs prématurés</th>
+                                <th class="center">Quota total</th>
+                                <th class="center">Quota fait</th>
                             </tr>
                             <tr>
                                 <td><span id="absenceSpan"></span></td>
                                 <td><span id="retardSpan"></span></td>
                                 <td><span id="departSpan"></span></td>
+                                <td><span id="quotaTotalSpan"></span></td>
+                                <td><span id="quotaFaitSpan"></span></td>
                             </tr>
                             <tr>
-                                <th colspan="3" class="center">Total Temps Perdu</th>
+                                <th colspan="5" class="center">Total Temps Perdu</th>
                             </tr>
                             <tr>
                                 <td>-</td>
                                 <td><span id="tprSpan"></span> min</td>
                                 <td><span id="tpdSpan"></span> min</td>
+                                <td>-</td>
+                                <td>-</td>
                             </tr>
                             <tr>
-                                <th colspan="3" class="center">Total d'argent Perdu</th>
+                                <th colspan="5" class="center">Total d'argent Perdu</th>
                             </tr>
                             <tr>
                                 <td><span id="spaSpan"></span> FCFA</td>
                                 <td><span id="sprSpan"></span> FCFA</td>
                                 <td><span id="spdSpan"></span> FCFA</td>
+                                <td>-</td>
+                                <td>-</td>
                             </tr>
                             <tr>
-                                <td colspan="3">=<span id="tapSpan"></span> FCFA (<span id="papSpan"></span>%)</td>
+                                <td colspan="5">=<span id="tapSpan"></span> FCFA (<span id="papSpan"></span>%)</td>
                             </tr>
                         </table>
                     </div>
@@ -194,6 +202,13 @@
                     <div class="col l6 diagRet14">
                         <span>Diagramme des retards de 14H00</span>
                         <canvas id="n14-chart" class="card"></canvas>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col l12">
+                        <span>Diagramme comparatif des quotas horraires</span>
+                        <canvas id="quotaPieChart" class="card" style="cursor: pointer">
+                        </canvas>
                     </div>
                 </div>
             </div>
@@ -271,14 +286,17 @@
                             url: "userStats",
                             data: {'empId':employeeId,'dateFrom':fromDate,'dateTo':toDate,'interval':interval},
                             success: function (data) {
-                                console.log("Here");
+                                console.log("Debut");
                                 console.log(data);
+                                console.log("Fin");
                                 var type = data.type;
                                 console.log("Type : "+type);
                                 $("#containerMustBeHidden").attr("style","display:block");
                                 $("#absenceSpan").text(data.absences);
                                 $("#retardSpan").text(data.retards);
                                 $("#departSpan").text(data.departs);
+                                $("#quotaTotalSpan").text(data.quota_total);
+                                $("#quotaFaitSpan").text(data.quota_fait);
                                 $("#tprSpan").text(Math.ceil(data.tpr));
                                 $("#tpdSpan").text(Math.ceil(data.tpd));
                                 /*alert("Salaire = : "+salary);
@@ -373,6 +391,31 @@
                                         }
                                     },
                                 });
+
+                                // Diagramme circulaire des quotas
+                                var ctx = document.getElementById('quotaPieChart').getContext('2d');
+                                var myPieChart = new Chart(ctx,{
+                                    type: 'pie',
+                                    data: {
+                                        datasets: [{
+                                            label: "Absences",
+                                            backgroundColor: ['#ff6384', '#36a2eb'],
+                                            data: [data.quota_total,data.quota_fait],
+                                        }],
+                                        labels : [
+                                            'Quota normal devant etre fait',
+                                            'Quota fait par l\'employé'
+                                        ]
+                                    },
+                                    options: {
+                                        onClick:function () {
+                                            // On repositionne le scrollbar
+                                            var elem = document.getElementById("chartsContainer");
+                                            elem.scrollIntoView(true);
+                                        }
+                                    },
+                                });
+
                                 // Diagramme à bandes des absences
                                 var ctx = document.getElementById('myChart').getContext('2d');
                                 var chart = new Chart(ctx, {

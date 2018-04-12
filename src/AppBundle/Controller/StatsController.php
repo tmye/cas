@@ -9,6 +9,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Departement;
+use AppBundle\Controller\ClockinReccordController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -21,19 +22,25 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class StatsController extends Controller
+class StatsController extends ClockinReccordController
 {
     /**
      * @Route("/t",name="t")
      */
     
     public function tAction(Request $request){
-        $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find(1);
+        $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find(26);
+        $cr = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord");
         $je = json_decode($employe->getWorkingHour()->getWorkingHour(),true);
         $theDay = "lundi";
-        echo "test ::::::::::::::::";
-        echo $je[$theDay][0]["type"];
-        var_dump($je);
+        $interval = 180*60;
+
+        $data = $cr->quota($employe,strtotime("30 March 2018"),$interval);
+
+        foreach ($data as $d){
+        }
+
+        return new Response("OK");
     }
 
     /**
@@ -75,14 +82,6 @@ class StatsController extends Controller
                 return "dimanche";
                 break;
         }
-    }
-
-    public function debug_to_console( $data ) {
-        $output = $data;
-        if ( is_array( $output ) )
-            $output = implode( ',', $output);
-
-        echo "<script>console.log( 'Debug Objects: " . $output . "' );</script>";
     }
 
     /**
@@ -129,6 +128,10 @@ class StatsController extends Controller
         $tabRetardsPause = array();
         $tabDeparts = array();
         $tabRetards = array();
+
+        $quota_fait = 0;
+        $quota_total = 0;
+
         // On boucle sur les jours sélectionnés
         $i=0;
         for ($cpt=0;$cpt<=$days;$cpt++){
@@ -285,6 +288,18 @@ class StatsController extends Controller
                     }else{
                         $test = "trrrrrr";
                     }
+
+                    // Après tous on recupère ses quotas en appelant la fonction historique
+
+                    $history = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('Y-m-d',$nowTime),$employe->getId(),$request);
+                    $history = json_decode($history->getContent(),true);
+                    $quota_total += $history["quota"];
+                    $quota_fait += $history["quota_fait"];
+
+                    /*print_r("\n GET CONTENT BEGIN \n");
+                    print_r($history);
+                    print_r("\n GET CONTENT END \n");*/
+
                     break;
                 case "3":
                     // Si son workingHour est de type 1
@@ -299,10 +314,12 @@ class StatsController extends Controller
                     break;
             }
 
-            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts);
+            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait);
             $nowTime = $nowTime+86400;
         }
 
+
+        //return new Response($history);
         if($donnees != null){
             return new JsonResponse($donnees);
         }else{
