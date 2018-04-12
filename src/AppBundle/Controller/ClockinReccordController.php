@@ -569,13 +569,19 @@ class ClockinReccordController extends Controller
 
                     $content = array("content"=>$jsonContent,"emp"=>$empTab);
                 }
+
             }
 
             if(!empty($emplo) && $emplo != null){
                 $array_of_quota = array();
                 // Si on est dans le cas où cest un appel depuis un autre controlleur
-                $quota_en_minuite = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["quota_en_minuite"];
-                $quota_fait_en_minuite = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["quota_fait"];
+                if(isset(json_decode($content["content"],true)["clockinRecord"][0][$emplo]) && !empty(json_decode($content["content"],true)["clockinRecord"][0][$emplo])){
+                    $quota_en_minuite = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["quota_en_minuite"];
+                    $quota_fait_en_minuite = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["quota_fait"];
+                }else{
+                    $quota_en_minuite = 0;
+                    $quota_fait_en_minuite = 0;
+                }
                 $array_of_quota["quota"] = $quota_en_minuite;
                 $array_of_quota["quota_fait"] = $quota_fait_en_minuite;
 

@@ -292,9 +292,11 @@ class StatsController extends ClockinReccordController
                     // Après tous on recupère ses quotas en appelant la fonction historique
 
                     $history = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('Y-m-d',$nowTime),$employe->getId(),$request);
-                    $history = json_decode($history->getContent(),true);
-                    $quota_total += $history["quota"];
-                    $quota_fait += $history["quota_fait"];
+                    if(($history != null) && ($history != "")){
+                        $history = json_decode($history->getContent(),true);
+                        $quota_total += $history["quota"];
+                        $quota_fait += $history["quota_fait"];
+                    }
 
                     /*print_r("\n GET CONTENT BEGIN \n");
                     print_r($history);
