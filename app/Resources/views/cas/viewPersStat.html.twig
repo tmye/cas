@@ -182,6 +182,42 @@
                         </table>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col l6">
+                        <span>Retards de 8H00</span>
+                        <table class="card table bordered centered striped highlight responsive-table">
+                            <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Heure de départ</th>
+                                <th>Lapse</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tabRetards8">
+                            <tr>
+                                <td colspan="3">Aucune donnée à afficher</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col l6">
+                        <span>Retards de 14H00</span>
+                        <table class="card table bordered centered striped highlight responsive-table">
+                            <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Heure de départ</th>
+                                <th>Lapse</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tabRetards14">
+                            <tr>
+                                <td colspan="3">Aucune donnée à afficher</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <div class="row chartsContainer" id="chartsContainer">
                     <div class="col l6 diagDep12">
                         <span>Diagramme des départs prématurés de 12H00</span>
@@ -192,11 +228,11 @@
                         <canvas id="n-chart" class="card"></canvas>
                     </div>
                     <div class="col l6">
-                        <span>Diagramme des retards de 8H00</span>
+                        <span>Diagramme des retards de 14H00</span>
                         <canvas id="m8-chart" class="card"></canvas>
                     </div>
                     <div class="col l6 diagRet14">
-                        <span>Diagramme des retards de 14H00</span>
+                        <span>Diagramme des retards de 8H00</span>
                         <canvas id="n14-chart" class="card"></canvas>
                     </div>
                 </div>
@@ -323,11 +359,16 @@
                                 var pauseDatas = [];
                                 var retardDatas = [];
                                 var retardPauseDatas = [];
+                                var debutDatas = [];
+                                var finPauseDatas = [];
+
                                 var pauseLabels = [];
                                 var retardLabels = [];
                                 var retardPauseLabels = [];
                                 var finDatas = [];
                                 var finLabels = [];
+                                var debutLabels = [];
+                                var finPauseLabels = [];
 
                                 if(data.pauseStats.length > 0){
                                     $("#tabDepartsPrematures12").html("");
@@ -354,6 +395,36 @@
                                             "<td>"+data.finStats[k].date+"</td>"+
                                             "<td>"+data.finStats[k].heureDepart+"</td>"+
                                             "<td>"+data.finStats[k].temps+" Min</td>"+
+                                            "</tr>"
+                                        );
+                                    }
+                                }
+
+                                if(data.retardPauseStats.length > 0){
+                                    $("#tabRetards8").html("");
+                                    for(var j=0;j < data.retardPauseStats.length;j++){
+                                        finPauseDatas.push(data.retardPauseStats[j].temps);
+                                        finPauseLabels.push(data.retardPauseStats[j].date);
+                                        $("#tabRetards8").append(
+                                            "<tr>"+
+                                            "<td>"+data.retardPauseStats[j].date+"</td>"+
+                                            "<td>"+data.retardPauseStats[j].heureRetard+"</td>"+
+                                            "<td>"+data.retardPauseStats[j].temps+" Min</td>"+
+                                            "</tr>"
+                                        );
+                                    }
+                                }
+
+                                if(data.retardStats.length > 0){
+                                    $("#tabRetards14").html("");
+                                    for(var k=0;k < data.retardStats.length;k++){
+                                        debutDatas.push(data.retardStats[k].temps);
+                                        debutLabels.push(data.retardStats[k].date);
+                                        $("#tabRetards14").append(
+                                            "<tr>"+
+                                            "<td>"+data.retardStats[k].date+"</td>"+
+                                            "<td>"+data.retardStats[k].heureRetard+"</td>"+
+                                            "<td>"+data.retardStats[k].temps+" Min</td>"+
                                             "</tr>"
                                         );
                                     }
