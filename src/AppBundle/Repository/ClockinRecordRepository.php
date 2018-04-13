@@ -100,60 +100,41 @@ class ClockinRecordRepository extends EntityRepository
         }
     }
 
-    public function retard($emp,$date,$interval,$hAN){
+    public function retard($emp,$date,$interval,$heureNormaleArrive){
 
-        $heureNormalArrive = $hAN;
+        $heureNormaleArrive = $heureNormaleArrive+$date;
 
         $queryBuilder = $this->createQueryBuilder('c');
         $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
         $queryBuilder->andWhere('c.clockinTime > :date');
-        $queryBuilder->setParameter('date',$date+$heureNormalArrive);
+        $queryBuilder->setParameter('date',$heureNormaleArrive);
         $queryBuilder->andWhere('c.clockinTime <= (:maxDate)');
-        $queryBuilder->setParameter('maxDate',$date+$heureNormalArrive+$interval);
+        $queryBuilder->setParameter('maxDate',$heureNormaleArrive+$interval);
         $donn = $queryBuilder->getQuery()->getResult();
         if($donn != null){
             $ct = $donn[0]->getClockinTime();
-            $diff = $ct- ($date+$heureNormalArrive); // Timestamp
-            return $diff;
+            $diff = ($ct-$heureNormaleArrive); // Timestamp
+            return array($diff,$ct);
         }else{
             return 0;
         }
     }
 
-    public function retardPause($emp,$day,$date,$hAN){
+    public function retardPause($emp,$date,$interval_pause,$heureNormaleArrivePause){
 
-        $heureNormalArrive = $hAN;
-
-        $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
-        $heureDebutNormal = $empWH[$day][0]["pauseBeginHour"];
-        $heureFinNormal = $empWH[$day][0]["pauseEndHour"];
-
-        // Détermination de l'intervalle de pause
-
-        $pauseBeginHourExploded = explode(":",$heureDebutNormal);
-        $pauseEndHourExploded = explode(":",$heureFinNormal);
-
-        $pauseEndHourInMinutes =0;
-        $pauseBeginHourInMinutes =0;
-
-        if(sizeof($pauseBeginHourExploded)>1){
-            $pauseBeginHourInMinutes = (((int)$pauseBeginHourExploded[0])*60)+((int)$pauseBeginHourExploded[1]);
-            $pauseEndHourInMinutes = (((int)$pauseEndHourExploded[0])*60)+((int)$pauseEndHourExploded[1]);
-        }
-
-        $interval = (($pauseEndHourInMinutes - $pauseBeginHourInMinutes)/2)*60;
+        $heureNormaleArrivePause = $heureNormaleArrivePause+$date;
 
         $queryBuilder = $this->createQueryBuilder('c');
         $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
         $queryBuilder->andWhere('c.clockinTime > :date');
-        $queryBuilder->setParameter('date',$date+$heureNormalArrive);
+        $queryBuilder->setParameter('date',$heureNormaleArrivePause);
         $queryBuilder->andWhere('c.clockinTime <= (:maxDate)');
-        $queryBuilder->setParameter('maxDate',$date+$heureNormalArrive+$interval);
+        $queryBuilder->setParameter('maxDate',$heureNormaleArrivePause+$interval_pause);
         $donn = $queryBuilder->getQuery()->getResult();
         if($donn != null){
             $ct = $donn[0]->getClockinTime();
-            $diff = $ct- ($date+$heureNormalArrive); // Timestamp
-            return $diff;
+            $diff = $ct- ($heureNormaleArrivePause); // Timestamp
+            return array($diff,$ct);
         }else{
             return 0;
         }
@@ -179,40 +160,36 @@ class ClockinRecordRepository extends EntityRepository
         }
     }
 
-    public function departPremature($emp,$date,$interval){
-
-        $heureNormalDepart = (60*60*17)+(60*30); // Timestamp 60sec * 60min * 17heures + 30min = 17h30
+    public function departPremature($emp,$date,$interval,$heureNormaleDepart){
 
         $queryBuilder = $this->createQueryBuilder('c');
         $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
         $queryBuilder->andWhere('c.clockinTime < :date');
-        $queryBuilder->setParameter('date',$date+$heureNormalDepart);
+        $queryBuilder->setParameter('date',$date+$heureNormaleDepart);
         $queryBuilder->andWhere('c.clockinTime >= (:maxDate)');
-        $queryBuilder->setParameter('maxDate',$date+$heureNormalDepart-$interval);
+        $queryBuilder->setParameter('maxDate',$date+$heureNormaleDepart-$interval);
         $donn = $queryBuilder->getQuery()->getResult();
         if($donn != null){
             $ct = $donn[0]->getClockinTime();
-            $diff = ($date+$heureNormalDepart)-$ct; // Timestamp
+            $diff = ($date+$heureNormaleDepart)-$ct; // Timestamp
             return array($diff,$ct);
         }else{
             return false;
         }
     }
 
-    public function departPausePremature($emp,$date,$interval){
-
-        $heureNormalDepart = (60*60*12); // Timestamp 60sec * 60min * 12heures
+    public function departPausePremature($emp,$date,$interval,$heureNormaleDepartPause){
 
         $queryBuilder = $this->createQueryBuilder('c');
         $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
         $queryBuilder->andWhere('c.clockinTime < :date');
-        $queryBuilder->setParameter('date',$date+$heureNormalDepart);
-        $queryBuilder->andWhere('c.clockinTime >= (:maxDate)');
-        $queryBuilder->setParameter('maxDate',$date+$heureNormalDepart-$interval);
+        $queryBuilder->setParameter('date',$date+$heureNormaleDepartPause);
+        $queryBuilder->andWhere('c.clockinTime >= (:minDate)');
+        $queryBuilder->setParameter('minDate',$date+$heureNormaleDepartPause-$interval);
         $donn = $queryBuilder->getQuery()->getResult();
         if($donn != null){
             $ct = $donn[0]->getClockinTime();
-            $diff = ($date+$heureNormalDepart)-$ct; // Timestamp
+            $diff = ($date+$heureNormaleDepartPause)-$ct; // Timestamp
             return array($diff,$ct);
         }else{
             return false;
