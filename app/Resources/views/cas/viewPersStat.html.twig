@@ -102,15 +102,13 @@
                                 <th class="center">Absences</th>
                                 <th class="center">Retards</th>
                                 <th class="center">Départs prématurés</th>
-                                <th class="center">Quota total</th>
-                                <th class="center">Quota fait</th>
+                                <th class="center" colspan="2">Quota de l'employé</th>
                             </tr>
                             <tr>
                                 <td><span id="absenceSpan"></span></td>
                                 <td><span id="retardSpan"></span></td>
                                 <td><span id="departSpan"></span></td>
-                                <td><span id="quotaTotalSpan"></span></td>
-                                <td><span id="quotaFaitSpan"></span></td>
+                                <td colspan="2"><span id="quotaTotalSpan"></span></td>
                             </tr>
                             <tr>
                                 <th colspan="5" class="center">Total Temps Perdu</th>
@@ -119,8 +117,7 @@
                                 <td>-</td>
                                 <td><span id="tprSpan"></span> min</td>
                                 <td><span id="tpdSpan"></span> min</td>
-                                <td>-</td>
-                                <td>-</td>
+                                <td colspan="2"><span id="tempsPerduQuotaSpan">-</span></td>
                             </tr>
                             <tr>
                                 <th colspan="5" class="center">Total d'argent Perdu</th>
@@ -129,8 +126,7 @@
                                 <td><span id="spaSpan"></span> FCFA</td>
                                 <td><span id="sprSpan"></span> FCFA</td>
                                 <td><span id="spdSpan"></span> FCFA</td>
-                                <td>-</td>
-                                <td>-</td>
+                                <td colspan="2"><span id="sommePerduQuotaSpan">-</span></td>
                             </tr>
                             <tr>
                                 <td colspan="5">=<span id="tapSpan"></span> FCFA (<span id="papSpan"></span>%)</td>
@@ -295,8 +291,15 @@
                                 $("#absenceSpan").text(data.absences);
                                 $("#retardSpan").text(data.retards);
                                 $("#departSpan").text(data.departs);
-                                $("#quotaTotalSpan").text(data.quota_total);
-                                $("#quotaFaitSpan").text(data.quota_fait);
+                                // On fait d'abord un test
+                                if(data.quota_fait > data.quota_total){
+                                    $("#quotaTotalSpan").text(data.quota_total+"/"+data.quota_total);
+                                }else if(data.quota_fait < data.quota_total){
+                                    var quotaDiff = (data.quota_total - data.quota_fait);
+                                    $("#tempsPerduQuotaSpan").text(quotaDiff);
+                                    $("#sommePerduQuotaSpan").text(salaryPerMin*quotaDiff);
+                                }
+                                $("#quotaTotalSpan").text(data.quota_fait+"/"+data.quota_total);
                                 $("#tprSpan").text(Math.ceil(data.tpr));
                                 $("#tpdSpan").text(Math.ceil(data.tpd));
                                 /*alert("Salaire = : "+salary);
@@ -523,7 +526,7 @@
                                     options: {
                                         title:{
                                             display:true,
-                                            text: "Diagramme des départs prématurés de 12H00"
+                                            text: "Diagramme des retards de 8H00"
                                         }
                                     }
                                 });
@@ -549,7 +552,7 @@
                                     options: {
                                         title:{
                                             display:true,
-                                            text: "Diagramme des départs prématurés de 18H00"
+                                            text: "Diagramme des retards de 14H00"
                                         }
                                     }
                                 });

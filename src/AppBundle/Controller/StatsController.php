@@ -182,7 +182,38 @@ class StatsController extends ClockinReccordController
             switch ($type){
                 case "1":
                     // Si son workingHour est de type 1
+
+                    // Pour le calcul d'un depart prématuré de pause,Calculons l'intervalle
+                    $heureDebutNormal = $empWH[$theDay][0]["beginHour"];
+                    $heureFinNormal = $empWH[$theDay][0]["endHour"];
+                    $heureDebutNormalPause = $empWH[$theDay][0]["pauseBeginHour"];
+                    $heureFinNormalPause = $empWH[$theDay][0]["pauseEndHour"];
+
+                    $beginHourExploded = explode(":",$heureDebutNormal);
+                    $endHourExploded = explode(":",$heureFinNormal);
+                    $pauseBeginHourExploded = explode(":",$heureDebutNormalPause);
+                    $pauseEndHourExploded = explode(":",$heureFinNormalPause);
+
+                    $endHourInMinutes =0;
+                    $beginHourInMinutes =0;
+                    $pauseEndHourInMinutes =0;
+                    $pauseBeginHourInMinutes =0;
+
+                    if(sizeof($pauseBeginHourExploded)>1){
+                        $pauseBeginHourInMinutes = (((int)$pauseBeginHourExploded[0])*60)+((int)$pauseBeginHourExploded[1]);
+                        $pauseEndHourInMinutes = (((int)$pauseEndHourExploded[0])*60)+((int)$pauseEndHourExploded[1]);
+                    }
+                    $beginHourInMinutes = (((int)$beginHourExploded[0])*60)+((int)$beginHourExploded[1]);
+                    $endHourInMinutes = (((int)$endHourExploded[0])*60)+((int)$endHourExploded[1]);
+
+                    $interval_pause = (($pauseEndHourInMinutes - $pauseBeginHourInMinutes)/2)*60;
+                    $heureNormaleArrive = $beginHourInMinutes*60;
+                    $heureNormaleDepart = $endHourInMinutes*60;
+                    $heureNormaleArrivePause = $pauseEndHourInMinutes*60;
+                    $heureNormaleDepartPause = $pauseBeginHourInMinutes*60;
+
                     if(!$cr->present($employe,$nowTime)){
+                        //echo "\n Je suis dans le case 1 \n";
                         $absences++;
                         $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
                         $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
@@ -190,28 +221,32 @@ class StatsController extends ClockinReccordController
                         $tempsPerdusAbsences = $timePerdusAbsences/60;
                         $sommeAbsences +=$tempsPerdusAbsences;
                     }
-                    $retardDiff = $cr->retard($employe,$nowTime,$interval,$_total_time);
+                    $retardDiff = $cr->retard($employe,$nowTime,$interval,$heureNormaleArrive);
                     if($retardDiff != null){
+                        //echo "\n J'ai detecte un retard \n";
                         $nowDate = date('d/m/Y',$nowTime);
                         $retards++;
-                        $sommeRetards +=$retardDiff;
-                        $tempsPerdusRetards += $retardDiff/(60);
-                        $ct = date('H:i',$retardDiff);
-                        $tabRetards[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$tempsPerdusRetards);
+                        $sommeRetards +=$retardDiff[0];
+                        $tempsPerdusRetards += $retardDiff[0]/(60);
+                        $perte_temps = (int)($retardDiff[0]/(60));
+                        $ct = date('H:i',$retardDiff[1]);
+
+                        $tabRetards[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$perte_temps);
                     }
-                    $retardPauseDiff = $cr->retardPause($employe,$theDay,$nowTime,$_total_time);
+                    $retardPauseDiff = $cr->retardPause($employe,$nowTime,$interval_pause,$heureNormaleArrivePause);
                     if($retardPauseDiff != null){
                         $nowDate = date('d/m/Y',$nowTime);
                         //echo "\n J'ai detecte un retard de pause \n";
                         $retards++;
-                        $sommeRetards +=$retardDiff;
-                        $tempsPerdusRetardsPause = $retardPauseDiff/(60);
-                        $tempsPerdusRetards+= $retardPauseDiff/(60);
-                        $ct = date('H:i',$retardDiff);
+                        $sommeRetards +=$retardPauseDiff[0];
+                        $tempsPerdusRetardsPause = $retardPauseDiff[0]/(60);
+                        $tempsPerdusRetards+= $retardPauseDiff[0]/(60);
+                        $ct = date('H:i',$retardPauseDiff[1]);
                         $tabRetardsPause[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$tempsPerdusRetardsPause);
                     }
-                    $departDiff = $cr->departPremature($employe,$nowTime,$interval);
+                    $departDiff = $cr->departPremature($employe,$nowTime,$interval,$heureNormaleDepart);
                     if($departDiff != null){
+                        //echo "\n J'ai detecte un depart prématuré \n";
                         $nowDate = date('d/m/Y',$nowTime);
                         $departs++;
                         $sommeDeparts +=$departDiff[0];
@@ -221,8 +256,9 @@ class StatsController extends ClockinReccordController
                         $ct = date('H:i',$departDiff[1]);
                         $tabDeparts[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsFin);
                     }
-                    $departPauseDiff = $cr->departPausePremature($employe,$nowTime,$interval);
+                    $departPauseDiff = $cr->departPausePremature($employe,$nowTime,$interval_pause,$heureNormaleDepartPause);
                     if($departPauseDiff[0] != null){
+                        //echo "\n J'ai detecte un depart de pause prématuré et l'heure est :".date('H:i',$departPauseDiff[1])." \n";
                         $i++;
                         $nowDate = date('d/m/Y',$nowTime);
                         $departsPause++;
@@ -239,6 +275,7 @@ class StatsController extends ClockinReccordController
                     }
                     break;
                 case "2":
+                    // On n'a pas besoin de calculer certaines données
                     if(!$cr->present($employe,$nowTime)){
                         $absences++;
                         $tempsPerdusAbsences = ((int)$quota)*60;
@@ -255,10 +292,10 @@ class StatsController extends ClockinReccordController
                         $nowDate = date('d/m/Y',$nowTime);
                         //echo "\n J'ai detecte un retard de pause \n";
                         $retards++;
-                        $sommeRetards +=$retardDiff;
-                        $tempsPerdusRetardsPause = $retardPauseDiff/(60);
-                        $tempsPerdusRetards+= $retardPauseDiff/(60);
-                        $ct = date('H:i',$retardDiff);
+                        $sommeRetards +=$retardPauseDiff[0];
+                        $tempsPerdusRetardsPause = $retardPauseDiff[0]/(60);
+                        $tempsPerdusRetards+= $retardPauseDiff[0]/(60);
+                        $ct = date('H:i',$retardPauseDiff[1]);
                         $tabRetardsPause[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$tempsPerdusRetardsPause);
                     }
                     $departDiff = $cr->departPremature($employe,$nowTime,$interval);
