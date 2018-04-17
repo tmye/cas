@@ -134,10 +134,14 @@ class StatsController extends ClockinReccordController
 
         // On boucle sur les jours sélectionnés
         $i=0;
+        $tabType = array();
         for ($cpt=0;$cpt<=$days;$cpt++){
             $theDay = date('N',$nowTime);
             $theDay = $this->dateDayNameFrench($theDay);
             $type = $empWH[$theDay][0]["type"];
+
+            $tabType[$theDay] = $type;
+
             $quota = $empWH[$theDay][0]["quota"];
             $quotaUtilisateur = $empWH[$theDay][0]["quota"];
 
@@ -353,7 +357,7 @@ class StatsController extends ClockinReccordController
                     break;
             }
 
-            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait);
+            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType);
             $nowTime = $nowTime+86400;
         }
 

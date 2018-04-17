@@ -218,24 +218,156 @@
                         </table>
                     </div>
                 </div>
-                <div class="row chartsContainer" id="chartsContainer">
-                    <div class="col l6 diagDep12">
-                        <span>Diagramme des départs prématurés de 12H00</span>
-                        <canvas id="m-chart" class="card"></canvas>
+
+                <h5>Diagrammes</h5>
+
+                <span class="CContainer lundiCContainer">
+                    <p class="legend">Lundi</p>
+                    <div class="row chartsContainer">
+                        <div class="col l6 lundiDiagDep12">
+                            <span>Diagramme des départs prématurés de 12H00</span>
+                            <canvas id="lundi-m-chart" class="card"></canvas>
+                        </div>
+                        <div class="col l6">
+                            <sp>Diagramme des départs prématurés de 18H00</sp>
+                            <canvas id="lundi-n-chart" class="card"></canvas>
+                        </div>
+                        <div class="col l6 lundiDiagRet14">
+                            <span>Diagramme des retards de 14H00</span>
+                            <canvas id="lundi-m8-chart" class="card"></canvas>
+                        </div>
+                        <div class="col l6">
+                            <span>Diagramme des retards de 8H00</span>
+                            <canvas id="lundi-n14-chart" class="card"></canvas>
+                        </div>
                     </div>
-                    <div class="col l6">
-                        <sp>Diagramme des départs prématurés de 18H00</sp>
-                        <canvas id="n-chart" class="card"></canvas>
+                </span>
+                <span class="CContainer mardiCContainer">
+                    <p class="legend">Mardi</p>
+                    <div class="row chartsContainer" id="chartsContainer">
+                        <div class="col l6 mardiiDiagDep12">
+                            <span>Diagramme des départs prématurés de 12H00</span>
+                            <canvas id="mardi-m-chart" class="card"></canvas>
+                        </div>
+                        <div class="col l6">
+                            <sp>Diagramme des départs prématurés de 18H00</sp>
+                            <canvas id="mardi-n-chart" class="card"></canvas>
+                        </div>
+                        <div class="col l6 mardiDiagRet14">
+                            <span>Diagramme des retards de 14H00</span>
+                            <canvas id="mardi-m8-chart" class="card"></canvas>
+                        </div>
+                        <div class="col l6">
+                            <span>Diagramme des retards de 8H00</span>
+                            <canvas id="mardi-n14-chart" class="card"></canvas>
+                        </div>
                     </div>
-                    <div class="col l6">
-                        <span>Diagramme des retards de 14H00</span>
-                        <canvas id="m8-chart" class="card"></canvas>
+                </span>
+                <span class="CContainer mercrediCContainer">
+                    <p class="legend">Mercredi</p>
+                    <div class="row chartsContainer" id="chartsContainer">
+                        <div class="col l6 mercrediDiagDep12">
+                            <span>Diagramme des départs prématurés de 12H00</span>
+                            <canvas id="mercredi-m-chart" class="card"></canvas>
+                        </div>
+                        <div class="col l6">
+                            <sp>Diagramme des départs prématurés de 18H00</sp>
+                            <canvas id="mercredi-n-chart" class="card"></canvas>
+                        </div>
+                        <div class="col l6 mercrediDiagRet14">
+                            <span>Diagramme des retards de 14H00</span>
+                            <canvas id="mercredi-m8-chart" class="card"></canvas>
+                        </div>
+                        <div class="col l6">
+                            <span>Diagramme des retards de 8H00</span>
+                            <canvas id="mercredi-n14-chart" class="card"></canvas>
+                        </div>
                     </div>
-                    <div class="col l6 diagRet14">
-                        <span>Diagramme des retards de 8H00</span>
-                        <canvas id="n14-chart" class="card"></canvas>
+                </span>
+                <span class="CContainer jeudiCContainer">
+                    <p class="legend">Jeudi</p>
+                    <div class="row chartsContainer" id="chartsContainer">
+                        <div class="col l6 jeudiDiagDep12">
+                            <span>Diagramme des départs prématurés de 12H00</span>
+                            <canvas id="jeudi-m-chart" class="card"></canvas>
+                        </div>
+                        <div class="col l6">
+                            <sp>Diagramme des départs prématurés de 18H00</sp>
+                            <canvas id="jeudi-n-chart" class="card"></canvas>
+                        </div>
+                        <div class="col l6 jeudiDiagRet14">
+                            <span>Diagramme des retards de 14H00</span>
+                            <canvas id="jeudi-m8-chart" class="card"></canvas>
+                        </div>
+                        <div class="col l6 diagRet14">
+                            <span>Diagramme des retards de 8H00</span>
+                            <canvas id="jeudi-n14-chart" class="card"></canvas>
+                        </div>
                     </div>
-                </div>
+                </span>
+                <span class="CContainer vendrediCContainer">
+                    <p class="legend">Vendredi</p>
+                    <div class="row chartsContainer" id="chartsContainer">
+                        <div class="col l6 vendrediDiagDep12">
+                            <span>Diagramme des départs prématurés de 12H00</span>
+                            <canvas id="vendredi-m-chart" class="card"></canvas>
+                        </div>
+                        <div class="col l6">
+                            <sp>Diagramme des départs prématurés de 18H00</sp>
+                            <canvas id="vendredi-n-chart" class="card"></canvas>
+                        </div>
+                        <div class="col l6 vendrediDiagRet14">
+                            <span>Diagramme des retards de 14H00</span>
+                            <canvas id="vendredi-m8-chart" class="card"></canvas>
+                        </div>
+                        <div class="col l6">
+                            <span>Diagramme des retards de 8H00</span>
+                            <canvas id="vendredi-n14-chart" class="card"></canvas>
+                        </div>
+                    </div>
+                </span>
+                <span class="CContainer samediCContainer">
+                    <p class="legend">Samedi</p>
+                    <div class="row chartsContainer" id="chartsContainer">
+                        <div class="col l6 samediDiagDep12">
+                            <span>Diagramme des départs prématurés de 12H00</span>
+                            <canvas id="samedi-m-chart" class="card"></canvas>
+                        </div>
+                        <div class="col l6">
+                            <sp>Diagramme des départs prématurés de 18H00</sp>
+                            <canvas id="samedi-n-chart" class="card"></canvas>
+                        </div>
+                        <div class="col l6 samediDiagRet14">
+                            <span>Diagramme des retards de 14H00</span>
+                            <canvas id="samedi-m8-chart" class="card"></canvas>
+                        </div>
+                        <div class="col l6">
+                            <span>Diagramme des retards de 8H00</span>
+                            <canvas id="samedi-n14-chart" class="card"></canvas>
+                        </div>
+                    </div>
+                </span>
+                <span class="CContainer dimancheCContainer">
+                    <p class="legend">Dimanche</p>
+                    <div class="row chartsContainer" id="chartsContainer">
+                        <div class="col l6 dimancheDiagDep12">
+                            <span>Diagramme des départs prématurés de 12H00</span>
+                            <canvas id="dimanche-m-chart" class="card"></canvas>
+                        </div>
+                        <div class="col l6">
+                            <sp>Diagramme des départs prématurés de 18H00</sp>
+                            <canvas id="dimanche-n-chart" class="card"></canvas>
+                        </div>
+                        <div class="col l6">
+                            <span>Diagramme des retards de 14H00</span>
+                            <canvas id="dimanche-m8-chart" class="card"></canvas>
+                        </div>
+                        <div class="col l6 dimancheDiagRet14">
+                            <span>Diagramme des retards de 8H00</span>
+                            <canvas id="dimanche-n14-chart" class="card"></canvas>
+                        </div>
+                    </div>
+                </span>
                 <div class="row">
                     <div class="col l12">
                         <span>Diagramme comparatif des quotas horraires</span>
@@ -319,6 +451,7 @@
                             data: {'empId':employeeId,'dateFrom':fromDate,'dateTo':toDate,'interval':interval},
                             success: function (data) {
                                 console.log("Debut");
+                                console.log(data.tabType);
                                 console.log(data);
                                 console.log("Fin");
                                 var type = data.type;
@@ -359,20 +492,127 @@
                                 var pauseDatas = [];
                                 var retardDatas = [];
                                 var retardPauseDatas = [];
-                                var debutDatas = [];
-                                var finPauseDatas = [];
+                                var finDatas = [];
 
                                 var pauseLabels = [];
                                 var retardLabels = [];
                                 var retardPauseLabels = [];
-                                var finDatas = [];
                                 var finLabels = [];
-                                var debutLabels = [];
-                                var finPauseLabels = [];
+
+                                // Variables des jours
+
+                                var lundiPauseTabDatas = [];
+                                var lundiRetardTabDatas = [];
+                                var lundiRetardPauseTabDatas = [];
+                                var lundiFinTabDatas = [];
+
+                                var mardiPauseTabDatas = [];
+                                var mardiRetardTabDatas = [];
+                                var mardiRetardPauseTabDatas = [];
+                                var mardiFinTabDatas = [];
+
+                                var mercrediPauseTabDatas = [];
+                                var mercrediRetardTabDatas = [];
+                                var mercrediRetardPauseTabDatas = [];
+                                var mercrediFinTabDatas = [];
+
+                                var jeudiPauseTabDatas = [];
+                                var jeudiRetardTabDatas = [];
+                                var jeudiRetardPauseTabDatas = [];
+                                var jeudiFinTabDatas = [];
+
+                                var vendrediPauseTabDatas = [];
+                                var vendrediRetardTabDatas = [];
+                                var vendrediRetardPauseTabDatas = [];
+                                var vendrediFinTabDatas = [];
+
+                                var samediPauseTabDatas = [];
+                                var samediRetardTabDatas = [];
+                                var samediRetardPauseTabDatas = [];
+                                var samediFinTabDatas = [];
+
+                                var dimanchePauseTabDatas = [];
+                                var dimancheRetardTabDatas = [];
+                                var dimancheRetardPauseTabDatas = [];
+                                var dimancheFinTabDatas = [];
+
+                                // Pour les labels
+
+                                var lundiPauseTabLabels = [];
+                                var lundiRetardTabLabels = [];
+                                var lundiRetardPauseTabLabels = [];
+                                var lundiFinTabLabels = [];
+
+                                var mardiPauseTabLabels = [];
+                                var mardiRetardTabLabels = [];
+                                var mardiRetardPauseTabLabels = [];
+                                var mardiFinTabLabels = [];
+
+                                var mercrediPauseTabLabels = [];
+                                var mercrediRetardTabLabels = [];
+                                var mercrediRetardPauseTabLabels = [];
+                                var mercrediFinTabLabels = [];
+
+                                var jeudiPauseTabLabels = [];
+                                var jeudiRetardTabLabels = [];
+                                var jeudiRetardPauseTabLabels = [];
+                                var jeudiFinTabLabels = [];
+
+                                var vendrediPauseTabLabels = [];
+                                var vendrediRetardTabLabels = [];
+                                var vendrediRetardPauseTabLabels = [];
+                                var vendrediFinTabLabels = [];
+
+                                var samediPauseTabLabels = [];
+                                var samediRetardTabLabels = [];
+                                var samediRetardPauseTabLabels = [];
+                                var samediFinTabLabels = [];
+
+                                var dimanchePauseTabLabels = [];
+                                var dimancheRetardTabLabels = [];
+                                var dimancheRetardPauseTabLabels = [];
+                                var dimancheFinTabLabels = [];
 
                                 if(data.pauseStats.length > 0){
                                     $("#tabDepartsPrematures12").html("");
                                     for(var j=0;j < data.pauseStats.length;j++){
+
+                                        var laDate = data.pauseStats[j].date;
+                                        var tabDate = laDate.split("/");
+                                        var dateReformate = tabDate[2]+"/"+tabDate[1]+"/"+tabDate[0];
+                                        var dateObject = new Date(dateReformate);
+                                        var leJour = dateObject.getDay();
+                                        switch (leJour){
+                                            case 1:
+                                                lundiTabPauseDatas.push(data.pauseStats[j].temps);
+                                                lundiTabPauseLabels.push(data.pauseStats[j].date);
+                                                break;
+                                            case 2:
+                                                mardiTabPauseDatas.push(data.pauseStats[j].temps);
+                                                mardiTabPauseLabels.push(data.pauseStats[j].date);
+                                                break;
+                                            case 3:
+                                                mercrediTabPauseDatas.push(data.pauseStats[j].temps);
+                                                mercrediTabPauseLabels.push(data.pauseStats[j].date);
+                                                break;
+                                            case 4:
+                                                jeudiTabPauseDatas.push(data.pauseStats[j].temps);
+                                                jeudiTabPauseLabels.push(data.pauseStats[j].date);
+                                                break;
+                                            case 5:
+                                                vendrediTabPauseDatas.push(data.pauseStats[j].temps);
+                                                vendrediTabPauseLabels.push(data.pauseStats[j].date);
+                                                break;
+                                            case 6:
+                                                samediTabPauseDatas.push(data.pauseStats[j].temps);
+                                                samediTabPauseLabels.push(data.pauseStats[j].date);
+                                                break;
+                                            case 0:
+                                                dimancheTabPauseDatas.push(data.pauseStats[j].temps);
+                                                dimancheTabPauseLabels.push(data.pauseStats[j].date);
+                                                break;
+                                        }
+
                                         pauseDatas.push(data.pauseStats[j].temps);
                                         pauseLabels.push(data.pauseStats[j].date);
                                         $("#tabDepartsPrematures12").append(
@@ -388,6 +628,43 @@
                                 if(data.finStats.length > 0){
                                     $("#tabDepartsPrematures17").html("");
                                     for(var k=0;k < data.finStats.length;k++){
+
+                                        var laDate = data.finStats[k].date;
+                                        var tabDate = laDate.split("/");
+                                        var dateReformate = tabDate[2]+"/"+tabDate[1]+"/"+tabDate[0];
+                                        var dateObject = new Date(dateReformate);
+                                        var leJour = dateObject.getDay();
+                                        switch (leJour){
+                                            case 1:
+                                                lundiFinTabDatas.push(data.finStats[k].temps);
+                                                lundiFinTabLabels.push(data.finStats[k].date);
+                                                break;
+                                            case 2:
+                                                mardiFinTabDatas.push(data.finStats[k].temps);
+                                                mardiFinTabLabels.push(data.finStats[k].date);
+                                                break;
+                                            case 3:
+                                                mercrediFinTabDatas.push(data.finStats[k].temps);
+                                                mercrediFinTabLabels.push(data.finStats[k].date);
+                                                break;
+                                            case 4:
+                                                jeudiFinTabDatas.push(data.finStats[k].temps);
+                                                jeudiFinTabLabels.push(data.finStats[k].date);
+                                                break;
+                                            case 5:
+                                                vendrediFinTabDatas.push(data.finStats[k].temps);
+                                                vendrediFinTabLabels.push(data.finStats[k].date);
+                                                break;
+                                            case 6:
+                                                samediFinTabDatas.push(data.finStats[k].temps);
+                                                samediFinTabLabels.push(data.finStats[k].date);
+                                                break;
+                                            case 0:
+                                                dimancheFinTabDatas.push(data.finStats[k].temps);
+                                                dimancheFinTabLabels.push(data.finStats[k].date);
+                                                break;
+                                        }
+
                                         finDatas.push(data.finStats[k].temps);
                                         finLabels.push(data.finStats[k].date);
                                         $("#tabDepartsPrematures17").append(
@@ -400,16 +677,55 @@
                                     }
                                 }
 
+                                console.log("just before");
+
                                 if(data.retardPauseStats.length > 0){
                                     $("#tabRetards8").html("");
-                                    for(var j=0;j < data.retardPauseStats.length;j++){
-                                        finPauseDatas.push(data.retardPauseStats[j].temps);
-                                        finPauseLabels.push(data.retardPauseStats[j].date);
+                                    for(var l=0;l < data.retardPauseStats.length;l++){
+
+                                        var laDate = data.retardPauseStats[l].date;
+                                        var tabDate = laDate.split("/");
+                                        var dateReformate = tabDate[2]+"/"+tabDate[1]+"/"+tabDate[0];
+                                        var dateObject = new Date(dateReformate);
+                                        var leJour = dateObject.getDay();
+                                        switch (leJour){
+                                            case 1:
+                                                lundiRetardPauseTabDatas.push(data.retardPauseStats[l].temps);
+                                                lundiRetardPauseTabLabels.push(data.retardStats[l].date);
+                                                break;
+                                            case 2:
+                                                mardiRetardPauseTabDatas.push(data.retardPauseStats[l].temps);
+                                                mardiRetardPauseTabLabels.push(data.retardPauseStats[l].date);
+                                                break;
+                                            case 3:
+                                                mercrediRetardPauseTabDatas.push(data.retardPauseStats[l].temps);
+                                                mercrediRetardPauseTabLabels.push(data.retardPauseStats[l].date);
+                                                break;
+                                            case 4:
+                                                jeudiRetardPauseTabDatas.push(data.retardPauseStats[l].temps);
+                                                jeudiRetardPauseTabLabels.push(data.retardPauseStats[l].date);
+                                                break;
+                                            case 5:
+                                                vendrediRetardPauseTabDatas.push(data.retardPauseStats[l].temps);
+                                                vendrediRetardPauseTabLabels.push(data.retardPauseStats[l].date);
+                                                break;
+                                            case 6:
+                                                samediRetardPauseTabDatas.push(data.retardPauseStats[l].temps);
+                                                samediRetardPauseTabLabels.push(data.retardPauseStats[l].date);
+                                                break;
+                                            case 0:
+                                                dimancheRetardPauseTabDatas.push(data.retardPauseStats[l].temps);
+                                                dimancheRetardPauseTabLabels.push(data.retardPauseStats[l].date);
+                                                break;
+                                        }
+
+                                        retardPauseDatas.push(data.retardPauseStats[l].temps);
+                                        retardPauseLabels.push(data.retardPauseStats[l].date);
                                         $("#tabRetards8").append(
                                             "<tr>"+
-                                            "<td>"+data.retardPauseStats[j].date+"</td>"+
-                                            "<td>"+data.retardPauseStats[j].heureRetard+"</td>"+
-                                            "<td>"+data.retardPauseStats[j].temps+" Min</td>"+
+                                            "<td>"+data.retardPauseStats[l].date+"</td>"+
+                                            "<td>"+data.retardPauseStats[l].heureRetard+"</td>"+
+                                            "<td>"+data.retardPauseStats[l].temps+" Min</td>"+
                                             "</tr>"
                                         );
                                     }
@@ -417,28 +733,54 @@
 
                                 if(data.retardStats.length > 0){
                                     $("#tabRetards14").html("");
-                                    for(var k=0;k < data.retardStats.length;k++){
-                                        debutDatas.push(data.retardStats[k].temps);
-                                        debutLabels.push(data.retardStats[k].date);
+                                    for(var m=0;m < data.retardStats.length;m++){
+
+                                        var laDate = data.retardStats[m].date;
+                                        var tabDate = laDate.split("/");
+                                        var dateReformate = tabDate[2]+"/"+tabDate[1]+"/"+tabDate[0];
+                                        var dateObject = new Date(dateReformate);
+                                        var leJour = dateObject.getDay();
+                                        switch (leJour){
+                                            case 1:
+                                                lundiRetardTabDatas.push(data.retardStats[m].temps);
+                                                lundiRetardTabLabels.push(data.retardStats[m].date);
+                                                break;
+                                            case 2:
+                                                mardiRetardTabDatas.push(data.retardStats[m].temps);
+                                                mardiRetardTabLabels.push(data.retardStats[m].date);
+                                                break;
+                                            case 3:
+                                                mercrediRetardTabDatas.push(data.retardStats[m].temps);
+                                                mercrediRetardTabLabels.push(data.retardStats[m].date);
+                                                break;
+                                            case 4:
+                                                jeudiRetardTabDatas.push(data.retardStats[m].temps);
+                                                jeudiRetardTabLabels.push(data.retardStats[m].date);
+                                                break;
+                                            case 5:
+                                                vendrediRetardTabDatas.push(data.retardStats[m].temps);
+                                                vendrediRetardTabLabels.push(data.retardStats[m].date);
+                                                break;
+                                            case 6:
+                                                samediRetardTabDatas.push(data.retardStats[m].temps);
+                                                samediRetardTabLabels.push(data.retardStats[m].date);
+                                                break;
+                                            case 0:
+                                                dimancheRetardTabDatas.push(data.retardStats[m].temps);
+                                                dimancheRetardTabLabels.push(data.retardStats[m].date);
+                                                break;
+                                        }
+
+                                        retardDatas.push(data.retardStats[m].temps);
+                                        retardLabels.push(data.retardStats[m].date);
                                         $("#tabRetards14").append(
                                             "<tr>"+
-                                            "<td>"+data.retardStats[k].date+"</td>"+
-                                            "<td>"+data.retardStats[k].heureRetard+"</td>"+
-                                            "<td>"+data.retardStats[k].temps+" Min</td>"+
+                                            "<td>"+data.retardStats[m].date+"</td>"+
+                                            "<td>"+data.retardStats[m].heureRetard+"</td>"+
+                                            "<td>"+data.retardStats[m].temps+" Min</td>"+
                                             "</tr>"
                                         );
                                     }
-                                }
-
-                                for(var l=0;l < data.retardStats.length;l++){
-                                    retardDatas.push(data.retardStats[l].temps);
-                                    retardLabels.push(data.retardStats[l].date);
-                                }
-
-
-                                for(var m=0;m < data.retardPauseStats.length;m++){
-                                    retardPauseDatas.push(data.retardPauseStats[m].temps);
-                                    retardPauseLabels.push(data.retardPauseStats[m].date);
                                 }
 
                                 // Les diagrammes
@@ -522,9 +864,14 @@
                                     }
                                 });
 
-                                // Diagramme linéaire
+                                /*
+                                * Diagramme linéaire On a 7 jours de la semaine
+                                *
+                                * Ce qui fait un total de 7*4 = 28 Diagramme
+                                */
 
-                                var ctx = document.getElementById('m-chart').getContext('2d');
+                                // Pour lundi
+                                var ctx = document.getElementById('lundi-m-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
                                     type: 'line',
@@ -536,9 +883,9 @@
                                             label: "Minuite",
                                             backgroundColor: 'rgba(0,0,0,0)',
                                             borderColor: '#36a2eb',
-                                            data: pauseDatas,
+                                            data: lundiPauseTabDatas,
                                         }],
-                                        labels : pauseLabels
+                                        labels : lundiPauseTabLabels
                                     },
 
                                     // Configuration options go here
@@ -550,7 +897,7 @@
                                     }
                                 });
 
-                                var ctx = document.getElementById('n-chart').getContext('2d');
+                                var ctx = document.getElementById('lundi-n-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
                                     type: 'line',
@@ -562,9 +909,9 @@
                                             label: "Minuite",
                                             backgroundColor: 'rgba(0,0,0,0)',
                                             borderColor: '#ff6384',
-                                            data: finDatas,
+                                            data: lundiFinTabDatas,
                                         }],
-                                        labels: finLabels
+                                        labels: lundiFinTabLabels
                                     },
 
                                     // Configuration options go here
@@ -576,7 +923,7 @@
                                     }
                                 });
 
-                                var ctx = document.getElementById('m8-chart').getContext('2d');
+                                var ctx = document.getElementById('lundi-m8-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
                                     type: 'line',
@@ -588,9 +935,9 @@
                                             label: "Minuite",
                                             backgroundColor: 'rgba(0,0,0,0)',
                                             borderColor: '#36a2eb',
-                                            data: retardDatas,
+                                            data: lundiRetardTabDatas,
                                         }],
-                                        labels : retardLabels
+                                        labels : lundiRetardTabLabels
                                     },
 
                                     // Configuration options go here
@@ -602,7 +949,7 @@
                                     }
                                 });
 
-                                var ctx = document.getElementById('n14-chart').getContext('2d');
+                                var ctx = document.getElementById('lundi-n14-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
                                     type: 'line',
@@ -614,9 +961,9 @@
                                             label: "Minuite",
                                             backgroundColor: 'rgba(0,0,0,0)',
                                             borderColor: '#ff6384',
-                                            data: retardPauseDatas,
+                                            data: lundiRetardPauseTabDatas,
                                         }],
-                                        labels: retardPauseLabels
+                                        labels: lundiRetardPauseTabLabels
                                     },
 
                                     // Configuration options go here
@@ -628,21 +975,682 @@
                                     }
                                 });
 
-                                // Maintenant on supprime les diagrammes inutiles
-                                switch (type){
-                                    case "1":
-                                        $(".chartsContainer").show();
-                                        $(".diagDep12").show();
-                                        $(".diagRet14").show();
-                                        break;
-                                    case "2":
-                                        $(".chartsContainer").show();
-                                        $(".diagDep12").hide();
-                                        $(".diagRet14").hide();
-                                        break;
-                                    case "3":
-                                        $(".chartsContainer").hide();
-                                        break;
+                                /* --------------------------------|
+                                * Pour Mardi                       |
+                                *  --------------------------------|
+                                */
+                                var ctx = document.getElementById('mardi-m-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#36a2eb',
+                                            data: mardiPauseTabDatas,
+                                        }],
+                                        labels : mardiPauseTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des départs prématurés de 12H00"
+                                        }
+                                    }
+                                });
+
+                                var ctx = document.getElementById('mardi-n-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [0, 20, 40, 60, 80,100,120],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#ff6384',
+                                            data: mardiFinTabDatas,
+                                        }],
+                                        labels: mardiFinTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des départs prématurés de 18H00"
+                                        }
+                                    }
+                                });
+
+                                var ctx = document.getElementById('mardi-m8-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#36a2eb',
+                                            data: mardiRetardTabDatas,
+                                        }],
+                                        labels : mardiRetardTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des retards de 8H00"
+                                        }
+                                    }
+                                });
+
+                                var ctx = document.getElementById('mardi-n14-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [0, 20, 40, 60, 80,100,120],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#ff6384',
+                                            data: mardiPauseTabDatas,
+                                        }],
+                                        labels: mardiPauseTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des retards de 14H00"
+                                        }
+                                    }
+                                });
+
+                                /* --------------------------------|
+                                * Pour Mercredi                    |
+                                *  --------------------------------|
+                                */
+                                var ctx = document.getElementById('mercredi-m-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#36a2eb',
+                                            data: mercrediPauseTabDatas,
+                                        }],
+                                        labels : mercrediPauseTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des départs prématurés de 12H00"
+                                        }
+                                    }
+                                });
+
+                                var ctx = document.getElementById('mercredi-n-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [0, 20, 40, 60, 80,100,120],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#ff6384',
+                                            data: mercrediFinTabDatas,
+                                        }],
+                                        labels: mercrediFinTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des départs prématurés de 18H00"
+                                        }
+                                    }
+                                });
+
+                                var ctx = document.getElementById('mercredi-m8-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#36a2eb',
+                                            data: mercrediRetardTabDatas,
+                                        }],
+                                        labels : mercrediRetardTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des retards de 8H00"
+                                        }
+                                    }
+                                });
+
+                                var ctx = document.getElementById('mercredi-n14-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [0, 20, 40, 60, 80,100,120],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#ff6384',
+                                            data: mercrediPauseTabDatas,
+                                        }],
+                                        labels: mercrediPauseTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des retards de 14H00"
+                                        }
+                                    }
+                                });
+
+                                /* --------------------------------|
+                                * Pour Jeudi                       |
+                                *  --------------------------------|
+                                */
+                                var ctx = document.getElementById('jeudi-m-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#36a2eb',
+                                            data: jeudiPauseTabDatas,
+                                        }],
+                                        labels : jeudiPauseTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des départs prématurés de 12H00"
+                                        }
+                                    }
+                                });
+
+                                var ctx = document.getElementById('jeudi-n-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [0, 20, 40, 60, 80,100,120],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#ff6384',
+                                            data: jeudiFinTabDatas,
+                                        }],
+                                        labels: jeudiFinTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des départs prématurés de 18H00"
+                                        }
+                                    }
+                                });
+
+                                var ctx = document.getElementById('jeudi-m8-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#36a2eb',
+                                            data: jeudiRetardTabDatas,
+                                        }],
+                                        labels : jeudiRetardTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des retards de 8H00"
+                                        }
+                                    }
+                                });
+
+                                var ctx = document.getElementById('jeudi-n14-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [0, 20, 40, 60, 80,100,120],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#ff6384',
+                                            data: jeudiPauseTabDatas,
+                                        }],
+                                        labels: jeudiPauseTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des retards de 14H00"
+                                        }
+                                    }
+                                });
+
+                                /* --------------------------------|
+                                * Pour Vendredi                    |
+                                *  --------------------------------|
+                                */
+                                var ctx = document.getElementById('vendredi-m-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#36a2eb',
+                                            data: vendrediPauseTabDatas,
+                                        }],
+                                        labels : vendrediPauseTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des départs prématurés de 12H00"
+                                        }
+                                    }
+                                });
+
+                                var ctx = document.getElementById('vendredi-n-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [0, 20, 40, 60, 80,100,120],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#ff6384',
+                                            data: vendrediFinTabDatas,
+                                        }],
+                                        labels: vendrediFinTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des départs prématurés de 18H00"
+                                        }
+                                    }
+                                });
+
+                                var ctx = document.getElementById('vendredi-m8-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#36a2eb',
+                                            data: vendrediRetardTabDatas,
+                                        }],
+                                        labels : vendrediRetardTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des retards de 8H00"
+                                        }
+                                    }
+                                });
+
+                                var ctx = document.getElementById('vendredi-n14-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [0, 20, 40, 60, 80,100,120],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#ff6384',
+                                            data: vendrediPauseTabDatas,
+                                        }],
+                                        labels: vendrediPauseTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des retards de 14H00"
+                                        }
+                                    }
+                                });
+
+                                /* --------------------------------|
+                                * Pour Samedi                      |
+                                *  --------------------------------|
+                                */
+                                var ctx = document.getElementById('samedi-m-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#36a2eb',
+                                            data: samediPauseTabDatas,
+                                        }],
+                                        labels : samediPauseTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des départs prématurés de 12H00"
+                                        }
+                                    }
+                                });
+
+                                var ctx = document.getElementById('samedi-n-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [0, 20, 40, 60, 80,100,120],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#ff6384',
+                                            data: samediFinTabDatas,
+                                        }],
+                                        labels: samediFinTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des départs prématurés de 18H00"
+                                        }
+                                    }
+                                });
+
+                                var ctx = document.getElementById('samedi-m8-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#36a2eb',
+                                            data: samediRetardTabDatas,
+                                        }],
+                                        labels : samediRetardTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des retards de 8H00"
+                                        }
+                                    }
+                                });
+
+                                var ctx = document.getElementById('samedi-n14-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [0, 20, 40, 60, 80,100,120],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#ff6384',
+                                            data: samediPauseTabDatas,
+                                        }],
+                                        labels: samediPauseTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des retards de 14H00"
+                                        }
+                                    }
+                                });
+
+                                /* --------------------------------|
+                                * Pour Dimanche                    |
+                                *  --------------------------------|
+                                */
+                                var ctx = document.getElementById('dimanche-m-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#36a2eb',
+                                            data: dimanchePauseTabDatas,
+                                        }],
+                                        labels : dimanchePauseTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des départs prématurés de 12H00"
+                                        }
+                                    }
+                                });
+
+                                var ctx = document.getElementById('dimanche-n-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [0, 20, 40, 60, 80,100,120],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#ff6384',
+                                            data: dimancheFinTabDatas,
+                                        }],
+                                        labels: dimancheFinTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des départs prématurés de 18H00"
+                                        }
+                                    }
+                                });
+
+                                var ctx = document.getElementById('dimanche-m8-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#36a2eb',
+                                            data: dimancheRetardTabDatas,
+                                        }],
+                                        labels : dimancheRetardTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des retards de 8H00"
+                                        }
+                                    }
+                                });
+
+                                var ctx = document.getElementById('dimanche-n14-chart').getContext('2d');
+                                var chart = new Chart(ctx, {
+                                    // The type of chart we want to create
+                                    type: 'line',
+
+                                    // The data for our dataset
+                                    data: {
+                                        labels: [0, 20, 40, 60, 80,100,120],
+                                        datasets: [{
+                                            label: "Minuite",
+                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            borderColor: '#ff6384',
+                                            data: dimanchePauseTabDatas,
+                                        }],
+                                        labels: dimanchePauseTabLabels
+                                    },
+
+                                    // Configuration options go here
+                                    options: {
+                                        title:{
+                                            display:true,
+                                            text: "Diagramme des retards de 14H00"
+                                        }
+                                    }
+                                });
+
+
+
+                                /*
+                                * Maintenant on supprime les diagrammes inutiles
+                                * Pour tous les jours de la semaine
+                                */
+                                if (data.tabType["lundi"] != "1"){
+                                    $(".lundiDiagDep12").hide();
+                                    $(".lundiDiagRet14").hide();
+                                }else if(data.tabType["mardi"] != "1"){
+                                    $(".mardiDiagDep12").hide();
+                                    $(".mardiDiagRet14").hide();
+
+                                }else if(data.tabType["mercredi"] != "1"){
+                                    $(".mercrediDiagDep12").hide();
+                                    $(".mercrediDiagRet14").hide();
+                                }else if(data.tabType["jeudi"] != "1"){
+                                    $(".jeudiDiagDep12").hide();
+                                    $(".jeudiDiagRet14").hide();
+                                }else if(data.tabType["vendredi"] != "1"){
+                                    $(".vendrediDiagDep12").hide();
+                                    $(".vendrediDiagRet14").hide();
+                                }else if(data.tabType["samedi"] != "1"){
+                                    $(".samediDiagDep12").hide();
+                                    $(".samediDiagRet14").hide();
+                                }else if(data.tabType["dimanche"] != "1"){
+                                    $(".dimancheDiagDep12").hide();
+                                    $(".dimancheDiagRet14").hide();
                                 }
                             },
                             error: function (msg) {
