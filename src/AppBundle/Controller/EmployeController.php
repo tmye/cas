@@ -212,8 +212,9 @@ class EmployeController extends Controller {
                     $file_extension = $file->guessExtension();
                     $fileName = $employe->getEmployeeCcid().'.'.$file->guessExtension();
                     $employe->setPicture($fileName);
+                    $user_profile_pictures = $this->getParameter("user_profile_pictures");
                     // Move the file to the directory where images are stored
-                    $file->move('uploads/img', $fileName);
+                    $file->move($user_profile_pictures, $fileName);
                     $employe->setPicture($fileName);
                 }else{
                     $employe->setPicture($last_picture);

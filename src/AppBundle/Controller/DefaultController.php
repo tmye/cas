@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\CompanyConfig;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +21,27 @@ class DefaultController extends Controller
         $res = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->machinesByDep(1);
 
         print_r($res);
+        return new Response("OK");
+    }
+
+    /**
+     * @Route("/changeSocietyName", name="changeSocietyName")
+     */
+    public function changeSocietyNameAction(Request $request,$name = null)
+    {
+        $name = $request->request->get("name");
+        $cc = $this->getDoctrine()->getManager()->getRepository("AppBundle:CompanyConfig")->findAll();
+        $em = $this->getDoctrine()->getManager();
+        if($cc != null){
+            $cc = $cc[0];
+            $cc->setCompanyName($name);
+            $em->flush();
+        }else{
+            $newCC = new CompanyConfig();
+            $newCC->setCompanyName($name);
+            $em->persist($newCC);
+            $em->flush();
+        }
         return new Response("OK");
     }
 
@@ -206,7 +228,6 @@ class DefaultController extends Controller
             return new Response("0");
         }
 
-
         //return new Response(json_encode($t));
     }
 
@@ -341,5 +362,13 @@ class DefaultController extends Controller
             "departements"=>$departements,
             "machines"=>$machines
         ));
+    }
+
+    /**
+     * @Route("/manageSocietyName",name="manageSocietyName")
+     */
+    public function manageSocietyNameAction(Request $request)
+    {
+        return $this->render('cas/manageSocietyName.html.twig');
     }
 }
