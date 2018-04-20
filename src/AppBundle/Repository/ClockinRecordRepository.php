@@ -122,8 +122,6 @@ class ClockinRecordRepository extends EntityRepository
 
     public function retardPause($emp,$date,$interval_pause,$heureNormaleArrivePause){
 
-        //print_r("Hhhhhhhhhh : ".$heureNormaleArrivePause);
-
         $heureNormaleArrivePause = $heureNormaleArrivePause+$date;
 
         $queryBuilder = $this->createQueryBuilder('c');

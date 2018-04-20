@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col l12">
+            <h5>Changer le nom de la société</h5>
+
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Changement de nom</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <form class="col l12" id="main_form">
+                                        <span id="type1">
+                                            <div class="row firstOne">
+                                                <div class="col l12">
+                                                    <h5>Nom de la société</h5>
+                                                    <span>Changer le nom de la société</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <input type="text" id="companyName" placeholder="Entrez le nouveau nom de la société">
+                                                <br><br>
+                                                <input type="button" id="submitSocietyName" class="btn" value="Changer">
+                                            </div>
+                                        </span>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function () {
+            $("#submitSocietyName").click(function () {
+                $.ajax({
+                    type: 'POST',
+                    url: "changeSocietyName",
+                    data: {'name':$("#companyName").val()},
+                    success: function(data) {
+                        alert(data);
+                    },
+                    error: function () {
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
