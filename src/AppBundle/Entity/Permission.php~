@@ -40,16 +40,10 @@ class Permission
     private $askerId;
 
     /**
-     * @var int
-     *
-     * @ORM\Column(name="concerned_mployee_ccid", type="integer")
-     */
-    private $concernedMployeeCcid;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=45)
+     * @Assert\NotBlank()
      */
     private $title;
 
@@ -57,6 +51,7 @@ class Permission
      * @var string
      *
      * @ORM\Column(name="description", type="string", length=45)
+     * @Assert\NotBlank()
      */
     private $description;
 
@@ -82,6 +77,13 @@ class Permission
     private $dateFrom;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="time_from", type="string")
+     */
+    private $timeFrom;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="date_to", type="datetime")
@@ -89,9 +91,18 @@ class Permission
     private $dateTo;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="time_to", type="string")
+     */
+    private $timeTo;
+
+    /**
      * @var int
      *
      * @ORM\Column(name="state", type="integer")
+     * @Assert\NotBlank()
+     * @Assert\Range(min=0,max=2)
      */
     private $state;
 
@@ -127,29 +138,6 @@ class Permission
     public function getAskerId()
     {
         return $this->askerId;
-    }
-
-    /**
-     * Set concernedMployeeCcid
-     *
-     * @param integer $concernedMployeeCcid
-     * @return Permission
-     */
-    public function setConcernedMployeeCcid($concernedMployeeCcid)
-    {
-        $this->concernedMployeeCcid = $concernedMployeeCcid;
-
-        return $this;
-    }
-
-    /**
-     * Get concernedMployeeCcid
-     *
-     * @return integer 
-     */
-    public function getConcernedMployeeCcid()
-    {
-        return $this->concernedMployeeCcid;
     }
 
     /**
@@ -311,5 +299,28 @@ class Permission
     public function getCreateTime()
     {
         return $this->createTime;
+    }
+
+    /**
+     * Set employee
+     *
+     * @param \AppBundle\Entity\Employe $employee
+     * @return Permission
+     */
+    public function setEmployee(\AppBundle\Entity\Employe $employee)
+    {
+        $this->employee = $employee;
+
+        return $this;
+    }
+
+    /**
+     * Get employee
+     *
+     * @return \AppBundle\Entity\Employe 
+     */
+    public function getEmployee()
+    {
+        return $this->employee;
     }
 }

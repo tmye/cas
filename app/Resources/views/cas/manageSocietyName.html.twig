@@ -28,6 +28,30 @@
                                         </span>
                                     </form>
                                 </div>
+                                <div class="row">
+                                    <form class="col l12" id="main_form">
+                                        <span id="type1">
+                                            <div class="row firstOne">
+                                                <div class="col l12">
+                                                    <h5>Logo de la société</h5>
+                                                    <span>Changer le logo de la société</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="row">
+                                                    <div class="col l8">
+                                                        <input type="file" class="fileInput" id="fileInput">
+                                                        <br><br>
+                                                        <input type="button" id="submitSocietyLogo" class="btn" value="Changer">
+                                                    </div>
+                                                    <div class="col l4">
+                                                        <img src="" id="preview" alt="companyLogo" class="companyLogoPreview">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </form>
+                                </div>
                             </div>
                         </li>
                     </ul>
@@ -55,6 +79,63 @@
                     }
                 });
             });
+
+            // Section du logo de la société
+
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#preview').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            $(".fileInput").change(function() {
+                readURL(this);
+            });
+
+            /*$("#previewButton").click(function(){
+                $(".fileInput").click();
+            });*/
+
+            // Requete ajax de soumission de l'image
+
+            $("#submitSocietyLogo").click(function(){
+                var formdata = new FormData();
+                var fInput = document.getElementById("fileInput");
+                console.log(fInput);
+                formdata.append("image",fInput.files[0]);
+                console.log(fInput);
+
+                $.ajax({
+                    url: "{{ path('changeSocietyLogo') }}",
+                    type: "POST",
+                    data: formdata,
+                    cache:false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        alert(data);
+                    },
+                    error: function() {
+                        alert("Erreur");
+                    }
+                });
+                /*$.ajax({
+                    url: "{path('syncPubCoverAll')}",
+                    type: "POST",
+                    data: {"deps":tab},
+                    success: function(data) {
+                        alert(data);
+                    },
+                    error: function() {
+                        alert("Erreur");
+                    }
+                });*/
+            });
+
         });
     </script>
 {% endblock %}

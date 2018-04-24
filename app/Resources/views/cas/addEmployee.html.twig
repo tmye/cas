@@ -14,6 +14,15 @@
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
                                     <div class="col l12">
+                                        {%  if message is defined and message is not null %}
+                                            <div class="operation_message">
+                                                {{ message }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col l12">
                                             <span class="detailSpan" style="display: none">Détails de l'heure de travail sélectionnée</span>
                                         {% for wh in whList %}
                                             <table class="bordered striped centered hideTable" id="{{ wh.workingHour.code }}" style="display: none">
@@ -131,15 +140,15 @@
                                         <div class="row">
                                             <div class="input-field col s4">
                                                 <span>Nom</span>
-                                                {{ form_row(form.last_name, {'attr': {'class': 'input-customized','placeholder':'Une petite description'}}) }}
+                                                {{ form_row(form.surname, {'attr': {'class': 'input-customized','placeholder':'Votre Nom'}}) }}
                                             </div>
                                             <div class="input-field col s4">
                                                 <span>Prénom</span>
-                                                {{ form_row(form.surname, {'attr': {'class': 'input-customized','placeholder':'Une petite description'}}) }}
+                                                {{ form_row(form.last_name, {'attr': {'class': 'input-customized','placeholder':'Prénom'}}) }}
                                             </div>
                                             <div class="input-field col s4">
                                                 <span>Deuxième prénom</span>
-                                                {{ form_row(form.middle_name, {'attr': {'class':'input-customized','placeholder':'Le titre de la permission'}}) }}
+                                                {{ form_row(form.middle_name, {'attr': {'class':'input-customized','placeholder':'Deuxième prénom'}}) }}
                                             </div>
                                         </div>
                                         <div class="row">
@@ -181,8 +190,8 @@
                                                 <button id="previewButton" type="button" style="width: 180px;height: 30px;border: solid 1px rgba(0,0,0,0.2);margin-top: 20px">Choisir une image</button>
                                             </div>
                                             <div class="input-field col s4 center">
-                                                {% if picPath is defined and picPath is not null %}
-                                                    <img id="preview" src="{{ asset('uploads/img/')~picPath }}" alt="image_preview" class="employee_image_preview" width="100" height="100">
+                                                {% if employe is defined and employe.picture is not null %}
+                                                    <img id="preview" src="{{ asset('/')~user_profile_pictures~'/'~employe.picture }}" alt="image_preview" class="employee_image_preview" width="100" height="100">
                                                 {% else %}
                                                     <img id="preview" src="{{ asset('img/guest.png') }}" alt="image_preview" class="employee_image_preview" width="100" height="100">
                                                 {% endif %}

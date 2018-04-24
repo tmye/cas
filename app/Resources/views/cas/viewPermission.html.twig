@@ -12,6 +12,15 @@
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
                                     <div class="col l12">
+                                        {%  if message is defined and message is not null %}
+                                            <div class="operation_message">
+                                                {{ message }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col l12">
                                         <ul class="tabs">
                                             <li class="tab col s3"><a href="#pending" class="active">En attentes</a></li>
                                             <li class="tab col s3"><a href="#not_granted">Refusées</a></li>
@@ -27,7 +36,7 @@
                                             {% for perm in listPerm %}
                                                 {% if perm.state == 0 %}
                                                     {% if perm.CreateTime | date('m')!=last_month %}
-                                            <!-- Loool + mdr juste pour fermer le row et en ouvrir un nouveau pour une séparation des éléments -->
+                                            <!-- juste pour fermer le row et en ouvrir un nouveau pour une séparation des éléments -->
                                             </div>
                                             <div class="row">
                                                 <p class="permissionsSeparator">{{ perm.CreateTime | date('M')~" "~perm.CreateTime | date('Y') }}</p>
@@ -51,8 +60,8 @@
                                                                 {{ nbreJours~" Jours "~nbreHeures~" Heures" }}
                                                                 </b>
                                                             </p>
-                                                            <a href="grantPermission/{{ perm.id }}"><button class="simple-button-decoration green lighten-1 white-text"><span class="fa fa-check"></span> Accorder</button></a>
-                                                            <a href="rejectPermission/{{ perm.id }}"><button class="deleteDep simple-button-decoration red lighten-1 white-text"><span class="fa fa-times"></span> Refuser</button></a>
+                                                            <a href="{{ path('grantPermision',{'id':perm.id}) }}"><button class="simple-button-decoration green lighten-1 white-text"><span class="fa fa-check"></span> Accorder</button></a>
+                                                            <a href="{{ path('rejectPermision',{'id':perm.id}) }}"><button class="deleteDep simple-button-decoration red lighten-1 white-text"><span class="fa fa-times"></span> Refuser</button></a>
                                                         </div>
                                                     </div>
 

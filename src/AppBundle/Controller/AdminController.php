@@ -54,11 +54,27 @@ class AdminController extends Controller
     }
 
     /**
+     * @Route("/superAdmin/expiry",name="expiry")
+     */
+    public function expiryAction(Request $request)
+    {
+        if($this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')){
+            return $this->render("cas/expiration.html.twig");
+        }else{
+            throw new AccessDeniedException("Accès limité aux super-administrateurs");
+        }
+    }
+
+    /**
      * @Route("/admin/roleChange",name="roleChange")
      */
     public function roleChangeAction(Request $request)
     {
         if($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')){
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if ($expiry_service->hasExpired()) {
+                return $this->redirectToRoute("expiryPage");
+            }
             if ($request->isMethod('POST')) {
                 $empId = $request->request->get("employe");
                 $role = $request->request->get("role");

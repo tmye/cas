@@ -18,4 +18,54 @@ class PermissionRepository extends EntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function grantedPermissions($date){
+        $qb = $this->createQueryBuilder('p');
+        $qb->where('p.state = :state');
+        $qb->setParameter('state',1);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function enPermission($emp,$date,$savedHour,$normalHour){
+
+        // The hours are on the H:i format
+        $qb = $this->createQueryBuilder('p');
+        $qb->where('p.state = :state');
+        $qb->setParameter('state',1);
+        $qb->andWhere('p.employee = :e');
+        $qb->setParameter('e',$emp);
+
+        $permissionHourB = null;
+        $permissionHourA = null;
+        $result = $qb->getQuery()->getResult();
+        $recycledResult = array();
+
+        foreach ($result as $r){
+            if($r->getDateFrom()->format("Y-m-d") == $date){
+                $recycledResult[]=$r;
+            }
+            $permissionHourB = strtotime($date.' '.$r->getTimeTo());
+        }
+
+        if(sizeof($recycledResult)>0){
+
+            $firstResult = $recycledResult[0];
+            $permissionHourA = strtotime($date.' '.$firstResult->getTimeFrom());
+
+            $empHourA = strtotime($date.' '.$normalHour);
+            $empHourB = strtotime($date.' '.$savedHour);
+
+            if($empHourB <= $permissionHourB && $empHourA >= $permissionHourA){
+                //print_r("\n OUI DATE : ".$date);
+                return true;
+            }else{
+                //print_r("\n NON DATE : ".$date);
+                return true;
+            }
+        } else{
+            //print_r("\n NON DEUXIEME CAS ".$date);
+            return false;
+        }
+    }
 }

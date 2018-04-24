@@ -28,52 +28,62 @@ class DepartementController extends Controller
      */
     public function departementAction(Request $request)
     {
-        // Recuperation des departements existants
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
 
-        $depRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement");
-        $listDep = $depRep->findAll();
+            // Recuperation des departements existants
+            $depRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement");
+            $listDep = $depRep->findAll();
 
-        $departement = new Departement();
-        $departement->setLastUpdate(new \DateTime());
-        $departement->setCreateDate(new \DateTime());
-        $departement->setAuthor($this->getUser()->getUsername());
+            $departement = new Departement();
+            $departement->setLastUpdate(new \DateTime());
+            $departement->setCreateDate(new \DateTime());
+            $departement->setAuthor($this->getUser()->getUsername());
 
-        // On crée le FormBuilder grâce au service form factory
-        $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $departement);
+            // On crée le FormBuilder grâce au service form factory
+            $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $departement);
 
-        // On ajoute les champs de l'entité que l'on veut à notre formulaire
-        $formBuilder
-            ->add('name', TextType::class,array('label'=>' '))
-            ->add('maxCount', IntegerType::class,array('label'=>' '))
-            ->add('Créer', SubmitType::class);
+            // On ajoute les champs de l'entité que l'on veut à notre formulaire
+            $formBuilder
+                ->add('name', TextType::class,array('label'=>' '))
+                ->add('maxCount', IntegerType::class,array('label'=>' '))
+                ->add('Créer', SubmitType::class);
 
-        // À partir du formBuilder, on génère le formulaire
+            // À partir du formBuilder, on génère le formulaire
 
-        $form = $formBuilder->getForm();
+            $form = $formBuilder->getForm();
 
-        if ($request->isMethod('POST')) {
-            $form->handleRequest($request);
-            if ($form->isValid()) {
-                $em = $this->getDoctrine()->getManager();
+            if ($request->isMethod('POST')) {
+                $form->handleRequest($request);
+                if ($form->isValid()) {
+                    $em = $this->getDoctrine()->getManager();
 
-                $em->persist($departement);
-                $em->flush();
+                    $em->persist($departement);
+                    $em->flush();
 
-                $request->getSession()->getFlashBag()->add('notice', 'Département bien enregistrée.');
+                    return $this->render("cas/departement.html.twig",array(
+                        'message'=>"Ce département a été ajouté avec succès",
+                        'form' => $form->createView(),
+                        'listDep' => $listDep
+                    ));
 
-                return $this->redirectToRoute('departement', array("listDep" => $listDep));
+                }
 
             }
 
+            // À ce stade, le formulaire n'est pas valide car :
+            // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
+            // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
+            return $this->render('cas/departement.html.twig', array(
+                'form' => $form->createView(),
+                'listDep' => $listDep
+            ));
+        }else{
+            return $this->redirectToRoute("login");
         }
-
-        // À ce stade, le formulaire n'est pas valide car :
-        // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
-        // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
-        return $this->render('cas/departement.html.twig', array(
-            'form' => $form->createView(),
-            'listDep' => $listDep
-        ));
     }
 
     /**
@@ -81,27 +91,88 @@ class DepartementController extends Controller
      */
     public function deleteDepartementAction(Request $request, $id)
     {
-        // On vérifie que le département est vide
-        $em = $this->getDoctrine()->getManager();
-        $qb = $em->createQueryBuilder();
-        $qb->select('e')
-            ->from('AppBundle:Employe','e')
-            ->andWhere('e.departement='.$id);
-        $listEmployee = $qb->getQuery()->getArrayResult();
-
-        $dep = $this->getDoctrine()->getManager()->getRepository('AppBundle:Departement')->find($id);
-        if ($dep != null) {
-            if($listEmployee == null){
-                $em = $this->getDoctrine()->getManager();
-                $em->remove($dep);
-                $em->flush();
-                return new Response("Ce département a été supprimé");
-            }else{
-                return new Response("Ce département contient des employés et ne peut donc etre supprimé");
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
             }
+            // On vérifie que le département est vide
+            $em = $this->getDoctrine()->getManager();
+            $qb = $em->createQueryBuilder();
+            $qb->select('e')
+                ->from('AppBundle:Employe','e')
+                ->andWhere('e.departement='.$id);
+            $listEmployee = $qb->getQuery()->getArrayResult();
 
-        } else{
-            throw new NotFoundHttpException("Le département d'id " . $id . " n'existe pas.");
+            $dep = $this->getDoctrine()->getManager()->getRepository('AppBundle:Departement')->find($id);
+            if ($dep != null) {
+                if($listEmployee == null){
+                    $em = $this->getDoctrine()->getManager();
+                    $em->remove($dep);
+                    $em->flush();
+
+                    $depRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement");
+                    $listDep = $depRep->findAll();
+
+                    $departement = new Departement();
+                    $departement->setLastUpdate(new \DateTime());
+                    $departement->setCreateDate(new \DateTime());
+                    $departement->setAuthor($this->getUser()->getUsername());
+
+                    // On crée le FormBuilder grâce au service form factory
+                    // On recréé le formulaire pour ne pas passer un formulaire vide au render()
+                    $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $departement);
+
+                    // On ajoute les champs de l'entité que l'on veut à notre formulaire
+                    $formBuilder
+                        ->add('name', TextType::class,array('label'=>' '))
+                        ->add('maxCount', IntegerType::class,array('label'=>' '))
+                        ->add('Créer', SubmitType::class);
+
+                    // À partir du formBuilder, on génère le formulaire
+
+                    $form = $formBuilder->getForm();
+
+                    return $this->render("cas/departement.html.twig",array(
+                        'message'=>"Ce département a été supprimé avec succès",
+                        'form' => $form->createView(),
+                        'listDep' => $listDep
+                    ));
+                }else{
+                    $depRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement");
+                    $listDep = $depRep->findAll();
+
+                    $departement = new Departement();
+                    $departement->setLastUpdate(new \DateTime());
+                    $departement->setCreateDate(new \DateTime());
+                    $departement->setAuthor($this->getUser()->getUsername());
+
+                    // On crée le FormBuilder grâce au service form factory
+                    // On recréé le formulaire pour ne pas passer un formulaire vide au render()
+                    $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $departement);
+
+                    // On ajoute les champs de l'entité que l'on veut à notre formulaire
+                    $formBuilder
+                        ->add('name', TextType::class,array('label'=>' '))
+                        ->add('maxCount', IntegerType::class,array('label'=>' '))
+                        ->add('Créer', SubmitType::class);
+
+                    // À partir du formBuilder, on génère le formulaire
+
+                    $form = $formBuilder->getForm();
+
+                    return $this->render("cas/departement.html.twig",array(
+                        'message'=>"Ce département contient des employés et ne peut donc etre supprimé",
+                        'form' => $form->createView(),
+                        'listDep' => $listDep
+                    ));
+                }
+
+            } else{
+                throw new NotFoundHttpException("Le département d'id " . $id . " n'existe pas.");
+            }
+        }else{
+            return $this->redirectToRoute("login");
         }
     }
 
@@ -110,56 +181,65 @@ class DepartementController extends Controller
      */
     public function editDepartementAction(Request $request, $id)
     {
-        $departement = $this->getDoctrine()->getManager()->getRepository('AppBundle:Departement')->find($id);
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+            $departement = $this->getDoctrine()->getManager()->getRepository('AppBundle:Departement')->find($id);
 
-        // Recuperation des departements existants
+            // Recuperation des departements existants
 
-        $depRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement");
-        $listDep = $depRep->findAll();
+            $depRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement");
+            $listDep = $depRep->findAll();
 
-        if($departement != null){
-            $departement->setLastUpdate(new \DateTime());
-            $departement->setCreateDate(new \DateTime());
-            $departement->setAuthor($this->getUser()->getUsername());
-        }else{
-            throw new NotFoundHttpException("Le département d'id " . $id . " n'existe pas.");
-        }
+            if($departement != null){
+                $departement->setLastUpdate(new \DateTime());
+                $departement->setCreateDate(new \DateTime());
+                $departement->setAuthor($this->getUser()->getUsername());
+            }else{
+                throw new NotFoundHttpException("Le département d'id " . $id . " n'existe pas.");
+            }
 
-        // On crée le FormBuilder grâce au service form factory
-        $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $departement);
+            // On crée le FormBuilder grâce au service form factory
+            $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $departement);
 
-        // On ajoute les champs de l'entité que l'on veut à notre formulaire
-        $formBuilder
-            ->add('name', TextType::class)
-            ->add('maxCount', IntegerType::class,array('label'=>' '))
-            ->add('Modifier', SubmitType::class,array('label'=>' '));
+            // On ajoute les champs de l'entité que l'on veut à notre formulaire
+            $formBuilder
+                ->add('name', TextType::class)
+                ->add('maxCount', IntegerType::class,array('label'=>' '))
+                ->add('Modifier', SubmitType::class,array('label'=>' '));
 
-        // À partir du formBuilder, on génère le formulaire
+            // À partir du formBuilder, on génère le formulaire
 
-        $form = $formBuilder->getForm();
+            $form = $formBuilder->getForm();
 
-        if ($request->isMethod('POST')) {
-            $form->handleRequest($request);
-            if ($form->isValid()) {
-                $em = $this->getDoctrine()->getManager();
+            if ($request->isMethod('POST')) {
+                $form->handleRequest($request);
+                if ($form->isValid()) {
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($departement);
+                    $em->flush();
 
-                $em->persist($departement);
-                $em->flush();
+                    return $this->render("cas/departement.html.twig",array(
+                        'message'=>"Ce département a été modifié",
+                        'form' => $form->createView(),
+                        'listDep' => $listDep
+                    ));
 
-                $request->getSession()->getFlashBag()->add('notice', 'Département bien enregistrée.');
-
-                return $this->redirectToRoute('departement', array("listDep" => $listDep));
+                }
 
             }
 
+            // À ce stade, le formulaire n'est pas valide car :
+            // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
+            // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
+            return $this->render('cas/departement.html.twig', array(
+                'form' => $form->createView(),
+                'listDep' => $listDep
+            ));
+        }else{
+            return $this->redirectToRoute("login");
         }
-
-        // À ce stade, le formulaire n'est pas valide car :
-        // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
-        // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
-        return $this->render('cas/departement.html.twig', array(
-            'form' => $form->createView(),
-            'listDep' => $listDep
-        ));
     }
 }

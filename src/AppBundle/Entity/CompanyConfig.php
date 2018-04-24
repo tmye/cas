@@ -28,6 +28,13 @@ class CompanyConfig
      */
     private $companyName;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="company_logo", type="string", length=255)
+     */
+    private $companyLogo;
+
 
     /**
      * Get id
@@ -61,5 +68,29 @@ class CompanyConfig
     public function getCompanyName()
     {
         return $this->companyName;
+    }
+
+    /**
+     * Set companyLogo
+     *
+     * @param string $companyLogo
+     *
+     * @return CompanyConfig
+     */
+    public function setCompanyLogo($companyLogo)
+    {
+        $this->companyLogo = $companyLogo;
+
+        return $this;
+    }
+
+    /**
+     * Get companyLogo
+     *
+     * @return string
+     */
+    public function getCompanyLogo()
+    {
+        return $this->companyLogo;
     }
 }

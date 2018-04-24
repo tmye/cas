@@ -135,6 +135,21 @@
                     </div>
                 </div>
                 <div class="row">
+                    <h5>Permissions</h5>
+                    <table class="center">
+                        <thead>
+                            <tr>
+                                <th>Date de la permission</th>
+                                <th>Type</th>
+                                <th>Temps à rajouter</th>
+                                <th>Somme à rajouter</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabPermissions">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
                     <div class="col l6">
                         <span>Diagramme cumulé des absences</span>
                         <canvas id="myPieChart" class="card" style="cursor: pointer">
@@ -399,6 +414,11 @@
 
                 return dayName;
 
+            }
+
+            function precisionRound(number, precision) {
+                var factor = Math.pow(10, precision);
+                return Math.round(number * factor) / factor;
             }
 
             /* Création de la fonction de chargement des données de l'employé sélectionné */
@@ -782,6 +802,29 @@
                                         );
                                     }
                                 }
+
+                                // Script pour remplir le tableau de stats des permissions
+
+                                $("#tabPermisions").html("");
+                                console.log("Permissions :");
+                                $.each(data.permissionData,function (id) {
+                                    $.each(data.permissionData[id],function (el) {
+                                        var losedTime = data.permissionData[id][el].tempsPerdu;
+                                        if (losedTime >= 60){
+                                            losedTime = Math.trunc((losedTime/60))+" H "+Math.round(losedTime%60)+" Min";
+                                        }else{
+                                            losedTime = losedTime+" Min";
+                                        }
+                                        $("#tabPermissions").append("" +
+                                            "<tr>" +
+                                                "<td>"+data.permissionData[id][el].date+"</td>" +
+                                                "<td>"+data.permissionData[id][el].type+"</td>" +
+                                                "<td>"+losedTime+"</td>"+
+                                                "<td>"+precisionRound((data.permissionData[id][el].tempsPerdu*salaryPerMin),5)+"</td>" +
+                                            "</tr>");
+                                        console.log(data.permissionData[id][el].date);
+                                    });
+                                });
 
                                 // Les diagrammes
                                 // Diagramme circulaire des absences
