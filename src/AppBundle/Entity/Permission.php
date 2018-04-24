@@ -77,11 +77,25 @@ class Permission
     private $dateFrom;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="time_from", type="string", nullable=true)
+     */
+    private $timeFrom;
+
+    /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date_to", type="datetime")
+     * @ORM\Column(name="date_to", type="datetime", nullable=true)
      */
     private $dateTo;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="time_to", type="string", nullable=true)
+     */
+    private $timeTo;
 
     /**
      * @var int
@@ -308,5 +322,53 @@ class Permission
     public function getEmployee()
     {
         return $this->employee;
+    }
+
+    /**
+     * Set timeFrom
+     *
+     * @param string $timeFrom
+     *
+     * @return Permission
+     */
+    public function setTimeFrom($timeFrom)
+    {
+        $this->timeFrom = $timeFrom;
+
+        return $this;
+    }
+
+    /**
+     * Get timeFrom
+     *
+     * @return string
+     */
+    public function getTimeFrom()
+    {
+        return $this->timeFrom;
+    }
+
+    /**
+     * Set timeTo
+     *
+     * @param string $timeTo
+     *
+     * @return Permission
+     */
+    public function setTimeTo($timeTo)
+    {
+        $this->timeTo = $timeTo;
+
+        return $this;
+    }
+
+    /**
+     * Get timeTo
+     *
+     * @return string
+     */
+    public function getTimeTo()
+    {
+        return $this->timeTo;
     }
 }

@@ -41,112 +41,121 @@ class EmployeController extends Controller {
      */
     public function addEmployeeAction(Request $request)
     {
-        $employe = new Employe();
-        $employe->setLastUpdate(new \DateTime());
-        $employe->setCreateDate(new \DateTime());
-        $employe->setEmployeeCcid(10000);
-        $employe->setPassword(md5($this->getParameter("default_password")));
-        $employe->setPicture($this->getDefaultPicture());
-        //$employe->setGodfatherCcid($this->getUser()->getId());
-        $employe->setGodfatherCcid(0);
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+            $employe = new Employe();
+            $employe->setLastUpdate(new \DateTime());
+            $employe->setCreateDate(new \DateTime());
+            $employe->setEmployeeCcid(10000);
+            $employe->setPassword(md5($this->getParameter("default_password")));
+            $employe->setPicture($this->getDefaultPicture());
+            //$employe->setGodfatherCcid($this->getUser()->getId());
+            $employe->setGodfatherCcid(0);
 
-        // On crée le FormBuilder grâce au service form factory
-        $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $employe);
+            // On crée le FormBuilder grâce au service form factory
+            $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $employe);
 
-        // On ajoute les champs de l'entité que l'on veut à notre formulaire
-        $formBuilder
-            ->add('surname', TextType::class,array('label'=>' '))
-            ->add('middle_name', TextType::class,array('required' => false,'label'=>' '))
-            ->add('last_name', TextType::class,array('label'=>' '))
-            ->add('adress', TextType::class,array('label'=>' '))
-            ->add('contact', TextType::class,array('label'=>' '))
-            ->add('picture', FileType::class,array(
-                'required'=>false,
-                'label'=>' ',
-                'data_class' => null
-            ))
-            ->add('salary', IntegerType::class,array('label'=>' '))
-            ->add('function', TextType::class,array('label'=>' '))
-            ->add('hire_date', DateTimeType::class,array('widget'=>'single_text','label'=>' '))
-            ->add('departement',EntityType::class,array(
-                'label'=>' ',
-                'class' => 'AppBundle:Departement',
-                'choice_label' => 'name',
-                'multiple' => false,
-            ))
-            ->add('workingHour',EntityType::class,array(
-                'label'=>' ',
-                'class' => 'AppBundle:WorkingHours',
-                'choice_label' => 'code',
-                'multiple' => false,
-            ))
-            ->add('Créer', SubmitType::class);
-        // À partir du formBuilder, on génère le formulaire
+            // On ajoute les champs de l'entité que l'on veut à notre formulaire
+            $formBuilder
+                ->add('surname', TextType::class,array('label'=>' '))
+                ->add('middle_name', TextType::class,array('required' => false,'label'=>' '))
+                ->add('last_name', TextType::class,array('label'=>' '))
+                ->add('adress', TextType::class,array('label'=>' '))
+                ->add('contact', TextType::class,array('label'=>' '))
+                ->add('picture', FileType::class,array(
+                    'required'=>false,
+                    'label'=>' ',
+                    'data_class' => null
+                ))
+                ->add('salary', IntegerType::class,array('label'=>' '))
+                ->add('function', TextType::class,array('label'=>' '))
+                ->add('hire_date', DateTimeType::class,array('widget'=>'single_text','label'=>' '))
+                ->add('departement',EntityType::class,array(
+                    'label'=>' ',
+                    'class' => 'AppBundle:Departement',
+                    'choice_label' => 'name',
+                    'multiple' => false,
+                ))
+                ->add('workingHour',EntityType::class,array(
+                    'label'=>' ',
+                    'class' => 'AppBundle:WorkingHours',
+                    'choice_label' => 'code',
+                    'multiple' => false,
+                ))
+                ->add('Créer', SubmitType::class);
+            // À partir du formBuilder, on génère le formulaire
 
-        $form = $formBuilder->getForm();
+            $form = $formBuilder->getForm();
 
-        if ($request->isMethod('POST')) {
-            $form->handleRequest($request);
-            if ($form->isValid()) {
+            if ($request->isMethod('POST')) {
+                $form->handleRequest($request);
+                if ($form->isValid()) {
 
-                /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
+                    /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
 
 
-                $file = $employe->getPicture();
-                if ($file == null) {
-                    $employe->setPicture($this->getDefaultPicture());
+                    $file = $employe->getPicture();
+                    if ($file == null) {
+                        $employe->setPicture($this->getDefaultPicture());
+                    }
+
+                    if(isset($file) && !empty($file)){
+                        // Generate a unique name for the file before saving it
+                        $file_extension = $file->guessExtension();
+                        $fileName = $employe->getEmployeeCcid().'.'.$file->guessExtension();
+
+                        $employe->setPicture($fileName);
+                    }
+
+                    $em = $this->getDoctrine()->getManager();
+
+                    $em->persist($employe);
+                    $em->flush();
+
+                    $last_id = $employe->getId();
+                    $employe->setEmployeeCcid(10000 + $last_id);
+
+                    $employe->setUsername($employe->getEmployeeCcid());
+                    // Maintenant qu'un a un CCID on modifie le nom du fichier avant de l'uploader
+
+                    if(isset($file) && !empty($file)) {
+                        $timest = time();
+                        $fileName = $employe->getEmployeeCcid().'_'.$timest.'.'.$file->guessExtension();
+                        $user_profile_pictures = $this->getParameter("user_profile_pictures");
+                        $file->move($user_profile_pictures, $fileName);
+
+                        $employe->setPicture($employe->getEmployeeCcid().'_'.$timest.'.'.$file_extension);
+                    }
+                    $em->persist($employe);
+                    $em->flush();
+
+                    $wh = $this->returnWorkingHoursAction();
+                    return $this->render("cas/addEmployee.html.twig",array(
+                        'message'=>"Cet employé a été ajouté avec succès",
+                        'form' => $form->createView(),
+                        'whList' => $wh,
+                    ));
                 }
 
-                if(isset($file) && !empty($file)){
-                    // Generate a unique name for the file before saving it
-                    $file_extension = $file->guessExtension();
-                    $fileName = $employe->getEmployeeCcid().'.'.$file->guessExtension();
-
-                    $employe->setPicture($fileName);
-                }
-
-                $em = $this->getDoctrine()->getManager();
-
-                $em->persist($employe);
-                $em->flush();
-
-                $last_id = $employe->getId();
-                echo("<br>Last id : ".$last_id);
-                $employe->setEmployeeCcid(10000 + $last_id);
-
-                $employe->setUsername($employe->getEmployeeCcid());
-                // Maintenant qu'un a un CCID on modifie le nom du fichier avant de l'uploader
-
-                if(isset($file) && !empty($file)) {
-                    $fileName = $employe->getEmployeeCcid().'.'.$file->guessExtension();
-                    $user_profile_pictures = $this->getParameter("user_profile_pictures");
-                    print_r($user_profile_pictures);
-                    $file->move($user_profile_pictures, $fileName);
-
-                    $employe->setPicture($employe->getEmployeeCcid().'.'.$file_extension);
-                }
-                $em->persist($employe);
-                $em->flush();
-
-                $request->getSession()->getFlashBag()->add('notice', 'Employé bien enregistrée.');
-
-                //return $this->redirectToRoute('viewEmploye');
-
-                return new Response("OK");
             }
 
+            // À ce stade, le formulaire n'est pas valide car :
+            // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
+            // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
+
+            $wh = $this->returnWorkingHoursAction();
+
+            return $this->render('cas/addEmployee.html.twig', array(
+                'form' => $form->createView(),
+                'whList' => $wh,
+                'page' => "add"
+            ));
+        }else{
+            return $this->redirectToRoute("login");
         }
-
-        // À ce stade, le formulaire n'est pas valide car :
-        // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
-        // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
-
-        $wh = $this->returnWorkingHoursAction();
-
-        return $this->render('cas/addEmployee.html.twig', array(
-            'form' => $form->createView(),
-            'whList' => $wh
-        ));
     }
 
     /**
@@ -154,97 +163,110 @@ class EmployeController extends Controller {
      */
     public function editEmployeeAction(Request $request, $id)
     {
-        $employe = $this->getDoctrine()->getManager()->getRepository('AppBundle:Employe')->find($id);
-        $last_picture = $employe->getPicture();
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+            $employe = $this->getDoctrine()->getManager()->getRepository('AppBundle:Employe')->find($id);
+            $last_picture = $employe->getPicture();
 
-        if($employe != null){
-            $employe->setLastUpdate(new \DateTime());
-            $employe->setGodfatherCcid($this->getUser()->getId());
-        }else{
-            throw new NotFoundHttpException("L'employé d'id " . $id . " n'existe pas.");
-        }
+            if($employe != null){
+                $employe->setLastUpdate(new \DateTime());
+                $employe->setGodfatherCcid($this->getUser()->getId());
+            }else{
+                throw new NotFoundHttpException("L'employé d'id " . $id . " n'existe pas.");
+            }
 
-        // On crée le FormBuilder grâce au service form factory
-        $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $employe);
+            // On crée le FormBuilder grâce au service form factory
+            $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $employe);
 
-        // On ajoute les champs de l'entité que l'on veut à notre formulaire
-        $formBuilder
-            ->add('surname', TextType::class,array('label'=>' '))
-            ->add('middle_name', TextType::class,array('required' => false,'label'=>' '))
-            ->add('last_name', TextType::class,array('label'=>' '))
-            ->add('adress', TextType::class,array('label'=>' '))
-            ->add('contact', TextType::class,array('label'=>' '))
-            ->add('salary', IntegerType::class,array('label'=>' '))
-            ->add('picture', FileType::class,array(
-                'required'=>false,
-                'label'=>' ',
-                'data_class' => null
-            ))
-            ->add('function', TextType::class,array('label'=>' '))
-            ->add('hire_date', DateTimeType::class,array('widget'=>'single_text','label'=>' '))
-            ->add('departement',EntityType::class,array(
-                'label'=>' ',
-                'class' => 'AppBundle:Departement',
-                'choice_label' => 'name',
-                'multiple' => false,
-            ))
-            ->add('workingHour',EntityType::class,array(
-                'label'=>' ',
-                'class' => 'AppBundle:WorkingHours',
-                'choice_label' => 'code',
-                'multiple' => false,
-            ))
-            ->add('Modifier', SubmitType::class);
-        // À partir du formBuilder, on génère le formulaire
+            // On ajoute les champs de l'entité que l'on veut à notre formulaire
+            $formBuilder
+                ->add('surname', TextType::class,array('label'=>' '))
+                ->add('middle_name', TextType::class,array('required' => false,'label'=>' '))
+                ->add('last_name', TextType::class,array('label'=>' '))
+                ->add('adress', TextType::class,array('label'=>' '))
+                ->add('contact', TextType::class,array('label'=>' '))
+                ->add('salary', IntegerType::class,array('label'=>' '))
+                ->add('picture', FileType::class,array(
+                    'required'=>false,
+                    'label'=>' ',
+                    'data_class' => null
+                ))
+                ->add('function', TextType::class,array('label'=>' '))
+                ->add('hire_date', DateTimeType::class,array('widget'=>'single_text','label'=>' '))
+                ->add('departement',EntityType::class,array(
+                    'label'=>' ',
+                    'class' => 'AppBundle:Departement',
+                    'choice_label' => 'name',
+                    'multiple' => false,
+                ))
+                ->add('workingHour',EntityType::class,array(
+                    'label'=>' ',
+                    'class' => 'AppBundle:WorkingHours',
+                    'choice_label' => 'code',
+                    'multiple' => false,
+                ))
+                ->add('Modifier', SubmitType::class);
+            // À partir du formBuilder, on génère le formulaire
 
-        $form = $formBuilder->getForm();
+            $form = $formBuilder->getForm();
 
-        if ($request->isMethod('POST')) {
-            $form->handleRequest($request);
-            if ($form->isValid()) {
+            if ($request->isMethod('POST')) {
+                $form->handleRequest($request);
+                if ($form->isValid()) {
 
-                /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
+                    /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
 
-                $file = $employe->getPicture();
+                    $file = $employe->getPicture();
 
-                if(isset($file) && !empty($file)){
-                    // Generate a unique name for the file before saving it
-                    $file_extension = $file->guessExtension();
-                    $fileName = $employe->getEmployeeCcid().'.'.$file->guessExtension();
-                    $employe->setPicture($fileName);
-                    $user_profile_pictures = $this->getParameter("user_profile_pictures");
-                    // Move the file to the directory where images are stored
-                    $file->move($user_profile_pictures, $fileName);
-                    $employe->setPicture($fileName);
-                }else{
-                    $employe->setPicture($last_picture);
+                    if(isset($file) && !empty($file)){
+                        $timest = time();
+                        $fileName = $employe->getEmployeeCcid().'_'.$timest.'.'.$file->guessExtension();
+                        $employe->setPicture($fileName);
+                        $user_profile_pictures = $this->getParameter("user_profile_pictures");
+                        // Move the file to the directory where images are stored
+                        $file->move($user_profile_pictures, $fileName);
+                        $employe->setPicture($fileName);
+                    }else{
+                        $employe->setPicture($last_picture);
+                    }
+
+                    $em = $this->getDoctrine()->getManager();
+
+                    $em->persist($employe);
+                    $em->flush();
+
+                    $request->getSession()->getFlashBag()->add('notice', 'Employé bien enregistrée.');
+
+                    //return $this->redirectToRoute('viewEmploye');
+
+                    $wh = $this->returnWorkingHoursAction();
+                    return $this->render("cas/addEmployee.html.twig",array(
+                        'message'=>"Cet employé a été modifié",
+                        'form' => $form->createView(),
+                        'whList' => $wh
+                    ));
                 }
-
-                $em = $this->getDoctrine()->getManager();
-
-                $em->persist($employe);
-                $em->flush();
-
-                $request->getSession()->getFlashBag()->add('notice', 'Employé bien enregistrée.');
-
-                //return $this->redirectToRoute('viewEmploye');
-
-                return new Response("Employé modifié");
 
             }
 
+            $wh = $this->returnWorkingHoursAction();
+
+            // À ce stade, le formulaire n'est pas valide car :
+            // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
+            // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
+            return $this->render('cas/addEmployee.html.twig', array(
+                'form' => $form->createView(),
+                'picture' => $employe->getPicture(),
+                'whList'=>$wh,
+                'employe'=>$employe
+            ));
+        }else{
+            return $this->redirectToRoute("login");
         }
 
-        $wh = $this->returnWorkingHoursAction();
-
-        // À ce stade, le formulaire n'est pas valide car :
-        // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
-        // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
-        return $this->render('cas/addEmployee.html.twig', array(
-            'form' => $form->createView(),
-            'picture' => $employe->getPicture(),
-            'whList'=>$wh
-        ));
     }
 
     /**
@@ -252,11 +274,19 @@ class EmployeController extends Controller {
      */
     public function viewEmployeeAction(Request $request)
     {
-        $depRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement");
-        $listDep = $depRep->findAll();
-        return $this->render('cas/viewEmployee.html.twig', array(
-            'listDep' => $listDep,
-        ));
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+            $depRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement");
+            $listDep = $depRep->findAll();
+            return $this->render('cas/viewEmployee.html.twig', array(
+                'listDep' => $listDep,
+            ));
+        }else{
+            return $this->redirectToRoute("login");
+        }
     }
 
     /**
@@ -311,33 +341,65 @@ class EmployeController extends Controller {
      */
     public function deleteEmployeeAction(Request $request, $id)
     {
-        $emp = $this->getDoctrine()->getManager()->getRepository('AppBundle:Employe')->find($id);
-        if ($emp != null) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($emp);
-            $em->flush();
-            return new Response("Cet Employé a été supprimé");
-        } else{
-            throw new NotFoundHttpException("L'employé d'id " . $id . " n'existe pas.");
-        }
-    }
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+            $emp = $this->getDoctrine()->getManager()->getRepository('AppBundle:Employe')->find($id);
+            if ($emp != null) {
+                $em = $this->getDoctrine()->getManager();
+                $em->remove($emp);
+                $em->flush();
 
-    /**
-     * @Route("/randomEmployee" ,name="randomEmployee")
-     */
-    public function randomEmployeeAction()
-    {
-        $alpha = array('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z');
-        $random_name = array();
-        $limite = random_int(5,20);
-        for($i=0;$i<$limite;$i++){
-            $random_name[] = $alpha[random_int(0,25)];
-        }
-        foreach ($random_name as $letters){
-            echo $letters;
+                $employe = new Employe();
+                $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $employe);
+
+                // On ajoute les champs de l'entité que l'on veut à notre formulaire
+                $formBuilder
+                    ->add('surname', TextType::class,array('label'=>' '))
+                    ->add('middle_name', TextType::class,array('required' => false,'label'=>' '))
+                    ->add('last_name', TextType::class,array('label'=>' '))
+                    ->add('adress', TextType::class,array('label'=>' '))
+                    ->add('contact', TextType::class,array('label'=>' '))
+                    ->add('picture', FileType::class,array(
+                        'required'=>false,
+                        'label'=>' ',
+                        'data_class' => null
+                    ))
+                    ->add('salary', IntegerType::class,array('label'=>' '))
+                    ->add('function', TextType::class,array('label'=>' '))
+                    ->add('hire_date', DateTimeType::class,array('widget'=>'single_text','label'=>' '))
+                    ->add('departement',EntityType::class,array(
+                        'label'=>' ',
+                        'class' => 'AppBundle:Departement',
+                        'choice_label' => 'name',
+                        'multiple' => false,
+                    ))
+                    ->add('workingHour',EntityType::class,array(
+                        'label'=>' ',
+                        'class' => 'AppBundle:WorkingHours',
+                        'choice_label' => 'code',
+                        'multiple' => false,
+                    ))
+                    ->add('Créer', SubmitType::class);
+                // À partir du formBuilder, on génère le formulaire
+
+                $form = $formBuilder->getForm();
+
+                $wh = $this->returnWorkingHoursAction();
+                return $this->render("cas/addEmployee.html.twig",array(
+                    'message'=>"Cet employé a été supprimé de la base de données",
+                    'form' => $form->createView(),
+                    'whList' => $wh
+                ));
+            } else{
+                throw new NotFoundHttpException("L'employé d'id " . $id . " n'existe pas.");
+            }
+        }else{
+            return $this->redirectToRoute("login");
         }
 
-        return new Response("<br>OK");
     }
 
     protected function returnWorkingHoursAction()

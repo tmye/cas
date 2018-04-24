@@ -26,15 +26,23 @@ class WorkingHoursController extends Controller
      */
     public function addWorkingHourAction(Request $request)
     {
-        $whList = $this->getDoctrine()->getManager()->getRepository("AppBundle:WorkingHours")->findAll();
-        $tab = array();
-        foreach ($whList as $wh){
-            $tab[] = ['id'=>$wh->getId(),'workingHour'=>(array)json_decode($wh->getWorkingHour())];
-        }
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if ($expiry_service->hasExpired()) {
+                return $this->redirectToRoute("expiryPage");
+            }
+            $whList = $this->getDoctrine()->getManager()->getRepository("AppBundle:WorkingHours")->findAll();
+            $tab = array();
+            foreach ($whList as $wh){
+                $tab[] = ['id'=>$wh->getId(),'workingHour'=>(array)json_decode($wh->getWorkingHour())];
+            }
 
-        return $this->render('cas/addWorkingHour.html.twig', array(
-            'whList'=>$tab
-        ));
+            return $this->render('cas/addWorkingHour.html.twig', array(
+                'whList'=>$tab
+            ));
+        }else{
+            return $this->redirectToRoute("login");
+        }
     }
 
     /**
@@ -80,37 +88,55 @@ class WorkingHoursController extends Controller
      */
     public function editWorkingHourAction(Request $request, $id)
     {
-        $wh = $this->getDoctrine()->getManager()->getRepository("AppBundle:WorkingHours")->find($id);
-        if($wh == null){
-            throw new NotFoundHttpException("Ce workingHour n'a pas été trouvé");
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if ($expiry_service->hasExpired()) {
+                return $this->redirectToRoute("expiryPage");
+            }
+            if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+                $wh = $this->getDoctrine()->getManager()->getRepository("AppBundle:WorkingHours")->find($id);
+                if($wh == null){
+                    throw new NotFoundHttpException("Ce workingHour n'a pas été trouvé");
+                }
+                $tab = array();
+
+                $json_wh = json_decode($wh->getWorkingHour(),true);
+                $tab[] = ['id'=>$wh->getId(),'workingHour'=>(array)json_decode($wh->getWorkingHour())];
+
+                return $this->render('cas/editWorkingHour.html.twig', array(
+                    'id'=>$id,
+                    'wh'=>$wh,
+                    'whJson'=>$json_wh
+                ));
+            }else{
+                return $this->redirectToRoute("login");
+            }
+        }else{
+            return $this->redirectToRoute("login");
         }
-        $tab = array();
-
-        $json_wh = json_decode($wh->getWorkingHour(),true);
-        $tab[] = ['id'=>$wh->getId(),'workingHour'=>(array)json_decode($wh->getWorkingHour())];
-
-        return $this->render('cas/editWorkingHour.html.twig', array(
-            'id'=>$id,
-            'wh'=>$wh,
-            'whJson'=>$json_wh
-        ));
     }
 
     /**
      * @Route("/deleteWorkingHour/{id}", name="deleteWorkingHour")
     */
-
     public function deleteWorkingHourAction(Request $request, $id){
-        $wh = $this->getDoctrine()->getManager()->getRepository("AppBundle:WorkingHours")->find($id);
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if ($expiry_service->hasExpired()) {
+                return $this->redirectToRoute("expiryPage");
+            }
+            $wh = $this->getDoctrine()->getManager()->getRepository("AppBundle:WorkingHours")->find($id);
 
-        if($wh != null){
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($wh);
-            $em->flush();
-            return new Response("Ce working hour a été supprimé");
+            if($wh != null){
+                $em = $this->getDoctrine()->getManager();
+                $em->remove($wh);
+                $em->flush();
+                return new Response("Ce working hour a été supprimé");
+            }else{
+                throw new NotFoundHttpException("Le working hour d'id ".$id." n'existe pas");
+            }
         }else{
-            throw new NotFoundHttpException("Le working hour d'id ".$id." n'existe pas");
+            return $this->redirectToRoute("login");
         }
-
     }
 }

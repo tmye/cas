@@ -30,60 +30,14 @@ class MachinesController extends Controller
      */
     public function addMachineAction(Request $request)
     {
-        $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
-        $machine = new Machine();
-
-        // On crée le FormBuilder grâce au service form factory
-        $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $machine);
-
-        // On ajoute les champs de l'entité que l'on veut à notre formulaire
-        $formBuilder
-            ->add('name', TextType::class, array('label' =>' '))
-            ->add('machineId', TextType::class, array('label' =>' '))
-            ->add('description', TextareaType::class, array('label' =>' '))
-            ->add('departements', EntityType::class,array(
-                'class'=>'AppBundle:Departement',
-                'label'=>' ',
-                'choice_label' => 'name',
-                'multiple' => true,
-            ))
-            ->add('Ajouter', SubmitType::class);
-
-        // À partir du formBuilder, on génère le formulaire
-
-        $form = $formBuilder->getForm();
-
-        if ($request->isMethod('POST')) {
-            $form->handleRequest($request);
-            if ($form->isValid()) {
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($machine);
-                $em->flush();
-
-                $request->getSession()->getFlashBag()->add('notice', 'Machine bien enregistrée.');
-
-                return new Response("OK machine enregistrée");
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if ($expiry_service->hasExpired()) {
+                return $this->redirectToRoute("expiryPage");
             }
-        }
+            $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
+            $machine = new Machine();
 
-        // À ce stade, le formulaire n'est pas valide car :
-        // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
-        // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
-        return $this->render('api/addMachine.html.twig', array(
-            'form' => $form->createView(),
-            'machines' => $machines
-        ));
-    }
-
-    /**
-     * @Route("/editMachine/{id}",name="editMachine")
-     */
-    public function editMachineAction(Request $request, $id)
-    {
-        $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
-        $machine = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->find($id);
-
-        if($machine != null){
             // On crée le FormBuilder grâce au service form factory
             $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $machine);
 
@@ -98,7 +52,7 @@ class MachinesController extends Controller
                     'choice_label' => 'name',
                     'multiple' => true,
                 ))
-                ->add('Modifier', SubmitType::class);
+                ->add('Ajouter', SubmitType::class);
 
             // À partir du formBuilder, on génère le formulaire
 
@@ -113,7 +67,7 @@ class MachinesController extends Controller
 
                     $request->getSession()->getFlashBag()->add('notice', 'Machine bien enregistrée.');
 
-                    return new Response("OK machine modifiée");
+                    return new Response("OK machine enregistrée");
                 }
             }
 
@@ -125,7 +79,70 @@ class MachinesController extends Controller
                 'machines' => $machines
             ));
         }else{
-            throw new NotFoundHttpException("Le département d'id " . $id . " n'existe pas.");
+            return $this->redirectToRoute("login");
+        }
+
+    }
+
+    /**
+     * @Route("/editMachine/{id}",name="editMachine")
+     */
+    public function editMachineAction(Request $request, $id)
+    {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if ($expiry_service->hasExpired()) {
+                return $this->redirectToRoute("expiryPage");
+            }
+            $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
+            $machine = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->find($id);
+
+            if($machine != null){
+                // On crée le FormBuilder grâce au service form factory
+                $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $machine);
+
+                // On ajoute les champs de l'entité que l'on veut à notre formulaire
+                $formBuilder
+                    ->add('name', TextType::class, array('label' =>' '))
+                    ->add('machineId', TextType::class, array('label' =>' '))
+                    ->add('description', TextareaType::class, array('label' =>' '))
+                    ->add('departements', EntityType::class,array(
+                        'class'=>'AppBundle:Departement',
+                        'label'=>' ',
+                        'choice_label' => 'name',
+                        'multiple' => true,
+                    ))
+                    ->add('Modifier', SubmitType::class);
+
+                // À partir du formBuilder, on génère le formulaire
+
+                $form = $formBuilder->getForm();
+
+                if ($request->isMethod('POST')) {
+                    $form->handleRequest($request);
+                    if ($form->isValid()) {
+                        $em = $this->getDoctrine()->getManager();
+                        $em->persist($machine);
+                        $em->flush();
+
+                        $request->getSession()->getFlashBag()->add('notice', 'Machine bien enregistrée.');
+
+                        return new Response("OK machine modifiée");
+                    }
+                }
+
+                // À ce stade, le formulaire n'est pas valide car :
+                // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
+                // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
+                return $this->render('api/addMachine.html.twig', array(
+                    'form' => $form->createView(),
+                    'machines' => $machines
+                ));
+            }else{
+                throw new NotFoundHttpException("Le département d'id " . $id . " n'existe pas.");
+            }
+        }else{
+            return $this->redirectToRoute("login");
         }
     }
 
@@ -134,16 +151,23 @@ class MachinesController extends Controller
      */
     public function deleteMachineAction(Request $request, $id)
     {
-        // On vérifie que le département n'est pas vide
-
-        $machine = $this->getDoctrine()->getManager()->getRepository('AppBundle:Machine')->find($id);
-        if ($machine != null) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($machine);
-            $em->flush();
-            return new Response("Cette machine a été supprimée de la base de données");
-        } else{
-            throw new NotFoundHttpException("La machine d'id " . $id . " n'existe pas.");
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if ($expiry_service->hasExpired()) {
+                return $this->redirectToRoute("expiryPage");
+            }
+            // On vérifie que le département n'est pas vide
+            $machine = $this->getDoctrine()->getManager()->getRepository('AppBundle:Machine')->find($id);
+            if ($machine != null) {
+                $em = $this->getDoctrine()->getManager();
+                $em->remove($machine);
+                $em->flush();
+                return new Response("Cette machine a été supprimée de la base de données");
+            } else{
+                throw new NotFoundHttpException("La machine d'id " . $id . " n'existe pas.");
+            }
+        }else{
+            return $this->redirectToRoute("login");
         }
     }
 
@@ -152,13 +176,21 @@ class MachinesController extends Controller
      */
     public function pubCoversAction(Request $request)
     {
-        $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
-        $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
-        $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
-        return $this->render('cas/pubCovers.html.twig',array(
-            'departements'=>$departements,
-            'machines'=>$machines
-        ));
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if ($expiry_service->hasExpired()) {
+                return $this->redirectToRoute("expiryPage");
+            }
+            $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
+            $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
+            return $this->render('cas/pubCovers.html.twig',array(
+                'departements'=>$departements,
+                'machines'=>$machines
+            ));
+        }else{
+            return $this->redirectToRoute("login");
+        }
     }
 
     // Les fonctions relatives à la gestion globale du système

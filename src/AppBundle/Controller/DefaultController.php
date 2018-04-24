@@ -3,10 +3,12 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\CompanyConfig;
+use AppBundle\Entity\Expiration;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use TmyeDeviceBundle\Entity\DevicePubPic;
 use TmyeDeviceBundle\Entity\UpdateEntity;
 
@@ -18,9 +20,14 @@ class DefaultController extends Controller
      */
     public function functionTestAction(Request $request)
     {
-        $res = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->machinesByDep(1);
+        $date = "2018-04-19";
+        $heureNormaleArrivee = "14:00";
+        $heureEnregistre = "14:10";
+        $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission(26,$date,$heureEnregistre,$heureNormaleArrivee);
+        /*foreach ($p as $perm){
+            echo "<br>".$perm->getDescription()."<br>";
+        }*/
 
-        print_r($res);
         return new Response("OK");
     }
 
@@ -36,11 +43,78 @@ class DefaultController extends Controller
             $cc = $cc[0];
             $cc->setCompanyName($name);
             $em->flush();
+
+            $session = new Session();
+            $session->set("companyName",$name);
         }else{
             $newCC = new CompanyConfig();
             $newCC->setCompanyName($name);
             $em->persist($newCC);
             $em->flush();
+
+            $session = new Session();
+            $session->set("companyName",$name);
+        }
+        return new Response("OK");
+    }
+
+    /**
+     * @Route("/expiryPage", name="expiryPage")
+     */
+    public function expiryPageAction(Request $request)
+    {
+        return $this->render("cas/expiryPage.html.twig");
+    }
+
+    /**
+     * @Route("/expiryDate", name="expiryDate")
+     */
+    public function expiryDateAction(Request $request)
+    {
+        $date = $request->request->get("date");
+        $ex = $this->getDoctrine()->getManager()->getRepository("AppBundle:Expiration")->findAll();
+        $em = $this->getDoctrine()->getManager();
+        if($ex != null){
+            $ex = $ex[0];
+            $ex->setExpiryDate($date);
+            $em->flush();
+
+            $session = new Session();
+            $session->set("expiryDate",$date);
+        }else{
+            $newEX = new Expiration;
+            $newEX->setExpiryDate($date);
+            $em->persist($newEX);
+            $em->flush();
+
+            $session = new Session();
+            $session->set("expiryDate",$date);
+        }
+        return new Response("OK");
+    }
+
+    /**
+     * @Route("/changeSocietyLogo", name="changeSocietyLogo")
+     */
+    public function changeSocietyLogoAction(Request $request,$name = null)
+    {
+        $cc = $this->getDoctrine()->getManager()->getRepository("AppBundle:CompanyConfig")->findAll();
+        $em = $this->getDoctrine()->getManager();
+        if($cc != null){
+            if(isset($_FILES["image"]["name"]) && !empty($_FILES["image"]["name"])){
+                $cc = $cc[0];
+                $cc->setCompanyLogo($_FILES["image"]["name"]);
+                $em->flush();
+
+                $resultat = move_uploaded_file($_FILES['image']['tmp_name'],"company_images/".basename($_FILES["image"]["name"]));
+                $em->flush();
+                $session = new Session();
+                $session->set("companyLogo",$_FILES['image']['name']);
+            }else{
+                return new Response("Erreur");
+            }
+        }else{
+            return new Response("Spécifiez d'abord un nom de société");
         }
         return new Response("OK");
     }
@@ -237,6 +311,11 @@ class DefaultController extends Controller
     public function indexAction(Request $request)
     {
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            $expiry_service->hasExpired();
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
             return $this->render('cas/index.html.twig', array(
                 'base_dir' => realpath($this->container->getParameter('kernel.root_dir').'/..').DIRECTORY_SEPARATOR,
             ));
@@ -250,8 +329,16 @@ class DefaultController extends Controller
      */
     public function historiqueAction(Request $request)
     {
-        $listDep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
-        return $this->render('cas/historique.html.twig',array('listDep'=>$listDep));
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+            $listDep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            return $this->render('cas/historique.html.twig',array('listDep'=>$listDep));
+        }else{
+            return $this->redirectToRoute("login");
+        }
     }
 
 
@@ -288,13 +375,20 @@ class DefaultController extends Controller
      */
     public function switchAction(Request $request)
     {
-        $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
-        $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
-        $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
-        return $this->render('cas/switch.html.twig',array(
-            'departements'=>$departements,
-            'machines'=>$machines
-        ));
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if ($expiry_service->hasExpired()) {
+                return $this->redirectToRoute("expiryPage");
+            }
+            $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
+            return $this->render('cas/switch.html.twig',array(
+                'departements'=>$departements,
+                'machines'=>$machines
+            ));
+        }else{
+            return $this->redirectToRoute("login");
+        }
     }
 
     /**
@@ -302,7 +396,16 @@ class DefaultController extends Controller
      */
     public function manageAction(Request $request)
     {
-        return $this->render('cas/manage.html.twig');
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if ($expiry_service->hasExpired()) {
+                return $this->redirectToRoute("expiryPage");
+            }
+            return $this->render('cas/manage.html.twig');
+        }else{
+            return $this->redirectToRoute("login");
+        }
+
     }
 
     /**
@@ -310,10 +413,19 @@ class DefaultController extends Controller
      */
     public function manageEmpProfilePictureAction(Request $request)
     {
-        $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
-        return $this->render('cas/manageEmpProfilePicture.html.twig',array(
-            "departements"=>$departements
-        ));
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if ($expiry_service->hasExpired()) {
+                return $this->redirectToRoute("expiryPage");
+            }
+            $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            return $this->render('cas/manageEmpProfilePicture.html.twig',array(
+                "departements"=>$departements
+            ));
+        }else{
+            return $this->redirectToRoute("login");
+        }
+
     }
 
     /**
@@ -321,10 +433,18 @@ class DefaultController extends Controller
      */
     public function manageEmpFingerprintAction(Request $request)
     {
-        $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
-        return $this->render('cas/manageEmpFingerprint.html.twig',array(
-            "departements"=>$departements
-        ));
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if ($expiry_service->hasExpired()) {
+                return $this->redirectToRoute("expiryPage");
+            }
+            $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            return $this->render('cas/manageEmpFingerprint.html.twig',array(
+                "departements"=>$departements
+            ));
+        }else{
+            return $this->redirectToRoute("login");
+        }
     }
 
     /**
@@ -332,10 +452,19 @@ class DefaultController extends Controller
      */
     public function manageEmployeeAction(Request $request)
     {
-        $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
-        return $this->render('cas/manageEmployee.html.twig',array(
-            "departements"=>$departements
-        ));
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if ($expiry_service->hasExpired()) {
+                return $this->redirectToRoute("expiryPage");
+            }
+            $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            return $this->render('cas/manageEmployee.html.twig',array(
+                "departements"=>$departements
+            ));
+        }else{
+            return $this->redirectToRoute("login");
+        }
+
     }
 
     /**
@@ -343,12 +472,20 @@ class DefaultController extends Controller
      */
     public function manageDeleteDataAction(Request $request)
     {
-        $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
-        $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
-        return $this->render('cas/delete.html.twig',array(
-            "departements"=>$departements,
-            "machines"=>$machines
-        ));
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if ($expiry_service->hasExpired()) {
+                return $this->redirectToRoute("expiryPage");
+            }
+            $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
+            $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            return $this->render('cas/delete.html.twig',array(
+                "departements"=>$departements,
+                "machines"=>$machines
+            ));
+        }else{
+            return $this->redirectToRoute("login");
+        }
     }
 
     /**
@@ -356,12 +493,20 @@ class DefaultController extends Controller
      */
     public function manageDepartementAction(Request $request)
     {
-        $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
-        $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
-        return $this->render('cas/manageDepartement.html.twig',array(
-            "departements"=>$departements,
-            "machines"=>$machines
-        ));
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if ($expiry_service->hasExpired()) {
+                return $this->redirectToRoute("expiryPage");
+            }
+            $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
+            $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            return $this->render('cas/manageDepartement.html.twig',array(
+                "departements"=>$departements,
+                "machines"=>$machines
+            ));
+        }else{
+            return $this->redirectToRoute("login");
+        }
     }
 
     /**
@@ -369,6 +514,14 @@ class DefaultController extends Controller
      */
     public function manageSocietyNameAction(Request $request)
     {
-        return $this->render('cas/manageSocietyName.html.twig');
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if ($expiry_service->hasExpired()) {
+                return $this->redirectToRoute("expiryPage");
+            }
+            return $this->render('cas/manageSocietyName.html.twig');
+        }else{
+            return $this->redirectToRoute("login");
+        }
     }
 }

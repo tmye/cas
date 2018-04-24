@@ -48,14 +48,22 @@ class StatsController extends ClockinReccordController
      */
     public function persStatAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
-        $listEmployee = $em->getRepository("AppBundle:Employe")->findAll();
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+            $em = $this->getDoctrine()->getManager();
+            $listEmployee = $em->getRepository("AppBundle:Employe")->findAll();
 
-        $dep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
-        return $this->render('cas/viewPersStat.html.twig',array(
-            'listDep'=>$dep,
-            'listEmployee'=>$listEmployee
-        ));
+            $dep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            return $this->render('cas/viewPersStat.html.twig',array(
+                'listDep'=>$dep,
+                'listEmployee'=>$listEmployee
+            ));
+        }else{
+            return $this->redirectToRoute("login");
+        }
     }
 
     private function dateDayNameFrench($day){
@@ -124,10 +132,28 @@ class StatsController extends ClockinReccordController
         $tempsPerdusRetards=0;
         $tempsPerdusDeparts=0;
 
+        $timePP = 0;
+        $tempPP = 0;
+        $tempsTPP = 0;
+        $tempPerduDepartPausePermission = 0;
+        $tempsTPerduDepartPausePermission = 0;
+        $tempPerduDepartPermission = 0;
+        $tempsTPerduDepartPermission = 0;
+        $tempPerduRetardPausePermission = 0;
+        $tempsTPerduRetardPausePermission = 0;
+        $tempPerduRetardPermission = 0;
+        $tempsTPerduRetardPermission = 0;
+
         $tabDepartsPause = array();
+        $tabDepartsPausePermission = array();
         $tabRetardsPause = array();
+        $tabRetardsPausePermission = array();
         $tabDeparts = array();
+        $tabDepartsPermission = array();
         $tabRetards = array();
+        $tabRetardsPermission = array();
+
+        $tabAbsencesPermission = array();
 
         $quota_fait = 0;
         $quota_total = 0;
@@ -223,40 +249,79 @@ class StatsController extends ClockinReccordController
             if ($type == "1" || $type == "2"){
                 // Si son workingHour est de type 1 ou 2
                 if(!$cr->present($employe,$nowTime)){
-                    //echo "\n Je suis dans le case 1 \n";
+
+                    $nowDate = date('d/m/Y',$nowTime);
+                    //print_r("\n ### Absent = ".$nowDate);
                     $absences++;
                     $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
                     $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
                     $timePerdusAbsences = ($timeFin - $timeDebut);
-                    $tempsPerdusAbsences = $timePerdusAbsences/60;
+                    $tempPerdu = $timePerdusAbsences/60;
+                    $tempsPerdusAbsences += $tempPerdu;
                     $sommeAbsences +=$tempsPerdusAbsences;
+
+                    //print_r("\n @@@Temps perdu absences = ".$tempsPerdusAbsences);
+                    //print_r("\n &&&& Heure = ".$empWH[$theDay][0]["endHour"]);
+                    //print_r("\n &&&& Heure = ".$empWH[$theDay][0]["beginHour"]);
+
+                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$empWH[$theDay][0]["endHour"],$empWH[$theDay][0]["beginHour"]);
+                    if($p){
+                        /*
+                         * We need some other variables to avoid conflicts with userStats variables
+                         */
+                        $timePP = ($timeFin - $timeDebut);
+                        $tempPP = $timePP/60;
+                        $tempsTPP += $tempPP;
+                        $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Absence","tempsPerdu"=>$tempPP);
+                    }
                 }
                 $retardDiff = $cr->retard($employe,$nowTime,$interval,$heureNormaleArrive);
                 if($retardDiff != null){
-                    //echo "\n J'ai detecte un retard \n";
                     $nowDate = date('d/m/Y',$nowTime);
                     $retards++;
                     $sommeRetards +=$retardDiff[0];
                     $tempsPerdusRetards += $retardDiff[0]/(60);
                     $perte_temps = (int)($retardDiff[0]/(60));
                     $ct = date('H:i',$retardDiff[1]);
-
                     $tabRetards[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$perte_temps);
+
+                    // Now we deal with the permissions calculations
+                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$ct,$empWH[$theDay][0]["beginHour"]);
+                    //print_r("\n P result ".$p."\n");
+                    //print_r("\n"."Here"."\n");
+
+                    if($p){
+                        /*
+                         * We need some other variables to avoid conflicts with userStats variables
+                         */
+                        $tempPerduRetardPermission = ($retardDiff[0])/(60);
+                        $tempsTPerduRetardPermission += $tempPerduRetardPermission;
+                        $tabRetardsPermission[]= array("date"=>$nowDate,"heureRetard"=>null,"tempsTotal"=>$tempsTPerduRetardPermission,"type"=>"Retard","tempsPerdu"=>$tempPerduRetardPermission);
+                    }
                 }
                 $retardPauseDiff = $cr->retardPause($employe,$nowTime,$interval_pause,$heureNormaleArrivePause);
                 if($retardPauseDiff != null){
                     $nowDate = date('d/m/Y',$nowTime);
-                    //echo "\n J'ai detecte un retard de pause \n";
                     $retards++;
                     $sommeRetards +=$retardPauseDiff[0];
                     $tempsPerdusRetardsPause = $retardPauseDiff[0]/(60);
                     $tempsPerdusRetards+= $retardPauseDiff[0]/(60);
                     $ct = date('H:i',$retardPauseDiff[1]);
                     $tabRetardsPause[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$tempsPerdusRetardsPause);
+
+                    // Now we deal with the permissions calculations
+                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$ct,$empWH[$theDay][0]["pauseEndHour"]);
+                    if($p){
+                        /*
+                         * We need some other variables to avoid conflicts with userStats variables
+                         */
+                        $tempPerduRetardPausePermission = ($retardPauseDiff[0])/(60);
+                        $tempsTPerduRetardPausePermission += $tempPerduRetardPausePermission;
+                        $tabRetardsPausePermission[]= array("date"=>$nowDate,"heureRetard"=>null,"tempsTotal"=>$tempsTPerduRetardPausePermission,"type"=>"Retard pause","tempsPerdu"=>$tempPerduRetardPausePermission);
+                    }
                 }
                 $departDiff = $cr->departPremature($employe,$nowTime,$interval,$heureNormaleDepart);
                 if($departDiff != null){
-                    //echo "\n J'ai detecte un depart prématuré \n";
                     $nowDate = date('d/m/Y',$nowTime);
                     $departs++;
                     $sommeDeparts +=$departDiff[0];
@@ -265,10 +330,20 @@ class StatsController extends ClockinReccordController
                     $tempsPerdusDeparts+=$tempsPerdusDepartsFin;
                     $ct = date('H:i',$departDiff[1]);
                     $tabDeparts[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsFin);
+
+                    // Now we deal with the permissions calculations
+                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$ct,$empWH[$theDay][0]["endHour"]);
+                    if($p){
+                        /*
+                         * We need some other variables to avoid conflicts with userStats variables
+                         */
+                        $tempPerduDepartPermission = ($departDiff[0])/(60);
+                        $tempsTPerduDepartPermission += $tempPerduDepartPermission;
+                        $tabDepartsPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPerduDepartPermission,"type"=>"Départ prématuré","tempsPerdu"=>$tempPerduDepartPermission);
+                    }
                 }
                 $departPauseDiff = $cr->departPausePremature($employe,$nowTime,$interval_pause,$heureNormaleDepartPause);
                 if($departPauseDiff[0] != null){
-                    //echo "\n J'ai detecte un depart de pause prématuré et l'heure est :".date('H:i',$departPauseDiff[1])." \n";
                     $i++;
                     $nowDate = date('d/m/Y',$nowTime);
                     $departsPause++;
@@ -280,6 +355,17 @@ class StatsController extends ClockinReccordController
                     $tempsPerdusDeparts +=$tempsPerdusDepartsPause;
                     $ct = date('H:i',$departPauseDiff[1]);
                     $tabDepartsPause[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsPause);
+
+                    // Now we deal with the permissions calculations
+                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$ct,$empWH[$theDay][0]["pauseBeginHour"]);
+                    if($p){
+                        /*
+                         * We need some other variables to avoid conflicts with userStats variables
+                         */
+                        $tempPerduDepartPausePermission = ($departPauseDiff[0])/(60);
+                        $tempsTPerduDepartPausePermission += $tempPerduDepartPausePermission;
+                        $tabDepartsPausePermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPerduDepartPausePermission,"type"=>"Depart pause prématuré","tempsPerdu"=>$tempPerduDepartPausePermission);
+                    }
                 }
 
                 // SI le type est exclusivement 2,On calcul les quotas horraires
@@ -293,19 +379,34 @@ class StatsController extends ClockinReccordController
                         $quota_fait += $history["quota_fait"];
                     }
                 }
-            }else{
-                // Si son workingHour est de type 1
+            }else if($type == 3){
+                // Si son workingHour est de type 3
                 if(!$cr->present($employe,$nowTime)){
+                    $nowDate = date('d/m/Y',$nowTime);
                     $absences++;
                     $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
                     $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
                     $timePerdusAbsences = ($timeFin - $timeDebut);
-                    $tempsPerdusAbsences = $timePerdusAbsences/60;
-                    $sommeAbsences +=$tempsPerdusAbsences;
+                    $tempPerdu = $timePerdusAbsences/60;
+                    //$tempsPerdusAbsences = $tempPerdu;
+                    //$sommeAbsences +=$tempsPerdusAbsences;
+
+                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$empWH[$theDay][0]["endHour"],$empWH[$theDay][0]["beginHour"]);
+                    if($p){
+                        /*
+                         * We need some other variables to avoid conflicts with userStats variables
+                         */
+                        $timePP = ($timeFin - $timeDebut);
+                        $tempPP = $timePP/60;
+                        $tempsTPP += $tempPP;
+                        print_r("\n Here :::: ".$nowDate." :::: ".$tempPerdu);
+                        $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Absence","tempsPerdu"=>$tempPP);
+                    }
                 }
             }
 
-            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType);
+            $donneesPermission = array("retardStats"=>$tabRetardsPermission,"retardPauseStats"=>$tabRetardsPausePermission,"pauseStats"=>$tabDepartsPausePermission,"finStats"=> $tabDepartsPermission,"absenceStats"=>$tabAbsencesPermission);
+            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType,"permissionData"=>$donneesPermission);
             $nowTime = $nowTime+86400;
         }
 
@@ -330,10 +431,18 @@ class StatsController extends ClockinReccordController
      */
     public function depStatAction(Request $request)
     {
-        $dep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
-        return $this->render('cas/viewDepStat.html.twig',array(
-            'listDep'=>$dep
-        ));
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+            $dep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            return $this->render('cas/viewDepStat.html.twig',array(
+                'listDep'=>$dep
+            ));
+        }else{
+            return $this->redirectToRoute("login");
+        }
     }
 
     /*
