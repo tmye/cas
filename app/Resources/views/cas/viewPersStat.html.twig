@@ -152,8 +152,10 @@
                 <div class="row">
                     <div class="col l6">
                         <span>Diagramme cumulé des absences</span>
-                        <canvas id="myPieChart" class="card" style="cursor: pointer">
-                        </canvas>
+                        <div class="myPieChartContainer">
+                            <canvas id="myPieChart" class="card" style="cursor: pointer">
+                            </canvas>
+                        </div>
                     </div>
                     <div class="col l6">
                         <span>Diagramme des absences</span>
@@ -199,7 +201,7 @@
                 </div>
                 <div class="row">
                     <div class="col l6">
-                        <span>Retards de 8H00</span>
+                        <span>Retards de 14H00</span>
                         <table class="card table bordered centered striped highlight responsive-table">
                             <thead>
                             <tr>
@@ -216,7 +218,7 @@
                         </table>
                     </div>
                     <div class="col l6">
-                        <span>Retards de 14H00</span>
+                        <span>Retards de 8H00</span>
                         <table class="card table bordered centered striped highlight responsive-table">
                             <thead>
                             <tr>
@@ -248,11 +250,11 @@
                             <canvas id="lundi-n-chart" class="card"></canvas>
                         </div>
                         <div class="col l6 lundiDiagRet14">
-                            <span>Diagramme des retards de 14H00</span>
+                            <span>Diagramme des retards de 8H00</span>
                             <canvas id="lundi-m8-chart" class="card"></canvas>
                         </div>
                         <div class="col l6">
-                            <span>Diagramme des retards de 8H00</span>
+                            <span>Diagramme des retards de 14H00</span>
                             <canvas id="lundi-n14-chart" class="card"></canvas>
                         </div>
                     </div>
@@ -269,11 +271,11 @@
                             <canvas id="mardi-n-chart" class="card"></canvas>
                         </div>
                         <div class="col l6 mardiDiagRet14">
-                            <span>Diagramme des retards de 14H00</span>
+                            <span>Diagramme des retards de 8H00</span>
                             <canvas id="mardi-m8-chart" class="card"></canvas>
                         </div>
                         <div class="col l6">
-                            <span>Diagramme des retards de 8H00</span>
+                            <span>Diagramme des retards de 14H00</span>
                             <canvas id="mardi-n14-chart" class="card"></canvas>
                         </div>
                     </div>
@@ -290,11 +292,11 @@
                             <canvas id="mercredi-n-chart" class="card"></canvas>
                         </div>
                         <div class="col l6 mercrediDiagRet14">
-                            <span>Diagramme des retards de 14H00</span>
+                            <span>Diagramme des retards de 8H00</span>
                             <canvas id="mercredi-m8-chart" class="card"></canvas>
                         </div>
                         <div class="col l6">
-                            <span>Diagramme des retards de 8H00</span>
+                            <span>Diagramme des retards de 14H00</span>
                             <canvas id="mercredi-n14-chart" class="card"></canvas>
                         </div>
                     </div>
@@ -311,11 +313,11 @@
                             <canvas id="jeudi-n-chart" class="card"></canvas>
                         </div>
                         <div class="col l6 jeudiDiagRet14">
-                            <span>Diagramme des retards de 14H00</span>
+                            <span>Diagramme des retards de 8H00</span>
                             <canvas id="jeudi-m8-chart" class="card"></canvas>
                         </div>
                         <div class="col l6 diagRet14">
-                            <span>Diagramme des retards de 8H00</span>
+                            <span>Diagramme des retards de 14H00</span>
                             <canvas id="jeudi-n14-chart" class="card"></canvas>
                         </div>
                     </div>
@@ -332,11 +334,11 @@
                             <canvas id="vendredi-n-chart" class="card"></canvas>
                         </div>
                         <div class="col l6 vendrediDiagRet14">
-                            <span>Diagramme des retards de 14H00</span>
+                            <span>Diagramme des retards de 8H00</span>
                             <canvas id="vendredi-m8-chart" class="card"></canvas>
                         </div>
                         <div class="col l6">
-                            <span>Diagramme des retards de 8H00</span>
+                            <span>Diagramme des retards de 14H00</span>
                             <canvas id="vendredi-n14-chart" class="card"></canvas>
                         </div>
                     </div>
@@ -353,11 +355,11 @@
                             <canvas id="samedi-n-chart" class="card"></canvas>
                         </div>
                         <div class="col l6 samediDiagRet14">
-                            <span>Diagramme des retards de 14H00</span>
+                            <span>Diagramme des retards de 8H00</span>
                             <canvas id="samedi-m8-chart" class="card"></canvas>
                         </div>
                         <div class="col l6">
-                            <span>Diagramme des retards de 8H00</span>
+                            <span>Diagramme des retards de 14H00</span>
                             <canvas id="samedi-n14-chart" class="card"></canvas>
                         </div>
                     </div>
@@ -374,11 +376,11 @@
                             <canvas id="dimanche-n-chart" class="card"></canvas>
                         </div>
                         <div class="col l6">
-                            <span>Diagramme des retards de 14H00</span>
+                            <span>Diagramme des retards de 8H00</span>
                             <canvas id="dimanche-m8-chart" class="card"></canvas>
                         </div>
                         <div class="col l6 dimancheDiagRet14">
-                            <span>Diagramme des retards de 8H00</span>
+                            <span>Diagramme des retards de 14H00</span>
                             <canvas id="dimanche-n14-chart" class="card"></canvas>
                         </div>
                     </div>
@@ -456,7 +458,7 @@
                         tempsPerduRetards = data.tpr;
 
                         // Intervalle de retard
-                        var interval = 180*60; // 10800
+                        var interval = 180*60; // 10800 3Heures
 
                         $("#nameSpan").text(fullName);
                         $("#salarySpan").text(salary);
@@ -604,32 +606,32 @@
                                         var leJour = dateObject.getDay();
                                         switch (leJour){
                                             case 1:
-                                                lundiTabPauseDatas.push(data.pauseStats[j].temps);
-                                                lundiTabPauseLabels.push(data.pauseStats[j].date);
+                                                lundiPauseTabDatas.push(data.pauseStats[j].temps);
+                                                lundiPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 2:
-                                                mardiTabPauseDatas.push(data.pauseStats[j].temps);
-                                                mardiTabPauseLabels.push(data.pauseStats[j].date);
+                                                mardiPauseTabDatas.push(data.pauseStats[j].temps);
+                                                mardiPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 3:
-                                                mercrediTabPauseDatas.push(data.pauseStats[j].temps);
-                                                mercrediTabPauseLabels.push(data.pauseStats[j].date);
+                                                mercrediPauseTabDatas.push(data.pauseStats[j].temps);
+                                                mercrediPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 4:
-                                                jeudiTabPauseDatas.push(data.pauseStats[j].temps);
-                                                jeudiTabPauseLabels.push(data.pauseStats[j].date);
+                                                jeudiPauseTabDatas.push(data.pauseStats[j].temps);
+                                                jeudiPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 5:
-                                                vendrediTabPauseDatas.push(data.pauseStats[j].temps);
-                                                vendrediTabPauseLabels.push(data.pauseStats[j].date);
+                                                vendrediPauseTabDatas.push(data.pauseStats[j].temps);
+                                                vendrediPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 6:
-                                                samediTabPauseDatas.push(data.pauseStats[j].temps);
-                                                samediTabPauseLabels.push(data.pauseStats[j].date);
+                                                samediPauseTabDatas.push(data.pauseStats[j].temps);
+                                                samediPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 0:
-                                                dimancheTabPauseDatas.push(data.pauseStats[j].temps);
-                                                dimancheTabPauseLabels.push(data.pauseStats[j].date);
+                                                dimanchePauseTabDatas.push(data.pauseStats[j].temps);
+                                                dimanchePauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                         }
 
@@ -828,6 +830,10 @@
 
                                 // Les diagrammes
                                 // Diagramme circulaire des absences
+
+                                $("#myPieChart").remove();
+                                var element = "<canvas id='myPieChart' class='card' style='cursor: pointer'></canvas>";
+                                $(".myPieChartContainer").append(element);
                                 var ctx = document.getElementById('myPieChart').getContext('2d');
                                 var myPieChart = new Chart(ctx,{
                                     type: 'pie',
@@ -1112,9 +1118,9 @@
                                             label: "Minuite",
                                             backgroundColor: 'rgba(0,0,0,0)',
                                             borderColor: '#ff6384',
-                                            data: mardiPauseTabDatas,
+                                            data: mardiRetardPauseTabDatas,
                                         }],
-                                        labels: mardiPauseTabLabels
+                                        labels: mardiRetardPauseTabLabels
                                     },
 
                                     // Configuration options go here
@@ -1220,9 +1226,9 @@
                                             label: "Minuite",
                                             backgroundColor: 'rgba(0,0,0,0)',
                                             borderColor: '#ff6384',
-                                            data: mercrediPauseTabDatas,
+                                            data: mercrediRetardPauseTabDatas,
                                         }],
-                                        labels: mercrediPauseTabLabels
+                                        labels: mercrediRetardPauseTabLabels
                                     },
 
                                     // Configuration options go here
@@ -1328,9 +1334,9 @@
                                             label: "Minuite",
                                             backgroundColor: 'rgba(0,0,0,0)',
                                             borderColor: '#ff6384',
-                                            data: jeudiPauseTabDatas,
+                                            data: jeudiRetardPauseTabDatas,
                                         }],
-                                        labels: jeudiPauseTabLabels
+                                        labels: jeudiRetardPauseTabLabels
                                     },
 
                                     // Configuration options go here
@@ -1436,9 +1442,9 @@
                                             label: "Minuite",
                                             backgroundColor: 'rgba(0,0,0,0)',
                                             borderColor: '#ff6384',
-                                            data: vendrediPauseTabDatas,
+                                            data: vendrediRetardPauseTabDatas,
                                         }],
-                                        labels: vendrediPauseTabLabels
+                                        labels: vendrediRetardPauseTabLabels
                                     },
 
                                     // Configuration options go here
@@ -1544,9 +1550,9 @@
                                             label: "Minuite",
                                             backgroundColor: 'rgba(0,0,0,0)',
                                             borderColor: '#ff6384',
-                                            data: samediPauseTabDatas,
+                                            data: samediRetardPauseTabDatas,
                                         }],
-                                        labels: samediPauseTabLabels
+                                        labels: samediRetardPauseTabLabels
                                     },
 
                                     // Configuration options go here
@@ -1652,9 +1658,9 @@
                                             label: "Minuite",
                                             backgroundColor: 'rgba(0,0,0,0)',
                                             borderColor: '#ff6384',
-                                            data: dimanchePauseTabDatas,
+                                            data: dimancheRetardPauseTabDatas,
                                         }],
-                                        labels: dimanchePauseTabLabels
+                                        labels: dimancheRetardPauseTabLabels
                                     },
 
                                     // Configuration options go here
@@ -1672,26 +1678,26 @@
                                 * Maintenant on supprime les diagrammes inutiles
                                 * Pour tous les jours de la semaine
                                 */
-                                if (data.tabType["lundi"] != "1"){
+                                if (data.tabType["lundi"] != null && data.tabType["lundi"] != "1"){
                                     $(".lundiDiagDep12").hide();
                                     $(".lundiDiagRet14").hide();
-                                }else if(data.tabType["mardi"] != "1"){
+                                }if(data.tabType["mardi"] != null && data.tabType["mardi"] != "1"){
                                     $(".mardiDiagDep12").hide();
                                     $(".mardiDiagRet14").hide();
 
-                                }else if(data.tabType["mercredi"] != "1"){
+                                }if(data.tabType["mercredi"] != null && data.tabType["mercredi"] != "1"){
                                     $(".mercrediDiagDep12").hide();
                                     $(".mercrediDiagRet14").hide();
-                                }else if(data.tabType["jeudi"] != "1"){
+                                }if(data.tabType["jeudi"] != null && data.tabType["jeudi"] != "1"){
                                     $(".jeudiDiagDep12").hide();
                                     $(".jeudiDiagRet14").hide();
-                                }else if(data.tabType["vendredi"] != "1"){
+                                }if(data.tabType["vendredi"] != null && data.tabType["vendredi"] != "1"){
                                     $(".vendrediDiagDep12").hide();
                                     $(".vendrediDiagRet14").hide();
-                                }else if(data.tabType["samedi"] != "1"){
+                                }if(data.tabType["samedi"] != null && data.tabType["samedi"] != "1"){
                                     $(".samediDiagDep12").hide();
                                     $(".samediDiagRet14").hide();
-                                }else if(data.tabType["dimanche"] != "1"){
+                                }if(data.tabType["dimanche"] != null && data.tabType["dimanche"] != "1"){
                                     $(".dimancheDiagDep12").hide();
                                     $(".dimancheDiagRet14").hide();
                                 }

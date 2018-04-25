@@ -62,22 +62,18 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col l10 offset-l1">
+                <div class="col l6 appendCanvas">
                     <canvas id="myChart"></canvas>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col l10 offset-l1">
+                <div class="col l6 appendCanvas2">
                     <canvas id="myChart2"></canvas>
                 </div>
             </div>
             <div class="row">
-                <div class="col l10 offset-l1">
+                <div class="col l6 appendCanvas3">
                     <canvas id="myChart3"></canvas>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col l10 offset-l1">
+                <div class="col l6 appendCanvas4">
                     <canvas id="myChart4"></canvas>
                 </div>
             </div>
@@ -186,7 +182,7 @@
             }
 
             // Intervalle de retard
-            var interval = 30*60; // 1800
+            var interval = 180*60; // 10800 3Heures
             alert("I'm here...2");
             $.ajax({
                 type: 'POST',
@@ -211,6 +207,9 @@
                     console.log("Labels : "+labels);
 
                     // Les diagrammes
+                    $("#myChart").remove();
+                    var element = "<canvas id='myChart'></canvas>";
+                    $(".appendCanvas").append(element);
                     var ctx = document.getElementById('myChart').getContext('2d');
                     var chart = new Chart(ctx, {
                         type: 'bar',
@@ -225,6 +224,9 @@
                         },
                     });
 
+                    $("#myChart2").remove();
+                    var element = "<canvas id='myChart2'></canvas>";
+                    $(".appendCanvas2").append(element);
                     var ctx = document.getElementById('myChart2').getContext('2d');
                     var chart = new Chart(ctx, {
                         type: 'bar',
@@ -239,6 +241,9 @@
                         },
                     });
 
+                    $("#myChart3").remove();
+                    var element = "<canvas id='myChart3'></canvas>";
+                    $(".appendCanvas3").append(element);
                     var ctx = document.getElementById('myChart3').getContext('2d');
                     var chart = new Chart(ctx, {
                         type: 'bar',
@@ -253,6 +258,9 @@
                         },
                     });
 
+                    $("#myChart4").remove();
+                    var element = "<canvas id='myChart4'></canvas>";
+                    $(".appendCanvas4").append(element);
                     var ctx = document.getElementById('myChart4').getContext('2d');
                     var chart = new Chart(ctx, {
                         type: 'bar',

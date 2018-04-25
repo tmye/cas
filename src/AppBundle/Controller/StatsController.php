@@ -224,14 +224,6 @@ class StatsController extends ClockinReccordController
                 $heureNormaleDepartPause = 0;
             }
 
-
-            /*echo "\n Heures : ".$_heure_debut;
-            echo "\n Minuites : ".$_minuites_debut;
-            echo "\n Timestamp Heures : ".$_time_heure_debut;
-            echo "\n Timestamp Minuites : ".$_time_minuites_debut;
-            */
-            $test = null;
-
             /*
              * NOTE :
              * --------------------------------------------------------------------------
@@ -251,7 +243,6 @@ class StatsController extends ClockinReccordController
                 if(!$cr->present($employe,$nowTime)){
 
                     $nowDate = date('d/m/Y',$nowTime);
-                    //print_r("\n ### Absent = ".$nowDate);
                     $absences++;
                     $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
                     $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
@@ -259,11 +250,6 @@ class StatsController extends ClockinReccordController
                     $tempPerdu = $timePerdusAbsences/60;
                     $tempsPerdusAbsences += $tempPerdu;
                     $sommeAbsences +=$tempsPerdusAbsences;
-
-                    //print_r("\n @@@Temps perdu absences = ".$tempsPerdusAbsences);
-                    //print_r("\n &&&& Heure = ".$empWH[$theDay][0]["endHour"]);
-                    //print_r("\n &&&& Heure = ".$empWH[$theDay][0]["beginHour"]);
-
                     $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$empWH[$theDay][0]["endHour"],$empWH[$theDay][0]["beginHour"]);
                     if($p){
                         /*
@@ -494,7 +480,42 @@ class StatsController extends ClockinReccordController
             $type = $empWH[$theDay][0]["type"];
             $quota = $empWH[$theDay][0]["quota"];
             $quotaUtilisateur = $empWH[$theDay][0]["quota"];
-            $test = null;
+
+            // Pour le calcul d'un depart prématuré de pause,Calculons l'intervalle
+            $heureDebutNormal = $empWH[$theDay][0]["beginHour"];
+            $heureFinNormal = $empWH[$theDay][0]["endHour"];
+            $heureDebutNormalPause = $empWH[$theDay][0]["pauseBeginHour"];
+            $heureFinNormalPause = $empWH[$theDay][0]["pauseEndHour"];
+
+            $beginHourExploded = explode(":",$heureDebutNormal);
+            $endHourExploded = explode(":",$heureFinNormal);
+            $pauseBeginHourExploded = explode(":",$heureDebutNormalPause);
+            $pauseEndHourExploded = explode(":",$heureFinNormalPause);
+
+            $endHourInMinutes =0;
+            $beginHourInMinutes =0;
+            $pauseEndHourInMinutes =0;
+            $pauseBeginHourInMinutes =0;
+
+            if(sizeof($pauseBeginHourExploded)>1){
+                $pauseBeginHourInMinutes = (((int)$pauseBeginHourExploded[0])*60)+((int)$pauseBeginHourExploded[1]);
+                $pauseEndHourInMinutes = (((int)$pauseEndHourExploded[0])*60)+((int)$pauseEndHourExploded[1]);
+
+                $beginHourInMinutes = (((int)$beginHourExploded[0])*60)+((int)$beginHourExploded[1]);
+                $endHourInMinutes = (((int)$endHourExploded[0])*60)+((int)$endHourExploded[1]);
+
+                $interval_pause = (($pauseEndHourInMinutes - $pauseBeginHourInMinutes)/2)*60;
+                $heureNormaleArrive = $beginHourInMinutes*60;
+                $heureNormaleDepart = $endHourInMinutes*60;
+                $heureNormaleArrivePause = $pauseEndHourInMinutes*60;
+                $heureNormaleDepartPause = $pauseBeginHourInMinutes*60;
+            }else{
+                $interval_pause = 0;
+                $heureNormaleArrive = 0;
+                $heureNormaleDepart = 0;
+                $heureNormaleArrivePause = 0;
+                $heureNormaleDepartPause = 0;
+            }
 
             /*
              * NOTE :
@@ -510,102 +531,72 @@ class StatsController extends ClockinReccordController
              * S'il valide son quota horraire,on ne doit pas considérer son retard
              * dans la totalisation des heures perdus
             */
-            switch ($type){
-                case "1":
-                    // Si son workingHour est de type 1
-                    if(!$cr->present($employe,$nowTime)){
-                        $absences++;
-                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
-                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
-                        $timePerdusAbsences = ($timeFin - $timeDebut);
-                        $tempsPerdusAbsences = $timePerdusAbsences/60;
-                        $sommeAbsences +=$tempsPerdusAbsences;
-                    }
-                    $retardDiff = $cr->retard($employe,$nowTime,$interval);
-                    if($retardDiff != null){
-                        $retards++;
-                        $sommeRetards +=$retardDiff;
-                        $tempsPerdusRetards = $retardDiff/(60);
-                    }
-                    $departDiff = $cr->departPremature($employe,$nowTime,$interval);
-                    if($departDiff != null){
-                        $nowDate = date('d/m/Y',$nowTime);
-                        $departs++;
-                        $sommeDeparts +=$departDiff[0];
-                        $tempsPerdusDepartsFin = ($departDiff[0])/(60);
-                        // Pour prendre en compte les departs de 17h
-                        $tempsPerdusDeparts+=$tempsPerdusDepartsFin;
-                        $ct = date('H:i',$departDiff[1]);
-                        $tabDeparts[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsFin);
-                    }
-                    $departPauseDiff = $cr->departPausePremature($employe,$nowTime,$interval);
-                    if($departPauseDiff[0] != null){
-                        $i++;
-                        $nowDate = date('d/m/Y',$nowTime);
-                        $departsPause++;
-                        // Pour prendre en compte les departs de 12 h aussi
-                        $departs++;
-                        $sommeDepartsPause +=$departPauseDiff[0];
-                        $tempsPerdusDepartsPause = ($departPauseDiff[0])/(60);
-                        // Pour prendre en compte les departs de 12h aussi
-                        $tempsPerdusDeparts +=$tempsPerdusDepartsPause;
-                        $ct = date('H:i',$departPauseDiff[1]);
-                        $tabDepartsPause[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsPause);
-                    }else{
-                        $test = "trrrrrr";
-                    }
-                    break;
-                case "2":
-                    if(!$cr->present($employe,$nowTime)){
-                        $absences++;
-                        $tempsPerdusAbsences = ((int)$quota)*60;
-                        $sommeAbsences +=$tempsPerdusAbsences;
-                    }
-                    $retardDiff = $cr->retard($employe,$nowTime,$interval);
-                    if($retardDiff != null){
-                        $retards++;
-                        $sommeRetards +=$retardDiff;
-                        $tempsPerdusRetards = $retardDiff/(60);
-                    }
-                    $departDiff = $cr->departPremature($employe,$nowTime,$interval);
-                    if($departDiff != null){
-                        $nowDate = date('d/m/Y',$nowTime);
-                        $departs++;
-                        $sommeDeparts +=$departDiff[0];
-                        $tempsPerdusDepartsFin = ($departDiff[0])/(60);
-                        // Pour prendre en compte les departs de 17h
-                        $tempsPerdusDeparts +=$tempsPerdusDepartsFin;
-                        $ct = date('H:i',$departDiff[1]);
-                        $tabDeparts[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsFin);
-                    }
-                    $departPauseDiff = $cr->departPausePremature($employe,$nowTime,$interval);
-                    if($departPauseDiff[0] != null){
-                        $i++;
-                        $nowDate = date('d/m/Y',$nowTime);
-                        $departsPause++;
-                        // Pour prendre en compte les departs de 12 h aussi
-                        $departs++;
-                        $sommeDepartsPause +=$departPauseDiff[0];
-                        $tempsPerdusDepartsPause = ($departPauseDiff[0])/(60);
-                        // Pour prendre en compte les departs de 12 h aussi
-                        $tempsPerdusDeparts +=$tempsPerdusDepartsPause;
-                        $ct = date('H:i',$departPauseDiff[1]);
-                        $tabDepartsPause[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsPause);
-                    }else{
-                        $test = "trrrrrr";
-                    }
-                    break;
-                case "3":
-                    // Si son workingHour est de type 1
-                    if(!$cr->present($employe,$nowTime)){
-                        $absences++;
-                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
-                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
-                        $timePerdusAbsences = ($timeFin - $timeDebut);
-                        $tempsPerdusAbsences = $timePerdusAbsences/60;
-                        $sommeAbsences +=$tempsPerdusAbsences;
-                    }
-                    break;
+            if ($type == "1" || $type == "2") {
+                // Si son workingHour est de type 1
+                if (!$cr->present($employe, $nowTime)) {
+                    $absences++;
+                    $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                    $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+                    $timePerdusAbsences = ($timeFin - $timeDebut);
+                    $tempPerdu = $timePerdusAbsences / 60;
+                    $tempsPerdusAbsences += $tempPerdu;
+                    $sommeAbsences += $tempsPerdusAbsences;
+                }
+                $retardDiff = $cr->retard($employe, $nowTime, $interval, $heureNormaleArrive);
+                if ($retardDiff != null) {
+                    $nowDate = date('d/m/Y', $nowTime);
+                    $retards++;
+                    $sommeRetards += $retardDiff[0];
+                    $tempsPerdusRetards += $retardDiff[0] / (60);
+                    $perte_temps = (int)($retardDiff[0] / (60));
+                    $ct = date('H:i', $retardDiff[1]);
+                    $tabRetards[] = array("date" => $nowDate, "heureRetard" => $ct, "temps" => $perte_temps);
+                }
+                $retardPauseDiff = $cr->retardPause($employe, $nowTime, $interval_pause, $heureNormaleArrivePause);
+                if ($retardPauseDiff != null) {
+                    $nowDate = date('d/m/Y', $nowTime);
+                    $retards++;
+                    $sommeRetards += $retardPauseDiff[0];
+                    $tempsPerdusRetardsPause = $retardPauseDiff[0] / (60);
+                    $tempsPerdusRetards += $retardPauseDiff[0] / (60);
+                    $ct = date('H:i', $retardPauseDiff[1]);
+                    $tabRetardsPause[] = array("date" => $nowDate, "heureRetard" => $ct, "temps" => $tempsPerdusRetardsPause);
+                }
+                $departDiff = $cr->departPremature($employe, $nowTime, $interval, $heureNormaleDepart);
+                if ($departDiff != null) {
+                    $nowDate = date('d/m/Y', $nowTime);
+                    $departs++;
+                    $sommeDeparts += $departDiff[0];
+                    $tempsPerdusDepartsFin = ($departDiff[0]) / (60);
+                    // Pour prendre en compte les departs de 17h
+                    $tempsPerdusDeparts += $tempsPerdusDepartsFin;
+                    $ct = date('H:i', $departDiff[1]);
+                    $tabDeparts[] = array("date" => $nowDate, "heureDepart" => $ct, "temps" => $tempsPerdusDepartsFin);
+                }
+                $departPauseDiff = $cr->departPausePremature($employe, $nowTime, $interval_pause, $heureNormaleDepartPause);
+                if ($departPauseDiff[0] != null) {
+                    $i++;
+                    $nowDate = date('d/m/Y', $nowTime);
+                    $departsPause++;
+                    // Pour prendre en compte les departs de 12 h aussi
+                    $departs++;
+                    $sommeDepartsPause += $departPauseDiff[0];
+                    $tempsPerdusDepartsPause = ($departPauseDiff[0]) / (60);
+                    // Pour prendre en compte les departs de 12h aussi
+                    $tempsPerdusDeparts += $tempsPerdusDepartsPause;
+                    $ct = date('H:i', $departPauseDiff[1]);
+                    $tabDepartsPause[] = array("date" => $nowDate, "heureDepart" => $ct, "temps" => $tempsPerdusDepartsPause);
+                }
+            }else if($type == 3){
+                // Si son workingHour est de type 1
+                if(!$cr->present($employe,$nowTime)){
+                    $absences++;
+                    $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                    $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+                    $timePerdusAbsences = ($timeFin - $timeDebut);
+                    $tempsPerdusAbsences = $timePerdusAbsences/60;
+                    $sommeAbsences +=$tempsPerdusAbsences;
+                }
             }
 
             $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts);
@@ -651,6 +642,8 @@ class StatsController extends ClockinReccordController
             // A chaque fois qu'on change de département, on réinitialise la somme totale
             $sommeTotaleRetard = 0;
             $sommeTotaleDepart = 0;
+            $perteRetardTemps = 0;
+            $perteDepartTemps = 0;
             $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($dep);
             // On parcours aussi tous les employés pour additionner leur stats
             foreach ($emp as $e){
