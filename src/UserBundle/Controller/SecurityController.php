@@ -29,7 +29,7 @@ class SecurityController extends Controller
             $cc = null;
             $session->set("companyName",null);
             $session->set("companyLogo",null);
-            $this->redirectToRoute("changeSocietyName");
+            return $this->redirectToRoute("changeSocietyName");
         }
         $session->set("expiryDate",$exp[0]->getExpiryDate());
 
