@@ -28,4 +28,12 @@ class DepartementRepository extends EntityRepository
 
         return $tab;
     }
+
+    public function findAllSafe(){
+        $queryBuilder = $this->createQueryBuilder('d');
+        $queryBuilder->where('d.name != :name');
+        $queryBuilder->setParameter('name', "Default department");
+
+        return $queryBuilder->getQuery()->getResult();
+    }
 }

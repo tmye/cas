@@ -56,7 +56,7 @@ class StatsController extends ClockinReccordController
             $em = $this->getDoctrine()->getManager();
             $listEmployee = $em->getRepository("AppBundle:Employe")->findAll();
 
-            $dep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            $dep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAllSafe();
             return $this->render('cas/viewPersStat.html.twig',array(
                 'listDep'=>$dep,
                 'listEmployee'=>$listEmployee
@@ -422,7 +422,7 @@ class StatsController extends ClockinReccordController
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
             }
-            $dep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            $dep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAllSafe();
             return $this->render('cas/viewDepStat.html.twig',array(
                 'listDep'=>$dep
             ));

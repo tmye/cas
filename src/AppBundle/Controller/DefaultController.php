@@ -3,9 +3,13 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\CompanyConfig;
+use AppBundle\Entity\Departement;
+use AppBundle\Entity\Employe;
 use AppBundle\Entity\Expiration;
+use AppBundle\Entity\WorkingHours;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -20,15 +24,106 @@ class DefaultController extends Controller
      */
     public function functionTestAction(Request $request)
     {
-        $date = "2018-04-19";
+        /*$date = "2018-04-19";
         $heureNormaleArrivee = "14:00";
         $heureEnregistre = "14:10";
         $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission(26,$date,$heureEnregistre,$heureNormaleArrivee);
-        /*foreach ($p as $perm){
+        foreach ($p as $perm){
             echo "<br>".$perm->getDescription()."<br>";
         }*/
 
-        return new Response(strtotime("2018-04-25 08:45:00"));
+        $f = new Filesystem();
+        try{
+            $f->mkdir("Dossier Ebenezer");
+        }catch(IOExceptionInterface $e){
+            echo "Error occured : ".$e->getMessage();
+        }
+
+        return new Response("OK");
+    }
+
+    /**
+     * @Route("/firstTimeInitialization", name="firstTimeInitialization")
+     */
+    public function firstTimeInitializationAction(Request $request)
+    {
+        return $this->render("cas/firstTime.html.twig");
+    }
+
+    /**
+     * @Route("/initializeApplication", name="initializeApplication")
+     */
+    public function initializeApplicationAction(Request $request)
+    {
+        $cc = new CompanyConfig();
+        $em = $this->getDoctrine()->getManager();
+        if(isset($_FILES["image"]["name"]) && !empty($_FILES["image"]["name"])){
+            $resultat = move_uploaded_file($_FILES['image']['tmp_name'],"company_images/".basename($_FILES["image"]["name"]));
+            $cc->setCompanyName($request->request->get("compName"));
+            $cc->setCompanyLogo($_FILES["image"]["name"]);
+            $em->persist($cc);
+            $em->flush();
+
+            $session = new Session();
+            $session->set("companyLogo",$_FILES['image']['name']);
+            $session->set("companyName",$request->request->get("name"));
+            // We are done with the companyConfiguration.Now we must persist an Admin
+            $e = new Employe();
+            $e->setLastName($request->request->get("adminName"));
+            $e->setSurname($request->request->get("adminSurname"));
+            $e->setUsername(10001);
+            $e->setPassword($request->request->get("adminPassword"));
+            $e->setAuth(1);
+            $e->setRoles(array("ROLE_SUPER_ADMIN"));
+            $e->setAdress($request->request->get("adminAdress"));
+            $e->setContact($request->request->get("adminPhoneNumber"));
+            $e->setCreateDate(new \DateTime());
+            $e->setHireDate(new \DateTime());
+            $e->setLastUpdate(new \DateTime());
+
+            // The department cannot be null.
+            // We create a default department
+
+            $dep = new Departement();
+            $dep->setName("Default Department");
+            $dep->setMaxCount(1);
+            $dep->setCreateDate(new \DateTime());
+            $dep->setLastUpdate(new \DateTime());
+            $dep->setAuthor(10001);
+
+            // The same problem is encountered with his workingHour.
+
+            $wh = new WorkingHours();
+            $wh->setCode("Default");
+            $wh->setWorkingHour("Null");
+
+            // We continue with the rest of the admin (Employee) properties
+
+            $e->setDepartement($dep);
+            $e->setWorkingHour($wh);
+            $e->setSalary(0);
+            $e->setFunction("Super Admin");
+            $e->setGodfatherCcid(10001);
+            $e->setEmployeeCcid(10001);
+
+            $em->persist($dep);
+            $em->persist($wh);
+            $em->persist($e);
+            $em->flush();
+
+            // After persistance operation, we must edit initialization file
+
+            $file = fopen($this->getParameter("web_dir")."/first_time",'r+');
+            fseek($file,0);
+            fputs($file,sha1("initialized"));
+            fclose($file);
+
+            // Now that all operations are achieved, we can return a response
+
+            return new Response(1);
+        }else{
+            return new Response("Erreur");
+        }
     }
 
     /**
