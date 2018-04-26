@@ -24,14 +24,14 @@ class CompanyConfig
     /**
      * @var string
      *
-     * @ORM\Column(name="company_name", type="string", length=255)
+     * @ORM\Column(name="company_name", type="string", length=255, nullable=true)
      */
     private $companyName;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="company_logo", type="string", length=255)
+     * @ORM\Column(name="company_logo", type="string", length=255, nullable=true)
      */
     private $companyLogo;
 

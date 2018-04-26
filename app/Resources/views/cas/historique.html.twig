@@ -176,11 +176,11 @@
                                                 );
                                                 if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
                                                     $(".redSpan_1_"+i).css("color","red");
-                                                }else if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
+                                                }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
                                                     $(".redSpanPauseBegin_1_"+i).css("color","red");
-                                                }else if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
+                                                }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
                                                     $(".redSpanPauseEnd_1_"+i).css("color","red");
-                                                }else if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
+                                                }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
                                                     $(".redSpanEnd_1_"+i).css("color","red");
                                                 }
                                                 break;
