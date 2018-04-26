@@ -16,6 +16,12 @@
                                         <span id="type1">
                                             <div class="row firstOne">
                                                 <div class="col l12">
+                                                    {% if token is defined and token is not null and token == 1 %}
+                                                        <h6 style="font-size: 20px">
+                                                            <span class="fa fa-exclamation-triangle orange-text"></span> Votre configuration actuelle n'est pas valide.Veuillez changer vos paramètres actuels.
+                                                        </h6>
+                                                        <br>
+                                                    {% endif %}
                                                     <h5>Nom de la société</h5>
                                                     <span>Changer le nom de la société</span>
                                                 </div>

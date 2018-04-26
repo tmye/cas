@@ -316,6 +316,10 @@ class DefaultController extends Controller
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
             }
+            $session = new Session();
+            if($session->get('companyName') == null || $session->get('companyLogo') == null){
+                return $this->redirectToRoute("manageSocietyName",array('badConfig'=>1));
+            }
             return $this->render('cas/index.html.twig', array(
                 'base_dir' => realpath($this->container->getParameter('kernel.root_dir').'/..').DIRECTORY_SEPARATOR,
             ));
@@ -516,10 +520,12 @@ class DefaultController extends Controller
     {
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
+            // Token Sent
+            $token = $request->query->get("badConfig");
             if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
             }
-            return $this->render('cas/manageSocietyName.html.twig');
+            return $this->render('cas/manageSocietyName.html.twig',array("token"=>$token));
         }else{
             return $this->redirectToRoute("login");
         }
