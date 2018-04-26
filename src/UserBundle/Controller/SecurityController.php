@@ -18,20 +18,22 @@ class SecurityController extends Controller
 
         $session = new Session();
         $cc = $this->getDoctrine()->getManager()->getRepository("AppBundle:CompanyConfig")->findAll();
-        $exp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Expiration")->findAll();
         if(($cc != null) && (!empty($cc))){
+            print_r("<br>In the if case</br>");
             $cc = $cc[0];
             $compName = $cc->getCompanyName();
             $compLogo = $cc->getCompanyLogo();
+            $compExpiration = $cc->getExpirationDate();
             $session->set("companyName",$compName);
             $session->set("companyLogo",$compLogo);
+            $session->set("expiryDate",$compExpiration);
         }else{
+            print_r("<br>In the else case</br>");
             $cc = null;
             $session->set("companyName",null);
             $session->set("companyLogo",null);
             return $this->redirectToRoute("changeSocietyName");
         }
-        $session->set("expiryDate",$exp[0]->getExpiryDate());
 
         if($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED')){
             return $this->redirectToRoute("homepage");

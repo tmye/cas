@@ -35,6 +35,13 @@ class CompanyConfig
      */
     private $companyLogo;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="expiration_date", type="string", length=255, nullable=true)
+     */
+    private $expirationDate;
+
 
     /**
      * Get id
@@ -92,5 +99,29 @@ class CompanyConfig
     public function getCompanyLogo()
     {
         return $this->companyLogo;
+    }
+
+    /**
+     * Set expirationDate
+     *
+     * @param string $expirationDate
+     *
+     * @return CompanyConfig
+     */
+    public function setExpirationDate($expirationDate)
+    {
+        $this->expirationDate = $expirationDate;
+
+        return $this;
+    }
+
+    /**
+     * Get expirationDate
+     *
+     * @return string
+     */
+    public function getExpirationDate()
+    {
+        return $this->expirationDate;
     }
 }
