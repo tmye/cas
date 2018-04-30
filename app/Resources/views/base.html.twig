@@ -14,13 +14,13 @@
     <body>
     <div class="row">
         <div class="col l2">
-            <ul id="slide-out" class="side-nav" style="background-color: #2A3F54">
+            <ul id="slide-out" class="side-nav" style="background-color: rgba(49,59,70,1)">
                 <div class="row">
                     <div class="col l10">
                         <br>
                         <ul class="collapsible navigation_collapsible" style="font-weight: 100 !important" data-collapsible="accordion">
                             <li>
-                                <div>
+                                <div class="user">
                                     {% if app.user is defined and app.user is not null %}
                                         <img src="{{ asset('/')~user_profile_pictures~'/'~app.user.picture }}" alt="user_image" class="circle middle-align user_extra_small_picture">
                                     {% endif %}
@@ -42,15 +42,15 @@
                             </li>
                             <br>
                             <li>
-                                <div class="collapsible-header valign-wrapper">
+                                <div class="collapsible-header valign-wrapper singleton">
                                     <span class="fa fa-home icons"></span>
-                                    <a href="{{ path('homepage') }}" style="margin-left: 4px;color: #fff">Accueil</a>
+                                    <a href="{{ path('homepage') }}" style="margin-left: 4px;">Accueil</a>
                                 </div>
                             </li>
                             <li class="">
                                 <div class="collapsible-header collapsible_historique valign-wrapper">
                                     <span class="fa fa-file-alt icons"></span>
-                                    <span style="margin-left: 4px;color: #fff">Présences</span>
+                                    <span style="margin-left: 4px;">Présences</span>
                                 </div>
                                 <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
                                     <a href="{{ path("historique") }}" class="collapsible-links">Historiques</a>
@@ -59,7 +59,7 @@
                             <li>
                                 <div class="collapsible-header valign-wrapper">
                                     <span class="fa fa-chart-bar icons"></span>
-                                    <span style="margin-left: 4px;color: #fff">Statistiques</span>
+                                    <span style="margin-left: 4px;">Statistiques</span>
                                 </div>
                                 <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
                                     <a href="{{ path("depStat") }}" class="collapsible-links">Départements</a>
@@ -70,7 +70,7 @@
                             <li>
                                 <div class="collapsible-header valign-wrapper">
                                     <span class="fa fa-file icons"></span>
-                                    <span style="margin-left: 4px;color: #fff">Permissions</span>
+                                    <span style="margin-left: 4px;">Permissions</span>
                                 </div>
                                 <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
                                     <a href="{{ path('viewPermission') }}" class="collapsible-links">Liste</a>
@@ -79,15 +79,15 @@
                                 </div>
                             </li>
                             <li>
-                                <div class="collapsible-header valign-wrapper">
+                                <div class="collapsible-header valign-wrapper singleton">
                                     <span class="fa fa-building icons"></span>
-                                    <a href="{{ path("departement") }}" style="margin-left: 4px;color: #fff">Départements</a>
+                                    <a href="{{ path("departement") }}" style="margin-left: 4px;">Départements</a>
                                 </div>
                             </li>
                             <li>
                                 <div class="collapsible-header valign-wrapper">
                                     <span class="fa fa-user icons"></span>
-                                    <span style="margin-left: 4px;color: #fff">Employés</span>
+                                    <span style="margin-left: 4px;">Employés</span>
                                 </div>
                                 <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
                                     <a href="{{ path("addEmployee") }}" class="collapsible-links">Ajouter</a>
@@ -98,7 +98,7 @@
                             <li>
                                 <div class="collapsible-header valign-wrapper">
                                     <span class="fa fa-wrench icons"></span>
-                                    <span style="margin-left: 4px;color: #fff">Réglages</span>
+                                    <span style="margin-left: 4px;">Réglages</span>
                                 </div>
                                 <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
                                     <a href="{{ path("addWorkingHour") }}" class="collapsible-links">Ajouter heure de travail</a>
