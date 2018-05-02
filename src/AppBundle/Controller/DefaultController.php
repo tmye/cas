@@ -32,14 +32,7 @@ class DefaultController extends Controller
             echo "<br>".$perm->getDescription()."<br>";
         }*/
 
-        $f = new Filesystem();
-        try{
-            $f->mkdir("Dossier Ebenezer");
-        }catch(IOExceptionInterface $e){
-            echo "Error occured : ".$e->getMessage();
-        }
-
-        return new Response("OK");
+        return new Response(strtotime("2018-05-01 10:04:00"));
     }
 
     /**

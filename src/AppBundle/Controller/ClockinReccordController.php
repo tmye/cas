@@ -108,7 +108,11 @@ class ClockinReccordController extends Controller
      * ou false sinon
     */
     public function arrive(ClockinRecord $cR,$day,$request){
+
+        $interval = 60*60;
+
         $empWH = json_decode($cR->getEmploye()->getWorkingHour()->getWorkingHour(),true);
+
         $heureDebutNormal = $empWH[$day][0]["beginHour"];
         $heureFinNormal = $empWH[$day][0]["endHour"];
 
@@ -124,17 +128,17 @@ class ClockinReccordController extends Controller
         $dSenceA = $dd;
         $dSenceD = $df;
         // Borne inférieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
-        $hIInfA = $hSenceA- (ClockinReccordController::$min_laps * 60);
-        $hIInfD = $hSenceD- (ClockinReccordController::$min_laps * 60);
+        $hIInfA = $hSenceA- ($interval);
+        $hIInfD = $hSenceD- ($interval);
 
-        $dIInfA = $dSenceA- (ClockinReccordController::$min_laps * 60);
-        $dIInfD = $dSenceD- (ClockinReccordController::$min_laps * 60);
+        $dIInfA = $dSenceA- ($interval);
+        $dIInfD = $dSenceD- ($interval);
         // Borne superieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
-        $hISupA = $hSenceA+ (ClockinReccordController::$min_laps * 60);
-        $dISupA = $dSenceA+ (ClockinReccordController::$min_laps * 60);
+        $hISupA = $hSenceA+ ($interval);
+        $dISupA = $dSenceA+ ($interval);
 
-        $hISupD = $hSenceD+ (ClockinReccordController::$min_laps * 60);
-        $dISupD = $dSenceD+ (ClockinReccordController::$min_laps * 60);
+        $hISupD = $hSenceD+ ($interval);
+        $dISupD = $dSenceD+ ($interval);
 
         //echo "<br>test : ".strtotime("14 February 2018 6:25:00");
 
@@ -418,13 +422,7 @@ class ClockinReccordController extends Controller
     public function findHistoriqueAction($departem = null,$dat = null,$emplo = null,Request $request = null)
     {
 
-
-         // 30min
-
-        $heureDebutNormal = "6:30:00";
-        $heureDebutPauseNormal = "12:00:00";
-        $heureFinNormal = "17:30:00";
-        $heureFinPauseNormal = "14:00:00";
+        $interval = 60*60; // 1 heure
 
         if(($request->request->get('id') != null) && ($request->request->get('date') != null)){
             $dep = $request->request->get('id');
@@ -459,7 +457,39 @@ class ClockinReccordController extends Controller
                 $heureFinNormal = $empWH[$day][0]["endHour"];
                 $heureFinPauseNormal = $empWH[$day][0]["pauseEndHour"];
 
-                //echo "\nBeginHour : ".$heureDebutNormal."\n";
+                $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
+                $type = $empWH[$day][0]["type"];
+
+                // Pour le calcul d'un depart prématuré de pause,Calculons l'intervalle
+
+                $beginHourExploded = explode(":",$heureDebutNormal);
+                $endHourExploded = explode(":",$heureFinNormal);
+                $pauseBeginHourExploded = explode(":",$heureDebutPauseNormal);
+                $pauseEndHourExploded = explode(":",$heureFinPauseNormal);
+
+                if(sizeof($pauseBeginHourExploded)>1){
+                    $pauseBeginHourInMinutes = (((int)$pauseBeginHourExploded[0])*60)+((int)$pauseBeginHourExploded[1]);
+                    $pauseEndHourInMinutes = (((int)$pauseEndHourExploded[0])*60)+((int)$pauseEndHourExploded[1]);
+
+                    $interval_pause = (($pauseEndHourInMinutes - $pauseBeginHourInMinutes)/2)*60;
+                    $heureNormaleArrivePause = $pauseEndHourInMinutes*60;
+                    $heureNormaleDepartPause = $pauseBeginHourInMinutes*60;
+                }else{
+                    $interval_pause = 0;
+                    $heureNormaleArrivePause = 0;
+                    $heureNormaleDepartPause = 0;
+                }
+
+                if(sizeof($beginHourExploded)>1){
+                    $beginHourInMinutes = (((int)$beginHourExploded[0])*60)+((int)$beginHourExploded[1]);
+                    $endHourInMinutes = (((int)$endHourExploded[0])*60)+((int)$endHourExploded[1]);
+                    $heureNormaleArrive = $beginHourInMinutes*60;
+                    $heureNormaleDepart = $endHourInMinutes*60;
+                }else{
+                    $heureNormaleArrive = 0;
+                    $heureNormaleDepart = 0;
+                }
+
 
                 $dd = strtotime($_date." ".$heureDebutNormal);
                 $dpd = strtotime($_date." ".$heureDebutPauseNormal);
@@ -478,17 +508,15 @@ class ClockinReccordController extends Controller
                 $dSenceD = $df;
 
 
-                $dIInfA = $dSenceA-(ClockinReccordController::$min_laps * 60);
-                $dIInfPD = $dSencePD-(ClockinReccordController::$min_laps * 60);
-                $dIInfD = $dSenceD-(ClockinReccordController::$min_laps * 60);
-                $dIInfPF = $dSencePF-(ClockinReccordController::$min_laps * 60);
+                $dIInfA = $dSenceA-($interval);
+                $dIInfPD = $dSencePD-($interval_pause);
+                $dIInfD = $dSenceD-($interval);
+                $dIInfPF = $dSencePF-($interval_pause);
                 // Borne superieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
-                $dISupA = $dSenceA+(ClockinReccordController::$min_laps * 60);
-                $dISupPD = $dSencePD+(ClockinReccordController::$min_laps * 60);
-                $dISupPF = $dSencePF+(ClockinReccordController::$min_laps * 60);
-
-                $hISupD = $hSenceD+(ClockinReccordController::$min_laps * 60);
-                $dISupD = $dSenceD+(ClockinReccordController::$min_laps * 60);
+                $dISupA = $dSenceA+($interval);
+                $dISupPD = $dSencePD+($interval_pause);
+                $dISupPF = $dSencePF+($interval_pause);
+                $dISupD = $dSenceD+($interval);
 
                 // On récupère les données appartenant au département sélectionné
 
@@ -519,7 +547,33 @@ class ClockinReccordController extends Controller
                     $heureFinNormal = $empWH[$day][0]["endHour"];
                     $heureFinPauseNormal = $empWH[$day][0]["pauseEndHour"];
 
-                    //echo "\nBeginHour : ".$heureDebutNormal."\n";
+                    $beginHourExploded = explode(":",$heureDebutNormal);
+                    $endHourExploded = explode(":",$heureFinNormal);
+                    $pauseBeginHourExploded = explode(":",$heureDebutPauseNormal);
+                    $pauseEndHourExploded = explode(":",$heureFinPauseNormal);
+
+                    if(sizeof($pauseBeginHourExploded)>1){
+                        $pauseBeginHourInMinutes = (((int)$pauseBeginHourExploded[0])*60)+((int)$pauseBeginHourExploded[1]);
+                        $pauseEndHourInMinutes = (((int)$pauseEndHourExploded[0])*60)+((int)$pauseEndHourExploded[1]);
+
+                        $interval_pause = (($pauseEndHourInMinutes - $pauseBeginHourInMinutes)/2)*60;
+                        $heureNormaleArrivePause = $pauseEndHourInMinutes*60;
+                        $heureNormaleDepartPause = $pauseBeginHourInMinutes*60;
+                    }else{
+                        $interval_pause = 0;
+                        $heureNormaleArrivePause = 0;
+                        $heureNormaleDepartPause = 0;
+                    }
+
+                    if(sizeof($beginHourExploded)>1){
+                        $beginHourInMinutes = (((int)$beginHourExploded[0])*60)+((int)$beginHourExploded[1]);
+                        $endHourInMinutes = (((int)$endHourExploded[0])*60)+((int)$endHourExploded[1]);
+                        $heureNormaleArrive = $beginHourInMinutes*60;
+                        $heureNormaleDepart = $endHourInMinutes*60;
+                    }else{
+                        $heureNormaleArrive = 0;
+                        $heureNormaleDepart = 0;
+                    }
 
                     $dd = strtotime($_date." ".$heureDebutNormal);
                     $dpd = strtotime($_date." ".$heureDebutPauseNormal);
@@ -538,17 +592,15 @@ class ClockinReccordController extends Controller
                     $dSenceD = $df;
 
 
-                    $dIInfA = $dSenceA-(ClockinReccordController::$min_laps * 60);
-                    $dIInfPD = $dSencePD-(ClockinReccordController::$min_laps * 60);
-                    $dIInfD = $dSenceD-(ClockinReccordController::$min_laps * 60);
-                    $dIInfPF = $dSencePF-(ClockinReccordController::$min_laps * 60);
+                    $dIInfA = $dSenceA-($interval);
+                    $dIInfPD = $dSencePD-($interval_pause);
+                    $dIInfD = $dSenceD-($interval);
+                    $dIInfPF = $dSencePF-($interval_pause);
                     // Borne superieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
-                    $dISupA = $dSenceA+(ClockinReccordController::$min_laps * 60);
-                    $dISupPD = $dSencePD+(ClockinReccordController::$min_laps * 60);
-                    $dISupPF = $dSencePF+(ClockinReccordController::$min_laps * 60);
-
-                    $hISupD = $hSenceD+(ClockinReccordController::$min_laps * 60);
-                    $dISupD = $dSenceD+(ClockinReccordController::$min_laps * 60);
+                    $dISupA = $dSenceA+($interval);
+                    $dISupPD = $dSencePD+($interval_pause);
+                    $dISupPF = $dSencePF+($interval_pause);
+                    $dISupD = $dSenceD+($interval);
 
                     // On récupère les données appartenant au département sélectionné
 

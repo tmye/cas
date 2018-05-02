@@ -1,6 +1,16 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
+    <!-- Modal for ajax loading -->
+    <div id="modal_loading" class="modal ajax_modals">
+        <div class="modal-content">
+            <p class="center">
+                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+            </p>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col l12">
             <h5>Changer le nom de la société</h5>
@@ -74,16 +84,20 @@
     <script>
         $(function () {
             $("#submitSocietyName").click(function () {
+                $('#modal_loading').modal('open');
                 $.ajax({
                     type: 'POST',
                     url: "changeSocietyName",
                     data: {'name':$("#companyName").val()},
                     success: function(data) {
                         alert(data);
+                        $('#modal_loading').modal('close');
                     },
                     error: function () {
                     }
                 });
+                // Closing the loading box
+
             });
 
             // Section du logo de la société
@@ -109,6 +123,7 @@
             // Requete ajax de soumission de l'image
 
             $("#submitSocietyLogo").click(function(){
+                $('#modal_loading').modal('open');
                 var formdata = new FormData();
                 var fInput = document.getElementById("fileInput");
                 console.log(fInput);
@@ -124,11 +139,14 @@
                     processData: false,
                     success: function(data) {
                         alert(data);
+                        $('#modal_loading').modal('close');
                     },
                     error: function() {
                         alert("Erreur");
                     }
                 });
+                // Closing the loading box
+
                 /*$.ajax({
                     url: "{path('syncPubCoverAll')}",
                     type: "POST",

@@ -1,6 +1,16 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
+    <!-- Modal for ajax loading -->
+    <div id="modal_loading" class="modal ajax_modals">
+        <div class="modal-content">
+            <p class="center">
+                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+            </p>
+        </div>
+    </div>
+
     <!-- hidden input -->
     <div style="display: none">
         <select id="depSelected">
@@ -87,6 +97,7 @@
             });
             console.log(tab);
             $("#updateForAll").click(function () {
+                $('#modal_loading').modal('open');
                 var el = $("#depSelected").val();
                 tab.push(el);
                 console.log(el);
@@ -96,6 +107,9 @@
                     data: {"deps":tab},
                     success: function (data) {
                         console.log(data);
+                        // Closing the loading box
+
+                        $('#modal_loading').modal('close');
                     },
                     error: function (msg) {
                         alert("erreur");

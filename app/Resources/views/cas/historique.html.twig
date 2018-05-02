@@ -1,6 +1,16 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
+    <!-- Modal for ajax loading -->
+    <div id="modal_loading" class="modal ajax_modals">
+        <div class="modal-content">
+            <p class="center">
+                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+            </p>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col l12">
             <h5 class="page-title">Historiques des présences</h5>
@@ -124,6 +134,7 @@
         }
         $(function () {
             $("#historySearchButton").click(function () {
+                $('#modal_loading').modal('open');
                 //alert($("#selectedDate").val());
                 if($("#selectedDate").val() != ""){
                     if($("#selectedDep").val() != ""){
@@ -230,6 +241,10 @@
                                         );
                                     }
                                 });
+
+                                // Closing the loading box
+
+                                $('#modal_loading').modal('close');
                             },
                             error: function(msg) {
                                 alert("erreur"); }
@@ -251,6 +266,7 @@
     <script>
         // On s'attaque aux collapsibles
         $(function () {
+            $(".cl_history").addClass("collapsible_element_active");
             $(".navigation_collapsible").collapsible('open',1);
         });
     </script>

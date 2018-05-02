@@ -53,7 +53,7 @@
                                     <span style="margin-left: 4px;">Présences</span>
                                 </div>
                                 <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
-                                    <a href="{{ path("historique") }}" class="collapsible-links">Historiques</a>
+                                    <a href="{{ path("historique") }}" class="collapsible-links cl_history">Historiques</a>
                                 </div>
                             </li>
                             <li>
@@ -62,9 +62,9 @@
                                     <span style="margin-left: 4px;">Statistiques</span>
                                 </div>
                                 <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
-                                    <a href="{{ path("depStat") }}" class="collapsible-links">Départements</a>
+                                    <a href="{{ path("depStat") }}" class="collapsible-links cl_DepStats">Départements</a>
                                     <br>
-                                    <a href="{{ path("persStat") }}" class="collapsible-links">Personnelles</a>
+                                    <a href="{{ path("persStat") }}" class="collapsible-links cl_PersStats">Personnelles</a>
                                 </div>
                             </li>
                             <li>
@@ -73,9 +73,9 @@
                                     <span style="margin-left: 4px;">Permissions</span>
                                 </div>
                                 <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
-                                    <a href="{{ path('viewPermission') }}" class="collapsible-links">Liste</a>
+                                    <a href="{{ path('viewPermission') }}" class="collapsible-links cl_PermList">Liste</a>
                                     <br>
-                                    <a href="{{ path('addPermission') }}" class="collapsible-links">Demander</a>
+                                    <a href="{{ path('addPermission') }}" class="collapsible-links cl_Perm">Demander</a>
                                 </div>
                             </li>
                             <li>
@@ -90,9 +90,9 @@
                                     <span style="margin-left: 4px;">Employés</span>
                                 </div>
                                 <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
-                                    <a href="{{ path("addEmployee") }}" class="collapsible-links">Ajouter</a>
+                                    <a href="{{ path("addEmployee") }}" class="collapsible-links cl_Emp">Ajouter</a>
                                     <br>
-                                    <a href="{{ path("viewEmployee") }}" class="collapsible-links">Informations</a>
+                                    <a href="{{ path("viewEmployee") }}" class="collapsible-links cl_vEmp">Informations</a>
                                 </div>
                             </li>
                             <li>
@@ -101,11 +101,11 @@
                                     <span style="margin-left: 4px;">Réglages</span>
                                 </div>
                                 <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
-                                    <a href="{{ path("addWorkingHour") }}" class="collapsible-links">Ajouter heure de travail</a>
+                                    <a href="{{ path("addWorkingHour") }}" class="collapsible-links cl_WH">Ajouter heure de travail</a>
                                     <br>
-                                    <a href="{{ path("addMachine") }}" class="collapsible-links">Machines enrégistrées</a>
+                                    <a href="{{ path("addMachine") }}" class="collapsible-links cl_Mac">Machines enrégistrées</a>
                                     <br>
-                                    <a href="{{ path("manage") }}" class="collapsible-links">Gestion du système</a>
+                                    <a href="{{ path("manage") }}" class="collapsible-links cl_Manage">Gestion du système</a>
                                 </div>
                             </li>
                             <li>
@@ -144,6 +144,40 @@
     <div class="container">
         {% block body %}{% endblock %}
     </div>
+
+    <footer class="page-footer" style="background-color: rgb(49, 59, 70)">
+        <div class="container">
+            <div class="row">
+                <div class="col l6 s12">
+                    <h5 class="white-text">About CAS</h5>
+                    <p class="grey-text text-lighten-4">CAS is the best way to manage your employees</p>
+                </div>
+                <div class="col l4 offset-l2 s12">
+                    <h5 class="white-text">Contact</h5>
+                    <ul>
+                        <li>
+                            <p class="grey-text text-lighten-3" href="#!">
+                                <span class="fa fa-phone"></span>
+                                +228 22 34 32 67
+                            </p>
+                        </li>
+                        <li>
+                            <p class="grey-text text-lighten-3" href="#!">
+                                <span class="fa fa-mobile-alt"></span>
+                                +228 93 67 65 40
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <div class="container">
+                © 2018 C.A.S All rigths reserved
+                <a class="grey-text text-lighten-4 right" href="http://www.gscmanagment.com">www.gscmanagment.com</a>
+            </div>
+        </div>
+    </footer>
 
     <script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
     <script src="{{ asset('materialize/js/materialize.min.js') }}"></script>

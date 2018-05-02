@@ -1,6 +1,16 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
+    <!-- Modal for ajax loading -->
+    <div id="modal_loading" class="modal ajax_modals">
+        <div class="modal-content">
+            <p class="center">
+                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+            </p>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col l12">
             <h5 class="page-title">Statistiques</h5>
@@ -247,15 +257,15 @@
                             <span>Diagramme des départs prématurés de 12H00</span>
                             <canvas id="lundi-m-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6">
-                            <sp>Diagramme des départs prématurés de 18H00</sp>
+                        <div class="col l6 lundiDiagDep18">
+                            <span>Diagramme des départs prématurés de 18H00</span>
                             <canvas id="lundi-n-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 lundiDiagRet14">
+                        <div class="col l6 lundiDiagRet8">
                             <span>Diagramme des retards de 8H00</span>
                             <canvas id="lundi-m8-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6">
+                        <div class="col l6 lundiDiagRet14">
                             <span>Diagramme des retards de 14H00</span>
                             <canvas id="lundi-n14-chart" class="card"></canvas>
                         </div>
@@ -264,19 +274,19 @@
                 <span class="CContainer mardiCContainer">
                     <p class="legend">Mardi</p>
                     <div class="row chartsContainer" id="chartsContainer">
-                        <div class="col l6 mardiiDiagDep12">
+                        <div class="col l6 mardiDiagDep12">
                             <span>Diagramme des départs prématurés de 12H00</span>
                             <canvas id="mardi-m-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6">
-                            <sp>Diagramme des départs prématurés de 18H00</sp>
+                        <div class="col l6 mardiDiagDep18">
+                            <span>Diagramme des départs prématurés de 18H00</span>
                             <canvas id="mardi-n-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 mardiDiagRet14">
+                        <div class="col l6 mardiDiagRet8">
                             <span>Diagramme des retards de 8H00</span>
                             <canvas id="mardi-m8-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6">
+                        <div class="col l6 mardiDiagRet14">
                             <span>Diagramme des retards de 14H00</span>
                             <canvas id="mardi-n14-chart" class="card"></canvas>
                         </div>
@@ -289,15 +299,15 @@
                             <span>Diagramme des départs prématurés de 12H00</span>
                             <canvas id="mercredi-m-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6">
-                            <sp>Diagramme des départs prématurés de 18H00</sp>
+                        <div class="col l6 mercrediDiagDep18">
+                            <span>Diagramme des départs prématurés de 18H00</span>
                             <canvas id="mercredi-n-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 mercrediDiagRet14">
+                        <div class="col l6 mercrediDiagRet8">
                             <span>Diagramme des retards de 8H00</span>
                             <canvas id="mercredi-m8-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6">
+                        <div class="col l6 mercrediDiagRet14">
                             <span>Diagramme des retards de 14H00</span>
                             <canvas id="mercredi-n14-chart" class="card"></canvas>
                         </div>
@@ -310,15 +320,15 @@
                             <span>Diagramme des départs prématurés de 12H00</span>
                             <canvas id="jeudi-m-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6">
-                            <sp>Diagramme des départs prématurés de 18H00</sp>
+                        <div class="col l6 jeudiDiagDep18">
+                            <span>Diagramme des départs prématurés de 18H00</span>
                             <canvas id="jeudi-n-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 jeudiDiagRet14">
+                        <div class="col l6 jeudiDiagRet8">
                             <span>Diagramme des retards de 8H00</span>
                             <canvas id="jeudi-m8-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 diagRet14">
+                        <div class="col l6 jeudiDiagRet14">
                             <span>Diagramme des retards de 14H00</span>
                             <canvas id="jeudi-n14-chart" class="card"></canvas>
                         </div>
@@ -331,15 +341,15 @@
                             <span>Diagramme des départs prématurés de 12H00</span>
                             <canvas id="vendredi-m-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6">
-                            <sp>Diagramme des départs prématurés de 18H00</sp>
+                        <div class="col l6 vendrediDiagDep18">
+                            <span>Diagramme des départs prématurés de 18H00</span>
                             <canvas id="vendredi-n-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 vendrediDiagRet14">
+                        <div class="col l6 vendrediDiagRet8">
                             <span>Diagramme des retards de 8H00</span>
                             <canvas id="vendredi-m8-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6">
+                        <div class="col l6 vendrediDiagRet14">
                             <span>Diagramme des retards de 14H00</span>
                             <canvas id="vendredi-n14-chart" class="card"></canvas>
                         </div>
@@ -352,15 +362,15 @@
                             <span>Diagramme des départs prématurés de 12H00</span>
                             <canvas id="samedi-m-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6">
-                            <sp>Diagramme des départs prématurés de 18H00</sp>
+                        <div class="col l6 samediDiagDep18">
+                            <span>Diagramme des départs prématurés de 18H00</span>
                             <canvas id="samedi-n-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 samediDiagRet14">
+                        <div class="col l6 samediDiagRet8">
                             <span>Diagramme des retards de 8H00</span>
                             <canvas id="samedi-m8-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6">
+                        <div class="col l6 samediDiagRet14">
                             <span>Diagramme des retards de 14H00</span>
                             <canvas id="samedi-n14-chart" class="card"></canvas>
                         </div>
@@ -373,11 +383,11 @@
                             <span>Diagramme des départs prématurés de 12H00</span>
                             <canvas id="dimanche-m-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6">
-                            <sp>Diagramme des départs prématurés de 18H00</sp>
+                        <div class="col l6 dimancheDiagDep18">
+                            <span>Diagramme des départs prématurés de 18H00</span>
                             <canvas id="dimanche-n-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6">
+                        <div class="col l6 dimancheDiagRet8">
                             <span>Diagramme des retards de 8H00</span>
                             <canvas id="dimanche-m8-chart" class="card"></canvas>
                         </div>
@@ -1680,8 +1690,8 @@
 
 
                                 /*
-                                * Maintenant on supprime les diagrammes inutiles
-                                * Pour tous les jours de la semaine
+                                * Now we remove all no needed diagrams
+                                * for all days
                                 */
                                 if (data.tabType["lundi"] != null && data.tabType["lundi"] != "1"){
                                     $(".lundiDiagDep12").hide();
@@ -1706,14 +1716,117 @@
                                     $(".dimancheDiagDep12").hide();
                                     $(".dimancheDiagRet14").hide();
                                 }
+
+                                /*
+                                * Now we remove diagrams if we don't need weekends
+                                */
+                                if(data.tabType["samedi"] == null){
+                                    $(".samediDiagDep12").hide();
+                                    $(".samediDiagDep18").hide();
+                                    $(".samediDiagRet14").hide();
+                                    $(".samediDiagRet8").hide();
+                                }if(data.tabType["dimanche"] == null){
+                                    $(".dimancheDiagDep12").hide();
+                                    $(".dimancheDiagDep18").hide();
+                                    $(".dimancheDiagRet14").hide();
+                                    $(".dimancheDiagRet8").hide();
+                                }
+
+                                /*
+                                * Now the last verification is if the datas are null
+                                */
+
+                                var lundiPauseTabDatas = [];
+                                var lundiRetardTabDatas = [];
+                                var lundiRetardPauseTabDatas = [];
+                                var lundiFinTabDatas = [];
+
+                                console.log("For now");
+                                console.log(lundiPauseTabDatas);
+                                console.log("Ending");
+                                // For monday
+                                if(lundiPauseTabDatas.length == 0){
+                                    $(".lundiDiagDep12").hide();
+                                }if(lundiRetardTabDatas.length == 0){
+                                    $(".lundiDiagRet8").hide();
+                                }if(lundiRetardPauseTabDatas.length == 0){
+                                    $(".lundiDiagRet14").hide();
+                                }if(lundiFinTabDatas.length == 0){
+                                    $(".lundiDiagDep18").hide();
+                                }
+                                // For tuesday
+                                if(mardiPauseTabDatas.length == 0){
+                                    $(".mardiDiagDep12").hide();
+                                }if(mardiRetardTabDatas.length == 0){
+                                    $(".mardiDiagRet8").hide();
+                                }if(mardiRetardPauseTabDatas.length == 0){
+                                    $(".mardiDiagRet14").hide();
+                                }if(mardiFinTabDatas.length == 0){
+                                    $(".mardiDiagDep18").hide();
+                                }
+                                // For wednesday
+                                if(mercrediPauseTabDatas.length == 0){
+                                    $(".mercrediDiagDep12").hide();
+                                }if(mercrediRetardTabDatas.length == 0){
+                                    $(".mercrediDiagRet8").hide();
+                                }if(mercrediRetardPauseTabDatas.length == 0){
+                                    $(".mercrediDiagRet14").hide();
+                                }if(mercrediFinTabDatas.length == 0){
+                                    $(".mercrediDiagDep18").hide();
+                                }
+                                // For thursday
+                                if(jeudiPauseTabDatas.length == 0){
+                                    $(".jeudiDiagDep12").hide();
+                                }if(jeudiRetardTabDatas.length == 0){
+                                    $(".jeudiDiagRet8").hide();
+                                }if(jeudiRetardPauseTabDatas.length == 0){
+                                    $(".jeudiDiagRet14").hide();
+                                }if(jeudiFinTabDatas.length == 0){
+                                    $(".jeudiDiagDep18").hide();
+                                }
+                                // For friday
+                                if(vendrediPauseTabDatas.length == 0){
+                                    $(".vendrediDiagDep12").hide();
+                                }if(vendrediRetardTabDatas.length == 0){
+                                    $(".vendrediDiagRet8").hide();
+                                }if(vendrediRetardPauseTabDatas.length == 0){
+                                    $(".vendrediDiagRet14").hide();
+                                }if(vendrediFinTabDatas.length == 0){
+                                    $(".vendrediDiagDep18").hide();
+                                }
+                                // For saturday
+                                if(samediPauseTabDatas.length == 0){
+                                    $(".samediDiagDep12").hide();
+                                }if(samediRetardTabDatas.length == 0){
+                                    $(".samediDiagRet8").hide();
+                                }if(samediRetardPauseTabDatas.length == 0){
+                                    $(".samediDiagRet14").hide();
+                                }if(samediFinTabDatas.length == 0){
+                                    $(".samediDiagDep18").hide();
+                                }
+                                // For Sunday
+                                if(dimanchePauseTabDatas.length == 0){
+                                    $(".dimancheDiagDep12").hide();
+                                }if(dimancheRetardTabDatas.length == 0){
+                                    $(".dimancheDiagRet8").hide();
+                                }if(dimancheRetardPauseTabDatas.length == 0){
+                                    $(".dimancheDiagRet14").hide();
+                                }if(dimancheFinTabDatas.length == 0){
+                                    $(".dimancheDiagDep18").hide();
+                                }
+
+                                // Closing the loading box
+
+                                $('#modal_loading').modal('close');
                             },
                             error: function (msg) {
-                                alert(msg);
+                                alert("Erreur : "+msg);
                             }
                         });
                     },
                     error: function(msg) {
-                        alert("erreur"); }
+                        alert("Erreur : "+msg);
+                    }
                 });
             }
 
@@ -1746,14 +1859,15 @@
             });
 
             $("#submitButton").click(function () {
+
+                $('#modal_loading').modal('open');
+
                 var dateFrom = new Date($("#fromDate").val()).getTime();
                 var dateTo = new Date($("#toDate").val()).getTime();
-                alert(dateFrom+" Vs "+dateTo);
                 if($("#depSelect").val()!=""){
                     if($("#empSelect").val()!=""){
                         if($("#fromDate").val()!=""){
                             if($("#toDate").val()!=""){
-                                alert("condition : "+(dateFrom == dateTo));
                                 if(dateFrom < dateTo || dateFrom == dateTo){
                                     $("#errorContainer").hide();
                                     loadSelectedEmpData($("#empSelect").val());
@@ -1788,6 +1902,7 @@
     <script>
         // On s'attaque aux collapsibles
         $(function () {
+            $(".cl_PersStats").addClass("collapsible_element_active");
             $(".navigation_collapsible").collapsible('open',2);
         });
     </script>

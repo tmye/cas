@@ -1,6 +1,16 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
+    <!-- Modal for ajax loading -->
+    <div id="modal_loading" class="modal ajax_modals">
+        <div class="modal-content">
+            <p class="center">
+                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+            </p>
+        </div>
+    </div>
+
     <!-- hidden input -->
     <div style="display: none">
         <select id="depSelected">
@@ -142,12 +152,16 @@
             //var tab2 = [data,{nom:"Francis",age:21}];
             //console.log(tab2);
             $("#rebootForAll").click(function () {
+                $('#modal_loading').modal('open');
                 $.ajax({
                     type: 'POST',
                     url: "{{ path('syncReboot') }}",
                     data: {"deps":tab},
                     success: function (data) {
                         console.log(data);
+                        // Closing the loading box
+
+                        $('#modal_loading').modal('close');
                     },
                     error: function (msg) {
                         alert("erreur");
@@ -162,6 +176,7 @@
             var tab = [];
             console.log(tab);
             $("#rebootForDep").click(function () {
+                $('#modal_loading').modal('open');
                 var el = $("#depSelected2").val();
                 tab.push(el);
                 console.log(el);
@@ -171,6 +186,9 @@
                     data: {"deps":el},
                     success: function (data) {
                         console.log(data);
+                        // Closing the loading box
+
+                        $('#modal_loading').modal('close');
                     },
                     error: function (msg) {
                         alert("erreur");
@@ -183,6 +201,7 @@
     <script>
         $(function () {
             $("#rebootForMac").click(function () {
+                $('#modal_loading').modal('open');
                 var el = $("#macSelected").val();
                 console.log("Element : "+el);
                 $.ajax({
@@ -191,6 +210,9 @@
                     data: {"mac":el},
                     success: function (data) {
                         console.log(data);
+                        // Closing the loading box
+
+                        $('#modal_loading').modal('close');
                     },
                     error: function (msg) {
                         alert("erreur");

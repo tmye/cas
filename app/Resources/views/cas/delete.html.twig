@@ -1,6 +1,16 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
+    <!-- Modal for ajax loading -->
+    <div id="modal_loading" class="modal ajax_modals">
+        <div class="modal-content">
+            <p class="center">
+                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+            </p>
+        </div>
+    </div>
+
     <!-- hidden input -->
     <div style="display: none">
         <select id="depSelected">
@@ -115,12 +125,16 @@
             });
             console.log(tab);
             $("#deleteForAll").click(function () {
+                $('#modal_loading').modal('open');
                 $.ajax({
                     type: 'POST',
                     url: "{{ path('syncDeleteForAll') }}",
                     data: {"deps":tab},
                     success: function (data) {
                         console.log(data);
+                        // Closing the loading box
+
+                        $('#modal_loading').modal('close');
                     },
                     error: function (msg) {
                         alert("erreur");
@@ -133,6 +147,7 @@
     <script>
         $(function () {
             $("#deleteForMac").click(function () {
+                $('#modal_loading').modal('open');
                 var el = $("#macSelected").val();
                 console.log("Element : "+el);
                 $.ajax({
@@ -141,6 +156,9 @@
                     data: {"mac":el},
                     success: function (data) {
                         console.log(data);
+                        // Closing the loading box
+
+                        $('#modal_loading').modal('close');
                     },
                     error: function (msg) {
                         alert("erreur");

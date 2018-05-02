@@ -1,6 +1,16 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
+    <!-- Modal for ajax loading -->
+    <div id="modal_loading" class="modal ajax_modals">
+        <div class="modal-content">
+            <p class="center">
+                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+            </p>
+        </div>
+    </div>
+
     <!-- hidden input -->
     <div style="display: none">
         <select id="depSelected">
@@ -200,6 +210,9 @@
 
                 var temp = document.getElementById("first_image_input_QBC45");
                 $("#submit_button_1").click(function(){
+
+                    $('#modal_loading').modal('open');
+
                     var formdata = new FormData();
                     var tab = [];
                     $.each($("#depSelected").children(),function (arrayID) {
@@ -224,7 +237,6 @@
                         contentType: false,
                         processData: false,
                         success: function(data) {
-                            console.log(data);
                         },
                         error: function() {
                             alert("Erreur");
@@ -235,7 +247,10 @@
                         type: "POST",
                         data: {"deps":tab},
                         success: function(data) {
-                            alert(data);
+                            alert("OK");
+                            // Closing the loading box
+
+                            $('#modal_loading').modal('close');
                         },
                         error: function() {
                             alert("Erreur");
@@ -249,6 +264,9 @@
                 */
 
                 $("#submit_button_2").click(function(){
+
+                    $('#modal_loading').modal('open');
+
                     var dep = $("#depSelected2").val();
                     var formdata = new FormData();
                     formdata.append("depId",dep);
@@ -271,7 +289,6 @@
                         processData: false,
                         success: function(data) {
                             //console.log(data);
-                            alert(data);
                         },
                         error: function() {
                             alert("Erreur");
@@ -282,7 +299,10 @@
                         type: "POST",
                         data: {"deps":dep},
                         success: function(data) {
-                            alert(data);
+                            alert("OK");
+                            // Closing the loading box
+
+                            $('#modal_loading').modal('close');
                         },
                         error: function() {
                             alert("Erreur");
@@ -297,6 +317,9 @@
                 */
 
                 $("#submit_button_3").click(function(){
+
+                    $('#modal_loading').modal('open');
+
                     var mac = $("#macSelected").val();
                     var formdata = new FormData();
                     formdata.append("macId",mac);
@@ -319,7 +342,6 @@
                         processData: false,
                         success: function(data) {
                             //console.log(data);
-                            alert(data);
                         },
                         error: function() {
                             alert("Erreur");
@@ -330,7 +352,10 @@
                         type: "POST",
                         data: {"mac":mac},
                         success: function(data) {
-                            alert(data);
+                            alert("OK");
+                            // Closing the loading box
+
+                            $('#modal_loading').modal('close');
                         },
                         error: function() {
                             alert("Erreur");
@@ -351,9 +376,9 @@
                                 var res = JSON.parse(data);
                                 console.log(data);
                                 console.log(res[0]);
-                                $("#first_image_3").attr("src","{{ asset("pub_covers/") }}"+res[0]);
-                                $("#second_image_3").attr("src","{{ asset("pub_covers/") }}"+res[1]);
-                                $("#third_image_3").attr("src","{{ asset("pub_covers/") }}"+res[2]);
+                                $("#first_image_3").attr("src","{# asset("pub_covers/") #}"+res[0]);
+                                $("#second_image_3").attr("src","{# asset("pub_covers/") #}"+res[1]);
+                                $("#third_image_3").attr("src","{# asset("pub_covers/") #}"+res[2]);
                             }else{
                                 alert("Aucune image pour cette machine !");
                             }

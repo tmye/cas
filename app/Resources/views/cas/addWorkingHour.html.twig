@@ -746,6 +746,14 @@
             });
         });
     </script>
+    <script>
+        // On s'attaque aux collapsibles
+        $(function () {
+            $(".cl_WH").addClass("collapsible_element_active");
+            $(".navigation_collapsible").collapsible('open',6);
+        });
+    </script>
+
 {% endblock %}
 
 {% block stylesheets %}

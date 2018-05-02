@@ -36,15 +36,8 @@ class HomeStatsController extends Controller
      */
     public function tested(Request $request)
     {
-        $permissionsData = $this->permissionSelect();
-        echo "Number of permissions : ".$permissionsData[1]."<br>";
-        echo ":::::::::::::TABLEAU TRIE::::::::::::::::::<br>";
-        $tabb = array(3,1,5,4,0,1,6);
-        $tabbTrie = $this->trier($tabb);
-        var_dump($tabbTrie);
-        echo "<br><br>";
-        echo $tabbTrie[0];
-
+        $retour = $this->jourSemaine("2018-05-02");
+        var_dump($retour);
         return new Response("<br>OK");
     }
 
@@ -79,7 +72,7 @@ class HomeStatsController extends Controller
      */
     public function homeStatsAction(Request $request)
     {
-        $jour = "2018/03/14";
+        $jour = date("Y").'-'.date("m").'-'.date("d");
         $tab = $this->jourSemaine($jour);
         //echo "<br><br> Jour : $tab[0] <br><br>";
         $timeFrom = strtotime($tab[2]."00:00:00");
@@ -113,10 +106,10 @@ class HomeStatsController extends Controller
         $clockinR = $cr->findAll();
         // On boucle sur les jours sélectionnés
         $i=0;
-        $interval = 1800; // 30 Minuites
+        $interval = 3000; // 30 Minuites
 
         // On récupère tous les employés
-        $listEmp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
+        $listEmp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeSafe();
         // On boucle sur les jours
         for ($cpt=0;$cpt<$tab[0];$cpt++){
             $theDay = date('N',$nowTime);
@@ -130,119 +123,112 @@ class HomeStatsController extends Controller
                 $type = $empWH[$theDay][0]["type"];
                 $name = $emp->getSurname()." ".$emp->getMiddleName()." ".$emp->getLastName();
                 $dep = $emp->getDepartement()->getName();
+
+                // Pour le calcul d'un depart prématuré de pause,Calculons l'intervalle
+                $heureDebutNormal = $empWH[$theDay][0]["beginHour"];
+                $heureFinNormal = $empWH[$theDay][0]["endHour"];
+                $heureDebutNormalPause = $empWH[$theDay][0]["pauseBeginHour"];
+                $heureFinNormalPause = $empWH[$theDay][0]["pauseEndHour"];
+
+                $beginHourExploded = explode(":",$heureDebutNormal);
+                $endHourExploded = explode(":",$heureFinNormal);
+                $pauseBeginHourExploded = explode(":",$heureDebutNormalPause);
+                $pauseEndHourExploded = explode(":",$heureFinNormalPause);
+
+
+                if(sizeof($pauseBeginHourExploded)>1){
+                    $pauseBeginHourInMinutes = (((int)$pauseBeginHourExploded[0])*60)+((int)$pauseBeginHourExploded[1]);
+                    $pauseEndHourInMinutes = (((int)$pauseEndHourExploded[0])*60)+((int)$pauseEndHourExploded[1]);
+
+                    $interval_pause = (($pauseEndHourInMinutes - $pauseBeginHourInMinutes)/2)*60;
+                    $heureNormaleArrivePause = $pauseEndHourInMinutes*60;
+                    $heureNormaleDepartPause = $pauseBeginHourInMinutes*60;
+                }else{
+                    $interval_pause = 0;
+                    $heureNormaleArrivePause = 0;
+                    $heureNormaleDepartPause = 0;
+                }
+
+                if(sizeof($beginHourExploded)>1){
+                    $beginHourInMinutes = (((int)$beginHourExploded[0])*60)+((int)$beginHourExploded[1]);
+                    $endHourInMinutes = (((int)$endHourExploded[0])*60)+((int)$endHourExploded[1]);
+                    $heureNormaleArrive = $beginHourInMinutes*60;
+                    $heureNormaleDepart = $endHourInMinutes*60;
+                }else{
+                    $heureNormaleArrive = 0;
+                    $heureNormaleDepart = 0;
+                }
+
                 if(!$cr->present($emp,$nowTime)){
                     $absences++;
                 }
 
-                switch ($type){
-                    case "1":
-                        $retardDiff = $cr->retard($emp,$nowTime,$interval);
-                        if($retardDiff != null){
-                            $retards++;
-                            $sommeRetards +=$retardDiff;
-                            $tempsPerdusRetards += $retardDiff/(60);
+                if ($type == "1" || $type == "2") {
+                    $retardDiff = $cr->retard($emp,$nowTime,$interval,$heureNormaleArrive);
+                    if ($retardDiff != null) {
+                        $retards++;
+                        $sommeRetards += $retardDiff[0];
+                        $tempsPerdusRetards += $retardDiff[0] / (60);
 
-                            if($this->exist($tabClassementRetard,$emp->getId())){
-                                $lastNumber = $tabClassementRetard[$emp->getId()]["nombre"];
-                                $tabClassementRetard[$emp->getId()] = array("name"=>$name,"dep"=>$dep,"nombre"=>$lastNumber+1,"cumul"=>$tempsPerdusRetards);
-                            }else{
-                                $tabClassementRetard[$emp->getId()] = array("name"=>$name,"dep"=>$dep,"nombre"=>1,"cumul"=>$tempsPerdusRetards);
-                            }
+                        if ($this->exist($tabClassementRetard, $emp->getId())) {
+                            $lastNumber = $tabClassementRetard[$emp->getId()]["nombre"];
+                            $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $tempsPerdusRetards);
+                        } else {
+                            $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusRetards);
                         }
-                        $departDiff = $cr->departPremature($emp,$nowTime,$interval);
-                        if($departDiff != null){
-                            $nowDate = date('d/m/Y',$nowTime);
-                            $departs++;
-                            $sommeDeparts +=$departDiff[0];
-                            $tempsPerdusDepartsFin = ($departDiff[0])/(60);
-                            // Pour prendre en compte les departs de 17h
-                            $tempsPerdusDeparts+=$tempsPerdusDepartsFin;
-                            $ct = date('H:i',$departDiff[1]);
-                            $tabDeparts[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsFin);
+                    }
+                    $retardPauseDiff = $cr->retardPause($emp,$nowTime,$interval_pause,$heureNormaleArrivePause);
+                    if ($retardPauseDiff != null) {
+                        $retards++;
+                        $sommeRetards += $retardPauseDiff[0];
+                        $tempsPerdusRetards += $retardPauseDiff[0] / (60);
 
-                            if($this->exist($tabClassementDepart,$emp->getId())){
-                                $lastNumber = $tabClassementDepart[$emp->getId()]["nombre"];
-                                $tabClassementDepart[$emp->getId()] = array("name"=>$name,"dep"=>$dep,"nombre"=>$lastNumber+1,"cumul"=>$tempsPerdusDeparts);
-                            }else{
-                                $tabClassementDepart[$emp->getId()] = array("name"=>$name,"dep"=>$dep,"nombre"=>1,"cumul"=>$tempsPerdusDeparts);
-                            }
+                        if ($this->exist($tabClassementRetard, $emp->getId())) {
+                            $lastNumber = $tabClassementRetard[$emp->getId()]["nombre"];
+                            $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $tempsPerdusRetards);
+                        } else {
+                            $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusRetards);
                         }
-                        $departPauseDiff = $cr->departPausePremature($emp,$nowTime,$interval);
-                        if($departPauseDiff[0] != null){
-                            $i++;
-                            $nowDate = date('d/m/Y',$nowTime);
-                            $departsPause++;
-                            // Pour prendre en compte les departs de 12 h aussi
-                            $departs++;
-                            $sommeDepartsPause +=$departPauseDiff[0];
-                            $tempsPerdusDepartsPause = ($departPauseDiff[0])/(60);
-                            // Pour prendre en compte les departs de 12h aussi
-                            $tempsPerdusDeparts +=$tempsPerdusDepartsPause;
-                            $ct = date('H:i',$departPauseDiff[1]);
-                            $tabDepartsPause[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsPause);
+                    }
+                    $departDiff = $cr->departPremature($emp, $nowTime, $interval,$heureNormaleDepart);
+                    if ($departDiff != null) {
+                        $nowDate = date('d/m/Y', $nowTime);
+                        $departs++;
+                        $sommeDeparts += $departDiff[0];
+                        $tempsPerdusDepartsFin = ($departDiff[0]) / (60);
+                        // Pour prendre en compte les departs de 17h
+                        $tempsPerdusDeparts += $tempsPerdusDepartsFin;
+                        $ct = date('H:i', $departDiff[1]);
+                        $tabDeparts[] = array("date" => $nowDate, "heureDepart" => $ct, "temps" => $tempsPerdusDepartsFin);
 
-                            if($this->exist($tabClassementDepart,$emp->getId())){
-                                $lastNumber = $tabClassementDepart[$emp->getId()]["nombre"];
-                                $tabClassementDepart[$emp->getId()] = array("name"=>$name,"dep"=>$dep,"nombre"=>$lastNumber+1,"cumul"=>$tempsPerdusDeparts);
-                            }else{
-                                $tabClassementDepart[$emp->getId()] = array("name"=>$name,"dep"=>$dep,"nombre"=>1,"cumul"=>$tempsPerdusDeparts);
-                            }
+                        if ($this->exist($tabClassementDepart, $emp->getId())) {
+                            $lastNumber = $tabClassementDepart[$emp->getId()]["nombre"];
+                            $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $tempsPerdusDeparts);
+                        } else {
+                            $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusDeparts);
                         }
-                        break;
-                    case "2":
-                        $retardDiff = $cr->retard($emp,$nowTime,$interval);
-                        if($retardDiff != null){
-                            $retards++;
-                            $sommeRetards +=$retardDiff;
-                            $tempsPerdusRetards += $retardDiff/(60);
+                    }
+                    $departPauseDiff = $cr->departPausePremature($emp, $nowTime, $interval_pause,$heureNormaleDepartPause);
+                    if ($departPauseDiff[0] != null) {
+                        $i++;
+                        $nowDate = date('d/m/Y', $nowTime);
+                        $departsPause++;
+                        // Pour prendre en compte les departs de 12 h aussi
+                        $departs++;
+                        $sommeDepartsPause += $departPauseDiff[0];
+                        $tempsPerdusDepartsPause = ($departPauseDiff[0]) / (60);
+                        // Pour prendre en compte les departs de 12h aussi
+                        $tempsPerdusDeparts += $tempsPerdusDepartsPause;
+                        $ct = date('H:i', $departPauseDiff[1]);
+                        $tabDepartsPause[] = array("date" => $nowDate, "heureDepart" => $ct, "temps" => $tempsPerdusDepartsPause);
 
-                            if($this->exist($tabClassementRetard,$emp->getId())){
-                                $lastNumber = $tabClassementRetard[$emp->getId()]["nombre"];
-                                $tabClassementRetard[$emp->getId()] = array("name"=>$name,"dep"=>$dep,"nombre"=>$lastNumber+1,"cumul"=>$tempsPerdusRetards);
-                            }else{
-                                $tabClassementRetard[$emp->getId()] = array("name"=>$name,"dep"=>$dep,"nombre"=>1,"cumul"=>$tempsPerdusRetards);
-                            }
+                        if ($this->exist($tabClassementDepart, $emp->getId())) {
+                            $lastNumber = $tabClassementDepart[$emp->getId()]["nombre"];
+                            $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $tempsPerdusDeparts);
+                        } else {
+                            $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusDeparts);
                         }
-                        $departDiff = $cr->departPremature($emp,$nowTime,$interval);
-                        if($departDiff != null){
-                            $nowDate = date('d/m/Y',$nowTime);
-                            $departs++;
-                            $sommeDeparts +=$departDiff[0];
-                            $tempsPerdusDepartsFin = ($departDiff[0])/(60);
-                            // Pour prendre en compte les departs de 17h
-                            $tempsPerdusDeparts +=$tempsPerdusDepartsFin;
-                            $ct = date('H:i',$departDiff[1]);
-                            $tabDeparts[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsFin);
-
-                            if($this->exist($tabClassementDepart,$emp->getId())){
-                                $lastNumber = $tabClassementDepart[$emp->getId()]["nombre"];
-                                $tabClassementDepart[$emp->getId()] = array("name"=>$name,"dep"=>$dep,"nombre"=>$lastNumber+1,"cumul"=>$tempsPerdusDeparts);
-                            }else{
-                                $tabClassementDepart[$emp->getId()] = array("name"=>$name,"dep"=>$dep,"nombre"=>1,"cumul"=>$tempsPerdusDeparts);
-                            }
-                        }
-                        $departPauseDiff = $cr->departPausePremature($emp,$nowTime,$interval);
-                        if($departPauseDiff[0] != null){
-                            $i++;
-                            $nowDate = date('d/m/Y',$nowTime);
-                            $departsPause++;
-                            // Pour prendre en compte les departs de 12 h aussi
-                            $departs++;
-                            $sommeDepartsPause +=$departPauseDiff[0];
-                            $tempsPerdusDepartsPause = ($departPauseDiff[0])/(60);
-                            // Pour prendre en compte les departs de 12 h aussi
-                            $tempsPerdusDeparts +=$tempsPerdusDepartsPause;
-                            $ct = date('H:i',$departPauseDiff[1]);
-                            $tabDepartsPause[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsPause);
-
-                            if($this->exist($tabClassementDepart,$emp->getId())){
-                                $lastNumber = $tabClassementDepart[$emp->getId()]["nombre"];
-                                $tabClassementDepart[$emp->getId()] = array("name"=>$name,"dep"=>$dep,"nombre"=>$lastNumber+1,"cumul"=>$tempsPerdusDeparts);
-                            }else{
-                                $tabClassementDepart[$emp->getId()] = array("name"=>$name,"dep"=>$dep,"nombre"=>1,"cumul"=>$tempsPerdusDeparts);
-                            }
-                        }
-                        break;
+                    }
                 }
             }
             // On incrémente la date d'un jour

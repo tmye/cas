@@ -12,4 +12,11 @@ use Doctrine\ORM\EntityRepository;
  */
 class WorkingHoursRepository extends EntityRepository
 {
+    public function safeWorkingHour(){
+        $qb = $this->createQueryBuilder('w');
+        $qb->where('w.code != :code');
+        $qb->setParameter('code',"Default");
+
+        return $qb->getQuery()->getResult();
+    }
 }

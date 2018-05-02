@@ -13,7 +13,7 @@
                         <li>
                             <div class="collapsible-header active">Retards<span class="badge teal lighten-2 white-text spanRetard"></span></div>
                             <div class="collapsible-body center">
-                                <a href="#" class="fa fa-th-list fa-4x red-text text-lighten-3"></a>
+                                <a href="{{ path("depStat") }}" class="fa fa-th-list fa-4x red-text text-lighten-3"></a>
                             </div>
                         </li>
                     </ul>
@@ -23,7 +23,7 @@
                         <li>
                             <div class="collapsible-header active">Départs<span class="badge teal lighten-2 white-text spanDepart"></span></div>
                             <div class="collapsible-body center">
-                                <a href="#" class="fa fa-paper-plane fa-4x teal-text text-lighten-3"></a>
+                                <a href="{{ path("depStat") }}" class="fa fa-paper-plane fa-4x teal-text text-lighten-3"></a>
                             </div>
                         </li>
                     </ul>
@@ -33,7 +33,7 @@
                         <li>
                             <div class="collapsible-header active">Permissions<span class="badge teal lighten-2 white-text spanPermission"></span></div>
                             <div class="collapsible-body center">
-                                <a href="#" class="fa fa-th-list fa-4x grey-text text-lighten-3"></a>
+                                <a href="{{ path("viewPermission") }}" class="fa fa-th-list fa-4x grey-text text-lighten-3"></a>
                             </div>
                         </li>
                     </ul>
@@ -43,7 +43,7 @@
                         <li>
                             <div class="collapsible-header active">Absences<span class="badge teal lighten-2 white-text spanAbsence"></span></div>
                             <div class="collapsible-body center">
-                                <a href="#" class="fa fa-th-list fa-4x blue-text text-lighten-3"></a>
+                                <a href="{{ path("depStat") }}" class="fa fa-th-list fa-4x blue-text text-lighten-3"></a>
                             </div>
                         </li>
                     </ul>
@@ -77,6 +77,7 @@
             type: 'POST',
             url: "homeStats",
             success: function (data) {
+                console.log(data);
                 //console.log(data);
                 $(".spanRetard").text(data.retards);
                 $(".spanDepart").text(data.departs);
@@ -105,7 +106,7 @@
                 });
 
                 $.each(data.classementRetard,function (arrayID) {
-                    $(".info_container_departs").append("" +
+                    $(".info_container_retards").append("" +
                         "<div class='valignwrapper' style='padding-bottom: 30px'>\n" +
                         "    <i class='fa fa-user top'></i>\n" +
                         "    <span class='top user-info-home'>\n" +
