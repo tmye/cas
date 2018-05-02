@@ -23,7 +23,7 @@ input
 
 .collapsible-body-perso
 {
-    background-color: rgba(0,100,155,1) !important;
+    background-color: rgba(0,100,155,0) !important;
 }
 .collapsible-body-perso a
 {
@@ -141,7 +141,7 @@ html
     width: 200px !important;
 }
 #menu-deroulant li
- {
+{
     width: 200px !important;
 }
 .badge
@@ -251,8 +251,8 @@ html
 .icons
 {
     text-align: center;
-    /*background-color: rgba(128,132,133,0.69);*/
-    background-color: teal;
+    background-color: rgba(180,180,180,0.1);
+    /*background-color: teal;*/
     color: #fff;
     padding: 5px;
     width: 25px;
@@ -329,3 +329,81 @@ html
     width: 150px !important;
     height: 150px !important;
 }
+
+/* materialize pre-init */
+
+.l10 {
+    padding: 0!important;
+}
+
+th {
+    border-radius: 0!important;
+    color: #444;
+    background-color: #c9c9c9;
+}
+
+/* customized menu links */
+
+.side-nav {
+    width: 250px!important;
+}
+
+.side-nav .navigation_collapsible, .side-nav .collapsible-header {
+    border-bottom: rgba(180,180,180, 0.5) solid 0.3px;
+}
+
+.row .col.l10 {
+    width:100%!important;
+}
+
+.side-nav a {
+
+    padding: 0!important;
+}
+
+.collapsible-header {
+}
+
+.navigation_collapsible  .collapsible-header:not(.singleton) {
+    display: block;
+    /*padding: 8px 4px!important;*/
+    background-color: rgba(180,180,180, 0.05);
+    font-size: 14px!important;
+    font-weight: bold;
+    /*color: rgba(255, 255, 255, 0.7);*/
+    color: rgba(255, 255, 255, 0.7)!important;
+    padding: 1em 2em;
+}
+
+.navigation_collapsible .collapsible-header.singleton {
+    padding: 0 2em;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7)!important;
+    font-size: 14px!important;
+    font-weight: bold;
+}
+
+.navigation_collapsible .collapsible-header.singleton a  {
+    color: rgba(255, 255, 255, 0.7)!important;
+}
+
+
+.navigation_collapsible  .collapsible-body {
+
+}
+
+
+.navigation_collapsible  .collapsible-links {
+    font-weight: 300;
+    font-size: 13px!important;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0 2.3em!important;
+}
+
+
+div.user {
+    padding: 8px 4px!important;
+}
+
+
+
