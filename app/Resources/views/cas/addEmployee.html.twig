@@ -3,8 +3,9 @@
 {% block body %}
     <div class="row">
         <div class="col l12">
-            <h5>Nouvel Employé</h5>
+            <h5 class="page-title">Nouvel Employé</h5>
 
+            {{ dump(whList) }}
 
             <div class="row">
                 <div class="col l12">
@@ -24,6 +25,9 @@
                                 <div class="row">
                                     <div class="col l12">
                                             <span class="detailSpan" style="display: none">Détails de l'heure de travail sélectionnée</span>
+
+                                        <!-- Past here -->
+
                                         {% for wh in whList %}
                                             <table class="bordered striped centered hideTable" id="{{ wh.workingHour.code }}" style="display: none">
                                                 <thead>
@@ -136,6 +140,9 @@
                                                 </tbody>
                                             </table>
                                         {% endfor %}
+
+
+
                                         {{ form_start(form) }}
                                         <div class="row">
                                             <div class="input-field col s4">
