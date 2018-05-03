@@ -142,6 +142,8 @@
                         $('#modal_loading').modal('close');
                     },
                     error: function() {
+                        // Closing the loading box
+                        $('#modal_loading').modal('close');
                         alert("Erreur");
                     }
                 });

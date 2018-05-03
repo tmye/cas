@@ -89,47 +89,116 @@
                 console.log(data.classementDepart);
 
                 var cpt =0;
-                $.each(data.classementDepart,function (arrayID) {
-                    $(".info_container_departs").append("" +
-                        "<div class='valignwrapper' style='padding-bottom: 30px'>\n" +
-                        "    <i class='fa fa-user top'></i>\n" +
-                        "    <span class='top user-info-home'>\n" +
-                        "        <span>"+data.classementDepart[arrayID]["name"]+"</span>\n" +
-                        "        <br>\n" +
-                        "        <span>"+data.classementDepart[arrayID]["cumul"]+"</span> min\n" +
-                        "        <br>\n" +
-                        "        <span>"+data.classementDepart[arrayID]["dep"]+"</span>\n" +
-                        "    </span>\n" +
-                        "</div>");
-                    console.log("Index : "+arrayID);
-                    cpt++;
-                });
-
-                $.each(data.classementRetard,function (arrayID) {
-                    $(".info_container_retards").append("" +
-                        "<div class='valignwrapper' style='padding-bottom: 30px'>\n" +
-                        "    <i class='fa fa-user top'></i>\n" +
-                        "    <span class='top user-info-home'>\n" +
-                        "        <span>"+data.classementRetard[arrayID]["name"]+"</span>\n" +
-                        "        <br>\n" +
-                        "        <span>"+data.classementRetard[arrayID]["cumul"]+"</span> min\n" +
-                        "        <br>\n" +
-                        "        <span>"+data.classementRetard[arrayID]["dep"]+"</span>\n" +
-                        "    </span>\n" +
-                        "</div>");
-                    console.log("Index : "+arrayID);
-                    cpt++;
-                });
 
                 console.log("taille du tableau de retards : "+tailleClassRet);
                 console.log("taille du tableau de departs : "+tailleClassDep);
 
-                // On vérifie s'il ya au moins 3 éléments avant de boucler
+                // First of all we must convert the json object to an array
+                var tabR = [];
+                $.each(data.classementRetard,function (arrayID) {
+                    tabR.push([data.classementRetard[arrayID]["name"],data.classementRetard[arrayID]["cumul"],data.classementRetard[arrayID]["dep"]]);
+                });
+                var tabD = [];
+                $.each(data.classementDepart,function (arrayID) {
+                    tabD.push([data.classementDepart[arrayID]["name"],data.classementDepart[arrayID]["cumul"],data.classementDepart[arrayID]["dep"]]);
+                });
 
-                if(tailleClassDep >=3){
-                    for (var i=0;i<3;i++){
-
+                // Sorting the data to obtain just three entries
+                var tempTab = [];
+                for(var i=0;i<(tabR.length-1);i++){
+                    for(var j=0;j<(tabR.length-1);j++){
+                        if(tabR[j+1][1] > tabR[j][1]){
+                            tempTab = [tabR[j+1][0],tabR[j+1][1],tabR[j+1][2]];
+                            tabR[j+1] = [tabR[j][0],tabR[j][1],tabR[j][2]];
+                            tabR[j] = tempTab;
+                        }
                     }
+
+                }
+                var tempTab = [];
+                for(var i=0;i<(tabD.length-1);i++){
+                    for(var j=0;j<(tabD.length-1);j++){
+                        if(tabD[j+1][1] > tabD[j][1]){
+                            tempTab = [tabD[j+1][0],tabD[j+1][1],tabD[j+1][2]];
+                            tabD[j+1] = [tabD[j][0],tabD[j][1],tabD[j][2]];
+                            tabD[j] = tempTab;
+                        }
+                    }
+
+                }
+
+                // Now that we have all tabs sorted,we can now show datas
+                // But before that we must verify if datas >= 3
+
+                console.log("§§§§§§§§§§§§§");
+                console.log(tabR[0][0]);
+                console.log("§§§§§§§§§§§§§");
+
+                if(tabR.length >= 3){
+                    for (var i=0;i<3;i++){
+                        $(".info_container_retards").append("" +
+                            "<div class='valignwrapper' style='padding-bottom: 30px'>\n" +
+                            "    <i class='fa fa-user top'></i>\n" +
+                            "    <span class='top user-info-home'>\n" +
+                            "        <span>"+tabR[i][0]+"</span>\n" +
+                            "        <br>\n" +
+                            "        <span>"+tabR[i][1]+"</span> min\n" +
+                            "        <br>\n" +
+                            "        <span>"+tabR[i][2]+"</span>\n" +
+                            "    </span>\n" +
+                            "</div>"
+                        );
+                    }
+                }else {
+                    $.each(tabR,function (arrayID) {
+                        $(".info_container_retards").append("" +
+                            "<div class='valignwrapper' style='padding-bottom: 30px'>\n" +
+                            "    <i class='fa fa-user top'></i>\n" +
+                            "    <span class='top user-info-home'>\n" +
+                            "        <span>"+tabR[arrayID][0]+"</span>\n" +
+                            "        <br>\n" +
+                            "        <span>"+tabR[arrayID][1]+"</span> min\n" +
+                            "        <br>\n" +
+                            "        <span>"+tabR[arrayID][2]+"</span>\n" +
+                            "    </span>\n" +
+                            "</div>"
+                        );
+                        console.log("Index : "+arrayID);
+                        cpt++;
+                    });
+                }
+
+                if(tabD >= 3){
+                    for (var i=0;i<3;i++){
+                        $(".info_container_departs").append("" +
+                            "<div class='valignwrapper' style='padding-bottom: 30px'>\n" +
+                            "    <i class='fa fa-user top'></i>\n" +
+                            "    <span class='top user-info-home'>\n" +
+                            "        <span>"+tabD[i][0]+"</span>\n" +
+                            "        <br>\n" +
+                            "        <span>"+tabD[i][1]+"</span> min\n" +
+                            "        <br>\n" +
+                            "        <span>"+tabD[i][2]+"</span>\n" +
+                            "    </span>\n" +
+                            "</div>"
+                        );
+                    }
+                }else {
+                    $.each(tabD,function (arrayID) {
+                        $(".info_container_departs").append("" +
+                            "<div class='valignwrapper' style='padding-bottom: 30px'>\n" +
+                            "    <i class='fa fa-user top'></i>\n" +
+                            "    <span class='top user-info-home'>\n" +
+                            "        <span>"+tabD[arrayID][0]+"</span>\n" +
+                            "        <br>\n" +
+                            "        <span>"+tabD[arrayID][1]+"</span> min\n" +
+                            "        <br>\n" +
+                            "        <span>"+tabD[arrayID][2]+"</span>\n" +
+                            "    </span>\n" +
+                            "</div>");
+                        console.log("Index : "+arrayID);
+                        cpt++;
+                    });
                 }
             },
             error: function(msg) {

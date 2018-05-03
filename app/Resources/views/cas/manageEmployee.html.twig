@@ -109,6 +109,8 @@
                         $('#modal_loading').modal('close');
                     },
                     error: function (msg) {
+                        // Closing the loading box
+                        $('#modal_loading').modal('close');
                         alert("erreur");
                         console.log(msg);
                     }

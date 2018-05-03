@@ -404,7 +404,7 @@ class EmployeController extends Controller {
 
     protected function returnWorkingHoursAction()
     {
-        $whList = $this->getDoctrine()->getManager()->getRepository("AppBundle:WorkingHours")->findAll();
+        $whList = $this->getDoctrine()->getManager()->getRepository("AppBundle:WorkingHours")->safeWorkingHour();
         $tab = array();
 
         foreach ($whList as $wh){
