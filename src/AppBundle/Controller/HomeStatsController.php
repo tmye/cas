@@ -172,7 +172,8 @@ class HomeStatsController extends Controller
 
                         if ($this->exist($tabClassementRetard, $emp->getId())) {
                             $lastNumber = $tabClassementRetard[$emp->getId()]["nombre"];
-                            $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $tempsPerdusRetards);
+                            $lastCumul = $tabClassementRetard[$emp->getId()]["cumul"];
+                            $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusRetards);
                         } else {
                             $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusRetards);
                         }
@@ -185,7 +186,8 @@ class HomeStatsController extends Controller
 
                         if ($this->exist($tabClassementRetard, $emp->getId())) {
                             $lastNumber = $tabClassementRetard[$emp->getId()]["nombre"];
-                            $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $tempsPerdusRetards);
+                            $lastCumul = $tabClassementRetard[$emp->getId()]["cumul"];
+                            $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusRetards);
                         } else {
                             $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusRetards);
                         }
@@ -195,15 +197,12 @@ class HomeStatsController extends Controller
                         $nowDate = date('d/m/Y', $nowTime);
                         $departs++;
                         $sommeDeparts += $departDiff[0];
-                        $tempsPerdusDepartsFin = ($departDiff[0]) / (60);
-                        // Pour prendre en compte les departs de 17h
-                        $tempsPerdusDeparts += $tempsPerdusDepartsFin;
-                        $ct = date('H:i', $departDiff[1]);
-                        $tabDeparts[] = array("date" => $nowDate, "heureDepart" => $ct, "temps" => $tempsPerdusDepartsFin);
+                        $tempsPerdusDeparts += ($departDiff[0]) / (60);
 
                         if ($this->exist($tabClassementDepart, $emp->getId())) {
                             $lastNumber = $tabClassementDepart[$emp->getId()]["nombre"];
-                            $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $tempsPerdusDeparts);
+                            $lastCumul = $tabClassementDepart[$emp->getId()]["cumul"];
+                            $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusDeparts);
                         } else {
                             $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusDeparts);
                         }
@@ -213,18 +212,14 @@ class HomeStatsController extends Controller
                         $i++;
                         $nowDate = date('d/m/Y', $nowTime);
                         $departsPause++;
-                        // Pour prendre en compte les departs de 12 h aussi
                         $departs++;
                         $sommeDepartsPause += $departPauseDiff[0];
-                        $tempsPerdusDepartsPause = ($departPauseDiff[0]) / (60);
-                        // Pour prendre en compte les departs de 12h aussi
-                        $tempsPerdusDeparts += $tempsPerdusDepartsPause;
-                        $ct = date('H:i', $departPauseDiff[1]);
-                        $tabDepartsPause[] = array("date" => $nowDate, "heureDepart" => $ct, "temps" => $tempsPerdusDepartsPause);
+                        $tempsPerdusDeparts += ($departPauseDiff[0]) / (60);
 
                         if ($this->exist($tabClassementDepart, $emp->getId())) {
                             $lastNumber = $tabClassementDepart[$emp->getId()]["nombre"];
-                            $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $tempsPerdusDeparts);
+                            $lastCumul = $tabClassementDepart[$emp->getId()]["cumul"];
+                            $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusDeparts);
                         } else {
                             $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusDeparts);
                         }

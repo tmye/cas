@@ -108,11 +108,12 @@
                     success: function (data) {
                         console.log(data);
                         // Closing the loading box
-
                         $('#modal_loading').modal('close');
                     },
                     error: function (msg) {
                         alert("erreur");
+                        // Closing the loading box
+                        $('#modal_loading').modal('close');
                         console.log(msg);
                     }
                 });

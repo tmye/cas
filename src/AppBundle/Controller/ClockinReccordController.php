@@ -448,16 +448,16 @@ class ClockinReccordController extends Controller
 
         if(sizeof($emp)>0){
             if(sizeof($emp)==1) {
-                $empTab[]=$emp->getId();
+                $empTab[]=$emp[0]->getId();
 
-                $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
+                $empWH = json_decode($emp[0]->getWorkingHour()->getWorkingHour(),true);
 
                 $heureDebutNormal = $empWH[$day][0]["beginHour"];
                 $heureDebutPauseNormal = $empWH[$day][0]["pauseBeginHour"];
                 $heureFinNormal = $empWH[$day][0]["endHour"];
                 $heureFinPauseNormal = $empWH[$day][0]["pauseEndHour"];
 
-                $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
+                $empWH = json_decode($emp[0]->getWorkingHour()->getWorkingHour(),true);
                 $type = $empWH[$day][0]["type"];
 
                 // Pour le calcul d'un depart prématuré de pause,Calculons l'intervalle
@@ -520,7 +520,7 @@ class ClockinReccordController extends Controller
 
                 // On récupère les données appartenant au département sélectionné
 
-                $tempData = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empHistory($emp->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
+                $tempData = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empHistory($emp[0]->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
 
                 //Maintenant il faut éliminer les doublons
                 $don[] = $this->elimineDoublon($tempData,$day,$request);

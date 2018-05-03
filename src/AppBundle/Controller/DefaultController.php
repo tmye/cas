@@ -32,7 +32,7 @@ class DefaultController extends Controller
             echo "<br>".$perm->getDescription()."<br>";
         }*/
 
-        return new Response(strtotime("2018-05-01 10:04:00"));
+        return new Response(strtotime("2018-05-03 21:45:00"));
     }
 
     /**
@@ -426,7 +426,7 @@ class DefaultController extends Controller
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
             }
-            $listDep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            $listDep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAllSafe();
             return $this->render('cas/historique.html.twig',array('listDep'=>$listDep));
         }else{
             return $this->redirectToRoute("login");

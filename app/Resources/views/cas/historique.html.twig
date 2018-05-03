@@ -134,10 +134,11 @@
         }
         $(function () {
             $("#historySearchButton").click(function () {
-                $('#modal_loading').modal('open');
                 //alert($("#selectedDate").val());
                 if($("#selectedDate").val() != ""){
                     if($("#selectedDep").val() != ""){
+                        // Modal open
+                        $('#modal_loading').modal('open');
                         $("#errorContainer").hide();
                         $("#rowsContainer").html("");
                         $.ajax({
@@ -211,11 +212,11 @@
                                                 );
                                                 if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
                                                     $(".redSpan_2_"+i).css("color","red");
-                                                }else if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
+                                                }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
                                                     $(".redSpanPauseBegin_2_"+i).css("color","red");
-                                                }else if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
+                                                }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
                                                     $(".redSpanPauseEnd_2_"+i).css("color","red");
-                                                }else if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
+                                                }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
                                                     $(".redSpanEnd_2_"+i).css("color","red");
                                                 }
                                                 break;
@@ -243,11 +244,13 @@
                                 });
 
                                 // Closing the loading box
-
                                 $('#modal_loading').modal('close');
                             },
                             error: function(msg) {
-                                alert("erreur"); }
+                                // Closing the loading box
+                                $('#modal_loading').modal('close');
+                                alert("erreur");
+                            }
                         });
                     }else {
                         $("#errorContainer").show();

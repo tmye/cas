@@ -1820,6 +1820,8 @@
                                 $('#modal_loading').modal('close');
                             },
                             error: function (msg) {
+                                // Closing the loading box
+                                $('#modal_loading').modal('close');
                                 alert("Erreur : "+msg);
                             }
                         });
@@ -1860,7 +1862,6 @@
 
             $("#submitButton").click(function () {
 
-                $('#modal_loading').modal('open');
 
                 var dateFrom = new Date($("#fromDate").val()).getTime();
                 var dateTo = new Date($("#toDate").val()).getTime();
@@ -1869,6 +1870,7 @@
                         if($("#fromDate").val()!=""){
                             if($("#toDate").val()!=""){
                                 if(dateFrom < dateTo || dateFrom == dateTo){
+                                    $('#modal_loading').modal('open');
                                     $("#errorContainer").hide();
                                     loadSelectedEmpData($("#empSelect").val());
                                 }else {

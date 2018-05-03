@@ -31,7 +31,7 @@ class WorkingHoursController extends Controller
             if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
             }
-            $whList = $this->getDoctrine()->getManager()->getRepository("AppBundle:WorkingHours")->findAll();
+            $whList = $this->getDoctrine()->getManager()->getRepository("AppBundle:WorkingHours")->safeWorkingHour();
             $tab = array();
             foreach ($whList as $wh){
                 $tab[] = ['id'=>$wh->getId(),'workingHour'=>(array)json_decode($wh->getWorkingHour())];
