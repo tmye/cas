@@ -157,7 +157,7 @@ class MachineSysController extends BaseController
         $res['status'] = 1;
         $res['info'] = 'ok';
         $res['data']["timezone"] = "UTC";
-        $res['data']["unixtime"] = time()-3600;
+        $res['data']["unixtime"] = time()/*-3600*/;
         $res['data']["datetime"] = date("Y-m-d H:i:s",   $res['data']["unixtime"]);
 
         $this->info($this->serialize($res));
