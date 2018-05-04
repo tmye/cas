@@ -106,7 +106,6 @@ class EmployeController extends Controller {
                         // Generate a unique name for the file before saving it
                         $file_extension = $file->guessExtension();
                         $fileName = $employe->getEmployeeCcid().'.'.$file->guessExtension();
-
                         $employe->setPicture($fileName);
                     }
 
@@ -221,13 +220,16 @@ class EmployeController extends Controller {
 
                     $file = $employe->getPicture();
 
+                    $user_profile_pictures = $this->getParameter("user_profile_pictures");
                     if(isset($file) && !empty($file)){
                         $timest = time();
                         $fileName = $employe->getEmployeeCcid().'_'.$timest.'.'.$file->guessExtension();
-                        $employe->setPicture($fileName);
-                        $user_profile_pictures = $this->getParameter("user_profile_pictures");
                         // Move the file to the directory where images are stored
                         $file->move($user_profile_pictures, $fileName);
+                        // Before setting the new file name to the employee,we must delete the older picture
+                        if($last_picture != null && !empty($last_picture)){
+                            unlink($user_profile_pictures."/".$last_picture);
+                        }
                         $employe->setPicture($fileName);
                     }else{
                         $employe->setPicture($last_picture);

@@ -191,6 +191,10 @@ class DefaultController extends Controller
         if($cc != null){
             if(isset($_FILES["image"]["name"]) && !empty($_FILES["image"]["name"])){
                 $cc = $cc[0];
+                $lastCompanyLogo = $cc->getCompanyLogo();
+                if($lastCompanyLogo != null && !empty($lastCompanyLogo) && file_exists("company_images/".$lastCompanyLogo)){
+                    unlink("company_images/".$lastCompanyLogo);
+                }
                 $cc->setCompanyLogo($_FILES["image"]["name"]);
                 $em->flush();
 
@@ -219,38 +223,55 @@ class DefaultController extends Controller
         if ($devices != null){
             foreach ($devices as $dev){
                 if(isset($_FILES["first_image_input_1"]["name"]) && !empty($_FILES["first_image_input_1"]["name"])){
+                    $lastImage = $dev->getImage1();
+                    if($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg"){
+                        // Verify if the file exists because we are in a loop
+                        if(file_exists("pub_covers/".$lastImage)){
+                            unlink("pub_covers/".$lastImage);
+                        }
+                    }
                     $dev->setImage1($_FILES["first_image_input_1"]["name"]);
                     $resultat = move_uploaded_file($_FILES['first_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_1"]["name"]));
                 }
                 if(isset($_FILES["second_image_input_1"]["name"]) && !empty($_FILES["second_image_input_1"]["name"])){
+                    $lastImage = $dev->getImage2();
+                    if($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg"){
+                        // Verify if the file exists because we are in a loop
+                        if(file_exists("pub_covers/".$lastImage)){
+                            unlink("pub_covers/".$lastImage);
+                        }
+                    }
                     $dev->setImage2($_FILES["second_image_input_1"]["name"]);
-                    $resultat = move_uploaded_file($_FILES['second_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_1"]["name"]));
+                    $resultat = move_uploaded_file($_FILES['second_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["second_image_input_1"]["name"]));
                 }
                 if(isset($_FILES["third_image_input_1"]["name"]) && !empty($_FILES["third_image_input_1"]["name"])){
+                    $lastImage = $dev->getImage3();
+                    if($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg"){
+                        // Verify if the file exists because we are in a loop
+                        if(file_exists("pub_covers/".$lastImage)){
+                            unlink("pub_covers/".$lastImage);
+                        }
+                    }
                     $dev->setImage3($_FILES["third_image_input_1"]["name"]);
-                    $resultat = move_uploaded_file($_FILES['third_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_1"]["name"]));
+                    $resultat = move_uploaded_file($_FILES['third_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["third_image_input_1"]["name"]));
                 }
-
                 $em->flush();
             }
         }else{
             foreach ($machines as $mac){
                 $dev = new DevicePubPic();
+                $dev->setDeviceid($mac->getMachineId());
                 if(isset($_FILES["first_image_input_1"]["name"]) && !empty($_FILES["first_image_input_1"]["name"])){
-                    echo "\n I'm also here for 1 \n";
-                    $dev->setDeviceid($mac->getMachineId());
                     $dev->setImage1($_FILES["first_image_input_1"]["name"]);
                     $resultat = move_uploaded_file($_FILES['first_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_1"]["name"]));
                 }
                 if(isset($_FILES["second_image_input_1"]["name"]) && !empty($_FILES["second_image_input_1"]["name"])){
-                    $dev->setDeviceid($mac->getMachineId());
                     $dev->setImage2($_FILES["second_image_input_1"]["name"]);
-                    $resultat = move_uploaded_file($_FILES['second_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_1"]["name"]));
+                    $resultat = move_uploaded_file($_FILES['second_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["second_image_input_1"]["name"]));
                 }
                 if(isset($_FILES["third_image_input_1"]["name"]) && !empty($_FILES["third_image_input_1"]["name"])){
-                    $dev->setDeviceid($mac->getMachineId());
                     $dev->setImage3($_FILES["third_image_input_1"]["name"]);
-                    $resultat = move_uploaded_file($_FILES['third_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_1"]["name"]));
+                    $resultat = move_uploaded_file($_FILES['third_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["third_image_input_1"]["name"]));
                 }
                 $em->persist($dev);
                 $em->flush();
@@ -284,16 +305,37 @@ class DefaultController extends Controller
             foreach ($devices as $dev){
                 if(isset($_FILES["first_image_input_2"]["name"]) && !empty($_FILES["first_image_input_2"]["name"])){
                     $dev->setDeviceid($mac->getMachineId());
+                    $lastImage = $dev->getImage1();
+                    if($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg"){
+                        // Verify if the file exists because we are in a loop
+                        if(file_exists("pub_covers/".$lastImage)){
+                            unlink("pub_covers/".$lastImage);
+                        }
+                    }
                     $dev->setImage1($_FILES["first_image_input_2"]["name"]);
                     $resultat = move_uploaded_file($_FILES['first_image_input_2']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_2"]["name"]));
                 }
                 if(isset($_FILES["second_image_input_2"]["name"]) && !empty($_FILES["second_image_input_2"]["name"])){
                     $dev->setDeviceid($mac->getMachineId());
+                    $lastImage = $dev->getImage2();
+                    if($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg"){
+                        // Verify if the file exists because we are in a loop
+                        if(file_exists("pub_covers/".$lastImage)){
+                            unlink("pub_covers/".$lastImage);
+                        }
+                    }
                     $dev->setImage2($_FILES["second_image_input_2"]["name"]);
                     $resultat = move_uploaded_file($_FILES['second_image_input_2']['tmp_name'],"pub_covers/".basename($_FILES["second_image_input_2"]["name"]));
                 }
                 if(isset($_FILES["third_image_input_2"]["name"]) && !empty($_FILES["third_image_input_2"]["name"])){
                     $dev->setDeviceid($mac->getMachineId());
+                    $lastImage = $dev->getImage3();
+                    if($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg"){
+                        // Verify if the file exists because we are in a loop
+                        if(file_exists("pub_covers/".$lastImage)){
+                            unlink("pub_covers/".$lastImage);
+                        }
+                    }
                     $dev->setImage3($_FILES["third_image_input_2"]["name"]);
                     $resultat = move_uploaded_file($_FILES['third_image_input_2']['tmp_name'],"pub_covers/".basename($_FILES["third_image_input_2"]["name"]));
                 }
@@ -302,6 +344,7 @@ class DefaultController extends Controller
         }else{
             foreach ($machines as $mac){
                 $dev = new DevicePubPic();
+                $dev->setDeviceid($mac->getMachineId());
                 if(isset($_FILES["first_image_input_2"]["name"]) && !empty($_FILES["first_image_input_2"]["name"])){
                     $dev->setImage1($_FILES["first_image_input_2"]["name"]);
                     $resultat = move_uploaded_file($_FILES['first_image_input_2']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_2"]["name"]));
@@ -336,14 +379,35 @@ class DefaultController extends Controller
         if ($devices != null) {
             foreach ($devices as $dev){
                 if(isset($_FILES["first_image_input_3"]["name"]) && !empty($_FILES["first_image_input_3"]["name"])){
+                    $lastImage = $dev->getImage1();
+                    if($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg"){
+                        // Verify if the file exists because we are in a loop
+                        if(file_exists("pub_covers/".$lastImage)){
+                            unlink("pub_covers/".$lastImage);
+                        }
+                    }
                     $dev->setImage1($_FILES["first_image_input_3"]["name"]);
                     $resultat = move_uploaded_file($_FILES['first_image_input_3']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_3"]["name"]));
                 }
                 if(isset($_FILES["second_image_input_3"]["name"]) && !empty($_FILES["second_image_input_3"]["name"])){
+                    $lastImage = $dev->getImage2();
+                    if($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg"){
+                        // Verify if the file exists because we are in a loop
+                        if(file_exists("pub_covers/".$lastImage)){
+                            unlink("pub_covers/".$lastImage);
+                        }
+                    }
                     $dev->setImage2($_FILES["second_image_input_3"]["name"]);
                     $resultat = move_uploaded_file($_FILES['second_image_input_3']['tmp_name'],"pub_covers/".basename($_FILES["second_image_input_3"]["name"]));
                 }
                 if(isset($_FILES["third_image_input_3"]["name"]) && !empty($_FILES["third_image_input_3"]["name"])){
+                    $lastImage = $dev->getImage3();
+                    if($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg"){
+                        // Verify if the file exists because we are in a loop
+                        if(file_exists("pub_covers/".$lastImage)){
+                            unlink("pub_covers/".$lastImage);
+                        }
+                    }
                     $dev->setImage3($_FILES["third_image_input_3"]["name"]);
                     $resultat = move_uploaded_file($_FILES['third_image_input_3']['tmp_name'],"pub_covers/".basename($_FILES["third_image_input_3"]["name"]));
                 }

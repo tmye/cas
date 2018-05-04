@@ -251,6 +251,7 @@
                             // Closing the loading box
 
                             $('#modal_loading').modal('close');
+                            window.location.href = "{{ path('pubCovers') }}";
                         },
                         error: function() {
                             // Closing the loading box
@@ -303,8 +304,8 @@
                         success: function(data) {
                             alert("OK");
                             // Closing the loading box
-
                             $('#modal_loading').modal('close');
+                            window.location.href = "{{ path('pubCovers') }}";
                         },
                         error: function() {
                             // Closing the loading box
@@ -359,6 +360,8 @@
                             alert("OK");
                             // Closing the loading box
                             $('#modal_loading').modal('close');
+                            window.location.href = "{{ path('pubCovers') }}";
+
                         },
                         error: function() {
                             // Closing the loading box

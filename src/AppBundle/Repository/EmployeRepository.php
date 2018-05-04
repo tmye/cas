@@ -26,4 +26,22 @@ class EmployeRepository extends EntityRepository
 
         return $queryBuilder->getQuery()->getResult();
     }
+
+    public function employeeSafeCurrent($empCcid){
+        $queryBuilder = $this->createQueryBuilder('e');
+        $queryBuilder->where('e.employeeCcid != :empCcid');
+        $queryBuilder->setParameter('empCcid',$empCcid);
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    public function employeeSafeBoth($empCcid){
+        $queryBuilder = $this->createQueryBuilder('e');
+        $queryBuilder->where('e.roles != :role');
+        $queryBuilder->setParameter('role',serialize(array("ROLE_SUPER_ADMIN")));
+        $queryBuilder->andWhere('e.employeeCcid != :empCcid');
+        $queryBuilder->setParameter('empCcid',$empCcid);
+
+        return $queryBuilder->getQuery()->getResult();
+    }
 }

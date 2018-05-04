@@ -22,7 +22,7 @@ class ClockinRecord
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Employe")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Employe", cascade={"remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $employe;

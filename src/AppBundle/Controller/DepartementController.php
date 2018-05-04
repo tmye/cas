@@ -208,7 +208,7 @@ class DepartementController extends Controller
             $formBuilder
                 ->add('name', TextType::class)
                 ->add('maxCount', IntegerType::class,array('label'=>' '))
-                ->add('Modifier', SubmitType::class,array('label'=>' '));
+                ->add('Modifier', SubmitType::class);
 
             // À partir du formBuilder, on génère le formulaire
 
