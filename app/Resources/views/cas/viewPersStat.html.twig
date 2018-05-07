@@ -159,7 +159,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="row">
+                <div class="row delaysPieChart">
                     <div class="col l6">
                         <span>Diagramme cumulé des absences</span>
                         <div class="myPieChartContainer">
@@ -167,7 +167,7 @@
                             </canvas>
                         </div>
                     </div>
-                    <div class="col l6">
+                    <div class="col l6 departuresChart">
                         <span>Diagramme des absences</span>
                         <div class="myChartContainer">
                             <canvas id="myChart" class="card">
@@ -397,7 +397,7 @@
                         </div>
                     </div>
                 </span>
-                <div class="row">
+                <div class="row quotaPieDiagram">
                     <div class="col l12">
                         <span>Diagramme comparatif des quotas horraires</span>
                         <canvas id="quotaPieChart" class="card" style="cursor: pointer">
@@ -461,7 +461,7 @@
                         var fToDate = new Date($("#toDate").val());
 
                         var timeDiff = Math.abs(fToDate.getTime() - fFromDate.getTime());
-                        var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                        var diffDays = timeDiff / (1000 * 3600 * 24);
                         diffDays +=1;
                         var totalSalary = (salary/30)*diffDays;
                         var salaryPerDay = (salary/30);
@@ -476,7 +476,7 @@
                         $("#salarySpan").text(salary);
                         $("#fromDateSpan").text(fromDate);
                         $("#toDateSpan").text(toDate);
-                        $("#totalSalarySpan").text(totalSalary);
+                        $("#totalSalarySpan").text(precisionRound(totalSalary,2));
 
                         // Recuperation des autres informations
                         $.ajax({
@@ -503,21 +503,14 @@
                                     $("#sommePerduQuotaSpan").text(salaryPerMin*quotaDiff);
                                 }
                                 $("#quotaTotalSpan").text(data.quota_fait+"/"+data.quota_total);
-                                $("#tprSpan").text(Math.ceil(data.tpr));
-                                $("#tpdSpan").text(Math.ceil(data.tpd));
-                                /*alert("Salaire = : "+salary);
-                                alert("Salaire journalier = : "+salary/30);
-                                alert("Salaire horraire = : "+(salary/30)/24);
-                                alert("Salaire par minuite = : "+((salary/30)/24)/60);
-                                alert("Le tout devrait faire = : "+(((salary/30)/24)/60)*data.tpd);
-                                alert("Temps perdu depart = : "+data.tpd);
-                                */
-                                $("#sprSpan").text(Math.ceil(salaryPerMin*data.tpr));
-                                $("#spdSpan").text(Math.ceil(salaryPerMin*data.tpd));
-                                $("#spaSpan").text(Math.ceil(salaryPerDay*data.nbreAbsences));
+                                $("#tprSpan").text(precisionRound(data.tpr,2));
+                                $("#tpdSpan").text(precisionRound(data.tpd,2));
+                                $("#sprSpan").text(precisionRound(salaryPerMin*data.tpr,2));
+                                $("#spdSpan").text(precisionRound(salaryPerMin*data.tpd,2));
+                                $("#spaSpan").text(precisionRound(salaryPerDay*data.nbreAbsences,2));
                                 var stp = (salaryPerMin*data.tpr)+(salaryPerMin*data.tpd)+(salaryPerDay*data.nbreAbsences);
-                                $("#tapSpan").text(Math.ceil(stp));
-                                $("#papSpan").text(Math.ceil((stp/salary)*100));
+                                $("#tapSpan").text(precisionRound(stp,2));
+                                $("#papSpan").text(precisionRound(((stp/salary)*100),2));
                                 //var res = JSON.parse(data.test);
                                 console.log(data.pauseStats);
 
@@ -870,6 +863,9 @@
                                 });
 
                                 // Diagramme circulaire des quotas
+                                console.log("### Affichage de donnees");
+                                console.log(data.quota_total);
+                                console.log("### Fin affichage de donnees");
                                 var ctx = document.getElementById('quotaPieChart').getContext('2d');
                                 var myPieChart = new Chart(ctx,{
                                     type: 'pie',
@@ -1747,72 +1743,176 @@
                                 // For monday
                                 if(lundiPauseTabDatas.length == 0){
                                     $(".lundiDiagDep12").hide();
-                                }if(lundiRetardTabDatas.length == 0){
-                                    $(".lundiDiagRet8").hide();
-                                }if(lundiRetardPauseTabDatas.length == 0){
-                                    $(".lundiDiagRet14").hide();
-                                }if(lundiFinTabDatas.length == 0){
-                                    $(".lundiDiagDep18").hide();
+                                }else{
+                                    $(".lundiDiagDep12").show();
                                 }
+                                if(lundiRetardTabDatas.length == 0){
+                                    $(".lundiDiagRet8").hide();
+                                }else{
+                                    $(".lundiDiagRet8").show();
+                                }
+                                if(lundiRetardPauseTabDatas.length == 0){
+                                    $(".lundiDiagRet14").hide();
+                                }else{
+                                    $(".lundiDiagRet14").show();
+                                }
+                                if(lundiFinTabDatas.length == 0){
+                                    $(".lundiDiagDep18").hide();
+                                }else{
+                                    $(".lundiDiagDep18").show();
+                                }
+
                                 // For tuesday
                                 if(mardiPauseTabDatas.length == 0){
                                     $(".mardiDiagDep12").hide();
-                                }if(mardiRetardTabDatas.length == 0){
-                                    $(".mardiDiagRet8").hide();
-                                }if(mardiRetardPauseTabDatas.length == 0){
-                                    $(".mardiDiagRet14").hide();
-                                }if(mardiFinTabDatas.length == 0){
-                                    $(".mardiDiagDep18").hide();
+                                }else{
+                                    $(".mardiDiagDep12").show();
                                 }
+                                if(mardiRetardTabDatas.length == 0){
+                                    $(".mardiDiagRet8").hide();
+                                }else{
+                                    $(".mardiDiagRet8").show();
+                                }
+                                if(mardiRetardPauseTabDatas.length == 0){
+                                    $(".mardiDiagRet14").hide();
+                                }else{
+                                    $(".mardiDiagRet14").show();
+                                }
+                                if(mardiFinTabDatas.length == 0){
+                                    $(".mardiDiagDep18").hide();
+                                }else{
+                                    $(".mardiDiagDep18").show();
+                                }
+
                                 // For wednesday
                                 if(mercrediPauseTabDatas.length == 0){
                                     $(".mercrediDiagDep12").hide();
-                                }if(mercrediRetardTabDatas.length == 0){
-                                    $(".mercrediDiagRet8").hide();
-                                }if(mercrediRetardPauseTabDatas.length == 0){
-                                    $(".mercrediDiagRet14").hide();
-                                }if(mercrediFinTabDatas.length == 0){
-                                    $(".mercrediDiagDep18").hide();
+                                }else{
+                                    $(".mercrediDiagDep12").show();
                                 }
+                                if(mercrediRetardTabDatas.length == 0){
+                                    $(".mercrediDiagRet8").hide();
+                                }else{
+                                    $(".mercrediDiagRet8").show();
+                                }
+                                if(mercrediRetardPauseTabDatas.length == 0){
+                                    $(".mercrediDiagRet14").hide();
+                                }else{
+                                    $(".mercrediDiagRet14").show();
+                                }
+                                if(mercrediFinTabDatas.length == 0){
+                                    $(".mercrediDiagDep18").hide();
+                                }else{
+                                    $(".mercrediDiagDep18").show();
+                                }
+
                                 // For thursday
                                 if(jeudiPauseTabDatas.length == 0){
                                     $(".jeudiDiagDep12").hide();
-                                }if(jeudiRetardTabDatas.length == 0){
-                                    $(".jeudiDiagRet8").hide();
-                                }if(jeudiRetardPauseTabDatas.length == 0){
-                                    $(".jeudiDiagRet14").hide();
-                                }if(jeudiFinTabDatas.length == 0){
-                                    $(".jeudiDiagDep18").hide();
+                                }else{
+                                    $(".jeudiDiagDep12").show();
                                 }
+                                if(jeudiRetardTabDatas.length == 0){
+                                    $(".jeudiDiagRet8").hide();
+                                }else{
+                                    $(".jeudiDiagRet8").show();
+                                }
+                                if(jeudiRetardPauseTabDatas.length == 0){
+                                    $(".jeudiDiagRet14").hide();
+                                }else{
+                                    $(".jeudiDiagRet14").show();
+                                }
+                                if(jeudiFinTabDatas.length == 0){
+                                    $(".jeudiDiagDep18").hide();
+                                }else{
+                                    $(".jeudiDiagDep18").show();
+                                }
+
                                 // For friday
                                 if(vendrediPauseTabDatas.length == 0){
                                     $(".vendrediDiagDep12").hide();
-                                }if(vendrediRetardTabDatas.length == 0){
-                                    $(".vendrediDiagRet8").hide();
-                                }if(vendrediRetardPauseTabDatas.length == 0){
-                                    $(".vendrediDiagRet14").hide();
-                                }if(vendrediFinTabDatas.length == 0){
-                                    $(".vendrediDiagDep18").hide();
+                                }else{
+                                    $(".vendrediDiagDep12").show();
                                 }
+                                if(vendrediRetardTabDatas.length == 0){
+                                    $(".vendrediDiagRet8").hide();
+                                }else{
+                                    $(".vendrediDiagRet8").show();
+                                }
+                                if(vendrediRetardPauseTabDatas.length == 0){
+                                    $(".vendrediDiagRet14").hide();
+                                }else{
+                                    $(".vendrediDiagRet14").show();
+                                }
+                                if(vendrediFinTabDatas.length == 0){
+                                    $(".vendrediDiagDep18").hide();
+                                }else{
+                                    $(".vendrediDiagDep18").show();
+                                }
+
                                 // For saturday
                                 if(samediPauseTabDatas.length == 0){
                                     $(".samediDiagDep12").hide();
-                                }if(samediRetardTabDatas.length == 0){
-                                    $(".samediDiagRet8").hide();
-                                }if(samediRetardPauseTabDatas.length == 0){
-                                    $(".samediDiagRet14").hide();
-                                }if(samediFinTabDatas.length == 0){
-                                    $(".samediDiagDep18").hide();
+                                }else{
+                                    $(".samediDiagDep12").show();
                                 }
+                                if(samediRetardTabDatas.length == 0){
+                                    $(".samediDiagRet8").hide();
+                                }else{
+                                    $(".samediDiagRet8").show();
+                                }
+                                if(samediRetardPauseTabDatas.length == 0){
+                                    $(".samediDiagRet14").hide();
+                                }else{
+                                    $(".samediDiagRet14").show();
+                                }
+                                if(samediFinTabDatas.length == 0){
+                                    $(".samediDiagDep18").hide();
+                                }else{
+                                    $(".samediDiagDep18").show();
+                                }
+
                                 // For Sunday
                                 if(dimanchePauseTabDatas.length == 0){
                                     $(".dimancheDiagDep12").hide();
-                                }if(dimancheRetardTabDatas.length == 0){
+                                }else{
+                                    $(".dimancheDiagDep12").show();
+                                }
+                                if(dimancheRetardTabDatas.length == 0){
                                     $(".dimancheDiagRet8").hide();
-                                }if(dimancheRetardPauseTabDatas.length == 0){
+                                }else{
+                                    $(".dimancheDiagRet8").show();
+                                }
+                                if(dimancheRetardPauseTabDatas.length == 0){
                                     $(".dimancheDiagRet14").hide();
-                                }if(dimancheFinTabDatas.length == 0){
+                                }else{
+                                    $(".dimancheDiagRet14").show();
+                                }
+                                if(dimancheFinTabDatas.length == 0){
                                     $(".dimancheDiagDep18").hide();
+                                }else{
+                                    $(".dimancheDiagDep18").show();
+                                }
+
+                                // For Quota diagram
+                                if(data.quota_total == 0){
+                                    $(".quotaPieDiagram").hide();
+                                }else{
+                                    $(".quotaPieDiagram").show();
+                                }
+
+                                // For delays piechart
+                                if(data.tpr == 0 && data.tpd == 0){
+                                    $(".delaysPieChart").hide();
+                                }else{
+                                    $(".delaysPieChart").show();
+                                }
+
+                                // For departures chart
+                                if(data.nbreAbsences == 0){
+                                    $(".departuresChart").hide();
+                                }else{
+                                    $(".departuresChart").show();
                                 }
 
                                 // Closing the loading box

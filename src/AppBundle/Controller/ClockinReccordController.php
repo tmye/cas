@@ -276,7 +276,7 @@ class ClockinReccordController extends Controller
             $pEH = $wH[$day][0]["pauseEndHour"];
             $eH = $wH[$day][0]["endHour"];
 
-            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"bH"=>$bH,"pBH"=>$pBH,"pEH"=>$pEH,"eH"=>$eH,"arrive"=>$arrive,"depart"=>0,"pause"=>0,"finPause"=>0);
+            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"time_arrive"=>$c->getClockinTime(),"time_depart"=>0,"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"bH"=>$bH,"pBH"=>$pBH,"pEH"=>$pEH,"eH"=>$eH,"arrive"=>$arrive,"depart"=>0,"pause"=>0,"finPause"=>0);
         }else{
             $nom = $c->getEmploye()->getLastName();
             $prenom = $c->getEmploye()->getSurname();
@@ -297,21 +297,21 @@ class ClockinReccordController extends Controller
             $pEH = $wH[$day][0]["pauseEndHour"];
             $eH = $wH[$day][0]["endHour"];
 
-            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"bH"=>$bH,"pBH"=>$pBH,"pEH"=>$pEH,"eH"=>$eH,"arrive"=>0,"depart"=>$depart,"pause"=>0,"finPause"=>0);
+            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"time_arrive"=>0,"time_depart"=>$c->getClockinTime(),"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"bH"=>$bH,"pBH"=>$pBH,"pEH"=>$pEH,"eH"=>$eH,"arrive"=>0,"depart"=>$depart,"pause"=>0,"finPause"=>0);
         }
         return $recordTab;
     }
 
     /* Fonction qui permet de tester si un clockinTime est plus récent */
     public function plusRecent($recordTab,ClockinRecord $c){
-        if($c->getClockinTime() < $recordTab[$c->getEmploye()->getId()]["arrive"] ){
+        if($c->getClockinTime() < $recordTab[$c->getEmploye()->getId()]["time_arrive"] ){
             return true;
         }else{
             return false;
         }
     }
     public function plusAncien($recTab,ClockinRecord $element){
-        if($element->getClockinTime() > $recTab[$element->getEmploye()->getId()]["depart"] ){
+        if($element->getClockinTime() > $recTab[$element->getEmploye()->getId()]["time_depart"] ){
             return true;
         }else{
             return false;
@@ -321,12 +321,14 @@ class ClockinReccordController extends Controller
     public function miseAJour($recordTab,ClockinRecord $c,$day,$request){
         if($this->arrive($c,$day,$request)){
             $recordTab[$c->getEmploye()->getId()]["arrive"] =date('H:i',$c->getClockinTime());
+            $recordTab[$c->getEmploye()->getId()]["time_arrive"] =$c->getClockinTime();
         }elseif($this->pause($c,$day)){
             $recordTab[$c->getEmploye()->getId()]["pause"] =date('H:i',$c->getClockinTime());
         }elseif($this->finPause($c,$day,$request)){
             $recordTab[$c->getEmploye()->getId()]["finPause"] =date('H:i',$c->getClockinTime());
         }else{
             $recordTab[$c->getEmploye()->getId()]["depart"] =date('H:i',$c->getClockinTime());
+            $recordTab[$c->getEmploye()->getId()]["time_depart"] =$c->getClockinTime();
         }
 
         /*
