@@ -169,10 +169,10 @@
                     </div>
                     <div class="col l6">
                         <span>Diagramme des absences</span>
-                        <span class="myChartContainer">
+                        <div class="myChartContainer">
                             <canvas id="myChart" class="card">
                             </canvas>
-                        </span>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -896,7 +896,7 @@
                                 // Diagramme à bandes des absences
                                 $("#myChart").remove();
                                 var element = "<canvas id='myChart' class='card' style='cursor: pointer'></canvas>";
-                                $(".myPieChartContainer").append(element);
+                                $(".myChartContainer").append(element);
                                 var ctx = document.getElementById('myChart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
