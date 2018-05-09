@@ -149,6 +149,42 @@ class ClockinReccordController extends Controller
         }
     }
 
+    /*
+     * Fonction booléenne qui renvoi true si un clockinTime est celui d'une heure de depart
+     * ou false sinon
+    */
+    public function depart(ClockinRecord $cR,$day,$request){
+
+        $interval = 60*60;
+
+        $empWH = json_decode($cR->getEmploye()->getWorkingHour()->getWorkingHour(),true);
+
+        $heureDebutNormal = $empWH[$day][0]["beginHour"];
+        $heureFinNormal = $empWH[$day][0]["endHour"];
+
+        $_date = date('d-m-Y',$cR->getClockinTime());
+
+        $df = strtotime($_date." ".$heureFinNormal);
+
+        // L'heure à laquelle l'employé est sensé partir
+        $hSenceD = strtotime(date("H:i",strtotime($df)));
+        // Timestamp de la dateheure à laquelle l'employé est sensé partir
+        $dSenceD = $df;
+        // Borne inférieur de l'intervalle d'heure à laquelle l'employé est sensé partir
+        $hIInfD = $hSenceD- ($interval);
+        $dIInfD = $dSenceD- ($interval);
+
+        // Borne superieur de l'intervalle d'heure à laquelle l'employé est sensé partir
+        $hISupD = $hSenceD+ ($interval);
+        $dISupD = $dSenceD+ ($interval);
+
+        if($dIInfD <= $cR->getClockinTime() && $cR->getClockinTime() <= $dISupD){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 
     public function pause(ClockinRecord $cR,$day){
         $empWH = json_decode($cR->getEmploye()->getWorkingHour()->getWorkingHour(),true);
@@ -326,7 +362,7 @@ class ClockinReccordController extends Controller
             $recordTab[$c->getEmploye()->getId()]["pause"] =date('H:i',$c->getClockinTime());
         }elseif($this->finPause($c,$day,$request)){
             $recordTab[$c->getEmploye()->getId()]["finPause"] =date('H:i',$c->getClockinTime());
-        }else{
+        }elseif($this->depart($c,$day,$request)){
             $recordTab[$c->getEmploye()->getId()]["depart"] =date('H:i',$c->getClockinTime());
             $recordTab[$c->getEmploye()->getId()]["time_depart"] =$c->getClockinTime();
         }
