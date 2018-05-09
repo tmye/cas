@@ -154,11 +154,21 @@ class MachineSysController extends BaseController
               'deviceId' => $sn,
               'type' => 'time'
           ]);*/
+
+
+
+
         $res['status'] = 1;
         $res['info'] = 'ok';
+        //$res['data']["datetime"] = date("Y-m-d H:i:s",   $res['data']["unixtime"]);
+
+        $fuseau = "Africa/Lome";
+        $timestamp = time();
+        $d =  new \DateTime("now",new \DateTimeZone($fuseau));
+        $d->setTimestamp($timestamp);
         $res['data']["timezone"] = "UTC";
-        $res['data']["unixtime"] = time()/*-3600*/;
-        $res['data']["datetime"] = date("Y-m-d H:i:s",   $res['data']["unixtime"]);
+        $res['data']["unixtime"] = $timestamp;
+        $res['data']["datetime"] = $d->format("Y-m-d H:i:s");
 
         $this->info($this->serialize($res));
 

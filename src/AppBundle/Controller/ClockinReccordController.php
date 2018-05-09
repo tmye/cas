@@ -313,7 +313,49 @@ class ClockinReccordController extends Controller
             $eH = $wH[$day][0]["endHour"];
 
             $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"time_arrive"=>$c->getClockinTime(),"time_depart"=>0,"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"bH"=>$bH,"pBH"=>$pBH,"pEH"=>$pEH,"eH"=>$eH,"arrive"=>$arrive,"depart"=>0,"pause"=>0,"finPause"=>0);
-        }else{
+        }elseif($this->pause($c,$day,$request)){
+            $nom = $c->getEmploye()->getLastName();
+            $prenom = $c->getEmploye()->getSurname();
+
+            $function = $c->getEmploye()->getFunction();
+            $wH = $c->getEmploye()->getWorkingHour()->getWorkingHour();
+            $wH = json_decode($wH,true);
+            $pause = date('H:i',$c->getClockinTime());
+
+            $_date = $request->request->get('date');
+            $day = date('N',strtotime($_date));
+            $day = $this->dateDayNameFrench($day);
+
+            $type = $wH[$day][0]["type"];
+            $quota = $wH[$day][0]["quota"];
+            $bH = $wH[$day][0]["beginHour"];
+            $pBH = $wH[$day][0]["pauseBeginHour"];
+            $pEH = $wH[$day][0]["pauseEndHour"];
+            $eH = $wH[$day][0]["endHour"];
+
+            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"time_arrive"=>0,"time_depart"=>0,"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"bH"=>$bH,"pBH"=>$pBH,"pEH"=>$pEH,"eH"=>$eH,"arrive"=>0,"depart"=>0,"pause"=>$pause,"finPause"=>0);
+        }elseif($this->finPause($c,$day,$request)){
+            $nom = $c->getEmploye()->getLastName();
+            $prenom = $c->getEmploye()->getSurname();
+
+            $function = $c->getEmploye()->getFunction();
+            $wH = $c->getEmploye()->getWorkingHour()->getWorkingHour();
+            $wH = json_decode($wH,true);
+            $finPause = date('H:i',$c->getClockinTime());
+
+            $_date = $request->request->get('date');
+            $day = date('N',strtotime($_date));
+            $day = $this->dateDayNameFrench($day);
+
+            $type = $wH[$day][0]["type"];
+            $quota = $wH[$day][0]["quota"];
+            $bH = $wH[$day][0]["beginHour"];
+            $pBH = $wH[$day][0]["pauseBeginHour"];
+            $pEH = $wH[$day][0]["pauseEndHour"];
+            $eH = $wH[$day][0]["endHour"];
+
+            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"time_arrive"=>0,"time_depart"=>$c->getClockinTime(),"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"bH"=>$bH,"pBH"=>$pBH,"pEH"=>$pEH,"eH"=>$eH,"arrive"=>0,"depart"=>0,"pause"=>0,"finPause"=>$finPause);
+        }elseif($this->depart($c,$day,$request)){
             $nom = $c->getEmploye()->getLastName();
             $prenom = $c->getEmploye()->getSurname();
 
@@ -347,11 +389,13 @@ class ClockinReccordController extends Controller
         }
     }
     public function plusAncien($recTab,ClockinRecord $element){
-        if($element->getClockinTime() > $recTab[$element->getEmploye()->getId()]["time_depart"] ){
-            return true;
-        }else{
-            return false;
-        }
+        //if(isset($recTab[$element->getEmploye()->getId()]["time_depart"]) && $recTab[$element->getEmploye()->getId()]["time_depart"] != null){
+            if($element->getClockinTime() > $recTab[$element->getEmploye()->getId()]["time_depart"] ){
+                return true;
+            }else{
+                return false;
+            }
+        //}
     }
 
     public function miseAJour($recordTab,ClockinRecord $c,$day,$request){
@@ -424,27 +468,25 @@ class ClockinReccordController extends Controller
              * Sinon à ce stade ça ne peut qu'etre une heure de départ
             */
             if($this->arrive($element,$day,$request)){
+                //print_r($element->getEmploye()->getSurname()." ### \n");
                 /*
                  * On vérifie si ce clockinTime est plus récent
                  * Si c'est le cas on met à jour les données
                  * Sinon on zappe
                 */
                 if($this->plusRecent($record,$element)){
-                    $record = $this->miseAJour($record,$element,$day,$request);
-                }else{
-                    // Il faut quan meme le mettre à jour
+                    //print_r(" --- Plus recent \n");
                     $record = $this->miseAJour($record,$element,$day,$request);
                 }
             }else{
+                //print_r($element->getEmploye()->getSurname()." @@@");
                 /*
                  * On vérifie si ce clockinTime est plus ancien
                  * Si c'est le cas on met à jour les données
                  * Sinon on zappe
                 */
                 if($this->plusAncien($record,$element)){
-                    $record = $this->miseAJour($record,$element,$day,$request);
-                }else{
-                    // Il faut quan meme le mettre à jour
+                    //print_r(" ::: Plus ancien \n");
                     $record = $this->miseAJour($record,$element,$day,$request);
                 }
             }
@@ -473,6 +515,7 @@ class ClockinReccordController extends Controller
 
 
         $empTab = array();
+        $empTab = array();
         $dataTable = array();
         $don = array();
 
@@ -498,8 +541,6 @@ class ClockinReccordController extends Controller
 
                 // Pour le calcul d'un depart prématuré de pause,Calculons l'intervalle
 
-                $beginHourExploded = explode(":",$heureDebutNormal);
-                $endHourExploded = explode(":",$heureFinNormal);
                 $pauseBeginHourExploded = explode(":",$heureDebutPauseNormal);
                 $pauseEndHourExploded = explode(":",$heureFinPauseNormal);
 
@@ -508,35 +549,15 @@ class ClockinReccordController extends Controller
                     $pauseEndHourInMinutes = (((int)$pauseEndHourExploded[0])*60)+((int)$pauseEndHourExploded[1]);
 
                     $interval_pause = (($pauseEndHourInMinutes - $pauseBeginHourInMinutes)/2)*60;
-                    $heureNormaleArrivePause = $pauseEndHourInMinutes*60;
-                    $heureNormaleDepartPause = $pauseBeginHourInMinutes*60;
                 }else{
                     $interval_pause = 0;
-                    $heureNormaleArrivePause = 0;
-                    $heureNormaleDepartPause = 0;
                 }
-
-                if(sizeof($beginHourExploded)>1){
-                    $beginHourInMinutes = (((int)$beginHourExploded[0])*60)+((int)$beginHourExploded[1]);
-                    $endHourInMinutes = (((int)$endHourExploded[0])*60)+((int)$endHourExploded[1]);
-                    $heureNormaleArrive = $beginHourInMinutes*60;
-                    $heureNormaleDepart = $endHourInMinutes*60;
-                }else{
-                    $heureNormaleArrive = 0;
-                    $heureNormaleDepart = 0;
-                }
-
 
                 $dd = strtotime($_date." ".$heureDebutNormal);
                 $dpd = strtotime($_date." ".$heureDebutPauseNormal);
                 $dpf = strtotime($_date." ".$heureFinPauseNormal);
                 $df = strtotime($_date." ".$heureFinNormal);
 
-                // L'heure à laquelle l'employé est sensé arriver
-                $hSenceA = strtotime(date("H:i",strtotime($dd)));
-                $hSencePD = strtotime(date("H:i",strtotime($dpd)));
-                $hSencePF = strtotime(date("H:i",strtotime($dpf)));
-                $hSenceD = strtotime(date("H:i",strtotime($df)));
                 // Timestamp de la dateheure à laquelle l'employé est sensé arriver
                 $dSenceA = $dd;
                 $dSencePD = $dpd;
@@ -583,8 +604,6 @@ class ClockinReccordController extends Controller
                     $heureFinNormal = $empWH[$day][0]["endHour"];
                     $heureFinPauseNormal = $empWH[$day][0]["pauseEndHour"];
 
-                    $beginHourExploded = explode(":",$heureDebutNormal);
-                    $endHourExploded = explode(":",$heureFinNormal);
                     $pauseBeginHourExploded = explode(":",$heureDebutPauseNormal);
                     $pauseEndHourExploded = explode(":",$heureFinPauseNormal);
 
@@ -593,22 +612,8 @@ class ClockinReccordController extends Controller
                         $pauseEndHourInMinutes = (((int)$pauseEndHourExploded[0])*60)+((int)$pauseEndHourExploded[1]);
 
                         $interval_pause = (($pauseEndHourInMinutes - $pauseBeginHourInMinutes)/2)*60;
-                        $heureNormaleArrivePause = $pauseEndHourInMinutes*60;
-                        $heureNormaleDepartPause = $pauseBeginHourInMinutes*60;
                     }else{
                         $interval_pause = 0;
-                        $heureNormaleArrivePause = 0;
-                        $heureNormaleDepartPause = 0;
-                    }
-
-                    if(sizeof($beginHourExploded)>1){
-                        $beginHourInMinutes = (((int)$beginHourExploded[0])*60)+((int)$beginHourExploded[1]);
-                        $endHourInMinutes = (((int)$endHourExploded[0])*60)+((int)$endHourExploded[1]);
-                        $heureNormaleArrive = $beginHourInMinutes*60;
-                        $heureNormaleDepart = $endHourInMinutes*60;
-                    }else{
-                        $heureNormaleArrive = 0;
-                        $heureNormaleDepart = 0;
                     }
 
                     $dd = strtotime($_date." ".$heureDebutNormal);
@@ -616,11 +621,6 @@ class ClockinReccordController extends Controller
                     $dpf = strtotime($_date." ".$heureFinPauseNormal);
                     $df = strtotime($_date." ".$heureFinNormal);
 
-                    // L'heure à laquelle l'employé est sensé arriver
-                    $hSenceA = strtotime(date("H:i",strtotime($dd)));
-                    $hSencePD = strtotime(date("H:i",strtotime($dpd)));
-                    $hSencePF = strtotime(date("H:i",strtotime($dpf)));
-                    $hSenceD = strtotime(date("H:i",strtotime($df)));
                     // Timestamp de la dateheure à laquelle l'employé est sensé arriver
                     $dSenceA = $dd;
                     $dSencePD = $dpd;
