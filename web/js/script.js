@@ -28,4 +28,5 @@ $(function(){
     $('.ajax_modals').modal({
         opacity: .6
     });
+    $('.tooltipped').tooltip();
 });

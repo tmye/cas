@@ -1,6 +1,16 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
+    <!-- Modal for ajax loading -->
+    <div id="modal_loading" class="modal ajax_modals">
+        <div class="modal-content">
+            <p class="center">
+                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+            </p>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col l12">
             <h5 class="page-title">Gestion globale du système</h5>
@@ -117,6 +127,11 @@
                                                     </a>
                                                 </div>
                                             </div>
+                                            <div class="fixed-action-btn" style="margin-bottom: 30px">
+                                              <a class="btn-floating tooltipped pulse green btn-large" id="btnSyncAll" data-position="top" data-tooltip="Tout mettre à jour">
+                                                <span class="fa fa-sync"></span>
+                                              </a>
+                                            </div>
                                         </span>
                                     </form>
                                 </div>
@@ -133,6 +148,29 @@
 {% endblock %}
 
 {% block javascripts %}
+    <script>
+        $(function () {
+            $("#btnSyncAll").click(function () {
+                $('#modal_loading').modal('open');
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('syncAll') }}",
+                    success: function (data) {
+                        console.log(data);
+                        alert("Données mise à jour");
+                        // Closing the loading box
+                        $('#modal_loading').modal('close');
+                    },
+                    error: function (msg) {
+                        // Closing the loading box
+                        $('#modal_loading').modal('close');
+                        alert("erreur");
+                        console.log(msg);
+                    }
+                });
+            });
+        });
+    </script>
     <script>
         // On s'attaque aux collapsibles
         $(function () {

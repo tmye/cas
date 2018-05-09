@@ -213,7 +213,18 @@ class MachinesController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $tabDeps = $request->request->get("deps");
+        /*
+         * Must do a test
+         * In case that we call this function in syncAll()
+        */
+        if($request->request->get("deps") != null && !empty($request->request->get("deps"))){
+            $tabDeps = $request->request->get("deps");
+        }else{
+            $result = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            foreach ($result as $dep){
+                $tabDeps[]=$dep->getId();
+            }
+        }
         $tab = $this->returnMachinesForSelectedDeps($tabDeps);
         // Pour éviter la duplication des données
         $len = sizeof($tab);
@@ -316,7 +327,18 @@ class MachinesController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $tabDeps = $request->request->get("deps");
+        /*
+         * Must do a test
+         * In case that we call this function in syncAll()
+        */
+        if($request->request->get("deps") != null && !empty($request->request->get("deps"))){
+            $tabDeps = $request->request->get("deps");
+        }else{
+            $result = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            foreach ($result as $dep){
+                $tabDeps[]=$dep->getId();
+            }
+        }
         $tab = $this->returnMachinesForSelectedDeps($tabDeps);
         // Pour éviter la duplication des données
         $len = sizeof($tab);
@@ -419,7 +441,18 @@ class MachinesController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $tabDeps = $request->request->get("deps");
+        /*
+         * Must do a test
+         * In case that we call this function in syncAll()
+        */
+        if($request->request->get("deps") != null && !empty($request->request->get("deps"))){
+            $tabDeps = $request->request->get("deps");
+        }else{
+            $result = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            foreach ($result as $dep){
+                $tabDeps[]=$dep->getId();
+            }
+        }
         $tab = $this->returnMachinesForSelectedDeps($tabDeps);
         // Pour éviter la duplication des données
         $len = sizeof($tab);
@@ -522,7 +555,18 @@ class MachinesController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $tabDeps = $request->request->get("deps");
+        /*
+         * Must do a test
+         * In case that we call this function in syncAll()
+        */
+        if($request->request->get("deps") != null && !empty($request->request->get("deps"))){
+            $tabDeps = $request->request->get("deps");
+        }else{
+            $result = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            foreach ($result as $dep){
+                $tabDeps[]=$dep->getId();
+            }
+        }
         $tab = $this->returnMachinesForSelectedDeps($tabDeps);
         // Pour éviter la duplication des données
         $len = sizeof($tab);
@@ -673,7 +717,18 @@ class MachinesController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $tabDeps = $request->request->get("deps");
+        /*
+         * Must do a test
+         * In case that we call this function in syncAll()
+        */
+        if($request->request->get("deps") != null && !empty($request->request->get("deps"))){
+            $tabDeps = $request->request->get("deps");
+        }else{
+            $result = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            foreach ($result as $dep){
+                $tabDeps[]=$dep->getId();
+            }
+        }
         $tab = $this->returnMachinesForSelectedDeps($tabDeps);
         // Pour éviter la duplication des données
         $len = sizeof($tab);
@@ -828,7 +883,18 @@ class MachinesController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $tabDeps = $request->request->get("deps");
+        /*
+         * Must do a test
+         * In case that we call this function in syncAll()
+        */
+        if($request->request->get("deps") != null && !empty($request->request->get("deps"))){
+            $tabDeps = $request->request->get("deps");
+        }else{
+            $result = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            foreach ($result as $dep){
+                $tabDeps[]=$dep->getId();
+            }
+        }
         $tab = $this->returnMachinesForSelectedDeps($tabDeps);
         // Pour éviter la duplication des données
         $len = sizeof($tab);
@@ -931,7 +997,18 @@ class MachinesController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $tabDeps = $request->request->get("deps");
+        /*
+         * Must do a test
+         * In case that we call this function in syncAll()
+        */
+        if($request->request->get("deps") != null && !empty($request->request->get("deps"))){
+            $tabDeps = $request->request->get("deps");
+        }else{
+            $result = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            foreach ($result as $dep){
+                $tabDeps[]=$dep->getId();
+            }
+        }
         $tab = $this->returnMachinesForSelectedDeps($tabDeps);
         // Pour éviter la duplication des données
         $len = sizeof($tab);
@@ -1175,5 +1252,22 @@ class MachinesController extends Controller
         }
         //return new Response(json_encode($finalTab));
         return new Response("OK");
+    }
+
+    /**
+     * @Route("/syncAll", name="syncAll")
+     */
+    public function syncAllAction(Request $request)
+    {
+        //$a = $this->syncDeleteForAllAction($request);
+        $b = $this->syncDepartementAction($request);
+        $c = $this->syncEmpAction($request);
+        $d = $this->syncEmpFAction($request);
+        $e = $this->syncEmpPPAction($request);
+        $f = $this->syncPubCoverAllAction($request);
+        $g = $this->syncRebootAction($request);
+
+        return new Response("OK");
+
     }
 }
