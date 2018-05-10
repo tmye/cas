@@ -45,9 +45,8 @@ class MachineSysController extends BaseController
         $res['data'] = [];
 
 //        foreach ($all as &$item) {
-        $sortir = true;
 
-        for ($z = 0; $z < sizeof($all) && $sortir; $z++) {
+        for ($z = 0; $z < sizeof($all); $z++) {
 
             $item = $all[$z];
 
@@ -118,33 +117,28 @@ class MachineSysController extends BaseController
                 case "pp":
                     /* profile pictures */
                     if (sizeof($res["data"]) > 0) {
-                        $sortir = false;
                         break(1);
                     }
                     if ($item != null) {
                         $tmp = $this->getProfilePictures($item->getId());
                         $res['data'] = $tmp;
-                        $sortir = false;
                         $this->info("GGG till the end -"."pp");
                     }
                     break;
                 case "fingerprints":
                     /* if data is too much, then break */
                     if (sizeof($res["data"]) > 0) {
-                        $sortir = false;
                         break(1);
                     }
                     if ($item != null) {
                         $tmp = $this->getAllFingerprints($item->getId());
                         $res['data'] = $tmp;
-                        $sortir = false;
                         $this->info("GGG till the end -"."fingerprints");
                     }
                     break;
                 case "pub":
                     /* if data too much break */
                     if (sizeof($res["data"]) > 0) {
-                        $sortir = false;
                         break(1);
                     }
                     $tmp = json_decode($item->getContent(), true);
