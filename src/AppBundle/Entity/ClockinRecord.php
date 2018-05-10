@@ -22,8 +22,8 @@ class ClockinRecord
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Employe", cascade={"remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Employe")
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $employe;
 
