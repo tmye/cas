@@ -132,9 +132,12 @@ class EmployeController extends Controller {
                     $em->flush();
 
                     $wh = $this->returnWorkingHoursAction();
+                    $employe = new Employe();
+                    $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $employe);
+                    $form = $formBuilder->getForm();
                     return $this->render("cas/addEmployee.html.twig",array(
                         'message'=>"Cet employé a été ajouté avec succès",
-                        'form' => null,
+                        'form' => $form->createView(),
                         'whList' => $wh,
                     ));
                 }
@@ -146,7 +149,6 @@ class EmployeController extends Controller {
             // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
 
             $wh = $this->returnWorkingHoursAction();
-
             return $this->render('cas/addEmployee.html.twig', array(
                 'form' => $form->createView(),
                 'whList' => $wh,
