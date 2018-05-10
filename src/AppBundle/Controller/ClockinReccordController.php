@@ -529,6 +529,7 @@ class ClockinReccordController extends Controller
             if(sizeof($emp)==1) {
                 $empTab[]=$emp[0]->getId();
                 $empNameTab[]=$emp[0]->getSurname()." ".$emp[0]->getLastName();
+                $empCcidTab[]=$emp[0]->getEmployeeCcid();
 
                 $empWH = json_decode($emp[0]->getWorkingHour()->getWorkingHour(),true);
 
@@ -593,11 +594,12 @@ class ClockinReccordController extends Controller
 
                 $jsonContent = $serializer->serialize(['clockinRecord' => $don],'json');
 
-                $content = array("content"=>$jsonContent,"emp"=>$empTab,"empNames"=>$empNameTab);
+                $content = array("content"=>$jsonContent,"emp"=>$empTab,"empNames"=>$empNameTab,"empCcid"=>$empCcidTab);
             }else{
                 foreach ($emp as $e){
                     $empTab[]=$e->getId();
                     $empNameTab[]=$e->getSurname()." ".$e->getLastName();
+                    $empCcidTab[]=$e->getEmployeeCcid();
 
 
                     $empWH = json_decode($e->getWorkingHour()->getWorkingHour(),true);
@@ -658,7 +660,7 @@ class ClockinReccordController extends Controller
 
                     $jsonContent = $serializer->serialize(['clockinRecord' => $don],'json');
 
-                    $content = array("content"=>$jsonContent,"emp"=>$empTab,"empNames"=>$empNameTab);
+                    $content = array("content"=>$jsonContent,"emp"=>$empTab,"empNames"=>$empNameTab,"empCcid"=>$empCcidTab);
                 }
 
             }
