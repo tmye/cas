@@ -50,6 +50,12 @@ class UpdateEntity
      */
     private $type;
 
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="priority", type="integer")
+     */
+    private $priority;
 
 
     /**
@@ -187,6 +193,28 @@ class UpdateEntity
     {
         $this->type = $type;
 
+        if ($type == "1doclean") {
+            $this->priority = 6;
+        }
+        if ($type == "dept") {
+            $this->priority = 5;
+        }
+        if ($type == "emp") {
+            $this->priority = 4;
+        }
+        if ($type == "fingerprints") {
+            $this->priority = 3;
+        }
+        if ($type == "pp") {
+            $this->priority = 2;
+        }
+        if ($type == "pub") {
+            $this->priority = 1;
+        }
+        if ($type == "reboot") {
+            $this->priority = 0;
+        }
+
         return $this;
     }
 
@@ -200,4 +228,27 @@ class UpdateEntity
         return $this->type;
     }
 
+    /**
+     * Set priority
+     *
+     * @param integer $priority
+     *
+     * @return UpdateEntity
+     */
+    public function setPriority($priority)
+    {
+        $this->priority = $priority;
+
+        return $this;
+    }
+
+    /**
+     * Get priority
+     *
+     * @return integer
+     */
+    public function getPriority()
+    {
+        return $this->priority;
+    }
 }

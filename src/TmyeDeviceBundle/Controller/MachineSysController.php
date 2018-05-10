@@ -875,7 +875,8 @@ class MachineSysController extends BaseController
 
         /* get random numbers that are greater than id */
 
-        return (($id*1000)+ $id+1);
+//        return (($id*1000)+ $id+1);
+        return $id;
     }
 
 
