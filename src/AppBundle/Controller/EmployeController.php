@@ -147,9 +147,6 @@ class EmployeController extends Controller {
 
             $wh = $this->returnWorkingHoursAction();
 
-            $em
-            $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $employe);
-            $form = $formBuilder->getForm();
             return $this->render('cas/addEmployee.html.twig', array(
                 'form' => $form->createView(),
                 'whList' => $wh,
