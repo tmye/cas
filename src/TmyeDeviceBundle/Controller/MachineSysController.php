@@ -44,103 +44,112 @@ class MachineSysController extends BaseController
         $res['info'] = 'ok';
         $res['data'] = [];
 
-        foreach ($all as &$item) {
+//        foreach ($all as &$item) {
+        $sortir = true;
+
+        for ($z = 0; $z < sizeof($all) && $sortir; $z++) {
+
+            $item = $all[$z];
+
             /* 1doclean - delete everything */
-            if ($item->getType() == "1doclean") {
-                if ($item != null) {
-                    $tmp = [
-                        'id' => $item->getId(),
-                        'do' => 'delete',
-                        'data' => ["user","fingerprint", "face", "headpic", "clockin", "pic", "dept"]
-                    ];
-                    array_push($res['data'], $tmp);
-                    break;
-                }
-            }
-            /* reboot device */
-            if ($item->getType() == "reboot") {
-                if ($item != null) {
-                    $tmp = json_decode("{\"id\":\"0\",\"do\":\"cmd\",\"cmd\":\"reboot\"}", true);
-                    $tmp['id'] = $item->getId();
-                    array_push($res['data'], $tmp);
-                    break;
-                }
-            }
-            /* update employee list */
-            if ($item->getType() == "emp") {
-                if ($item != null) {
-                    $tmp = $this->getAllUsers($item->getId());
-                    $res['data'] = $tmp;
-                }
-            }
-            /* update departements */
-            if ($item->getType() == "dept") {
-                if ($item != null) {
-
-                    if ($item->getContent() == "clear") {
-
-                        // clear the dept
+            switch ($item->getType()) {
+                case "1doclean":
+                    if ($item != null) {
                         $tmp = [
                             'id' => $item->getId(),
                             'do' => 'delete',
-                            'data' => "dept",
-                            'dept' =>  $this->getAllDepartementsIdzOnly()
+                            'data' => ["user","fingerprint", "face", "headpic", "clockin", "pic", "dept"]
                         ];
                         array_push($res['data'], $tmp);
-
-
-                        $tmp = [
-                            'id' => $item->getId(),
-                            'do' => 'delete',
-                            'data' => ["user", "fingerprint", "face", "headpic", "clockin", "pic"],
-                            'ccid' =>  $this->getAllEmployeesIdzOnly()
-                        ];
+                        break;
+                    }
+                    break;
+                case "reboot":
+                    if ($item != null) {
+                        $tmp = json_decode("{\"id\":\"0\",\"do\":\"cmd\",\"cmd\":\"reboot\"}", true);
+                        $tmp['id'] = $item->getId();
                         array_push($res['data'], $tmp);
+                        break;
+                    }
+                    break;
+                case "dept":
+                    if ($item != null) {
+
+                        if ($item->getContent() == "clear") {
+
+                            // clear the dept
+                            $tmp = [
+                                'id' => $item->getId(),
+                                'do' => 'delete',
+                                'data' => "dept",
+                                'dept' =>  $this->getAllDepartementsIdzOnly()
+                            ];
+                            array_push($res['data'], $tmp);
 
 
-                    } else {
-                        $tmp = [
-                            'id' => $item->getId(),
-                            'do' => 'update',
-                            'data' => "dept",
-                            'dept' =>  $this->getAllDepartements()
-                        ];
+                            $tmp = [
+                                'id' => $item->getId(),
+                                'do' => 'delete',
+                                'data' => ["user", "fingerprint", "face", "headpic", "clockin", "pic"],
+                                'ccid' =>  $this->getAllEmployeesIdzOnly()
+                            ];
+                            array_push($res['data'], $tmp);
+
+
+                        } else {
+                            $tmp = [
+                                'id' => $item->getId(),
+                                'do' => 'update',
+                                'data' => "dept",
+                                'dept' =>  $this->getAllDepartements()
+                            ];
+                            array_push($res['data'], $tmp);
+                        }
+                    }
+                    break;
+                case "emp":
+                    if ($item != null) {
+                        $tmp = $this->getAllUsers($item->getId());
+                        $res['data'] = $tmp;
+                    }
+                    break;
+                case "pp":
+                    /* profile pictures */
+                    if (sizeof($res["data"]) > 0) {
+                        $sortir = false;
+                        break(1);
+                    }
+                    if ($item != null) {
+                        $tmp = $this->getProfilePictures($item->getId());
+                        $res['data'] = $tmp;
+                        $sortir = false;
+                    }
+                    break;
+                case "fingerprints":
+                    /* if data is too much, then break */
+                    if (sizeof($res["data"]) > 0) {
+                        $sortir = false;
+                        break(1);
+                    }
+                    if ($item != null) {
+                        $tmp = $this->getAllFingerprints($item->getId());
+                        $res['data'] = $tmp;
+                        $sortir = false;
+                    }
+                    break;
+                case "pub":
+                    /* if data too much break */
+                    if (sizeof($res["data"]) > 0) {
+                        $sortir = false;
+                        break(1);
+                    }
+                    $tmp = json_decode($item->getContent(), true);
+                    if ($tmp != []) {
+                        $tmp = $this->getPubSetupContent(intval($tmp['index']));
+                        $tmp['id'] = $item->getId();
                         array_push($res['data'], $tmp);
                     }
-                }
-            }
-            /* profile pictures */
-            if ($res["data"] != [])
-                break;
-            if ($item->getType() == "pp") {
-                if ($item != null) {
-                    $tmp = $this->getProfilePictures($item->getId());
-                    $res['data'] = $tmp;
                     break;
-                }
-            }
-            /* fingerprints update */
-            if ($item->getType() == "fingerprints") {
-                /* if data is too much, then break */
-                if ($res["data"] != [])
-                    break;
-                if ($item != null) {
-                    $tmp = $this->getAllFingerprints($item->getId());
-                    $res['data'] = $tmp;
-                    //  break;
-                }
-            }
-            /* pub covers update */
-            if ($item->getType() == "pub") {
-                /* if data too much break */
-                if ($res["data"] != [])
-                    break;
-                $tmp = json_decode($item->getContent(), true);
-                if ($tmp != []) {
-                    $tmp = $this->getPubSetupContent(intval($tmp['index']));
-                    $tmp['id'] = $item->getId();
-                    array_push($res['data'], $tmp);
-                }
             }
         }
 
