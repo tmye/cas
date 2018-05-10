@@ -1,4 +1,13 @@
+// Functions
+
 $(function(){
+
+    // Fonction de conversion
+    function precisionRound(number, precision) {
+        var factor = Math.pow(10, precision);
+        return Math.round(number * factor) / factor;
+    }
+
     $('.collapsible').collapsible();
     $('.tap-target').tapTarget('open');
     $('.tap-target').tapTarget('close');

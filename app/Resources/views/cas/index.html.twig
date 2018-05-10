@@ -72,6 +72,11 @@
 
 {% block javascripts %}
     <script>
+        function precisionRound(number, precision) {
+            var factor = Math.pow(10, precision);
+            return Math.round(number * factor) / factor;
+        }
+
         // Recuperation des autres informations
         $.ajax({
             type: 'POST',
@@ -142,7 +147,7 @@
                             "    <span class='top user-info-home'>\n" +
                             "        <span>"+tabR[i][0]+"</span>\n" +
                             "        <br>\n" +
-                            "        <span>"+tabR[i][1]+"</span> min\n" +
+                            "        <span>"+precisionRound(tabR[i][1],0)+"</span> min\n" +
                             "        <br>\n" +
                             "        <span>"+tabR[i][2]+"</span>\n" +
                             "    </span>\n" +
@@ -157,7 +162,7 @@
                             "    <span class='top user-info-home'>\n" +
                             "        <span>"+tabR[arrayID][0]+"</span>\n" +
                             "        <br>\n" +
-                            "        <span>"+tabR[arrayID][1]+"</span> min\n" +
+                            "        <span>"+precisionRound(tabR[arrayID][1],0)+"</span> min\n" +
                             "        <br>\n" +
                             "        <span>"+tabR[arrayID][2]+"</span>\n" +
                             "    </span>\n" +
@@ -176,7 +181,7 @@
                             "    <span class='top user-info-home'>\n" +
                             "        <span>"+tabD[i][0]+"</span>\n" +
                             "        <br>\n" +
-                            "        <span>"+tabD[i][1]+"</span> min\n" +
+                            "        <span>"+precisionRound(tabD[i][1],0)+"</span> min\n" +
                             "        <br>\n" +
                             "        <span>"+tabD[i][2]+"</span>\n" +
                             "    </span>\n" +
@@ -191,7 +196,7 @@
                             "    <span class='top user-info-home'>\n" +
                             "        <span>"+tabD[arrayID][0]+"</span>\n" +
                             "        <br>\n" +
-                            "        <span>"+tabD[arrayID][1]+"</span> min\n" +
+                            "        <span>"+precisionRound(tabD[arrayID][1],0)+"</span> min\n" +
                             "        <br>\n" +
                             "        <span>"+tabD[arrayID][2]+"</span>\n" +
                             "    </span>\n" +
