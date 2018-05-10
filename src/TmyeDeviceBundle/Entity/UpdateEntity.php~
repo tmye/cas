@@ -50,6 +50,12 @@ class UpdateEntity
      */
     private $type;
 
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="priority", type="integer")
+     */
+    private $priority;
 
 
     /**
@@ -199,5 +205,4 @@ class UpdateEntity
     {
         return $this->type;
     }
-
 }

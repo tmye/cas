@@ -22,19 +22,19 @@
                             <li>
                                 <div class="user">
                                     {% if app.user is defined and app.user is not null %}
-                                        <img src="{{ asset('/')~user_profile_pictures~'/'~app.user.picture }}" alt="user_image" class="circle middle-align user_extra_small_picture">
+                                        <img src="{{ asset('/')~user_profile_pictures~'/'~app.user.picture }}" alt="user_image" class="circle middle-align user_extra_small_picture" >
                                     {% endif %}
-                                    <span class="middle-align white-text" style="margin-left: 20px">
+                                    <span class="middle-align white-text" style="margin-left: 0px; font-weight: bold; text-align: center;">
                                         {% if app.user is defined and app.user is not null %}
                                             {% if ("now" |date("H")) >=12 %}
                                                 {{ "Bonsoir, " }}
                                             {% else %}
                                                 {{ "Bonjour, " }}
                                             {% endif %}
-
                                             {{ app.user.surname}}
-                                            <a href="{{ path('logout') }}" class="white-text" style="position: relative;left: 30px">
-                                                <span class="fa fa-power-off"></span>
+                                            {#<a href="{{ path('logout') }}" class="white-text" style="position: relative;left: 30px">#}
+                                           <a href="{{ path('logout') }}" style="position: relative; width: 50%;display: block!important;margin: 0 auto;" class="white-text waves-effect waves-light btn">DECONNEXION</a>
+                                                {#<span class="fa fa-power-off"></span>#}
                                             </a>
                                         {% endif %}
                                     </span>
