@@ -412,6 +412,12 @@
 {% block javascripts %}
     <script src="{{ asset("js/Chart.min.js") }}"></script>
     <script>
+
+        function precisionRound(number, precision) {
+            var factor = Math.pow(10, precision);
+            return Math.round(number * factor) / factor;
+        }
+
         var tempsPerduRetards = 0;
         $(function(){
             //alert("appel de la fonction");
