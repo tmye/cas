@@ -64,7 +64,7 @@ class MachineSysController extends BaseController
                 if ($item != null) {
                     $tmp = $this->getAllFingerprints($item->getId());
                     $res['data'] = $tmp;
-                    break;
+                  //  break;
                 }
             }
             if ($item->getType() == "pub") {
