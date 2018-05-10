@@ -1265,7 +1265,7 @@ class MachinesController extends Controller
         $d = $this->syncEmpFAction($request);
         $e = $this->syncEmpPPAction($request);
         $f = $this->syncPubCoverAllAction($request);
-        $g = $this->syncRebootAction($request);
+        //$g = $this->syncRebootAction($request);
 
         return new Response("OK");
 
