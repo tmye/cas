@@ -85,7 +85,7 @@ class EmployeController extends Controller {
                     'choice_label' => 'code',
                     'multiple' => false,
                 ))
-                ->add('Créer', SubmitType::class);
+                ->add('Cr&eacute;er', SubmitType::class);
             // À partir du formBuilder, on génère le formulaire
 
             $form = $formBuilder->getForm();
@@ -384,7 +384,7 @@ class EmployeController extends Controller {
                         'choice_label' => 'code',
                         'multiple' => false,
                     ))
-                    ->add('Créer', SubmitType::class);
+                    ->add('Cr&eacute;er', SubmitType::class);
                 // À partir du formBuilder, on génère le formulaire
 
                 $form = $formBuilder->getForm();

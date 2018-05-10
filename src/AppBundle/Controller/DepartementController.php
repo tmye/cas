@@ -50,7 +50,7 @@ class DepartementController extends Controller
             $formBuilder
                 ->add('name', TextType::class,array('label'=>' '))
                 ->add('maxCount', IntegerType::class,array('label'=>' '))
-                ->add('Créer', SubmitType::class);
+                ->add('Cr&eacute;er', SubmitType::class);
 
             // À partir du formBuilder, on génère le formulaire
 
@@ -127,7 +127,7 @@ class DepartementController extends Controller
                     $formBuilder
                         ->add('name', TextType::class,array('label'=>' '))
                         ->add('maxCount', IntegerType::class,array('label'=>' '))
-                        ->add('Créer', SubmitType::class);
+                        ->add('Cr&eacute;er', SubmitType::class);
 
                     // À partir du formBuilder, on génère le formulaire
 
@@ -155,7 +155,7 @@ class DepartementController extends Controller
                     $formBuilder
                         ->add('name', TextType::class,array('label'=>' '))
                         ->add('maxCount', IntegerType::class,array('label'=>' '))
-                        ->add('Créer', SubmitType::class);
+                        ->add('Cr&eacute;er', SubmitType::class);
 
                     // À partir du formBuilder, on génère le formulaire
 
