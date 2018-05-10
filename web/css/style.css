@@ -469,5 +469,11 @@ div.user {
     padding: 8px 4px!important;
 }
 
+h5 {
+    font-weight: bold;
+}
 
+.right.black-text {
+    font-weight: bold;
+}
 
