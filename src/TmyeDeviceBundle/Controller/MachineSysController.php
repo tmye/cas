@@ -45,7 +45,19 @@ class MachineSysController extends BaseController
         $res['data'] = [];
 
         foreach ($all as &$item) {
-
+            /* 1doclean - delete everything */
+            if ($item->getType() == "1doclean") {
+                if ($item != null) {
+                    $tmp = [
+                        'id' => $item->getId(),
+                        'do' => 'delete',
+                        'data' => ["user","fingerprint", "face", "headpic", "clockin", "pic", "dept"]
+                    ];
+                    array_push($res['data'], $tmp);
+                    break;
+                }
+            }
+            /* reboot device */
             if ($item->getType() == "reboot") {
                 if ($item != null) {
                     $tmp = json_decode("{\"id\":\"0\",\"do\":\"cmd\",\"cmd\":\"reboot\"}", true);
@@ -54,27 +66,14 @@ class MachineSysController extends BaseController
                     break;
                 }
             }
+            /* update employee list */
             if ($item->getType() == "emp") {
                 if ($item != null) {
                     $tmp = $this->getAllUsers($item->getId());
                     $res['data'] = $tmp;
                 }
             }
-            if ($item->getType() == "fingerprints") {
-                if ($item != null) {
-                    $tmp = $this->getAllFingerprints($item->getId());
-                    $res['data'] = $tmp;
-                    break;
-                }
-            }
-            if ($item->getType() == "pub") {
-                $tmp = json_decode($item->getContent(), true);
-                if ($tmp != []) {
-                    $tmp = $this->getPubSetupContent(intval($tmp['index']));
-                    $tmp['id'] = $item->getId();
-                    array_push($res['data'], $tmp);
-                }
-            }
+            /* update departements */
             if ($item->getType() == "dept") {
                 if ($item != null) {
 
@@ -90,8 +89,6 @@ class MachineSysController extends BaseController
                         array_push($res['data'], $tmp);
 
 
-                        // clear the employees
-//                        {id:”1006”,do:”delete”,data:[”user”,”fingerprint”,”face”,”headpic”,”clockin”,”pic”],ccid:[13245,8784,54878]}
                         $tmp = [
                             'id' => $item->getId(),
                             'do' => 'delete',
@@ -112,6 +109,9 @@ class MachineSysController extends BaseController
                     }
                 }
             }
+            /* profile pictures */
+            if ($res["data"] != [])
+                break;
             if ($item->getType() == "pp") {
                 if ($item != null) {
                     $tmp = $this->getProfilePictures($item->getId());
@@ -119,13 +119,26 @@ class MachineSysController extends BaseController
                     break;
                 }
             }
-            if ($item->getType() == "1doclean") {
+            /* fingerprints update */
+            if ($item->getType() == "fingerprints") {
+                /* if data is too much, then break */
+                if ($res["data"] != [])
+                    break;
                 if ($item != null) {
-                    $tmp = [
-                        'id' => $item->getId(),
-                        'do' => 'delete',
-                        'data' => ["user","fingerprint", "face", "headpic", "clockin", "pic", "dept"]
-                    ];
+                    $tmp = $this->getAllFingerprints($item->getId());
+                    $res['data'] = $tmp;
+                    //  break;
+                }
+            }
+            /* pub covers update */
+            if ($item->getType() == "pub") {
+                /* if data too much break */
+                if ($res["data"] != [])
+                    break;
+                $tmp = json_decode($item->getContent(), true);
+                if ($tmp != []) {
+                    $tmp = $this->getPubSetupContent(intval($tmp['index']));
+                    $tmp['id'] = $item->getId();
                     array_push($res['data'], $tmp);
                 }
             }

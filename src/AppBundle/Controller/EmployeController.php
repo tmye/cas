@@ -85,7 +85,7 @@ class EmployeController extends Controller {
                     'choice_label' => 'code',
                     'multiple' => false,
                 ))
-                ->add('Cr&eacute;er', SubmitType::class);
+                ->add($this->conv_text("Créer"), SubmitType::class);
             // À partir du formBuilder, on génère le formulaire
 
             $form = $formBuilder->getForm();
@@ -384,7 +384,7 @@ class EmployeController extends Controller {
                         'choice_label' => 'code',
                         'multiple' => false,
                     ))
-                    ->add('Cr&eacute;er', SubmitType::class);
+                    ->add($this->conv_text("Créer"), SubmitType::class);
                 // À partir du formBuilder, on génère le formulaire
 
                 $form = $formBuilder->getForm();
@@ -420,5 +420,10 @@ class EmployeController extends Controller {
     {
         $employee_default_pic = /*$this->getParameter('user_profile_pictures').*/ DIRECTORY_SEPARATOR."default-profile.png";
         return $employee_default_pic;
+    }
+
+    private function conv_text($value) {
+        $result = mb_detect_encoding($value." ","UTF-8,CP1252") == "UTF-8" ? iconv("UTF-8", "CP1252", $value ) : $value;
+        return $result;
     }
 }
