@@ -26,6 +26,7 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Constraints\DateTime;
 
@@ -41,6 +42,8 @@ class EmployeController extends Controller {
      */
     public function addEmployeeAction(Request $request)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
@@ -131,15 +134,9 @@ class EmployeController extends Controller {
                     $em->persist($employe);
                     $em->flush();
 
-                    $wh = $this->returnWorkingHoursAction();
-                    $employe = new Employe();
-                    $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $employe);
-                    $form = $formBuilder->getForm();
-                    return $this->render("cas/addEmployee.html.twig",array(
-                        'message'=>"Cet employé a été ajouté avec succès",
-                        'form' => $form->createView(),
-                        'whList' => $wh,
-                    ));
+                    //$wh = $this->returnWorkingHoursAction();
+                    $session->getFlashBag()->add('notice', 'Cet employé a été ajouté avec succès');
+                    return $this->redirectToRoute("addEmployee");
                 }
 
             }
@@ -242,16 +239,11 @@ class EmployeController extends Controller {
                     $em->persist($employe);
                     $em->flush();
 
-                    $request->getSession()->getFlashBag()->add('notice', 'Employé bien enregistrée.');
 
                     //return $this->redirectToRoute('viewEmploye');
 
                     $wh = $this->returnWorkingHoursAction();
-                    return $this->render("cas/addEmployee.html.twig",array(
-                        'message'=>"Cet employé a été modifié",
-                        'form' => $form->createView(),
-                        'whList' => $wh
-                    ));
+                    return $this->render("editEmployee");
                 }
 
             }

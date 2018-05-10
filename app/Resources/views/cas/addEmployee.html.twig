@@ -13,11 +13,13 @@
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
                                     <div class="col l12">
-                                        {%  if message is defined and message is not null %}
-                                            <div class="operation_message">
-                                                {{ message }}
-                                            </div>
-                                        {% endif %}
+                                        <div class="operation_message">
+                                            {% if app.session.flashbag.get('notice') is defined and app.session.flashbag.get('notice') is not null %}
+                                                {% for flashMessage in app.session.flashbag.get('notice') %}
+                                                    {{ flashMessage }}
+                                                {% endfor %}
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
