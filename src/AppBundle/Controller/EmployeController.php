@@ -85,7 +85,7 @@ class EmployeController extends Controller {
                     'choice_label' => 'code',
                     'multiple' => false,
                 ))
-                ->add($this->conv_text("Créer"), SubmitType::class);
+                ->add("creer", SubmitType::class);
             // À partir du formBuilder, on génère le formulaire
 
             $form = $formBuilder->getForm();
@@ -134,7 +134,7 @@ class EmployeController extends Controller {
                     $wh = $this->returnWorkingHoursAction();
                     return $this->render("cas/addEmployee.html.twig",array(
                         'message'=>"Cet employé a été ajouté avec succès",
-                        'form' => $form->createView(),
+                        'form' => null,
                         'whList' => $wh,
                     ));
                 }
@@ -147,6 +147,9 @@ class EmployeController extends Controller {
 
             $wh = $this->returnWorkingHoursAction();
 
+            $em
+            $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $employe);
+            $form = $formBuilder->getForm();
             return $this->render('cas/addEmployee.html.twig', array(
                 'form' => $form->createView(),
                 'whList' => $wh,
@@ -207,7 +210,7 @@ class EmployeController extends Controller {
                     'choice_label' => 'code',
                     'multiple' => false,
                 ))
-                ->add('Modifier', SubmitType::class);
+                ->add('creer', SubmitType::class);
             // À partir du formBuilder, on génère le formulaire
 
             $form = $formBuilder->getForm();
@@ -384,7 +387,7 @@ class EmployeController extends Controller {
                         'choice_label' => 'code',
                         'multiple' => false,
                     ))
-                    ->add($this->conv_text("Créer"), SubmitType::class);
+                    ->add("creer", SubmitType::class);
                 // À partir du formBuilder, on génère le formulaire
 
                 $form = $formBuilder->getForm();
@@ -423,7 +426,7 @@ class EmployeController extends Controller {
     }
 
     private function conv_text($value) {
-        $result = mb_detect_encoding($value." ","UTF-8,CP1252") == "UTF-8" ? iconv("UTF-8", "CP1252", $value ) : $value;
+        $result = mb_detect_encoding($value." ","UTF-8,CP125") == "UTF-8" ? iconv("UTF-8", "CP1252", $value ) : $value;
         return $result;
     }
 }
