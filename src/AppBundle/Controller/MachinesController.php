@@ -252,24 +252,31 @@ class MachinesController extends Controller
              * déjà ces memes données dans la table.
             */
             foreach ($finalTab as $mac){
-                $found = 0;
-                while($found == 0 && $i < sizeof($donnees)){
-                    if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="emp" && $donnees[$i]->getIsactive()==1){
-                        $found = 1;
+                // On boucle sur tous les departements
+                foreach ($tabDeps as $d){
+                    // On boucle sur les employes
+                    $empl = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($d);
+                    foreach ($empl as $ee){
+                        $found = 0;
+                        while($found == 0 && $i < sizeof($donnees)){
+                            if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="emp" && $donnees[$i]->getIsactive()==1 && $donnees[$i]->getContent()==$ee->getId()){
+                                $found = 1;
+                            }
+                            $i++;
+                        }
+                        if ($found == 0){
+                            $updateE = new UpdateEntity();
+                            $updateE->setDeviceId($mac);
+                            $updateE->setContent($ee->getId());
+                            $updateE->setFunction("emp");
+                            $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
+                            $updateE->setIsactive(true);
+                            $updateE->setType("emp");
+
+                            $em->persist($updateE);
+                            $em->flush();
+                        }
                     }
-                    $i++;
-                }
-
-                if ($found == 0){
-                    $updateE = new UpdateEntity();
-                    $updateE->setDeviceId($mac);
-                    $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
-                    $updateE->setIsactive(true);
-                    $updateE->setType("emp");
-                    $updateE->setContent("");
-
-                    $em->persist($updateE);
-                    $em->flush();
                 }
             }
             //return new Response(json_encode($finalTab));
@@ -277,23 +284,30 @@ class MachinesController extends Controller
         }elseif($len == 1){
             // On persiste les éléments en fonction du cas
             foreach ($tab[0] as $mac){
-                while($found == 0 && $i < sizeof($donnees)){
-                    if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="emp" && $donnees[$i]->getIsactive()==1){
-                        $found = 1;
-                    }
-                    //$session->getFlashBag()->add('passage : ',$donnees[$i]->getDeviceId());
-                    $i++;
-                }
-                if ($found == 0){
-                    $updateE = new UpdateEntity();
-                    $updateE->setDeviceId($mac);
-                    $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
-                    $updateE->setIsactive(true);
-                    $updateE->setType("emp");
-                    $updateE->setContent("");
+                foreach ($tabDeps as $d){
+                    // On boucle sur les employes
+                    $empl = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($d);
+                    foreach ($empl as $ee){
+                        $found = 0;
+                        while($found == 0 && $i < sizeof($donnees)){
+                            if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="emp" && $donnees[$i]->getIsactive()==1 && $donnees[$i]->getContent()==$ee->getId()){
+                                $found = 1;
+                            }
+                            $i++;
+                        }
+                        if ($found == 0){
+                            $updateE = new UpdateEntity();
+                            $updateE->setDeviceId($mac);
+                            $updateE->setContent($ee->getId());
+                            $updateE->setFunction("emp");
+                            $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
+                            $updateE->setIsactive(true);
+                            $updateE->setType("emp");
 
-                    $em->persist($updateE);
-                    $em->flush();
+                            $em->persist($updateE);
+                            $em->flush();
+                        }
+                    }
                 }
             }
 
@@ -334,10 +348,8 @@ class MachinesController extends Controller
         //print_r($donnees);
         $i = 0;
         $found = 0;
-        echo "\nlength : ".$len;
 
         if($len >= 2){
-            echo "\nJe suis dans le premier cas";
             $finalTab = $tab[0];
             for($cpt=0;$cpt<$len;$cpt++){
                 foreach ($tab[$cpt] as $t){
@@ -357,61 +369,65 @@ class MachinesController extends Controller
 
 
             foreach ($finalTab as $mac){
-                $found = 0;
-                echo "\n J'arrive meme ici et le found est : ".$found;
-                while($found == 0 && $i < sizeof($donnees)){
-                    echo "\n size of donnees =: ".sizeof($donnees);
-                    echo "\n isActive =: ".$donnees[$i]->getIsactive();
-                    echo ("Comparaison : ".$donnees[$i]->getDeviceId() == $mac);
-                    if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="pp" && $donnees[$i]->getIsactive()==1){
-                        $found = 1;
-                    }else{
-                        echo "\n not found";
-                    }
-                    //$session->getFlashBag()->add('passage : ',$donnees[$i]->getDeviceId());
-                    $i++;
-                }
-                echo "\n Found = :".$found;
-                if ($found == 0){
-                    $updateE = new UpdateEntity();
-                    $updateE->setDeviceId($mac);
-                    $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
-                    $updateE->setIsactive(true);
-                    $updateE->setType("pp");
-                    $updateE->setContent("");
+                // On boucle sur tous les departements
+                foreach ($tabDeps as $d){
+                    // On boucle sur les employes
+                    $empl = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($d);
+                    foreach ($empl as $ee){
+                        $found = 0;
+                        while($found == 0 && $i < sizeof($donnees)){
+                            if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="pp" && $donnees[$i]->getIsactive()==1){
+                                $found = 1;
+                            }
+                            $i++;
+                        }
+                        if ($found == 0){
+                            $updateE = new UpdateEntity();
+                            $updateE->setDeviceId($mac);
+                            $updateE->setContent($ee->getId());
+                            $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
+                            $updateE->setIsactive(true);
+                            $updateE->setType("pp");
+                            $updateE->setFunction("pp");
 
-                    $em->persist($updateE);
-                    $em->flush();
+                            $em->persist($updateE);
+                            $em->flush();
+                        }
+                    }
                 }
             }
-            //return new Response(json_encode($finalTab));
             return new Response("OK");
         }elseif($len == 1){
-            echo "Je suis dans le dernier cas";
             // On persiste les éléments en fonction du cas
             foreach ($tab[0] as $mac){
-                while($found == 0 && $i < sizeof($donnees)){
-                    if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="pp" && $donnees[$i]->getIsactive()==1){
-                        $found = 1;
-                    }
-                    //$session->getFlashBag()->add('passage : ',$donnees[$i]->getDeviceId());
-                    $i++;
-                }
-                echo "Found2 = :".$found;
-                if ($found == 0){
-                    $updateE = new UpdateEntity();
-                    $updateE->setDeviceId($mac);
-                    $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
-                    $updateE->setIsactive(true);
-                    $updateE->setType("pp");
-                    $updateE->setContent("");
+                // On boucle sur tous les departements
+                foreach ($tabDeps as $d){
+                    // On boucle sur les employes
+                    $empl = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($d);
+                    foreach ($empl as $ee){
+                        $found = 0;
+                        while($found == 0 && $i < sizeof($donnees)){
+                            if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="pp" && $donnees[$i]->getIsactive()==1){
+                                $found = 1;
+                            }
+                            $i++;
+                        }
+                        if ($found == 0){
+                            $updateE = new UpdateEntity();
+                            $updateE->setDeviceId($mac);
+                            $updateE->setContent($ee->getId());
+                            $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
+                            $updateE->setIsactive(true);
+                            $updateE->setType("pp");
+                            $updateE->setFunction("pp");
 
-                    $em->persist($updateE);
-                    $em->flush();
+                            $em->persist($updateE);
+                            $em->flush();
+                        }
+                    }
                 }
             }
 
-            //return new Response(json_encode($tab));
             return new Response("OK pour le second cas");
         }else{
             echo "Je ne rentre jamais dedans";
@@ -448,10 +464,8 @@ class MachinesController extends Controller
         //print_r($donnees);
         $i = 0;
         $found = 0;
-        echo "\nlength : ".$len;
 
         if($len >= 2){
-            echo "\nJe suis dans le premier cas";
             $finalTab = $tab[0];
             for($cpt=0;$cpt<$len;$cpt++){
                 foreach ($tab[$cpt] as $t){
@@ -460,68 +474,69 @@ class MachinesController extends Controller
                     }
                 }
             }
-
-            print_r($finalTab);
-
             /*
              * On persiste les éléments en fonction du cas
              * Mais bien en avant ça, on vérifie s'il n'ya pas
              * déjà ces memes données dans la table.
             */
-
-
             foreach ($finalTab as $mac){
-                $found = 0;
-                echo "\n J'arrive meme ici et le found est : ".$found;
-                while($found == 0 && $i < sizeof($donnees)){
-                    echo "\n size of donnees =: ".sizeof($donnees);
-                    echo "\n isActive =: ".$donnees[$i]->getIsactive();
-                    echo ("Comparaison : ".$donnees[$i]->getDeviceId() == $mac);
-                    if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="fingerprints" && $donnees[$i]->getIsactive()==1){
-                        $found = 1;
-                    }else{
-                        echo "\n not found";
-                    }
-                    //$session->getFlashBag()->add('passage : ',$donnees[$i]->getDeviceId());
-                    $i++;
-                }
-                echo "\n Found = :".$found;
-                if ($found == 0){
-                    $updateE = new UpdateEntity();
-                    $updateE->setDeviceId($mac);
-                    $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
-                    $updateE->setIsactive(true);
-                    $updateE->setType("fingerprints");
-                    $updateE->setContent("");
+                // On boucle sur tous les departements
+                foreach ($tabDeps as $d){
+                    // On boucle sur les employes
+                    $empl = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($d);
+                    foreach ($empl as $ee){
+                        $found = 0;
+                        while($found == 0 && $i < sizeof($donnees)){
+                            if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="fingerprints" && $donnees[$i]->getIsactive()==1){
+                                $found = 1;
+                            }
+                            $i++;
+                        }
+                        if ($found == 0){
+                            $updateE = new UpdateEntity();
+                            $updateE->setDeviceId($mac);
+                            $updateE->setContent($ee->getId());
+                            $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
+                            $updateE->setIsactive(true);
+                            $updateE->setType("fingerprints");
+                            $updateE->setFunction("fingerprints");
 
-                    $em->persist($updateE);
-                    $em->flush();
+                            $em->persist($updateE);
+                            $em->flush();
+                        }
+                    }
                 }
             }
-            //return new Response(json_encode($finalTab));
             return new Response("OK");
         }elseif($len == 1){
             echo "Je suis dans le dernier cas";
             // On persiste les éléments en fonction du cas
             foreach ($tab[0] as $mac){
-                while($found == 0 && $i < sizeof($donnees)){
-                    if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="fingerprints" && $donnees[$i]->getIsactive()==1){
-                        $found = 1;
-                    }
-                    //$session->getFlashBag()->add('passage : ',$donnees[$i]->getDeviceId());
-                    $i++;
-                }
-                echo "Found2 = :".$found;
-                if ($found == 0){
-                    $updateE = new UpdateEntity();
-                    $updateE->setDeviceId($mac);
-                    $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
-                    $updateE->setIsactive(true);
-                    $updateE->setType("fingerprints");
-                    $updateE->setContent("");
+                // On boucle sur tous les departements
+                foreach ($tabDeps as $d){
+                    // On boucle sur les employes
+                    $empl = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($d);
+                    foreach ($empl as $ee){
+                        $found = 0;
+                        while($found == 0 && $i < sizeof($donnees)){
+                            if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="fingerprints" && $donnees[$i]->getIsactive()==1){
+                                $found = 1;
+                            }
+                            $i++;
+                        }
+                        if ($found == 0){
+                            $updateE = new UpdateEntity();
+                            $updateE->setDeviceId($mac);
+                            $updateE->setContent($ee->getId());
+                            $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
+                            $updateE->setIsactive(true);
+                            $updateE->setType("fingerprints");
+                            $updateE->setFunction("fingerprints");
 
-                    $em->persist($updateE);
-                    $em->flush();
+                            $em->persist($updateE);
+                            $em->flush();
+                        }
+                    }
                 }
             }
 

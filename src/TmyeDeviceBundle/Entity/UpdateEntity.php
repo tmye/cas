@@ -29,6 +29,13 @@ class UpdateEntity
     private $deviceId;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="content", type="integer")
+     */
+    private $content;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="creation_date", type="string", length=255)
@@ -41,13 +48,6 @@ class UpdateEntity
      * @ORM\Column(name="function", type="text")
      */
     private $function;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="content", type="integer")
-     */
-    private $content;
 
     /**
      * @var string
@@ -111,30 +111,6 @@ class UpdateEntity
     public function getCreationDate()
     {
         return $this->creationDate;
-    }
-
-    /**
-     * Set content
-     *
-     * @param integer $content
-     *
-     * @return UpdateEntity
-     */
-    public function setContent($content)
-    {
-        $this->content = $content;
-
-        return $this;
-    }
-
-    /**
-     * Get content
-     *
-     * @return integer
-     */
-    public function getContent()
-    {
-        return $this->content;
     }
 
     /**
@@ -280,5 +256,29 @@ class UpdateEntity
     public function getPriority()
     {
         return $this->priority;
+    }
+
+    /**
+     * Set content
+     *
+     * @param integer $content
+     *
+     * @return UpdateEntity
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+
+        return $this;
+    }
+
+    /**
+     * Get content
+     *
+     * @return integer
+     */
+    public function getContent()
+    {
+        return $this->content;
     }
 }
