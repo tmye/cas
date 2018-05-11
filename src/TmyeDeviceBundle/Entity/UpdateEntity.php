@@ -76,6 +76,7 @@ class UpdateEntity
     {
         $this->creationDate = time();
         $this->isactive = 1;
+        $this->content(0);
     }
 
 
