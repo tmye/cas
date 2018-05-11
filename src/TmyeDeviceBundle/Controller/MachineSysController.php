@@ -81,7 +81,6 @@ class MachineSysController extends BaseController
                         $this->info("get all users ".$item->getId());
                         $tmp = $this->getAllUsers($item);
                         array_push($res['data'], $tmp);
-                        echo "cadding employee\n";
                     }
                     break;
                 case "pp":
@@ -103,7 +102,10 @@ class MachineSysController extends BaseController
                     if ($item != null) {
                         $tmp = $this->getAllFingerprints($item);
                         array_push($res['data'], $tmp);
-//                        $this->info("GGG till the end -"."fingerprints");
+
+                        /* get everything and exit */
+
+//                      $this->info("GGG till the end -"."fingerprints");
                     }
                     break;
                 case "pub":
