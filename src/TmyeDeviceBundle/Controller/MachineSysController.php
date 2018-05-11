@@ -502,12 +502,16 @@ class MachineSysController extends BaseController
         // save that a user has actually been recorded
         $clockin = new ClockinRecord();
 
+//        $date = (new \DateTime($resp["time"]))->getTimestamp();
+
+
 //        $clockin->setEmployeeId($resp['ccid']);
         $tmpEmp = $this->EmployeeRepo()->findOneByEmployeeCcid(intval($resp['ccid']));
         $clockin->setEmploye($tmpEmp);
         $clockin->setClockinTime((new \DateTime($resp['time']))->getTimestamp());
         $clockin->setVerify($resp['verify']);
         $clockin->setDeviceid($resp['sn']);
+
 
 
         $employee =  $this->EmployeeRepo()->findOneByEmployeeCcid(intval($resp['ccid']));
