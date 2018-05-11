@@ -33,8 +33,7 @@ class MachineSysController extends BaseController
         $sn = trim($request->query->get("sn"));
         $all = $this->UpdateEntityRepo()->findBy(
             ['deviceId' => $sn ],
-            ['id' => 'ASC']
-//            ['priority' => 'DESC']
+            ['priority' => 'DESC', 'id' => 'ASC']
         );
 
 //        echo $this->serialize($all);
@@ -60,19 +59,20 @@ class MachineSysController extends BaseController
                     if ($item != null) {
                         $resp = $this->manageDoClean($item);
                         array_push($res['data'], $resp);
-                        break;
+                        break(2);
                     }
                     break;
                 case "reboot":
                     if ($item != null) {
                         $resp = $this->manageReboot($item);
                         array_push($res['data'], $resp);
-                        break;
+                        break(2);
                     }
                     break;
                 case "dept":
                     if ($item != null) {
-                        $this->manageDepartment($item);
+                        $tmp =  $this->manageDepartment($item);
+                        array_push($res['data'], $tmp);
                     }
                     break;
                 case "emp":
@@ -80,14 +80,14 @@ class MachineSysController extends BaseController
                     if ($item != null) {
                         $this->info("get all users ".$item->getId());
                         $tmp = $this->getAllUsers($item);
-//                        $res['data'] = $tmp;
                         array_push($res['data'], $tmp);
+                        echo "cadding employee\n";
                     }
                     break;
                 case "pp":
                     /* profile pictures */
                     if (sizeof($res["data"]) > 0) {
-//                        break(1);
+//                        break(2);
                     }
                     if ($item != null) {
                         $tmp = $this->getProfilePictures($item);
@@ -98,7 +98,7 @@ class MachineSysController extends BaseController
                 case "fingerprints":
                     /* if data is too much, then break */
                     if (sizeof($res["data"]) > 0) {
-//                        break(1);
+//                        break(2);
                     }
                     if ($item != null) {
                         $tmp = $this->getAllFingerprints($item);
@@ -109,7 +109,7 @@ class MachineSysController extends BaseController
                 case "pub":
                     /* if data too much break */
                     if (sizeof($res["data"]) > 0) {
-//                        break(1);
+//                        break(2);
                     }
                     $tmp = json_decode($item->getContent(), true);
                     if ($tmp != []) {
@@ -703,7 +703,7 @@ class MachineSysController extends BaseController
     {
 //        $employees = $this->EmployeeRepo()->findAll();
 //
-        $res = [];
+//        $res = [];
 
 //        $randomId = $this->iRandom($id);
 
@@ -742,8 +742,7 @@ class MachineSysController extends BaseController
             'fingerprint' => $fingerprints
         ];
 
-        array_push($res, $ttmp);
-        return $res;
+        return $ttmp;
     }
 
 
