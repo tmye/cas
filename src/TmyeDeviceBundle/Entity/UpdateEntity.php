@@ -38,10 +38,16 @@ class UpdateEntity
     /**
      * @var string
      *
-     * @ORM\Column(name="content", type="text")
+     * @ORM\Column(name="function", type="text")
+     */
+    private $function;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="content", type="integer")
      */
     private $content;
-
 
     /**
      * @var string
@@ -68,7 +74,6 @@ class UpdateEntity
 
     function __construct()
     {
-        $this->content = "";
         $this->creationDate = time();
         $this->isactive = 1;
     }
@@ -111,7 +116,7 @@ class UpdateEntity
     /**
      * Set content
      *
-     * @param string $content
+     * @param integer $content
      *
      * @return UpdateEntity
      */
@@ -125,12 +130,37 @@ class UpdateEntity
     /**
      * Get content
      *
-     * @return string
+     * @return integer
      */
     public function getContent()
     {
         return $this->content;
     }
+
+    /**
+     * Set function
+     *
+     * @param string $function
+     *
+     * @return UpdateEntity
+     */
+    public function setFunction($function)
+    {
+        $this->function = $function;
+
+        return $this;
+    }
+
+    /**
+     * Get function
+     *
+     * @return string
+     */
+    public function getFunction()
+    {
+        return $this->function;
+    }
+
 
     /**
      * Set isactive
