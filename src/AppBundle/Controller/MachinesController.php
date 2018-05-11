@@ -256,13 +256,10 @@ class MachinesController extends Controller
                 while($found == 0 && $i < sizeof($donnees)){
                     if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="emp" && $donnees[$i]->getIsactive()==1){
                         $found = 1;
-                    }else{
-                        echo "\n not found";
                     }
-                    //$session->getFlashBag()->add('passage : ',$donnees[$i]->getDeviceId());
                     $i++;
                 }
-                echo "\n Found = :".$found;
+
                 if ($found == 0){
                     $updateE = new UpdateEntity();
                     $updateE->setDeviceId($mac);
@@ -278,7 +275,6 @@ class MachinesController extends Controller
             //return new Response(json_encode($finalTab));
             return new Response("OK");
         }elseif($len == 1){
-            echo "Je suis dans le dernier cas";
             // On persiste les éléments en fonction du cas
             foreach ($tab[0] as $mac){
                 while($found == 0 && $i < sizeof($donnees)){
@@ -288,7 +284,6 @@ class MachinesController extends Controller
                     //$session->getFlashBag()->add('passage : ',$donnees[$i]->getDeviceId());
                     $i++;
                 }
-                echo "Found2 = :".$found;
                 if ($found == 0){
                     $updateE = new UpdateEntity();
                     $updateE->setDeviceId($mac);
