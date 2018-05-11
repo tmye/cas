@@ -33,9 +33,12 @@ class MachineSysController extends BaseController
         $sn = trim($request->query->get("sn"));
         $all = $this->UpdateEntityRepo()->findBy(
             ['deviceId' => $sn ],
-            ['id' => 'ASC'],
-            ['priority' => 'DESC']
+            ['priority' => 'DESC', 'id' => 'ASC']
         );
+
+//        echo $this->serialize($all);
+//        var_dump($all);
+//        exit;
 
         /*
             group updateEntites by update types and give a priority to the type clean
@@ -56,61 +59,66 @@ class MachineSysController extends BaseController
                     if ($item != null) {
                         $resp = $this->manageDoClean($item);
                         array_push($res['data'], $resp);
-                        break;
+                        break(2);
                     }
                     break;
                 case "reboot":
                     if ($item != null) {
                         $resp = $this->manageReboot($item);
                         array_push($res['data'], $resp);
-                        break;
+                        break(2);
                     }
                     break;
                 case "dept":
                     if ($item != null) {
-                        $this->manageDepartment($item);
+                        $tmp =  $this->manageDepartment($item);
+                        array_push($res['data'], $tmp);
                     }
                     break;
                 case "emp":
                     /* employee has to be by employee */
                     if ($item != null) {
+                        $this->info("get all users ".$item->getId());
                         $tmp = $this->getAllUsers($item);
-                        $res['data'] = $tmp;
+                        array_push($res['data'], $tmp);
                     }
                     break;
                 case "pp":
                     /* profile pictures */
                     if (sizeof($res["data"]) > 0) {
-                        break(1);
+//                        break(2);
                     }
                     if ($item != null) {
                         $tmp = $this->getProfilePictures($item);
-                        $res['data'] = $tmp;
-                        $this->info("GGG till the end -"."pp");
+                        array_push($res['data'], $tmp);
+//                        $this->info("GGG till the end -"."pp");
                     }
                     break;
                 case "fingerprints":
                     /* if data is too much, then break */
                     if (sizeof($res["data"]) > 0) {
-                        break(1);
+//                        break(2);
                     }
                     if ($item != null) {
                         $tmp = $this->getAllFingerprints($item);
-                        $res['data'] = $tmp;
-                        $this->info("GGG till the end -"."fingerprints");
+                        array_push($res['data'], $tmp);
+
+                        /* get everything and exit */
+
+//                      $this->info("GGG till the end -"."fingerprints");
                     }
                     break;
                 case "pub":
                     /* if data too much break */
                     if (sizeof($res["data"]) > 0) {
-                        break(1);
+//                        break(2);
                     }
                     $tmp = json_decode($item->getContent(), true);
                     if ($tmp != []) {
                         $tmp = $this->getPubSetupContent(intval($tmp['index']));
                         $tmp['id'] = $item->getId();
                         array_push($res['data'], $tmp);
-                        $this->info("GGG till the end -"."pub");
+//                        $this->info("GGG till the end -"."pub");
                     }
                     break;
             }
@@ -139,9 +147,6 @@ class MachineSysController extends BaseController
               'deviceId' => $sn,
               'type' => 'time'
           ]);*/
-
-
-
 
         $res['status'] = 1;
         $res['info'] = 'ok';
@@ -497,12 +502,16 @@ class MachineSysController extends BaseController
         // save that a user has actually been recorded
         $clockin = new ClockinRecord();
 
+//        $date = (new \DateTime($resp["time"]))->getTimestamp();
+
+
 //        $clockin->setEmployeeId($resp['ccid']);
         $tmpEmp = $this->EmployeeRepo()->findOneByEmployeeCcid(intval($resp['ccid']));
         $clockin->setEmploye($tmpEmp);
         $clockin->setClockinTime((new \DateTime($resp['time']))->getTimestamp());
         $clockin->setVerify($resp['verify']);
         $clockin->setDeviceid($resp['sn']);
+
 
 
         $employee =  $this->EmployeeRepo()->findOneByEmployeeCcid(intval($resp['ccid']));
@@ -560,6 +569,9 @@ class MachineSysController extends BaseController
     {
 //        {id:”1005”,do:”update”,data:”advert”,index:1,advert:”base64”}
         $pubsetup = $this->PubsRepo()->findOneBy(array("deviceid"=>"X_X"));
+
+        if ($pubsetup == null)
+            return;
 
         $pic_slide_1 = [
             'id' => $this->iRandom(0),
@@ -661,6 +673,8 @@ class MachineSysController extends BaseController
             "faceexist": 0
         }*/
 
+        $this->info("getting user for item->id ".$item->getId());
+
         /* the id that is send has to be something else. */
 
         /* find the use when looking into content */
@@ -712,7 +726,7 @@ class MachineSysController extends BaseController
 
         $fg =  json_decode($employee->getFingerprints());
 
-        $this->info($fg[0]);
+//        $this->info($fg[0]);
 
         if ($fg[0] != "") {
             $fingerprints[0] = $this->base64__($fg[0], "f");
@@ -734,8 +748,7 @@ class MachineSysController extends BaseController
             'fingerprint' => $fingerprints
         ];
 
-        array_push($res, $ttmp);
-        return $res;
+        return $ttmp;
     }
 
 
