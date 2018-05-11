@@ -54,60 +54,27 @@ class MachineSysController extends BaseController
             switch ($item->getType()) {
                 case "1doclean":
                     if ($item != null) {
-                        $tmp = [
-                            'id' => $item->getId(),
-                            'do' => 'delete',
-                            'data' => ["user","fingerprint", "face", "headpic", "clockin", "pic", "dept"]
-                        ];
-                        array_push($res['data'], $tmp);
+                        $resp = $this->manageDoClean($item);
+                        array_push($res['data'], $resp);
                         break;
                     }
                     break;
                 case "reboot":
                     if ($item != null) {
-                        $tmp = json_decode("{\"id\":\"\",\"do\":\"cmd\",\"cmd\":\"reboot\"}", true);
-                        $tmp['id'] = $item->getId();
-                        array_push($res['data'], $tmp);
+                        $resp = $this->manageReboot($item);
+                        array_push($res['data'], $resp);
                         break;
                     }
                     break;
                 case "dept":
                     if ($item != null) {
-
-                        if ($item->getFunction() == "clear") {
-
-                            // clear the dept
-                            $tmp = [
-                                'id' => $item->getId(),
-                                'do' => 'delete',
-                                'data' => "dept",
-                                'dept' =>  $this->getAllDepartementsIdzOnly()
-                            ];
-                            array_push($res['data'], $tmp);
-
-                            $tmp = [
-                                'id' => $item->getId(),
-                                'do' => 'delete',
-                                'data' => ["user", "fingerprint", "face", "headpic", "clockin", "pic"],
-                                'ccid' =>  $this->getAllEmployeesIdzOnly()
-                            ];
-                            array_push($res['data'], $tmp);
-                        } else {
-                            $tmp = [
-                                'id' => $item->getId(),
-                                'do' => 'update',
-                                'data' => "dept",
-                                'dept' =>  $this->getAllDepartements()
-                            ];
-                            array_push($res['data'], $tmp);
-                        }
+                        $this->manageDepartment($item);
                     }
                     break;
                 case "emp":
                     /* employee has to be by employee */
-
                     if ($item != null) {
-                        $tmp = $this->getAllUsers($item->getId());
+                        $tmp = $this->getAllUsers($item);
                         $res['data'] = $tmp;
                     }
                     break;
@@ -117,7 +84,7 @@ class MachineSysController extends BaseController
                         break(1);
                     }
                     if ($item != null) {
-                        $tmp = $this->getProfilePictures($item->getId());
+                        $tmp = $this->getProfilePictures($item);
                         $res['data'] = $tmp;
                         $this->info("GGG till the end -"."pp");
                     }
@@ -128,7 +95,7 @@ class MachineSysController extends BaseController
                         break(1);
                     }
                     if ($item != null) {
-                        $tmp = $this->getAllFingerprints($item->getId());
+                        $tmp = $this->getAllFingerprints($item);
                         $res['data'] = $tmp;
                         $this->info("GGG till the end -"."fingerprints");
                     }
@@ -679,30 +646,31 @@ class MachineSysController extends BaseController
 
 
 
-    private function getAllUsers($item_id)
+    private function getAllUsers($item)
     {
         /*{
-
-    "id": "1001",
-    "do": "update",
-    "data": "user",
-    "ccid": "1236",
-    "name": "张三 ",
-    "passwd": "md5",
-    "card": "65852",
-    "deptid": 11,
-    "auth": 0,
-    "faceexist": 0
-
+            "id": "1001",
+            "do": "update",
+            "data": "user",
+            "ccid": "1236",
+            "name": "张三 ",
+            "passwd": "md5",
+            "card": "65852",
+            "deptid": 11,
+            "auth": 0,
+            "faceexist": 0
         }*/
 
-        $randomId = $this->iRandom($item_id);
+        /* the id that is send has to be something else. */
 
-        $res = [];
-        $empl = $this->EmployeeRepo()->findAll();
-        foreach ($empl as &$e) {
+        /* find the use when looking into content */
+        $e = $this->EmployeeRepo()->find($item->getContent());
+
+        $tmp = [];
+
+        if ($e != null)
             $tmp = [
-                'id' => $randomId++,
+                'id' => $item->getId(),
                 'do' => 'update',
                 'data' => "user",
                 'ccid' => $e->getEmployeeCcid(),
@@ -712,9 +680,8 @@ class MachineSysController extends BaseController
                 'auth' => $e->getAuth(),
                 'faceexist' => 0
             ];
-            array_push($res, $tmp);
-        }
-        return $res;
+
+        return $tmp;
     }
 
     private function resetReturnValues()
@@ -724,44 +691,50 @@ class MachineSysController extends BaseController
             $this->deleteEntity($obj);
     }
 
-    private function getAllFingerprints($id)
+    private function getAllFingerprints($item)
     {
-        $employees = $this->EmployeeRepo()->findAll();
+//        $employees = $this->EmployeeRepo()->findAll();
+//
+//        $res = [];
 
-        $res = [];
+//        $randomId = $this->iRandom($id);
 
-        $randomId = $this->iRandom($id);
+//        foreach ($employees as &$employee) {
 
-        foreach ($employees as &$employee) {
+        $employee = $this->EmployeeRepo()->find($item->getContent());
 
-            $fingerprints = ["",""];
+        if ($employee == null)
+            return [];
 
-            $fg =  json_decode($employee->getFingerprints());
+        // else
 
-            $this->info($fg[0]);
+        $fingerprints = ["",""];
 
-            if ($fg[0] != "") {
-                $fingerprints[0] = $this->base64__($fg[0], "f");
-            }
-            else
-            {}
+        $fg =  json_decode($employee->getFingerprints());
 
+        $this->info($fg[0]);
 
-            if ($fg[1] != "")
-                $fingerprints[1] = $this->base64__($fg[1], "f") ;
-            else
-            {}
-
-            $ttmp = [
-                'id' => $randomId++,
-                'do' => 'update',
-                'data' => 'fingerprint',
-                'ccid' => $employee->getEmployeeCcid(),
-                'fingerprint' => $fingerprints
-            ];
-
-            array_push($res, $ttmp);
+        if ($fg[0] != "") {
+            $fingerprints[0] = $this->base64__($fg[0], "f");
         }
+        else
+        {}
+
+
+        if ($fg[1] != "")
+            $fingerprints[1] = $this->base64__($fg[1], "f") ;
+        else
+        {}
+
+        $ttmp = [
+            'id' => $item->getId(),
+            'do' => 'update',
+            'data' => 'fingerprint',
+            'ccid' => $employee->getEmployeeCcid(),
+            'fingerprint' => $fingerprints
+        ];
+
+        array_push($res, $ttmp);
         return $res;
     }
 
@@ -801,25 +774,22 @@ class MachineSysController extends BaseController
         $this->persist($employee);
     }
 
-    private function getProfilePictures($id)
+    private function getProfilePictures($item)
     {
 
-        $res = [];
-        $employees = $this->EmployeeRepo()->findAll();
-        $randomId = $this->iRandom($id);
+        //{"id":"1004","do":"update","data":"headpic","ccid":"123456","headpic":"base64"}
 
-        foreach ($employees as &$employee) {
-//{"id":"1004","do":"update","data":"headpic","ccid":"123456","headpic":"base64"}
-            $tmp = [
-                'id' => $randomId++,
-                'do' => 'update',
-                'data' => "headpic",
-                'ccid' => $employee->getEmployeeCcid(),
-                'headpic' => $this->base64__($this->getParameter('user_profile_pictures').DIRECTORY_SEPARATOR.$employee->getPicture())
-            ];
-            array_push($res, $tmp);
-        }
-        return $res;
+        $employee = $this->EmployeeRepo()->find($item->getContent());
+
+        $tmp = [
+            'id' => $item->getId(),
+            'do' => 'update',
+            'data' => "headpic",
+            'ccid' => $employee->getEmployeeCcid(),
+            'headpic' => $this->base64__($this->getParameter('user_profile_pictures').DIRECTORY_SEPARATOR.$employee->getPicture())
+        ];
+
+        return $tmp;
     }
 
     private function SetEmployeeHeadpic ($resp) {
@@ -868,6 +838,56 @@ class MachineSysController extends BaseController
 
 //        return (($id*1000)+ $id+1);
         return $id;
+    }
+
+    private function manageDoClean($item)
+    {
+        $tmp = [
+            'id' => $item->getId(),
+            'do' => 'delete',
+            'data' => ["user","fingerprint", "face", "headpic", "clockin", "pic", "dept"]
+        ];
+        // array_push($res['data'], $tmp);
+        return $tmp;
+    }
+
+    private function manageReboot($item)
+    {
+        $tmp = json_decode("{\"id\":\"\",\"do\":\"cmd\",\"cmd\":\"reboot\"}", true);
+        $tmp['id'] = $item->getId();
+        return $tmp;
+    }
+
+    private function manageDepartment($item)
+    {
+
+        if ($item->getFunction() == "clear") {
+
+            // clear the dept
+            /*     $tmp = [
+                     'id' => $item->getId(),
+                     'do' => 'delete',
+                     'data' => "dept",
+                     'dept' =>  $this->getAllDepartementsIdzOnly()
+                 ];
+                 array_push($res['data'], $tmp);
+
+                 $tmp = [
+                     'id' => $item->getId(),
+                     'do' => 'delete',
+                     'data' => ["user", "fingerprint", "face", "headpic", "clockin", "pic"],
+                     'ccid' =>  $this->getAllEmployeesIdzOnly()
+                 ];
+                 array_push($res['data'], $tmp);*/
+        } else {
+            $tmp = [
+                'id' => $item->getId(),
+                'do' => 'update',
+                'data' => "dept",
+                'dept' =>  $this->getAllDepartements()
+            ];
+            return $tmp;
+        }
     }
 
 
