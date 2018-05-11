@@ -32,9 +32,10 @@ class DefaultController extends Controller
             echo "<br>".$perm->getDescription()."<br>";
         }*/
 
-        //return new Response(date("Y-m-d H:i:s",1525864086));
-        //return new Response(strtotime("2018-05-11 17:25"));
-        return new Response(md5("5555"));
+        //return new Response(date("Y-m-d H:i:s",1526059500));
+        //return new Response(date("Y-m-d H:i:s",(new \DateTime())->getTimestamp()));
+        //return new Response(strtotime("2018-05-11 14:49"));
+        //return new Response(md5("5555"));
     }
 
     /**
