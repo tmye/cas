@@ -44,9 +44,14 @@ class StatsController extends ClockinReccordController
     }
 
     public function convertHourInMinutes($time){
-        $time = explode(":",$time);
-        $hour = $time[0];
-        $min = $time[1];
+        if(!empty($time) && $time != null){
+            $time = explode(":",$time);
+            $hour = $time[0];
+            $min = $time[1];
+        }else{
+            $hour = 0;
+            $min = 0;
+        }
 
         return (($hour*60)+$min);
     }
