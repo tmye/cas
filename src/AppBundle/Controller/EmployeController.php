@@ -42,7 +42,8 @@ class EmployeController extends Controller {
      */
     public function addEmployeeAction(Request $request)
     {
-        $session = new Session();
+
+        //print_r($this->get('session')->getFlashBag()->get('notice'));
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
@@ -135,7 +136,7 @@ class EmployeController extends Controller {
                     $em->flush();
 
                     //$wh = $this->returnWorkingHoursAction();
-                    $session->getFlashBag()->add('notice', 'Cet employé a été ajouté avec succès');
+                    $this->get('session')->getFlashBag()->set('notice', 'Cet employé a été ajouté avec succès');
                     return $this->redirectToRoute("addEmployee");
                 }
 
@@ -161,6 +162,7 @@ class EmployeController extends Controller {
      */
     public function editEmployeeAction(Request $request, $id)
     {
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
@@ -243,7 +245,8 @@ class EmployeController extends Controller {
                     //return $this->redirectToRoute('viewEmploye');
 
                     $wh = $this->returnWorkingHoursAction();
-                    return $this->render("editEmployee");
+                    $this->get('session')->getFlashBag()->set('notice', 'Cet employé a été modifié avec succès');
+                    return $this->redirectToRoute("editEmployee",array("id"=>$id));
                 }
 
             }
@@ -384,11 +387,8 @@ class EmployeController extends Controller {
                 $form = $formBuilder->getForm();
 
                 $wh = $this->returnWorkingHoursAction();
-                return $this->render("cas/addEmployee.html.twig",array(
-                    'message'=>"Cet employé a été supprimé de la base de données",
-                    'form' => $form->createView(),
-                    'whList' => $wh
-                ));
+                $this->get('session')->getFlashBag()->set('notice', 'Cet employé a été supprimé de la base de données');
+                return $this->redirectToRoute("addEmployee");
             } else{
                 throw new NotFoundHttpException("L'employé d'id " . $id . " n'existe pas.");
             }

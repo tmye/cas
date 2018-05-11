@@ -43,6 +43,14 @@ class StatsController extends ClockinReccordController
         return new Response("OK");
     }
 
+    public function convertHourInMinutes($time){
+        $time = explode(":",$time);
+        $hour = $time[0];
+        $min = $time[1];
+
+        return (($hour*60)+$min);
+    }
+
     /**
      * @Route("/persStat",name="persStat")
      */
@@ -273,8 +281,6 @@ class StatsController extends ClockinReccordController
 
                     // Now we deal with the permissions calculations
                     $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$ct,$empWH[$theDay][0]["beginHour"]);
-                    //print_r("\n P result ".$p."\n");
-                    //print_r("\n"."Here"."\n");
 
                     if($p){
                         /*
@@ -352,6 +358,33 @@ class StatsController extends ClockinReccordController
                         $tempsTPerduDepartPausePermission += $tempPerduDepartPausePermission;
                         $tabDepartsPausePermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPerduDepartPausePermission,"type"=>"Depart pause prématuré","tempsPerdu"=>$tempPerduDepartPausePermission);
                     }
+
+                }
+
+                // Now we deal with lost time calculations
+                // First of all we need the terminals
+                $lost_time = 0;
+                $his = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('Y-m-d',$nowTime),$employe->getId(),$request);
+                if(($his != null) && ($his != "")){
+                    $his = json_decode($his->getContent(),true);
+                    //print_r($his);
+                    $_arr = $his["arrive"];
+                    $_dep = $his["depart"];
+                    $_pau = $his["pause"];
+                    $_fpa = $his["finPause"];
+
+                    // Now that we have terminals, we must check the type of workingHour
+                    if($type == "1"){
+                        if($_arr == 0 || $_pau == 0){
+                            $lost_time += (int)($this->convertHourInMinutes($his["pBH"])) - (int)($this->convertHourInMinutes($his["bH"]));
+                        }
+                        if($_fpa == 0 || $_dep == 0){
+                            $lost_time += (int)($this->convertHourInMinutes($his["eH"])) - (int)($this->convertHourInMinutes($his["pEH"]));
+                        }
+                    }elseif ($type == "2"){
+                        // in this case the lost time is his quota because of his terminals
+                        $lost_time += (int)($his["quota"]);
+                    }
                 }
 
                 // SI le type est exclusivement 2,On calcul les quotas horraires
@@ -392,7 +425,7 @@ class StatsController extends ClockinReccordController
             }
 
             $donneesPermission = array("retardStats"=>$tabRetardsPermission,"retardPauseStats"=>$tabRetardsPausePermission,"pauseStats"=>$tabDepartsPausePermission,"finStats"=> $tabDepartsPermission,"absenceStats"=>$tabAbsencesPermission);
-            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType,"permissionData"=>$donneesPermission);
+            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType,"permissionData"=>$donneesPermission,"lost_time"=>$lost_time);
             $nowTime = $nowTime+86400;
         }
 

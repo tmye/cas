@@ -34,7 +34,7 @@ class MachineSysController extends BaseController
         $all = $this->UpdateEntityRepo()->findBy(
             ['deviceId' => $sn ],
             ['id' => 'ASC'],
-            ['type' => 'DESC']
+            ['priority' => 'DESC']
         );
 
         /*
@@ -44,103 +44,117 @@ class MachineSysController extends BaseController
         $res['info'] = 'ok';
         $res['data'] = [];
 
-        foreach ($all as &$item) {
+//        foreach ($all as &$item) {
+        $sortir = true;
+
+        for ($z = 0; $z < sizeof($all) && $sortir; $z++) {
+
+            $item = $all[$z];
+
             /* 1doclean - delete everything */
-            if ($item->getType() == "1doclean") {
-                if ($item != null) {
-                    $tmp = [
-                        'id' => $item->getId(),
-                        'do' => 'delete',
-                        'data' => ["user","fingerprint", "face", "headpic", "clockin", "pic", "dept"]
-                    ];
-                    array_push($res['data'], $tmp);
-                    break;
-                }
-            }
-            /* reboot device */
-            if ($item->getType() == "reboot") {
-                if ($item != null) {
-                    $tmp = json_decode("{\"id\":\"0\",\"do\":\"cmd\",\"cmd\":\"reboot\"}", true);
-                    $tmp['id'] = $item->getId();
-                    array_push($res['data'], $tmp);
-                    break;
-                }
-            }
-            /* update employee list */
-            if ($item->getType() == "emp") {
-                if ($item != null) {
-                    $tmp = $this->getAllUsers($item->getId());
-                    $res['data'] = $tmp;
-                }
-            }
-            /* update departements */
-            if ($item->getType() == "dept") {
-                if ($item != null) {
-
-                    if ($item->getContent() == "clear") {
-
-                        // clear the dept
+            switch ($item->getType()) {
+                case "1doclean":
+                    if ($item != null) {
                         $tmp = [
                             'id' => $item->getId(),
                             'do' => 'delete',
-                            'data' => "dept",
-                            'dept' =>  $this->getAllDepartementsIdzOnly()
+                            'data' => ["user","fingerprint", "face", "headpic", "clockin", "pic", "dept"]
                         ];
                         array_push($res['data'], $tmp);
-
-
-                        $tmp = [
-                            'id' => $item->getId(),
-                            'do' => 'delete',
-                            'data' => ["user", "fingerprint", "face", "headpic", "clockin", "pic"],
-                            'ccid' =>  $this->getAllEmployeesIdzOnly()
-                        ];
-                        array_push($res['data'], $tmp);
-
-
-                    } else {
-                        $tmp = [
-                            'id' => $item->getId(),
-                            'do' => 'update',
-                            'data' => "dept",
-                            'dept' =>  $this->getAllDepartements()
-                        ];
-                        array_push($res['data'], $tmp);
+                        break;
                     }
-                }
-            }
-            /* profile pictures */
-            if ($res["data"] != [])
-                break;
-            if ($item->getType() == "pp") {
-                if ($item != null) {
-                    $tmp = $this->getProfilePictures($item->getId());
-                    $res['data'] = $tmp;
                     break;
-                }
-            }
-            /* fingerprints update */
-            if ($item->getType() == "fingerprints") {
-                /* if data is too much, then break */
-                if ($res["data"] != [])
+                case "reboot":
+                    if ($item != null) {
+                        $tmp = json_decode("{\"id\":\"\",\"do\":\"cmd\",\"cmd\":\"reboot\"}", true);
+                        $tmp['id'] = $item->getId();
+                        array_push($res['data'], $tmp);
+                        break;
+                    }
                     break;
-                if ($item != null) {
-                    $tmp = $this->getAllFingerprints($item->getId());
-                    $res['data'] = $tmp;
-                    //  break;
-                }
-            }
-            /* pub covers update */
-            if ($item->getType() == "pub") {
-                /* if data too much break */
-                if ($res["data"] != [])
+                case "dept":
+                    if ($item != null) {
+
+                        if ($item->getContent() == "clear") {
+
+                            // clear the dept
+                            $tmp = [
+                                'id' => $item->getId(),
+                                'do' => 'delete',
+                                'data' => "dept",
+                                'dept' =>  $this->getAllDepartementsIdzOnly()
+                            ];
+                            array_push($res['data'], $tmp);
+
+
+                            $tmp = [
+                                'id' => $item->getId(),
+                                'do' => 'delete',
+                                'data' => ["user", "fingerprint", "face", "headpic", "clockin", "pic"],
+                                'ccid' =>  $this->getAllEmployeesIdzOnly()
+                            ];
+                            array_push($res['data'], $tmp);
+
+
+                        } else {
+                            $tmp = [
+                                'id' => $item->getId(),
+                                'do' => 'update',
+                                'data' => "dept",
+                                'dept' =>  $this->getAllDepartements()
+                            ];
+                            array_push($res['data'], $tmp);
+                        }
+                    }
                     break;
-                $tmp = json_decode($item->getContent(), true);
-                if ($tmp != []) {
-                    $tmp = $this->getPubSetupContent(intval($tmp['index']));
-                    $tmp['id'] = $item->getId();
-                    array_push($res['data'], $tmp);
-                }
+                case "emp":
+                    /* employee has to be by employee */
+
+                    if ($item != null) {
+                        $tmp = $this->getAllUsers($item->getId());
+                        $res['data'] = $tmp;
+                    }
+                    break;
+                case "pp":
+                    /* profile pictures */
+                    if (sizeof($res["data"]) > 0) {
+                        $sortir = false;
+                        break(1);
+                    }
+                    if ($item != null) {
+                        $tmp = $this->getProfilePictures($item->getId());
+                        $res['data'] = $tmp;
+                        $sortir = false;
+                        $this->info("GGG till the end -"."pp");
+                    }
+                    break;
+                case "fingerprints":
+                    /* if data is too much, then break */
+                    if (sizeof($res["data"]) > 0) {
+                        $sortir = false;
+                        break(1);
+                    }
+                    if ($item != null) {
+                        $tmp = $this->getAllFingerprints($item->getId());
+                        $res['data'] = $tmp;
+                        $sortir = false;
+                        $this->info("GGG till the end -"."fingerprints");
+                    }
+                    break;
+                case "pub":
+                    /* if data too much break */
+                    if (sizeof($res["data"]) > 0) {
+                        $sortir = false;
+                        break(1);
+                    }
+                    $tmp = json_decode($item->getContent(), true);
+                    if ($tmp != []) {
+                        $tmp = $this->getPubSetupContent(intval($tmp['index']));
+                        $tmp['id'] = $item->getId();
+                        array_push($res['data'], $tmp);
+                        $this->info("GGG till the end -"."pub");
+                    }
+                    break;
             }
         }
 
@@ -198,6 +212,7 @@ class MachineSysController extends BaseController
         $responsePack = json_decode($request->getContent(), true);
 
         $this->info("Reponse du serveur -- Reception de donnees");
+        $this->info($request->getContent());
         $sn = $request->get("sn");
 
         // open the file here
@@ -479,8 +494,10 @@ class MachineSysController extends BaseController
                     ['id' => $id,
                         'deviceId' => $sn]);
 
-                if ($currentEntity != null)
+                if ($currentEntity != null) {
+                    $this->info("DELETED ".$currentEntity->getId());
                     $this->deleteEntity($currentEntity);
+                }
             }
 
         // save the ok id inside the array
@@ -587,7 +604,7 @@ class MachineSysController extends BaseController
         $pubsetup = $this->PubsRepo()->findOneBy(array("deviceid"=>"X_X"));
 
         $pic_slide_1 = [
-            'id' => 0,
+            'id' => $this->iRandom(0),
             'do' => 'update',
             'data' => 'advert',
             'index' => 1,
@@ -597,7 +614,7 @@ class MachineSysController extends BaseController
             return $pic_slide_1;
 
         $pic_slide_2 = [
-            'id' => 1,
+            'id' => $this->iRandom(1),
             'do' => 'update',
             'data' => 'advert',
             'index' => 2,
@@ -607,7 +624,7 @@ class MachineSysController extends BaseController
             return $pic_slide_2;
 
         $pic_slide_3 = [
-            'id' => 2,
+            'id' => $this->iRandom(2),
             'do' => 'update',
             'data' => 'advert',
             'index' => 3,
@@ -663,7 +680,7 @@ class MachineSysController extends BaseController
         $res = [];
         $departements = $this->DepartementRepo()->findAll();
         foreach ($departements as &$departement) {
-            $ttmp = ['id'=>$departement->getId()];
+            $ttmp = ['id'=> $departement->getId() ];
             array_push($res, $ttmp);
         }
         return $res;
@@ -671,7 +688,7 @@ class MachineSysController extends BaseController
 
 
 
-    private function getAllUsers($id)
+    private function getAllUsers($item_id)
     {
         /*{
 
@@ -688,11 +705,13 @@ class MachineSysController extends BaseController
 
         }*/
 
+        $randomId = $this->iRandom($item_id);
+
         $res = [];
         $empl = $this->EmployeeRepo()->findAll();
         foreach ($empl as &$e) {
             $tmp = [
-                'id' => $id++,
+                'id' => $randomId++,
                 'do' => 'update',
                 'data' => "user",
                 'ccid' => $e->getEmployeeCcid(),
@@ -720,6 +739,8 @@ class MachineSysController extends BaseController
 
         $res = [];
 
+        $randomId = $this->iRandom($id);
+
         foreach ($employees as &$employee) {
 
             $fingerprints = ["",""];
@@ -741,7 +762,7 @@ class MachineSysController extends BaseController
             {}
 
             $ttmp = [
-                'id' => $id++,
+                'id' => $randomId++,
                 'do' => 'update',
                 'data' => 'fingerprint',
                 'ccid' => $employee->getEmployeeCcid(),
@@ -794,10 +815,12 @@ class MachineSysController extends BaseController
 
         $res = [];
         $employees = $this->EmployeeRepo()->findAll();
+        $randomId = $this->iRandom($id);
+
         foreach ($employees as &$employee) {
 //{"id":"1004","do":"update","data":"headpic","ccid":"123456","headpic":"base64"}
             $tmp = [
-                'id' => $id++,
+                'id' => $randomId++,
                 'do' => 'update',
                 'data' => "headpic",
                 'ccid' => $employee->getEmployeeCcid(),
@@ -845,6 +868,15 @@ class MachineSysController extends BaseController
 
 
         echo "good one ". md5('555'); exit;
+    }
+
+    private function iRandom($id)
+    {
+
+        /* get random numbers that are greater than id */
+
+//        return (($id*1000)+ $id+1);
+        return $id;
     }
 
 

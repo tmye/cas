@@ -520,25 +520,25 @@ class ClockinReccordController extends Controller
         $don = array();
 
         if(isset($emplo) && $emplo != null){
-            $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($emplo);
+            $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findOneBy(array("id"=>$emplo));
         }else{
             $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($dep);
         }
 
         if(sizeof($emp)>0){
             if(sizeof($emp)==1) {
-                $empTab[]=$emp[0]->getId();
-                $empNameTab[]=$emp[0]->getSurname()." ".$emp[0]->getLastName();
-                $empCcidTab[]=$emp[0]->getEmployeeCcid();
+                $empTab[]=$emp->getId();
+                $empNameTab[]=$emp->getSurname()." ".$emp->getLastName();
+                $empCcidTab[]=$emp->getEmployeeCcid();
 
-                $empWH = json_decode($emp[0]->getWorkingHour()->getWorkingHour(),true);
+                $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
 
                 $heureDebutNormal = $empWH[$day][0]["beginHour"];
                 $heureDebutPauseNormal = $empWH[$day][0]["pauseBeginHour"];
                 $heureFinNormal = $empWH[$day][0]["endHour"];
                 $heureFinPauseNormal = $empWH[$day][0]["pauseEndHour"];
 
-                $empWH = json_decode($emp[0]->getWorkingHour()->getWorkingHour(),true);
+                $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
                 $type = $empWH[$day][0]["type"];
 
                 // Pour le calcul d'un depart prématuré de pause,Calculons l'intervalle
@@ -579,7 +579,7 @@ class ClockinReccordController extends Controller
 
                 // On récupère les données appartenant au département sélectionné
 
-                $tempData = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empHistory($emp[0]->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
+                $tempData = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empHistory($emp->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
 
                 //Maintenant il faut éliminer les doublons
                 $don[] = $this->elimineDoublon($tempData,$day,$request);
@@ -666,19 +666,46 @@ class ClockinReccordController extends Controller
             }
 
             if(!empty($emplo) && $emplo != null){
-                $array_of_quota = array();
+                $array_of_data = array();
                 // Si on est dans le cas où cest un appel depuis un autre controlleur
                 if(isset(json_decode($content["content"],true)["clockinRecord"][0][$emplo]) && !empty(json_decode($content["content"],true)["clockinRecord"][0][$emplo])){
                     $quota_en_minuite = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["quota_en_minuite"];
                     $quota_fait_en_minuite = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["quota_fait"];
+                    $arrive = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["arrive"];
+                    $depart = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["depart"];
+                    $pause = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["pause"];
+                    $finPause = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["finPause"];
+
+                    $bH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["bH"];
+                    $eH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["eH"];
+                    $pBH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["pBH"];
+                    $pEH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["pEH"];
                 }else{
                     $quota_en_minuite = 0;
                     $quota_fait_en_minuite = 0;
-                }
-                $array_of_quota["quota"] = $quota_en_minuite;
-                $array_of_quota["quota_fait"] = $quota_fait_en_minuite;
+                    $arrive = null;
+                    $depart = null;
+                    $pause = null;
+                    $finPause = null;
 
-                return new JsonResponse($array_of_quota);
+                    $bH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["bH"];
+                    $eH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["eH"];
+                    $pBH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["pBH"];
+                    $pEH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["pEH"];
+                }
+                $array_of_data["quota"] = $quota_en_minuite;
+                $array_of_data["quota_fait"] = $quota_fait_en_minuite;
+                $array_of_data["arrive"] = $arrive;
+                $array_of_data["depart"] = $depart;
+                $array_of_data["pause"] = $pause;
+                $array_of_data["finPause"] = $finPause;
+
+                $array_of_data["bH"] = $bH;
+                $array_of_data["eH"] = $eH;
+                $array_of_data["pBH"] = $pBH;
+                $array_of_data["pEH"] = $pEH;
+
+                return new JsonResponse($array_of_data);
             }else{
                 return new JsonResponse($content);
             }

@@ -11,17 +11,15 @@
                         <li>
                             <div class="collapsible-header active">Formulaire d'ajout d'un nouvel employé</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
-                                <div class="row">
-                                    <div class="col l12">
-                                        <div class="operation_message">
-                                            {% if app.session.flashbag.get('notice') is defined and app.session.flashbag.get('notice') is not null %}
-                                                {% for flashMessage in app.session.flashbag.get('notice') %}
-                                                    {{ flashMessage }}
-                                                {% endfor %}
-                                            {% endif %}
+                                {% for message in  app.session.flashbag.get('notice') %}
+                                    <div class="row">
+                                        <div class="col l12">
+                                            <div class="operation_message">
+                                                {{ message }}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                {% endfor %}
                                 <div class="row">
                                     <div class="col l12">
                                             <span class="detailSpan" style="display: none">Détails de l'heure de travail sélectionnée</span>
