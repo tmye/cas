@@ -688,10 +688,10 @@ class ClockinReccordController extends Controller
                     $pause = null;
                     $finPause = null;
 
-                    $bH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["bH"];
-                    $eH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["eH"];
-                    $pBH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["pBH"];
-                    $pEH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["pEH"];
+                    $bH = 0;
+                    $eH = 0;
+                    $pBH = 0;
+                    $pEH = 0;
                 }
                 $array_of_data["quota"] = $quota_en_minuite;
                 $array_of_data["quota_fait"] = $quota_fait_en_minuite;
