@@ -74,7 +74,7 @@ class MachineSysController extends BaseController
                 case "dept":
                     if ($item != null) {
 
-                        if ($item->getContent() == "clear") {
+                        if ($item->getFunction() == "clear") {
 
                             // clear the dept
                             $tmp = [
@@ -85,7 +85,6 @@ class MachineSysController extends BaseController
                             ];
                             array_push($res['data'], $tmp);
 
-
                             $tmp = [
                                 'id' => $item->getId(),
                                 'do' => 'delete',
@@ -93,8 +92,6 @@ class MachineSysController extends BaseController
                                 'ccid' =>  $this->getAllEmployeesIdzOnly()
                             ];
                             array_push($res['data'], $tmp);
-
-
                         } else {
                             $tmp = [
                                 'id' => $item->getId(),

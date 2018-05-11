@@ -40,8 +40,14 @@ class UpdateEntity
      *
      * @ORM\Column(name="content", type="text")
      */
-    private $content;
+    private $function;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="content", type="text")
+     */
+    private $content;
 
     /**
      * @var string
@@ -131,6 +137,31 @@ class UpdateEntity
     {
         return $this->content;
     }
+
+    /**
+     * Set function
+     *
+     * @param string $function
+     *
+     * @return UpdateEntity
+     */
+    public function setFunction($function)
+    {
+        $this->function = $function;
+
+        return $this;
+    }
+
+    /**
+     * Get function
+     *
+     * @return string
+     */
+    public function getFunction()
+    {
+        return $this->function;
+    }
+
 
     /**
      * Set isactive
