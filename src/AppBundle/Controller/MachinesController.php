@@ -268,7 +268,6 @@ class MachinesController extends Controller
                             $updateE = new UpdateEntity();
                             $updateE->setDeviceId($mac);
                             $updateE->setContent($ee->getId());
-                            $updateE->setFunction("emp");
                             $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
                             $updateE->setIsactive(true);
                             $updateE->setType("emp");
@@ -299,7 +298,6 @@ class MachinesController extends Controller
                             $updateE = new UpdateEntity();
                             $updateE->setDeviceId($mac);
                             $updateE->setContent($ee->getId());
-                            $updateE->setFunction("emp");
                             $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
                             $updateE->setIsactive(true);
                             $updateE->setType("emp");
@@ -388,7 +386,6 @@ class MachinesController extends Controller
                             $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
                             $updateE->setIsactive(true);
                             $updateE->setType("pp");
-                            $updateE->setFunction("pp");
 
                             $em->persist($updateE);
                             $em->flush();
@@ -419,7 +416,6 @@ class MachinesController extends Controller
                             $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
                             $updateE->setIsactive(true);
                             $updateE->setType("pp");
-                            $updateE->setFunction("pp");
 
                             $em->persist($updateE);
                             $em->flush();
@@ -499,7 +495,6 @@ class MachinesController extends Controller
                             $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
                             $updateE->setIsactive(true);
                             $updateE->setType("fingerprints");
-                            $updateE->setFunction("fingerprints");
 
                             $em->persist($updateE);
                             $em->flush();
@@ -531,7 +526,6 @@ class MachinesController extends Controller
                             $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
                             $updateE->setIsactive(true);
                             $updateE->setType("fingerprints");
-                            $updateE->setFunction("fingerprints");
 
                             $em->persist($updateE);
                             $em->flush();
