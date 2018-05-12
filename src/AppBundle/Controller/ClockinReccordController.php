@@ -519,6 +519,7 @@ class ClockinReccordController extends Controller
         $dataTable = array();
         $don = array();
 
+        // check if one or many employees
         if(isset($emplo) && $emplo != null){
             $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findOneBy(array("id"=>$emplo));
         }else{
