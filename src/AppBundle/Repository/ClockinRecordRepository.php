@@ -61,6 +61,17 @@ class ClockinRecordRepository extends EntityRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
+    public function empAllHistory($empId,$min,$max){
+        $queryBuilder = $this->createQueryBuilder('c');
+        $queryBuilder->where('c.clockinTime BETWEEN :min AND :max');
+        $queryBuilder->setParameter('min',$min);
+        $queryBuilder->setParameter('max',$max);
+
+        $queryBuilder->andWhere('c.employe = :empId')->setParameter('empId',$empId);
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
     public function empHistorySimple($empId,$depId,$bMin,$bMax,$pBMin,$pBMax,$pEMin,$pEMax,$eMin,$eMax){
         $queryBuilder = $this->createQueryBuilder('c');
 
