@@ -6,6 +6,10 @@ security:
             algorithm:   md5
             iterations: 1
             encode_as_base64: false
+        AppBundle\Entity\Admin:
+            algorithm:   md5
+            iterations: 1
+            encode_as_base64: false
         #Symfony\Component\Security\Core\User\User: sha512
 
     role_hierarchy:
@@ -15,9 +19,16 @@ security:
 
     # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
-      main:
+      chain_provider:
+        chain:
+            providers: [main_employee,main_admin]
+      main_employee:
         entity:
           class:    AppBundle\Entity\Employe
+          property: username
+      main_admin:
+        entity:
+          class:    AppBundle\Entity\Admin
           property: username
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -28,7 +39,7 @@ security:
         main:
           pattern: ^/
           anonymous:    true
-          provider: main
+          provider: chain_provider
           form_login:
             login_path: login
             check_path: login_check

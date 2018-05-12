@@ -4,6 +4,16 @@
 {% block title %}C.A.S - Initialisation{% endblock %}
 
 {% block body %}
+
+    <!-- Modal for ajax loading -->
+    <div id="modal_loading" class="modal ajax_modals">
+        <div class="modal-content">
+            <p class="center">
+                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+            </p>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col l12">
             <h5 class="h5_title"><span class="fa fa-database"></span> Initialisation de l'application</h5>
@@ -43,8 +53,13 @@
                                         <input type="text" id="adminPhoneNumber" placeholder="Numéro de téléphone">
                                     </div>
                                     <div class="col l4">
+                                        <input type="text" id="adminUsername" placeholder="Choisissez un pseudo">
+                                    </div>
+                                    <div class="col l4">
                                         <input type="password" id="adminFirstPassword" placeholder="Mot de passe">
                                     </div>
+                                </div>
+                                <div class="row">
                                     <div class="col l4">
                                         <input type="password" id="adminSecondPassword" placeholder="Confirmation du mot de passe">
                                     </div>
@@ -90,8 +105,9 @@
                                 if($("#adminAdress").val()){
                                     if($("#adminPhoneNumber").val()){
                                         if($("#adminFirstPassword").val()){
-                                            if($("#adminFirstPassword").val().length >= 8){
+                                            if($("#adminFirstPassword").val().length >= 6){
                                                 if($("#adminFirstPassword").val() == $("#adminSecondPassword").val()){
+                                                    $('#modal_loading').modal('open');
                                                     // After the verifications we can deal with the ajax queries
                                                     var formdata = new FormData();
                                                     var fInput = document.getElementById("fileInput");
@@ -102,6 +118,7 @@
                                                     formdata.append("adminSurname",$("#adminSurname").val());
                                                     formdata.append("adminAdress",$("#adminAdress").val());
                                                     formdata.append("adminPhoneNumber",$("#adminPhoneNumber").val());
+                                                    formdata.append("adminUsername",$("#adminUsername").val());
                                                     formdata.append("adminPassword",$("#adminFirstPassword").val());
                                                     console.log(fInput);
                                                     $.ajax({
@@ -116,9 +133,15 @@
                                                             if(data == 1){
                                                                 window.location.href = "{{ path('homepage') }}";
                                                             }
+
+                                                            $('#modal_loading').modal('close');
+
                                                         },
                                                         error: function() {
                                                             alert("Erreur");
+
+                                                            $('#modal_loading').modal('close');
+
                                                         }
                                                     });
                                                 }else {
