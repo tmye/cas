@@ -42,6 +42,19 @@ class WorkingHours
      */
     private $isFor;
 
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="tolerance", type="integer")
+     */
+    private $tolerance;
+
+
+    public function __construct()
+    {
+        $this->tolerance = 60;
+    }
+
 
     /**
      * Get id
@@ -97,5 +110,28 @@ class WorkingHours
     public function getIsFor()
     {
         return $this->isFor;
+    }
+
+    /**
+     * Set code
+     *
+     * @param string $code
+     * @return WorkingHours
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    /**
+     * Get code
+     *
+     * @return string 
+     */
+    public function getCode()
+    {
+        return $this->code;
     }
 }

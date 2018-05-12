@@ -109,9 +109,8 @@ class ClockinReccordController extends Controller
     */
     public function arrive(ClockinRecord $cR,$day,$request){
 
-        $interval = 60*60;
-
         $empWH = json_decode($cR->getEmploye()->getWorkingHour()->getWorkingHour(),true);
+        $interval = ($cR->getEmploye()->getWorkingHour()->getTolerance())*60;
 
         $heureDebutNormal = $empWH[$day][0]["beginHour"];
         $heureFinNormal = $empWH[$day][0]["endHour"];
@@ -155,9 +154,9 @@ class ClockinReccordController extends Controller
     */
     public function depart(ClockinRecord $cR,$day,$request){
 
-        $interval = 60*60;
-
         $empWH = json_decode($cR->getEmploye()->getWorkingHour()->getWorkingHour(),true);
+        $interval = ($cR->getEmploye()->getWorkingHour()->getTolerance())*60;
+
 
         $heureDebutNormal = $empWH[$day][0]["beginHour"];
         $heureFinNormal = $empWH[$day][0]["endHour"];
@@ -430,14 +429,6 @@ class ClockinReccordController extends Controller
                 $time_depart = ($heure_depart*60)+$minuite_depart;
                 // Pour les pauses
 
-                /*$heure_debut_pause = (int)explode(':',$recordTab[$c->getEmploye()->getId()]["arrive"])[0];
-                $minuite_arrive = (int)explode(':',$recordTab[$c->getEmploye()->getId()]["arrive"])[1];
-                $time_arrive = ($heure_arrive*60)+$minuite_arrive;
-
-                $heure_depart = (int)explode(':',$recordTab[$c->getEmploye()->getId()]["depart"])[0];
-                $minuite_depart = (int)explode(':',$recordTab[$c->getEmploye()->getId()]["depart"])[1];
-                $time_depart = ($heure_depart*60)+$minuite_depart;*/
-
                 // Je calcul le quota
                 $quota_fait = $time_depart-$time_arrive; // En minuite
                 // Maintenant on fais une mis à jour du quota
@@ -500,8 +491,6 @@ class ClockinReccordController extends Controller
     public function findHistoriqueAction($departem = null,$dat = null,$emplo = null,Request $request = null)
     {
 
-        $interval = 60*60; // 1 heure
-
         if(($request->request->get('id') != null) && ($request->request->get('date') != null)){
             $dep = $request->request->get('id');
             $_date = $request->request->get('date');
@@ -528,10 +517,6 @@ class ClockinReccordController extends Controller
 
         if(sizeof($emp)>0){
             if(sizeof($emp)==1) {
-                $empTab[]=$emp->getId();
-                $empNameTab[]=$emp->getSurname()." ".$emp->getLastName();
-                $empCcidTab[]=$emp->getEmployeeCcid();
-
                 $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
 
                 $heureDebutNormal = $empWH[$day][0]["beginHour"];
@@ -541,6 +526,7 @@ class ClockinReccordController extends Controller
 
                 $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
                 $type = $empWH[$day][0]["type"];
+                $interval = ($emp->getWorkingHour()->getTolerance())*60;
 
                 // Pour le calcul d'un depart prématuré de pause,Calculons l'intervalle
 
@@ -581,6 +567,19 @@ class ClockinReccordController extends Controller
                 // On récupère les données appartenant au département sélectionné
 
                 $tempData = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empHistory($emp->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
+                $min = strtotime($_date." 00:00:00");
+                $max = strtotime($_date." 23:59:59");
+
+                $empAllRecord = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empAllHistory($emp->getId(),$min,$max);
+                $empAllRecordFinal = array();
+                foreach ($empAllRecord as $clock){
+                    $empAllRecordFinal[] = date("H:i:s",$clock->getClockinTime());
+                }
+
+                $empTab[]=$emp->getId();
+                $empAllHistoryTab[]=array($emp->getId(),$empAllRecordFinal);
+                $empNameTab[]=$emp->getSurname()." ".$emp->getLastName();
+                $empCcidTab[]=$emp->getEmployeeCcid();
 
                 //Maintenant il faut éliminer les doublons
                 $don[] = $this->elimineDoublon($tempData,$day,$request);
@@ -595,15 +594,12 @@ class ClockinReccordController extends Controller
 
                 $jsonContent = $serializer->serialize(['clockinRecord' => $don],'json');
 
-                $content = array("content"=>$jsonContent,"emp"=>$empTab,"empNames"=>$empNameTab,"empCcid"=>$empCcidTab);
+                $content = array("content"=>$jsonContent,"emp"=>$empTab,"empNames"=>$empNameTab,"empCcid"=>$empCcidTab,"allRecord"=>$empAllHistoryTab);
             }else{
                 foreach ($emp as $e){
-                    $empTab[]=$e->getId();
-                    $empNameTab[]=$e->getSurname()." ".$e->getLastName();
-                    $empCcidTab[]=$e->getEmployeeCcid();
-
 
                     $empWH = json_decode($e->getWorkingHour()->getWorkingHour(),true);
+                    $interval = ($e->getWorkingHour()->getTolerance())*60;
 
                     $heureDebutNormal = $empWH[$day][0]["beginHour"];
                     $heureDebutPauseNormal = $empWH[$day][0]["pauseBeginHour"];
@@ -647,10 +643,22 @@ class ClockinReccordController extends Controller
                     // On récupère les données appartenant au département sélectionné
 
                     $tempData = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empHistory($e->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
+                    $min = strtotime($_date." 00:00:00");
+                    $max = strtotime($_date." 23:59:59");
 
-                    //Maintenant il faut éliminer les doublons
+                    $empAllRecord = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empAllHistory($e->getId(),$min,$max);
+                    $empAllRecordFinal = array();
+                    foreach ($empAllRecord as $clock){
+                        $empAllRecordFinal[] = date("H:i:s",$clock->getClockinTime());
+                    }
+
+                    $empTab[]=$e->getId();
+                    $empAllHistoryTab[]= array($e->getId(),$empAllRecordFinal);
+                    $empNameTab[]=$e->getSurname()." ".$e->getLastName();
+                    $empCcidTab[]=$e->getEmployeeCcid();
+
+                    // Maintenant il faut éliminer les doublons
                     $don[] = $this->elimineDoublon($tempData,$day,$request);
-
 
                     $tabLength = sizeof($don);
 
@@ -661,7 +669,7 @@ class ClockinReccordController extends Controller
 
                     $jsonContent = $serializer->serialize(['clockinRecord' => $don],'json');
 
-                    $content = array("content"=>$jsonContent,"emp"=>$empTab,"empNames"=>$empNameTab,"empCcid"=>$empCcidTab);
+                    $content = array("content"=>$jsonContent,"emp"=>$empTab,"empNames"=>$empNameTab,"empCcid"=>$empCcidTab,"allRecords"=>$empAllHistoryTab);
                 }
 
             }

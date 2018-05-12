@@ -33,7 +33,7 @@ $(function(){
         ampmclickable: true, // make AM PM clickable
         aftershow: function(){} //Function for after opening timepicker
     });
-    //$('.modal').modal();
+    $('.modal').modal();
     $('.ajax_modals').modal({
         opacity: .6
     });

@@ -33,10 +33,10 @@ class DefaultController extends Controller
         }*/
 
 
-        //return new Response(date("Y-m-d H:i:s",1526059500));
+        //return new Response(date("Y-m-d H:i:s",1526053740));
         //return new Response(date("Y-m-d H:i:s",(new \DateTime())->getTimestamp()));
-        //return new Response(strtotime("2018-05-11 14:49"));
-        //return new Response(md5("5555"));
+        return new Response(strtotime("2018-05-11 20:49"));
+        //return new Response(md5("ebenezer10"));
     }
 
     /**
@@ -69,7 +69,7 @@ class DefaultController extends Controller
             $e->setLastName($request->request->get("adminName"));
             $e->setSurname($request->request->get("adminSurname"));
             $e->setUsername(10001);
-            $e->setPassword($request->request->get("adminPassword"));
+            $e->setPassword(md5($request->request->get("adminPassword")));
             $e->setAuth(1);
             $e->setRoles(array("ROLE_SUPER_ADMIN"));
             $e->setAdress($request->request->get("adminAdress"));

@@ -190,6 +190,8 @@ class StatsController extends ClockinReccordController
             $_time_heure_debut = null;
             $_time_minuites_debut = null;
 
+            $lost_time = 0;
+
             // Pour éviter les erreurs de "offset"
             if(($hAN != null) && ($hAN !="")){
                 $_heure_debut = explode(':',$hAN)[0];
@@ -368,7 +370,6 @@ class StatsController extends ClockinReccordController
 
                 // Now we deal with lost time calculations
                 // First of all we need the terminals
-                $lost_time = 0;
                 $his = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('Y-m-d',$nowTime),$employe->getId(),$request);
                 if(($his != null) && ($his != "")){
                     $his = json_decode($his->getContent(),true);
