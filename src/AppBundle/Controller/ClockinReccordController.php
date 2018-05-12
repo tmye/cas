@@ -109,9 +109,8 @@ class ClockinReccordController extends Controller
     */
     public function arrive(ClockinRecord $cR,$day,$request){
 
-        $interval = 60*60;
-
         $empWH = json_decode($cR->getEmploye()->getWorkingHour()->getWorkingHour(),true);
+        $interval = ($cR->getEmploye()->getWorkingHour()->getTolerance())*60;
 
         $heureDebutNormal = $empWH[$day][0]["beginHour"];
         $heureFinNormal = $empWH[$day][0]["endHour"];
@@ -155,9 +154,9 @@ class ClockinReccordController extends Controller
     */
     public function depart(ClockinRecord $cR,$day,$request){
 
-        $interval = 60*60;
-
         $empWH = json_decode($cR->getEmploye()->getWorkingHour()->getWorkingHour(),true);
+        $interval = ($cR->getEmploye()->getWorkingHour()->getTolerance())*60;
+
 
         $heureDebutNormal = $empWH[$day][0]["beginHour"];
         $heureFinNormal = $empWH[$day][0]["endHour"];
@@ -500,8 +499,6 @@ class ClockinReccordController extends Controller
     public function findHistoriqueAction($departem = null,$dat = null,$emplo = null,Request $request = null)
     {
 
-        $interval = 60*60; // 1 heure
-
         if(($request->request->get('id') != null) && ($request->request->get('date') != null)){
             $dep = $request->request->get('id');
             $_date = $request->request->get('date');
@@ -540,6 +537,7 @@ class ClockinReccordController extends Controller
 
                 $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
                 $type = $empWH[$day][0]["type"];
+                $interval = ($emp->getWorkingHour()->getTolerance())*60;
 
                 // Pour le calcul d'un depart prématuré de pause,Calculons l'intervalle
 
@@ -603,6 +601,7 @@ class ClockinReccordController extends Controller
 
 
                     $empWH = json_decode($e->getWorkingHour()->getWorkingHour(),true);
+                    $interval = ($e->getWorkingHour()->getTolerance())*60;
 
                     $heureDebutNormal = $empWH[$day][0]["beginHour"];
                     $heureDebutPauseNormal = $empWH[$day][0]["pauseBeginHour"];
