@@ -311,7 +311,7 @@ class ClockinReccordController extends Controller
             $pEH = $wH[$day][0]["pauseEndHour"];
             $eH = $wH[$day][0]["endHour"];
 
-            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"name"=>$c->getEmploye()->getSurname()." ".$c->getEmploye()->getLastName(),"time_arrive"=>$c->getClockinTime(),"time_depart"=>0,"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"bH"=>$bH,"pBH"=>$pBH,"pEH"=>$pEH,"eH"=>$eH,"arrive"=>$arrive,"depart"=>0,"pause"=>0,"finPause"=>0);
+            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"name"=>$c->getEmploye()->getSurname()." ".$c->getEmploye()->getLastName(),"time_arrive"=>$c->getClockinTime(),"time_depart"=>0,"time_pause"=>0,"time_fin_pause"=>0,"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"bH"=>$bH,"pBH"=>$pBH,"pEH"=>$pEH,"eH"=>$eH,"arrive"=>$arrive,"depart"=>0,"pause"=>0,"finPause"=>0);
         }elseif($this->pause($c,$day,$request)){
             $nom = $c->getEmploye()->getLastName();
             $prenom = $c->getEmploye()->getSurname();
@@ -332,7 +332,7 @@ class ClockinReccordController extends Controller
             $pEH = $wH[$day][0]["pauseEndHour"];
             $eH = $wH[$day][0]["endHour"];
 
-            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"name"=>$c->getEmploye()->getSurname()." ".$c->getEmploye()->getLastName(),"time_arrive"=>0,"time_depart"=>0,"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"bH"=>$bH,"pBH"=>$pBH,"pEH"=>$pEH,"eH"=>$eH,"arrive"=>0,"depart"=>0,"pause"=>$pause,"finPause"=>0);
+            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"name"=>$c->getEmploye()->getSurname()." ".$c->getEmploye()->getLastName(),"time_arrive"=>0,"time_depart"=>0,"time_pause"=>$c->getClockinTime(),"time_fin_pause"=>0,"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"bH"=>$bH,"pBH"=>$pBH,"pEH"=>$pEH,"eH"=>$eH,"arrive"=>0,"depart"=>0,"pause"=>$pause,"finPause"=>0);
         }elseif($this->finPause($c,$day,$request)){
             $nom = $c->getEmploye()->getLastName();
             $prenom = $c->getEmploye()->getSurname();
@@ -353,7 +353,7 @@ class ClockinReccordController extends Controller
             $pEH = $wH[$day][0]["pauseEndHour"];
             $eH = $wH[$day][0]["endHour"];
 
-            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"name"=>$c->getEmploye()->getSurname()." ".$c->getEmploye()->getLastName(),"time_arrive"=>0,"time_depart"=>$c->getClockinTime(),"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"bH"=>$bH,"pBH"=>$pBH,"pEH"=>$pEH,"eH"=>$eH,"arrive"=>0,"depart"=>0,"pause"=>0,"finPause"=>$finPause);
+            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"name"=>$c->getEmploye()->getSurname()." ".$c->getEmploye()->getLastName(),"time_arrive"=>0,"time_depart"=>0,"time_pause"=>0,"time_fin_pause"=>$c->getClockinTime(),"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"bH"=>$bH,"pBH"=>$pBH,"pEH"=>$pEH,"eH"=>$eH,"arrive"=>0,"depart"=>0,"pause"=>0,"finPause"=>$finPause);
         }elseif($this->depart($c,$day,$request)){
             $nom = $c->getEmploye()->getLastName();
             $prenom = $c->getEmploye()->getSurname();
@@ -374,7 +374,7 @@ class ClockinReccordController extends Controller
             $pEH = $wH[$day][0]["pauseEndHour"];
             $eH = $wH[$day][0]["endHour"];
 
-            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"name"=>$c->getEmploye()->getSurname()." ".$c->getEmploye()->getLastName(),"time_arrive"=>0,"time_depart"=>$c->getClockinTime(),"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"bH"=>$bH,"pBH"=>$pBH,"pEH"=>$pEH,"eH"=>$eH,"arrive"=>0,"depart"=>$depart,"pause"=>0,"finPause"=>0);
+            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"name"=>$c->getEmploye()->getSurname()." ".$c->getEmploye()->getLastName(),"time_arrive"=>0,"time_depart"=>$c->getClockinTime(),"time_pause"=>0,"time_fin_pause"=>0,"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"bH"=>$bH,"pBH"=>$pBH,"pEH"=>$pEH,"eH"=>$eH,"arrive"=>0,"depart"=>$depart,"pause"=>0,"finPause"=>0);
         }
         return $recordTab;
     }
@@ -399,15 +399,17 @@ class ClockinReccordController extends Controller
 
     public function miseAJour($recordTab,ClockinRecord $c,$day,$request){
         if($this->arrive($c,$day,$request)){
-            $recordTab[$c->getEmploye()->getId()]["arrive"] =date('H:i',$c->getClockinTime());
-            $recordTab[$c->getEmploye()->getId()]["time_arrive"] =$c->getClockinTime();
+            $recordTab[$c->getEmploye()->getId()]["arrive"] = date('H:i',$c->getClockinTime());
+            $recordTab[$c->getEmploye()->getId()]["time_arrive"] = $c->getClockinTime();
         }elseif($this->pause($c,$day)){
-            $recordTab[$c->getEmploye()->getId()]["pause"] =date('H:i',$c->getClockinTime());
+            $recordTab[$c->getEmploye()->getId()]["pause"] = date('H:i',$c->getClockinTime());
+            $recordTab[$c->getEmploye()->getId()]["time_pause"] = $c->getClockinTime();
         }elseif($this->finPause($c,$day,$request)){
-            $recordTab[$c->getEmploye()->getId()]["finPause"] =date('H:i',$c->getClockinTime());
+            $recordTab[$c->getEmploye()->getId()]["finPause"] = date('H:i',$c->getClockinTime());
+            $recordTab[$c->getEmploye()->getId()]["time_fin_pause"] = $c->getClockinTime();
         }elseif($this->depart($c,$day,$request)){
-            $recordTab[$c->getEmploye()->getId()]["depart"] =date('H:i',$c->getClockinTime());
-            $recordTab[$c->getEmploye()->getId()]["time_depart"] =$c->getClockinTime();
+            $recordTab[$c->getEmploye()->getId()]["depart"] = date('H:i',$c->getClockinTime());
+            $recordTab[$c->getEmploye()->getId()]["time_depart"] = $c->getClockinTime();
         }
 
         /*
@@ -439,6 +441,19 @@ class ClockinReccordController extends Controller
             }
         }else{
             $quota = null;
+        }
+
+        // Avant de renvoyer le tableau on reverifie les bornes
+        for ($i=0;$i<sizeof($recordTab)-1;$i++){
+            for ($j=0;$j<sizeof($recordTab)-1;$j++){
+                if($recordTab[$i+1]>$recordTab[$i]){
+                    $temp = $recordTab[$i+1];
+                    $recordTab[$i+1] = $recordTab[$i];
+                    $recordTab[$i] = $temp;
+                }
+                $j++;
+            }
+            $i++;
         }
 
         return $recordTab;

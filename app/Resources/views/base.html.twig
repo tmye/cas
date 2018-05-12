@@ -22,7 +22,11 @@
                             <li>
                                 <div class="user">
                                     {% if app.user is defined and app.user is not null %}
-                                        <img src="{{ asset('/')~user_profile_pictures~'/'~app.user.picture }}" alt="user_image" class="circle middle-align user_extra_small_picture" >
+                                        {% if app.user.picture is defined and app.user.picture is not null %}
+                                            <img src="{{ asset('/')~user_profile_pictures~'/'~app.user.picture }}" alt="user_image" class="circle middle-align user_extra_small_picture" >
+                                        {% else %}
+                                            <img src="{{ asset('img/avatar.jpg') }}" alt="user_image" class="circle middle-align user_extra_small_picture" >
+                                        {% endif %}
                                     {% endif %}
                                     <span class="middle-align white-text" style="margin-left: 0px; font-weight: bold; text-align: center;">
                                         {% if app.user is defined and app.user is not null %}

@@ -240,6 +240,7 @@
                                                     "<td><span class='redSpanPauseBegin_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
                                                     "<td><span class='redSpanPauseEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
                                                     "<td><span class='redSpanEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].eH+"</span></td>" +
+                                                    "<td><button data-target='modal1' class='detail_button modal-trigger' onclick='demander("+(i-1)+")' tag='"+(i-1)+"' style=''>Détails</button></td>" +
                                                     "</tr>"
                                                 );
                                                 if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
@@ -259,7 +260,7 @@
                                                     "<td>" + res.clockinRecord[arrayID][empId].nom + " " + res.clockinRecord[arrayID][empId].prenom + "</td>" +
                                                     "<td>" + res.clockinRecord[arrayID][empId].function + "</td>" +
                                                     "<td>" + convertType(res.clockinRecord[arrayID][empId].type) + "</td>" +
-                                                    "<td colspan='5' class='green lighten-2 white-text center'> Présent </td>" +
+                                                    "<td colspan='6' class='green lighten-2 white-text center'> Présent </td>" +
                                                     "</tr>"
                                                 );
                                                 break;

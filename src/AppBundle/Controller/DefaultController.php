@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Admin;
 use AppBundle\Entity\CompanyConfig;
 use AppBundle\Entity\Departement;
 use AppBundle\Entity\Employe;
@@ -35,7 +36,7 @@ class DefaultController extends Controller
 
         //return new Response(date("Y-m-d H:i:s",1526053740));
         //return new Response(date("Y-m-d H:i:s",(new \DateTime())->getTimestamp()));
-        return new Response(strtotime("2018-05-11 20:49"));
+        return new Response(strtotime("2018-05-15 08:30"));
         //return new Response(md5("ebenezer10"));
     }
 
@@ -52,74 +53,63 @@ class DefaultController extends Controller
      */
     public function initializeApplicationAction(Request $request)
     {
-        $cc = new CompanyConfig();
-        $em = $this->getDoctrine()->getManager();
-        if(isset($_FILES["image"]["name"]) && !empty($_FILES["image"]["name"])){
-            $resultat = move_uploaded_file($_FILES['image']['tmp_name'],"company_images/".basename($_FILES["image"]["name"]));
-            $cc->setCompanyName($request->request->get("compName"));
-            $cc->setCompanyLogo($_FILES["image"]["name"]);
-            $em->persist($cc);
-            $em->flush();
+        $admins = $this->getDoctrine()->getManager()->getRepository("AppBundle:Admin");
 
-            $session = new Session();
-            $session->set("companyLogo",$_FILES['image']['name']);
-            $session->set("companyName",$request->request->get("name"));
-            // We are done with the companyConfiguration.Now we must persist an Admin
-            $e = new Employe();
-            $e->setLastName($request->request->get("adminName"));
-            $e->setSurname($request->request->get("adminSurname"));
-            $e->setUsername(10001);
-            $e->setPassword(md5($request->request->get("adminPassword")));
-            $e->setAuth(1);
-            $e->setRoles(array("ROLE_SUPER_ADMIN"));
-            $e->setAdress($request->request->get("adminAdress"));
-            $e->setContact($request->request->get("adminPhoneNumber"));
-            $e->setCreateDate(new \DateTime());
-            $e->setHireDate(new \DateTime());
-            $e->setLastUpdate(new \DateTime());
+        // Searching for already used username
+        $i = 0;
+        $found = false;
+        if(sizeof($admins) > 1){
+            while($i < sizeof($admins) && $found == false){
+                if($admins[$i]->getUsername() == $request->request->get("adminUsername")){
+                    $found = true;
+                }
+                $i++;
+            }
+        }
 
-            // The department cannot be null.
-            // We create a default department
+        if($found == false){
+            $cc = new CompanyConfig();
+            $em = $this->getDoctrine()->getManager();
+            if(isset($_FILES["image"]["name"]) && !empty($_FILES["image"]["name"])){
+                $resultat = move_uploaded_file($_FILES['image']['tmp_name'],"company_images/".basename($_FILES["image"]["name"]));
+                $cc->setCompanyName($request->request->get("compName"));
+                $cc->setCompanyLogo($_FILES["image"]["name"]);
+                $em->persist($cc);
+                $em->flush();
 
-            $dep = new Departement();
-            $dep->setName("Default Department");
-            $dep->setMaxCount(1);
-            $dep->setCreateDate(new \DateTime());
-            $dep->setLastUpdate(new \DateTime());
-            $dep->setAuthor(10001);
+                $session = new Session();
+                $session->set("companyLogo",$_FILES['image']['name']);
+                $session->set("companyName",$request->request->get("name"));
+                // We are done with the companyConfiguration.Now we must persist an Admin
+                $e = new Admin();
+                $e->setName($request->request->get("adminName"));
+                $e->setSurname($request->request->get("adminSurname"));
+                $e->setUsername($request->request->get("adminUsername"));
+                $e->setPassword(md5($request->request->get("adminPassword")));
+                $e->setRoles(array("ROLE_SUPER_ADMIN"));
+                $e->setAddress($request->request->get("adminAdress"));
+                $e->setPhonenumber($request->request->get("adminPhoneNumber"));
 
-            // The same problem is encountered with his workingHour.
+                // We continue with the rest of the admin (Employee) properties
 
-            $wh = new WorkingHours();
-            $wh->setCode("Default");
-            $wh->setWorkingHour("Null");
+                $em->persist($e);
+                $em->flush();
 
-            // We continue with the rest of the admin (Employee) properties
+                // After persistance operation, we must edit initialization file
 
-            $e->setDepartement($dep);
-            $e->setWorkingHour($wh);
-            $e->setSalary(0);
-            $e->setFunction("Super Admin");
-            $e->setGodfatherCcid(10001);
-            $e->setEmployeeCcid(10001);
+                $file = fopen($this->getParameter("web_dir")."/first_time",'r+');
+                fseek($file,0);
+                fputs($file,sha1("initialized"));
+                fclose($file);
 
-            $em->persist($dep);
-            $em->persist($wh);
-            $em->persist($e);
-            $em->flush();
+                // Now that all operations are achieved, we can return a response
 
-            // After persistance operation, we must edit initialization file
-
-            $file = fopen($this->getParameter("web_dir")."/first_time",'r+');
-            fseek($file,0);
-            fputs($file,sha1("initialized"));
-            fclose($file);
-
-            // Now that all operations are achieved, we can return a response
-
-            return new Response(1);
+                return new Response(1);
+            }else{
+                return new Response("Erreur avec la soumission du logo");
+            }
         }else{
-            return new Response("Erreur");
+            return $this->redirectToRoute("firstTimeInitialization");
         }
     }
 
