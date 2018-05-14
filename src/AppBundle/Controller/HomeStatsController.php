@@ -121,7 +121,7 @@ class HomeStatsController extends Controller
 
                 $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
                 $type = $empWH[$theDay][0]["type"];
-                $name = $emp->getSurname()." ".$emp->getMiddleName()." ".$emp->getLastName();
+                $name = $emp->getSurname()." ".$emp->getLastName();
                 $dep = $emp->getDepartement()->getName();
 
                 // Pour le calcul d'un depart prématuré de pause,Calculons l'intervalle

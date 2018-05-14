@@ -469,7 +469,7 @@
                         var res = JSON.parse(data);
                         //alert("Le résultat : "+res.emp["id"]);
                         var employeeId = res.emp["id"];
-                        var fullName = res.emp["surname"]+" "+res.emp["middleName"]+" "+res.emp["lastName"];
+                        var fullName = res.emp["surname"]+" "+res.emp["lastName"];
                         var salary = res.emp["salary"];
                         var fromDate = $("#fromDate").val();
                         var fFromDate = new Date($("#fromDate").val());
@@ -1951,7 +1951,7 @@
             var len = {{ listEmployee | length }};
             var tab = [];
             {% for el in listEmployee %}
-                tab.push({depId:"{{ el.departement.id }}",id:"{{ el.id }}",ccid:"{{ el.employeeCcid }}",surname:"{{ el.surname }}",middleName:"{{ el.middleName }}", lastName:"{{ el.lastName }}"});
+                tab.push({depId:"{{ el.departement.id }}",id:"{{ el.id }}",ccid:"{{ el.employeeCcid }}",surname:"{{ el.surname }}", lastName:"{{ el.lastName }}"});
             {% endfor %}
             console.log("Test");
             console.log(tab);

@@ -688,7 +688,7 @@ class MachineSysController extends BaseController
                 'do' => 'update',
                 'data' => "user",
                 'ccid' => $e->getEmployeeCcid(),
-                'name' => $e->getMiddleName().' '.$e->getSurname(),
+                'name' => $e->getSurname(),
                 'passwd' => $e->getPassword(),
                 'deptid' => $e->getDepartement()->getId(),
                 'auth' => $e->getAuth(),

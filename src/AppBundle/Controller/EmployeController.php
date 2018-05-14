@@ -318,7 +318,6 @@ class EmployeController extends Controller {
             $tempTab = [];
             $tempTab["id"] = $e->getId();
             $tempTab["surname"] = $e->getSurname();
-            $tempTab["middleName"] = $e->getMiddleName();
             $tempTab["lastName"] = $e->getLastName();
             $tempTab["function"] = $e->getFunction();
             $tempTab["salary"] = $e->getSalary();
