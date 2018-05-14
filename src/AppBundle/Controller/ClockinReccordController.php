@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\ClockinRecord;
+use AppBundle\Entity\Employe;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -529,8 +530,8 @@ class ClockinReccordController extends Controller
             $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($dep);
         }
 
-        if(sizeof($emp)>0){
-            if(sizeof($emp)==1) {
+        if(isset($emp) && $emp != null){
+            if($emp instanceof Employe) {
                 $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
 
                 $heureDebutNormal = $empWH[$day][0]["beginHour"];
@@ -610,75 +611,77 @@ class ClockinReccordController extends Controller
 
                 $content = array("content"=>$jsonContent,"emp"=>$empTab,"empNames"=>$empNameTab,"empCcid"=>$empCcidTab,"allRecord"=>$empAllHistoryTab);
             }else{
-                foreach ($emp as $e){
-                    $empWH = json_decode($e->getWorkingHour()->getWorkingHour(),true);
-                    $interval = ($e->getWorkingHour()->getTolerance())*60;
+                if(sizeof($emp)>0){
+                    foreach ($emp as $e){
+                        $empWH = json_decode($e->getWorkingHour()->getWorkingHour(),true);
+                        $interval = ($e->getWorkingHour()->getTolerance())*60;
 
-                    $heureDebutNormal = $empWH[$day][0]["beginHour"];
-                    $heureDebutPauseNormal = $empWH[$day][0]["pauseBeginHour"];
-                    $heureFinNormal = $empWH[$day][0]["endHour"];
-                    $heureFinPauseNormal = $empWH[$day][0]["pauseEndHour"];
+                        $heureDebutNormal = $empWH[$day][0]["beginHour"];
+                        $heureDebutPauseNormal = $empWH[$day][0]["pauseBeginHour"];
+                        $heureFinNormal = $empWH[$day][0]["endHour"];
+                        $heureFinPauseNormal = $empWH[$day][0]["pauseEndHour"];
 
-                    $pauseBeginHourExploded = explode(":",$heureDebutPauseNormal);
-                    $pauseEndHourExploded = explode(":",$heureFinPauseNormal);
+                        $pauseBeginHourExploded = explode(":",$heureDebutPauseNormal);
+                        $pauseEndHourExploded = explode(":",$heureFinPauseNormal);
 
-                    if(sizeof($pauseBeginHourExploded)>1){
-                        $pauseBeginHourInMinutes = (((int)$pauseBeginHourExploded[0])*60)+((int)$pauseBeginHourExploded[1]);
-                        $pauseEndHourInMinutes = (((int)$pauseEndHourExploded[0])*60)+((int)$pauseEndHourExploded[1]);
+                        if(sizeof($pauseBeginHourExploded)>1){
+                            $pauseBeginHourInMinutes = (((int)$pauseBeginHourExploded[0])*60)+((int)$pauseBeginHourExploded[1]);
+                            $pauseEndHourInMinutes = (((int)$pauseEndHourExploded[0])*60)+((int)$pauseEndHourExploded[1]);
 
-                        $interval_pause = (($pauseEndHourInMinutes - $pauseBeginHourInMinutes)/2)*60;
-                    }else{
-                        $interval_pause = 0;
+                            $interval_pause = (($pauseEndHourInMinutes - $pauseBeginHourInMinutes)/2)*60;
+                        }else{
+                            $interval_pause = 0;
+                        }
+
+                        // Timestamp de la dateheure à laquelle l'employé est sensé arriver
+                        $dSenceA = strtotime($_date." ".$heureDebutNormal);
+                        $dSencePD = strtotime($_date." ".$heureDebutPauseNormal);
+                        $dSencePF = strtotime($_date." ".$heureFinPauseNormal);
+                        $dSenceD = strtotime($_date." ".$heureFinNormal);
+
+
+
+                        $dIInfA = $dSenceA-($interval);
+                        $dIInfPD = $dSencePD-($interval_pause);
+                        $dIInfD = $dSenceD-($interval);
+                        $dIInfPF = $dSencePF-($interval_pause);
+                        // Borne superieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
+                        $dISupA = $dSenceA+($interval);
+                        $dISupPD = $dSencePD+($interval_pause);
+                        $dISupPF = $dSencePF+($interval_pause);
+                        $dISupD = $dSenceD+($interval);
+
+                        // On récupère les données appartenant au département sélectionné
+
+                        $tempData = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empHistory($e->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
+                        $min = strtotime($_date." 00:00:00");
+                        $max = strtotime($_date." 23:59:59");
+
+                        $empAllRecord = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empAllHistory($e->getId(),$min,$max);
+                        $empAllRecordFinal = array();
+                        foreach ($empAllRecord as $clock){
+                            $empAllRecordFinal[] = date("H:i:s",$clock->getClockinTime());
+                        }
+
+                        $empTab[]=$e->getId();
+                        $empAllHistoryTab[]= array($e->getId(),$empAllRecordFinal);
+                        $empNameTab[]=$e->getSurname()." ".$e->getLastName();
+                        $empCcidTab[]=$e->getEmployeeCcid();
+
+                        // Maintenant il faut éliminer les doublons
+                        $don[] = $this->elimineDoublon($tempData,$day,$request);
+
+                        $tabLength = sizeof($don);
+
+                        $encoders = array(new XmlEncoder(), new JsonEncoder());
+                        $normalizers = array(new ObjectNormalizer());
+
+                        $serializer = new Serializer($normalizers, $encoders);
+
+                        $jsonContent = $serializer->serialize(['clockinRecord' => $don],'json');
+
+                        $content = array("content"=>$jsonContent,"emp"=>$empTab,"empNames"=>$empNameTab,"empCcid"=>$empCcidTab,"allRecords"=>$empAllHistoryTab);
                     }
-
-                    // Timestamp de la dateheure à laquelle l'employé est sensé arriver
-                    $dSenceA = strtotime($_date." ".$heureDebutNormal);
-                    $dSencePD = strtotime($_date." ".$heureDebutPauseNormal);
-                    $dSencePF = strtotime($_date." ".$heureFinPauseNormal);
-                    $dSenceD = strtotime($_date." ".$heureFinNormal);
-
-
-
-                    $dIInfA = $dSenceA-($interval);
-                    $dIInfPD = $dSencePD-($interval_pause);
-                    $dIInfD = $dSenceD-($interval);
-                    $dIInfPF = $dSencePF-($interval_pause);
-                    // Borne superieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
-                    $dISupA = $dSenceA+($interval);
-                    $dISupPD = $dSencePD+($interval_pause);
-                    $dISupPF = $dSencePF+($interval_pause);
-                    $dISupD = $dSenceD+($interval);
-
-                    // On récupère les données appartenant au département sélectionné
-
-                    $tempData = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empHistory($e->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
-                    $min = strtotime($_date." 00:00:00");
-                    $max = strtotime($_date." 23:59:59");
-
-                    $empAllRecord = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empAllHistory($e->getId(),$min,$max);
-                    $empAllRecordFinal = array();
-                    foreach ($empAllRecord as $clock){
-                        $empAllRecordFinal[] = date("H:i:s",$clock->getClockinTime());
-                    }
-
-                    $empTab[]=$e->getId();
-                    $empAllHistoryTab[]= array($e->getId(),$empAllRecordFinal);
-                    $empNameTab[]=$e->getSurname()." ".$e->getLastName();
-                    $empCcidTab[]=$e->getEmployeeCcid();
-
-                    // Maintenant il faut éliminer les doublons
-                    $don[] = $this->elimineDoublon($tempData,$day,$request);
-
-                    $tabLength = sizeof($don);
-
-                    $encoders = array(new XmlEncoder(), new JsonEncoder());
-                    $normalizers = array(new ObjectNormalizer());
-
-                    $serializer = new Serializer($normalizers, $encoders);
-
-                    $jsonContent = $serializer->serialize(['clockinRecord' => $don],'json');
-
-                    $content = array("content"=>$jsonContent,"emp"=>$empTab,"empNames"=>$empNameTab,"empCcid"=>$empCcidTab,"allRecords"=>$empAllHistoryTab);
                 }
 
             }
