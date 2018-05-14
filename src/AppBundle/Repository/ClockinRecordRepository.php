@@ -116,7 +116,6 @@ class ClockinRecordRepository extends EntityRepository
         $heureNormaleArrive = $heureNormaleArrive+$date;
 
         $bHTab = explode(":",$bH);
-        $minutes = ($bHTab[0]*60*60)+($bHTab[1]*60);
         $maxDate = $heureNormaleArrive+$interval;
 
         $queryBuilder = $this->createQueryBuilder('c');
