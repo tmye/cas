@@ -34,6 +34,7 @@
                                                     <option value="1">Heures figées</option>
                                                     <option value="2">Quota horraire</option>
                                                     <option value="3">Présence</option>
+                                                    <option value="4">Heures figées sans pause</option>
                                                 </select>
                                             </div>
                                             <div class="collapseSectionLundi">
@@ -71,6 +72,7 @@
                                                     <option value="1">Heures figées</option>
                                                     <option value="2">Quota horraire</option>
                                                     <option value="3">Présence</option>
+                                                    <option value="4">Heures figées sans pause</option>
                                                 </select>
                                             </div>
                                             <div class="collapseSectionMardi">
@@ -108,6 +110,7 @@
                                                     <option value="1">Heures figées</option>
                                                     <option value="2">Quota horraire</option>
                                                     <option value="3">Présence</option>
+                                                    <option value="4">Heures figées sans pause</option>
                                                 </select>
                                             </div>
                                             <div class="collapseSectionMercredi">
@@ -145,6 +148,7 @@
                                                     <option value="1">Heures figées</option>
                                                     <option value="2">Quota horraire</option>
                                                     <option value="3">Présence</option>
+                                                    <option value="4">Heures figées sans pause</option>
                                                 </select>
                                             </div>
                                             <div class="collapseSectionJeudi">
@@ -182,6 +186,7 @@
                                                     <option value="1">Heures figées</option>
                                                     <option value="2">Quota horraire</option>
                                                     <option value="3">Présence</option>
+                                                    <option value="4">Heures figées sans pause</option>
                                                 </select>
                                             </div>
                                             <div class="collapseSectionVendredi">
@@ -223,6 +228,7 @@
                                                     <option value="1">Heures figées</option>
                                                     <option value="2">Quota horraire</option>
                                                     <option value="3">Présence</option>
+                                                    <option value="4">Heures figées sans pause</option>
                                                 </select>
                                             </div>
                                             <div class="collapseSectionSamedi">
@@ -264,6 +270,7 @@
                                                     <option value="1">Heures figées</option>
                                                     <option value="2">Quota horraire</option>
                                                     <option value="3">Présence</option>
+                                                    <option value="4">Heures figées sans pause</option>
                                                 </select>
                                             </div>
                                             <div class="collapseSectionDimanche">
@@ -340,7 +347,9 @@
                                                                                 Lundi
                                                                                 <ul>
                                                                                     <li>Type : {{ wh.workingHour.lundi[0].type }}</li>
-                                                                                    <li>Quota horraire : {{ wh.workingHour.lundi[0].quota }}</li>
+                                                                                    {% if wh.workingHour.lundi[0].type == "2" %}
+                                                                                        <li>Quota horraire : {{ wh.workingHour.lundi[0].quota }}</li>
+                                                                                    {% endif %}
                                                                                 </ul>
                                                                             </li>
                                                                         </div>
@@ -349,7 +358,9 @@
                                                                                 Mardi
                                                                                 <ul>
                                                                                     <li>Type : {{ wh.workingHour.mardi[0].type }}</li>
-                                                                                    <li>Quota horraire : {{ wh.workingHour.mardi[0].quota }}</li>
+                                                                                    {% if wh.workingHour.mardi[0].type == "2" %}
+                                                                                        <li>Quota horraire : {{ wh.workingHour.mardi[0].quota }}</li>
+                                                                                    {% endif %}
                                                                                 </ul>
                                                                             </li>
                                                                         </div>
@@ -358,7 +369,9 @@
                                                                                 Mercredi
                                                                                 <ul>
                                                                                     <li>Type : {{ wh.workingHour.mercredi[0].type }}</li>
-                                                                                    <li>Quota horraire : {{ wh.workingHour.mercredi[0].quota }}</li>
+                                                                                    {% if wh.workingHour.mercredi[0].type == "2" %}
+                                                                                        <li>Quota horraire : {{ wh.workingHour.mercredi[0].quota }}</li>
+                                                                                    {% endif %}
                                                                                 </ul>
                                                                             </li>
                                                                         </div>
@@ -369,7 +382,9 @@
                                                                                 Jeudi
                                                                                 <ul>
                                                                                     <li>Type : {{ wh.workingHour.jeudi[0].type }}</li>
-                                                                                    <li>Quota horraire : {{ wh.workingHour.jeudi[0].quota }}</li>
+                                                                                    {% if wh.workingHour.jeudi[0].type == "2" %}
+                                                                                        <li>Quota horraire : {{ wh.workingHour.jeudi[0].quota }}</li>
+                                                                                    {% endif %}
                                                                                 </ul>
                                                                             </li>
                                                                         </div>
@@ -378,7 +393,9 @@
                                                                                 Vendredi
                                                                                 <ul>
                                                                                     <li>Type : {{ wh.workingHour.vendredi[0].type }}</li>
-                                                                                    <li>Quota horraire : {{ wh.workingHour.vendredi[0].quota }}</li>
+                                                                                    {% if wh.workingHour.vendredi[0].type == "2" %}
+                                                                                        <li>Quota horraire : {{ wh.workingHour.vendredi[0].quota }}</li>
+                                                                                    {% endif %}
                                                                                 </ul>
                                                                             </li>
                                                                         </div>
@@ -387,7 +404,9 @@
                                                                                 Samedi
                                                                                 <ul>
                                                                                     <li>Type : {{ wh.workingHour.samedi[0].type }}</li>
-                                                                                    <li>Quota horraire : {{ wh.workingHour.samedi[0].quota }}</li>
+                                                                                    {% if wh.workingHour.samedi[0].type == "2" %}
+                                                                                        <li>Quota horraire : {{ wh.workingHour.samedi[0].quota }}</li>
+                                                                                    {% endif %}
                                                                                 </ul>
                                                                             </li>
                                                                         </div>
@@ -396,7 +415,9 @@
                                                                                 Dimanche
                                                                                 <ul>
                                                                                     <li>Type : {{ wh.workingHour.dimanche[0].type }}</li>
-                                                                                    <li>Quota horraire : {{ wh.workingHour.dimanche[0].quota }}</li>
+                                                                                    {% if wh.workingHour.dimanche[0].type == "2" %}
+                                                                                        <li>Quota horraire : {{ wh.workingHour.dimanche[0].quota }}</li>
+                                                                                    {% endif %}
                                                                                 </ul>
                                                                             </li>
                                                                         </div>
@@ -484,6 +505,14 @@
 
                         desactiveTout("lundi");
                         break;
+                    case "4":
+                        $('.quotaSectionLundi input').val('');
+                        $('.quotaSectionLundi input').attr('disabled','disabled');
+                        $('.quotaSectionLundi input').css('background-color','#ccc');
+
+                        desactive("lundi");
+                        reactiveHeure("lundi");
+                        break;
                 }
             });
 
@@ -515,6 +544,14 @@
                         $('.quotaSectionMardi input').css('background-color','#ccc');
 
                         desactiveTout("mardi");
+                        break;
+                    case "4":
+                        $('.quotaSectionMardi input').val('');
+                        $('.quotaSectionMardi input').attr('disabled','disabled');
+                        $('.quotaSectionMardi input').css('background-color','#ccc');
+
+                        desactive("mardi");
+                        reactiveHeure("mardi");
                         break;
                 }
             });
@@ -548,6 +585,14 @@
 
                         desactiveTout("mercredi");
                         break;
+                    case "4":
+                        $('.quotaSectionMercredi input').val('');
+                        $('.quotaSectionMercredi input').attr('disabled','disabled');
+                        $('.quotaSectionMercredi input').css('background-color','#ccc');
+
+                        desactive("mercredi");
+                        reactiveHeure("mercredi");
+                        break;
                 }
             });
 
@@ -579,6 +624,14 @@
                         $('.quotaSectionJeudi input').css('background-color','#ccc');
 
                         desactiveTout("jeudi");
+                        break;
+                    case "4":
+                        $('.quotaSectionJeudi input').val('');
+                        $('.quotaSectionJeudi input').attr('disabled','disabled');
+                        $('.quotaSectionJeudi input').css('background-color','#ccc');
+
+                        desactive("jeudi");
+                        reactiveHeure("jeudi");
                         break;
                 }
             });
@@ -612,6 +665,14 @@
 
                         desactiveTout("vendredi");
                         break;
+                    case "4":
+                        $('.quotaSectionVendredi input').val('');
+                        $('.quotaSectionVendredi input').attr('disabled','disabled');
+                        $('.quotaSectionVendredi input').css('background-color','#ccc');
+
+                        desactive("vendredi");
+                        reactiveHeure("vendredi");
+                        break;
                 }
             });
 
@@ -644,6 +705,14 @@
 
                         desactiveTout("samedi");
                         break;
+                    case "4":
+                        $('.quotaSectionSamedi input').val('');
+                        $('.quotaSectionSamedi input').attr('disabled','disabled');
+                        $('.quotaSectionSamedi input').css('background-color','#ccc');
+
+                        desactive("samedi");
+                        reactiveHeure("samedi");
+                        break;
                 }
             });
 
@@ -675,6 +744,14 @@
                         $('.quotaSectionDimanche input').css('background-color','#ccc');
 
                         desactiveTout("dimanche");
+                        break;
+                    case "4":
+                        $('.quotaSectionDimanche input').val('');
+                        $('.quotaSectionDimanche input').attr('disabled','disabled');
+                        $('.quotaSectionDimanche input').css('background-color','#ccc');
+
+                        desactive("dimanche");
+                        reactiveHeure("dimanche");
                         break;
                 }
             });

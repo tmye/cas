@@ -485,9 +485,6 @@
 
                         tempsPerduRetards = data.tpr;
 
-                        // Intervalle de retard
-                        var interval = 180*60; // 10800 3Heures
-
                         $("#nameSpan").text(fullName);
                         $("#salarySpan").text(salary);
                         $("#fromDateSpan").text(fromDate);
@@ -498,7 +495,7 @@
                         $.ajax({
                             type: 'POST',
                             url: "userStats",
-                            data: {'empId':employeeId,'dateFrom':fromDate,'dateTo':toDate,'interval':interval},
+                            data: {'empId':employeeId,'dateFrom':fromDate,'dateTo':toDate},
                             success: function (data) {
                                 console.log("Debut");
                                 console.log(data.tabType);

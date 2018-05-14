@@ -115,13 +115,13 @@ class StatsController extends ClockinReccordController
         $timeFrom = strtotime($request->request->get("dateFrom")." 00:00:00");
         $dateTo = $request->request->get("dateTo");
         $timeTo = strtotime($request->request->get("dateTo")." 00:00:00");
-        $interval = $request->request->get("interval");
 
         $timeDays = $timeTo-$timeFrom;
         $days = $timeDays/(60*60*24);
 
         $nowTime = $timeFrom;
         $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($emp);
+        $interval = ($employe->getWorkingHour()->getTolerance())*60;
         $empWH = json_decode($employe->getWorkingHour()->getWorkingHour(),true);
         $cr = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord");
 
@@ -214,27 +214,25 @@ class StatsController extends ClockinReccordController
             $pauseBeginHourExploded = explode(":",$heureDebutNormalPause);
             $pauseEndHourExploded = explode(":",$heureFinNormalPause);
 
-            $endHourInMinutes =0;
-            $beginHourInMinutes =0;
-            $pauseEndHourInMinutes =0;
-            $pauseBeginHourInMinutes =0;
+            if(sizeof($beginHourExploded)>1 && sizeof($endHourExploded)>1){
+                $beginHourInMinutes = (((int)$beginHourExploded[0])*60)+((int)$beginHourExploded[1]);
+                $endHourInMinutes = (((int)$endHourExploded[0])*60)+((int)$endHourExploded[1]);
+            }else{
+                $beginHourInMinutes = 0;
+                $endHourInMinutes = 0;
+            }
+            $heureNormaleArrive = $beginHourInMinutes*60;
+            $heureNormaleDepart = $endHourInMinutes*60;
 
             if(sizeof($pauseBeginHourExploded)>1){
                 $pauseBeginHourInMinutes = (((int)$pauseBeginHourExploded[0])*60)+((int)$pauseBeginHourExploded[1]);
                 $pauseEndHourInMinutes = (((int)$pauseEndHourExploded[0])*60)+((int)$pauseEndHourExploded[1]);
 
-                $beginHourInMinutes = (((int)$beginHourExploded[0])*60)+((int)$beginHourExploded[1]);
-                $endHourInMinutes = (((int)$endHourExploded[0])*60)+((int)$endHourExploded[1]);
-
                 $interval_pause = (($pauseEndHourInMinutes - $pauseBeginHourInMinutes)/2)*60;
-                $heureNormaleArrive = $beginHourInMinutes*60;
-                $heureNormaleDepart = $endHourInMinutes*60;
                 $heureNormaleArrivePause = $pauseEndHourInMinutes*60;
                 $heureNormaleDepartPause = $pauseBeginHourInMinutes*60;
             }else{
                 $interval_pause = 0;
-                $heureNormaleArrive = 0;
-                $heureNormaleDepart = 0;
                 $heureNormaleArrivePause = 0;
                 $heureNormaleDepartPause = 0;
             }
@@ -253,7 +251,7 @@ class StatsController extends ClockinReccordController
              * S'il valide son quota horraire,on ne doit pas considérer son retard
              * dans la totalisation des heures perdus
             */
-            if ($type == "1" || $type == "2"){
+            if ($type == "1" || $type == "2" || $type == "4"){
                 // Si son workingHour est de type 1 ou 2
                 if(!$cr->present($employe,$nowTime)){
 
@@ -276,7 +274,7 @@ class StatsController extends ClockinReccordController
                         $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Absence","tempsPerdu"=>$tempPP);
                     }
                 }
-                $retardDiff = $cr->retard($employe,$nowTime,$interval,$heureNormaleArrive);
+                $retardDiff = $cr->retard($employe,$nowTime,$interval,$heureNormaleArrive,$empWH[$theDay][0]["beginHour"]);
                 if($retardDiff != null){
                     $nowDate = date('d/m/Y',$nowTime);
                     $retards++;
@@ -298,7 +296,7 @@ class StatsController extends ClockinReccordController
                         $tabRetardsPermission[]= array("date"=>$nowDate,"heureRetard"=>null,"tempsTotal"=>$tempsTPerduRetardPermission,"type"=>"Retard","tempsPerdu"=>$tempPerduRetardPermission);
                     }
                 }
-                $retardPauseDiff = $cr->retardPause($employe,$nowTime,$interval_pause,$heureNormaleArrivePause);
+                $retardPauseDiff = $cr->retardPause($employe,$nowTime,$interval_pause,$heureNormaleArrivePause,$empWH[$theDay][0]["pauseEndHour"]);
                 if($retardPauseDiff != null){
                     $nowDate = date('d/m/Y',$nowTime);
                     $retards++;
@@ -321,6 +319,7 @@ class StatsController extends ClockinReccordController
                 }
                 $departDiff = $cr->departPremature($employe,$nowTime,$interval,$heureNormaleDepart);
                 if($departDiff != null){
+
                     $nowDate = date('d/m/Y',$nowTime);
                     $departs++;
                     $sommeDeparts +=$departDiff[0];
@@ -380,7 +379,7 @@ class StatsController extends ClockinReccordController
                     $_fpa = $his["finPause"];
 
                     // Now that we have terminals, we must check the type of workingHour
-                    if($type == "1"){
+                    if($type == "1" || $type == "4"){
                         if($_arr == 0 || $_pau == 0){
                             $lost_time += (int)($this->convertHourInMinutes($his["pBH"])) - (int)($this->convertHourInMinutes($his["bH"]));
                         }
@@ -404,7 +403,7 @@ class StatsController extends ClockinReccordController
                         $quota_fait += $history["quota_fait"];
                     }
                 }
-            }else if($type == 3){
+            }else if($type == "3"){
                 // Si son workingHour est de type 3
                 if(!$cr->present($employe,$nowTime)){
                     $nowDate = date('d/m/Y',$nowTime);

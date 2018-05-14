@@ -148,13 +148,16 @@
         function convertType(type) {
             switch (type){
                 case "1":
-                    return "Heure figée";
+                    return "Heures figées";
                     break;
                 case "2":
                     return "Quota horraire";
                     break;
                 case "3":
                     return "Présence";
+                    break;
+                case "4":
+                    return "Heures figées sans pause";
                     break;
             }
         }
@@ -263,6 +266,31 @@
                                                     "<td colspan='6' class='green lighten-2 white-text center'> Présent </td>" +
                                                     "</tr>"
                                                 );
+                                                break;
+                                            case "4":
+                                                $("#rowsContainer").append("" +
+                                                    "<tr>" +
+                                                    "<td>" + res.clockinRecord[arrayID][empId].id + "</td>" +
+                                                    "<td>" + res.clockinRecord[arrayID][empId].nom + " " + res.clockinRecord[arrayID][empId].prenom + "</td>" +
+                                                    "<td>" + res.clockinRecord[arrayID][empId].function + "</td>" +
+                                                    "<td>" + convertType(res.clockinRecord[arrayID][empId].type) + "</td>" +
+                                                    "<td>" + res.clockinRecord[arrayID][empId].quota + "</td>" +
+                                                    "<td><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].bH+"</span></td>" +
+                                                    "<td><span class='redSpanPauseBegin_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                    "<td><span class='redSpanPauseEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                    "<td><span class='redSpanEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].eH+"</span></td>" +
+                                                    "<td><button data-target='modal1' class='detail_button modal-trigger' onclick='demander("+(i-1)+")' tag='"+(i-1)+"' style=''>Détails</button></td>" +
+                                                    "</tr>"
+                                                );
+                                                if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
+                                                    $(".redSpan_3_"+i).css("color","red");
+                                                }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
+                                                    $(".redSpanPauseBegin_3_"+i).css("color","red");
+                                                }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
+                                                    $(".redSpanPauseEnd_3_"+i).css("color","red");
+                                                }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
+                                                    $(".redSpanEnd_3_"+i).css("color","red");
+                                                }
                                                 break;
 
                                         }

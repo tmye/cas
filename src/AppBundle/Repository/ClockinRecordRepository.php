@@ -111,36 +111,48 @@ class ClockinRecordRepository extends EntityRepository
         }
     }
 
-    public function retard($emp,$date,$interval,$heureNormaleArrive){
+    public function retard($emp,$date,$interval,$heureNormaleArrive,$bH=null){
 
         $heureNormaleArrive = $heureNormaleArrive+$date;
+
+        $bHTab = explode(":",$bH);
+        $minutes = ($bHTab[0]*60*60)+($bHTab[1]*60);
+        $maxDate = $heureNormaleArrive+$interval;
 
         $queryBuilder = $this->createQueryBuilder('c');
         $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
         $queryBuilder->andWhere('c.clockinTime > :date');
         $queryBuilder->setParameter('date',$heureNormaleArrive);
         $queryBuilder->andWhere('c.clockinTime <= (:maxDate)');
-        $queryBuilder->setParameter('maxDate',$heureNormaleArrive+$interval);
+        $queryBuilder->setParameter('maxDate',$maxDate);
         $donn = $queryBuilder->getQuery()->getResult();
         if($donn != null){
             $ct = $donn[0]->getClockinTime();
-            $diff = ($ct-$heureNormaleArrive); // Timestamp
+            $diff = ($ct-($heureNormaleArrive)); // Timestamp
             return array($diff,$ct);
         }else{
             return 0;
         }
     }
 
-    public function retardPause($emp,$date,$interval_pause,$heureNormaleArrivePause){
+    public function retardPause($emp,$date,$interval_pause,$heureNormaleArrivePause,$pEH=null){
 
         $heureNormaleArrivePause = $heureNormaleArrivePause+$date;
+
+        $pEHTab = explode(":",$pEH);
+        if(!empty($pEH) && $pEH != null){
+            $minutes = ($pEHTab[0]*60*60)+($pEHTab[1]*60);
+        }else{
+            $minutes = 0;
+        }
+        $maxDate = $heureNormaleArrivePause+$interval_pause;
 
         $queryBuilder = $this->createQueryBuilder('c');
         $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
         $queryBuilder->andWhere('c.clockinTime > :date');
         $queryBuilder->setParameter('date',$heureNormaleArrivePause);
         $queryBuilder->andWhere('c.clockinTime <= (:maxDate)');
-        $queryBuilder->setParameter('maxDate',$heureNormaleArrivePause+$interval_pause);
+        $queryBuilder->setParameter('maxDate',$maxDate);
         $donn = $queryBuilder->getQuery()->getResult();
         if($donn != null){
             $ct = $donn[0]->getClockinTime();
