@@ -444,7 +444,7 @@ class ClockinReccordController extends Controller
         }
 
         // Avant de renvoyer le tableau on reverifie les bornes
-        for ($i=0;$i<sizeof($recordTab)-1;$i++){
+        /*for ($i=0;$i<sizeof($recordTab)-1;$i++){
             for ($j=0;$j<sizeof($recordTab)-1;$j++){
                 if($recordTab[$i+1]>$recordTab[$i]){
                     $temp = $recordTab[$i+1];
@@ -454,7 +454,7 @@ class ClockinReccordController extends Controller
                 $j++;
             }
             $i++;
-        }
+        }*/
 
         return $recordTab;
     }
@@ -611,7 +611,6 @@ class ClockinReccordController extends Controller
                 $content = array("content"=>$jsonContent,"emp"=>$empTab,"empNames"=>$empNameTab,"empCcid"=>$empCcidTab,"allRecord"=>$empAllHistoryTab);
             }else{
                 foreach ($emp as $e){
-
                     $empWH = json_decode($e->getWorkingHour()->getWorkingHour(),true);
                     $interval = ($e->getWorkingHour()->getTolerance())*60;
 
@@ -632,16 +631,12 @@ class ClockinReccordController extends Controller
                         $interval_pause = 0;
                     }
 
-                    $dd = strtotime($_date." ".$heureDebutNormal);
-                    $dpd = strtotime($_date." ".$heureDebutPauseNormal);
-                    $dpf = strtotime($_date." ".$heureFinPauseNormal);
-                    $df = strtotime($_date." ".$heureFinNormal);
-
                     // Timestamp de la dateheure à laquelle l'employé est sensé arriver
-                    $dSenceA = $dd;
-                    $dSencePD = $dpd;
-                    $dSencePF = $dpf;
-                    $dSenceD = $df;
+                    $dSenceA = strtotime($_date." ".$heureDebutNormal);
+                    $dSencePD = strtotime($_date." ".$heureDebutPauseNormal);
+                    $dSencePF = strtotime($_date." ".$heureFinPauseNormal);
+                    $dSenceD = strtotime($_date." ".$heureFinNormal);
+
 
 
                     $dIInfA = $dSenceA-($interval);
