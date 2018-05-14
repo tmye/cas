@@ -65,7 +65,6 @@ class EmployeController extends Controller {
             // On ajoute les champs de l'entité que l'on veut à notre formulaire
             $formBuilder
                 ->add('surname', TextType::class,array('label'=>' '))
-                ->add('middle_name', TextType::class,array('required' => false,'label'=>' '))
                 ->add('last_name', TextType::class,array('label'=>' '))
                 ->add('adress', TextType::class,array('label'=>' '))
                 ->add('contact', TextType::class,array('label'=>' '))
@@ -184,7 +183,6 @@ class EmployeController extends Controller {
             // On ajoute les champs de l'entité que l'on veut à notre formulaire
             $formBuilder
                 ->add('surname', TextType::class,array('label'=>' '))
-                ->add('middle_name', TextType::class,array('required' => false,'label'=>' '))
                 ->add('last_name', TextType::class,array('label'=>' '))
                 ->add('adress', TextType::class,array('label'=>' '))
                 ->add('contact', TextType::class,array('label'=>' '))
@@ -356,7 +354,6 @@ class EmployeController extends Controller {
                 // On ajoute les champs de l'entité que l'on veut à notre formulaire
                 $formBuilder
                     ->add('surname', TextType::class,array('label'=>' '))
-                    ->add('middle_name', TextType::class,array('required' => false,'label'=>' '))
                     ->add('last_name', TextType::class,array('label'=>' '))
                     ->add('adress', TextType::class,array('label'=>' '))
                     ->add('contact', TextType::class,array('label'=>' '))
