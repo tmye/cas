@@ -546,10 +546,10 @@ class MachineSysController extends BaseController
 
     private function standardSetup () {
 
-        $config = $this->ConfigEntityRepo()->findOneBy([]);
-        if ($config == null) {
-            $config = new ConfigEntity();
-            $this->persist($config);
+        $config = $this->ConfigEntityRepo()->findAll();
+
+        if ($config != null && sizeof($config) > 0) {
+            $config = $config[0];
         }
 
         $tmp['id'] = 0;
