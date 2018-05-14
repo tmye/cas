@@ -64,13 +64,8 @@ class DepartementController extends Controller
                     $em->persist($departement);
                     $em->flush();
 
-
-                    return $this->render("cas/departement.html.twig",array(
-                        'message'=>"Ce département a été ajouté avec succès",
-                        'form' => $form->createView(),
-                        'listDep' => $listDep
-                    ));
-
+                    $this->get('session')->getFlashBag()->set('notice', 'Ce département a été ajouté avec succès');
+                    return $this->redirectToRoute("departement");
                 }
 
             }
