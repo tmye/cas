@@ -20,7 +20,7 @@
                                             <br>
                                             <select name="employe">
                                                 {% for emp in employe %}
-                                                    <option value="{{ emp.id }}">{{ emp.surname~" "~emp.middleName~" "~emp.lastName }}</option>
+                                                    <option value="{{ emp.id }}">{{ emp.surname~" "~emp.lastName }}</option>
                                                 {% endfor %}
                                             </select>
                                         </div>
