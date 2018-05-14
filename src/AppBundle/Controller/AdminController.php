@@ -36,6 +36,7 @@ class AdminController extends Controller
                 $em = $this->getDoctrine()->getManager();
                 $e = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($empId);
                 $e->setRoles(array("ROLE_ADMIN"));
+                $e->setAuth(14);
                 $em->flush();
                 $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
                 return $this->render("cas/superAdmin.html.twig",array(
