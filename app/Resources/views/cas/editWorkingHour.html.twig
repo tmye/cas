@@ -157,7 +157,7 @@
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Fin</span>
-                                                    <input type="text" value='{{ whJson["jeudi"][0]["pauseBeginHour"] }}' id="jeudiEH" class="input-customized timepicker">
+                                                    <input type="text" value='{{ whJson["jeudi"][0]["endHour"] }}' id="jeudiEH" class="input-customized timepicker">
                                                 </div>
                                                 <div class="input-field col l2">
                                                     <span>Début pause</span>
@@ -763,7 +763,6 @@
                     reactiveHeure("lundi");
                     break;
                 case "3":
-                    console.log("Testin val() function");
                     $("#form_type_lundi").val(3);
 
                     $('.quotaSectionLundi input').val('');
@@ -771,6 +770,14 @@
                     $('.quotaSectionLundi input').css('background-color','#ccc');
 
                     desactiveTout("lundi");
+                    break;
+                case "4":
+                    $('.quotaSectionLundi input').val('');
+                    $('.quotaSectionLundi input').attr('disabled','disabled');
+                    $('.quotaSectionLundi input').css('background-color','#ccc');
+
+                    desactive("lundi");
+                    reactiveHeure("lundi");
                     break;
             }
 
@@ -804,6 +811,14 @@
 
                     desactiveTout("mardi");
                     break;
+                case "4":
+                    $('.quotaSectionMardi input').val('');
+                    $('.quotaSectionMardi input').attr('disabled','disabled');
+                    $('.quotaSectionMardi input').css('background-color','#ccc');
+
+                    desactive("mardi");
+                    reactiveHeure("mardi");
+                    break;
             }
 
             // Mercredi
@@ -832,6 +847,14 @@
                     $('.quotaSectionMercredi input').attr('disabled','disabled');
                     $('.quotaSectionMercredi input').css('background-color','#ccc');
                     desactiveTout("mercredi");
+                    break;
+                case "4":
+                    $('.quotaSectionMercredi input').val('');
+                    $('.quotaSectionMercredi input').attr('disabled','disabled');
+                    $('.quotaSectionMercredi input').css('background-color','#ccc');
+
+                    desactive("mercredi");
+                    reactiveHeure("mercredi");
                     break;
             }
 
@@ -862,6 +885,14 @@
                     $('.quotaSectionJeudi input').css('background-color','#ccc');
                     desactiveTout("jeudi");
                     break;
+                case "4":
+                    $('.quotaSectionJeudi input').val('');
+                    $('.quotaSectionJeudi input').attr('disabled','disabled');
+                    $('.quotaSectionJeudi input').css('background-color','#ccc');
+
+                    desactive("jeudi");
+                    reactiveHeure("jeudi");
+                    break;
             }
 
             // Vendredi
@@ -890,6 +921,14 @@
                     $('.quotaSectionVendredi input').attr('disabled','disabled');
                     $('.quotaSectionVendredi input').css('background-color','#ccc');
                     desactiveTout("vendredi");
+                    break;
+                case "4":
+                    $('.quotaSectionVendredi input').val('');
+                    $('.quotaSectionVendredi input').attr('disabled','disabled');
+                    $('.quotaSectionVendredi input').css('background-color','#ccc');
+
+                    desactive("vendredi");
+                    reactiveHeure("vendredi");
                     break;
             }
 
@@ -920,6 +959,14 @@
                     $('.quotaSectionSamedi input').css('background-color','#ccc');
                     desactiveTout("samedi");
                     break;
+                case "4":
+                    $('.quotaSectionSamedi input').val('');
+                    $('.quotaSectionSamedi input').attr('disabled','disabled');
+                    $('.quotaSectionSamedi input').css('background-color','#ccc');
+
+                    desactive("samedi");
+                    reactiveHeure("samedi");
+                    break;
             }
 
             // Dimanche
@@ -948,6 +995,14 @@
                     $('.quotaSectionDimanche input').attr('disabled','disabled');
                     $('.quotaSectionDimanche input').css('background-color','#ccc');
                     desactiveTout("dimanche");
+                    break;
+                case "4":
+                    $('.quotaSectionDimanche input').val('');
+                    $('.quotaSectionDimanche input').attr('disabled','disabled');
+                    $('.quotaSectionDimanche input').css('background-color','#ccc');
+
+                    desactive("dimanche");
+                    reactiveHeure("dimanche");
                     break;
             }
         });

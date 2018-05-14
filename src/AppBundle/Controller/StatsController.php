@@ -530,27 +530,25 @@ class StatsController extends ClockinReccordController
             $pauseBeginHourExploded = explode(":",$heureDebutNormalPause);
             $pauseEndHourExploded = explode(":",$heureFinNormalPause);
 
-            $endHourInMinutes =0;
-            $beginHourInMinutes =0;
-            $pauseEndHourInMinutes =0;
-            $pauseBeginHourInMinutes =0;
+            if(sizeof($beginHourExploded)>1 && sizeof($endHourExploded)){
+                $beginHourInMinutes = (((int)$beginHourExploded[0])*60)+((int)$beginHourExploded[1]);
+                $endHourInMinutes = (((int)$endHourExploded[0])*60)+((int)$endHourExploded[1]);
+            }else{
+                $beginHourInMinutes = 0;
+                $endHourInMinutes = 0;
+            }
+            $heureNormaleArrive = $beginHourInMinutes*60;
+            $heureNormaleDepart = $endHourInMinutes*60;
 
             if(sizeof($pauseBeginHourExploded)>1){
                 $pauseBeginHourInMinutes = (((int)$pauseBeginHourExploded[0])*60)+((int)$pauseBeginHourExploded[1]);
                 $pauseEndHourInMinutes = (((int)$pauseEndHourExploded[0])*60)+((int)$pauseEndHourExploded[1]);
 
-                $beginHourInMinutes = (((int)$beginHourExploded[0])*60)+((int)$beginHourExploded[1]);
-                $endHourInMinutes = (((int)$endHourExploded[0])*60)+((int)$endHourExploded[1]);
-
                 $interval_pause = (($pauseEndHourInMinutes - $pauseBeginHourInMinutes)/2)*60;
-                $heureNormaleArrive = $beginHourInMinutes*60;
-                $heureNormaleDepart = $endHourInMinutes*60;
                 $heureNormaleArrivePause = $pauseEndHourInMinutes*60;
                 $heureNormaleDepartPause = $pauseBeginHourInMinutes*60;
             }else{
                 $interval_pause = 0;
-                $heureNormaleArrive = 0;
-                $heureNormaleDepart = 0;
                 $heureNormaleArrivePause = 0;
                 $heureNormaleDepartPause = 0;
             }
@@ -569,7 +567,7 @@ class StatsController extends ClockinReccordController
              * S'il valide son quota horraire,on ne doit pas considérer son retard
              * dans la totalisation des heures perdus
             */
-            if ($type == "1" || $type == "2") {
+            if ($type == "1" || $type == "2" || $type == "4") {
                 // Si son workingHour est de type 1
                 if (!$cr->present($employe, $nowTime)) {
                     $absences++;
@@ -580,7 +578,7 @@ class StatsController extends ClockinReccordController
                     $tempsPerdusAbsences += $tempPerdu;
                     $sommeAbsences += $tempsPerdusAbsences;
                 }
-                $retardDiff = $cr->retard($employe, $nowTime, $interval, $heureNormaleArrive);
+                $retardDiff = $cr->retard($employe, $nowTime, $interval, $heureNormaleArrive, $empWH[$theDay][0]["beginHour"]);
                 if ($retardDiff != null) {
                     $nowDate = date('d/m/Y', $nowTime);
                     $retards++;
@@ -590,7 +588,7 @@ class StatsController extends ClockinReccordController
                     $ct = date('H:i', $retardDiff[1]);
                     $tabRetards[] = array("date" => $nowDate, "heureRetard" => $ct, "temps" => $perte_temps);
                 }
-                $retardPauseDiff = $cr->retardPause($employe, $nowTime, $interval_pause, $heureNormaleArrivePause);
+                $retardPauseDiff = $cr->retardPause($employe, $nowTime, $interval_pause, $heureNormaleArrivePause, $empWH[$theDay][0]["pauseEndHour"]);
                 if ($retardPauseDiff != null) {
                     $nowDate = date('d/m/Y', $nowTime);
                     $retards++;
@@ -626,7 +624,7 @@ class StatsController extends ClockinReccordController
                     $tabDepartsPause[] = array("date" => $nowDate, "heureDepart" => $ct, "temps" => $tempsPerdusDepartsPause);
                 }
             }else if($type == 3){
-                // Si son workingHour est de type 1
+                // Si son workingHour est de type 3
                 if(!$cr->present($employe,$nowTime)){
                     $absences++;
                     $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);

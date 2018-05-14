@@ -138,6 +138,7 @@
 
         function demander(tag) {
             var empData = dat[tag];
+            console.log(empData);
             $("#modal_element").html("");
             $.each(empData[1],function (arrayID) {
                 $("#modal_element").append("<td>"+empData[1][arrayID]+"<td>");
