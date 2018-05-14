@@ -227,7 +227,9 @@ class EmployeController extends Controller {
                         $file->move($user_profile_pictures, $fileName);
                         // Before setting the new file name to the employee,we must delete the older picture
                         if($last_picture != null && !empty($last_picture)){
-                            unlink($user_profile_pictures."/".$last_picture);
+                            if($last_picture != "default-profile.png"){
+                                unlink($user_profile_pictures."/".$last_picture);
+                            }
                         }
                         $employe->setPicture($fileName);
                     }else{
