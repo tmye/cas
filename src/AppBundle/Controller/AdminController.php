@@ -44,7 +44,7 @@ class AdminController extends Controller
                 ));
             }
 
-            $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeSafeBoth($this->getUser()->getEmployeeCcid());
+            $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
             return $this->render("cas/superAdmin.html.twig",array(
                 "employe" => $emp
             ));

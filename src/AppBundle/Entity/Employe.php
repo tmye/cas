@@ -97,13 +97,6 @@ class Employe implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="middle_name", type="string", length=45, nullable=true)
-     */
-    private $middleName;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="last_name", type="string", length=45)
      * @Assert\NotBlank()
      */
@@ -257,29 +250,6 @@ class Employe implements UserInterface
     public function getSurname()
     {
         return $this->surname;
-    }
-
-    /**
-     * Set middleName
-     *
-     * @param string $middleName
-     * @return Employe
-     */
-    public function setMiddleName($middleName)
-    {
-        $this->middleName = $middleName;
-
-        return $this;
-    }
-
-    /**
-     * Get middleName
-     *
-     * @return string 
-     */
-    public function getMiddleName()
-    {
-        return $this->middleName;
     }
 
     /**
