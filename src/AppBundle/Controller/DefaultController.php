@@ -34,9 +34,9 @@ class DefaultController extends Controller
         }*/
 
 
-        //return new Response(date("Y-m-d H:i:s",1526040000));
+        return new Response(date("Y-m-d H:i:s",1526162400));
         //return new Response(date("Y-m-d H:i:s",(new \DateTime())->getTimestamp()));
-        return new Response(strtotime("2018-05-15 11:35"));
+        //return new Response(strtotime("2018-05-13 08:35"));
         //return new Response(md5("ebenezer10"));
     }
 

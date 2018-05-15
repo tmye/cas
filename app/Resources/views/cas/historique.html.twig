@@ -204,7 +204,7 @@
                                 $.each(data.emp,function (arrayID) {
                                     i++;
                                     var empId = returnEmployeeId(arrayID,data.emp);
-                                    if(typeof (res.clockinRecord[arrayID][empId]) != "undefined"){
+                                    if(typeof (res.clockinRecord[arrayID][empId]) != "undefined" && data.empType[arrayID][1] != null){
                                         //alert("finalement");
                                         switch (res.clockinRecord[arrayID][empId].type){
                                             case "1":
@@ -295,6 +295,12 @@
                                                 break;
 
                                         }
+                                    }else if(data.empType[arrayID][1] == "null" || data.empType[arrayID][1] == null){
+                                        $("#rowsContainer").append("" +
+                                            "<tr>" +
+                                            "<td colspan='10' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:green'> Présence non requise </span></td>" +
+                                            "</tr>"
+                                        );
                                     }else{
                                         console.log(data.emp);
                                         //alert("nexiste pas");
