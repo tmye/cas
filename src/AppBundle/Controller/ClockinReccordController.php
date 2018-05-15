@@ -596,6 +596,7 @@ class ClockinReccordController extends Controller
                 $empAllHistoryTab[]=array($emp->getId(),$empAllRecordFinal);
                 $empNameTab[]=$emp->getSurname()." ".$emp->getLastName();
                 $empCcidTab[]=$emp->getEmployeeCcid();
+                $empTypeTab[]=array($emp->getId(),$type);
 
                 //Maintenant il faut éliminer les doublons
                 $don[] = $this->elimineDoublon($tempData,$day,$request);
@@ -610,11 +611,12 @@ class ClockinReccordController extends Controller
 
                 $jsonContent = $serializer->serialize(['clockinRecord' => $don],'json');
 
-                $content = array("content"=>$jsonContent,"emp"=>$empTab,"empNames"=>$empNameTab,"empCcid"=>$empCcidTab,"allRecord"=>$empAllHistoryTab);
+                $content = array("content"=>$jsonContent,"emp"=>$empTab,"empNames"=>$empNameTab,"empCcid"=>$empCcidTab,"empType"=>$empTypeTab,"allRecord"=>$empAllHistoryTab);
             }else{
                 if(sizeof($emp)>0){
                     foreach ($emp as $e){
                         $empWH = json_decode($e->getWorkingHour()->getWorkingHour(),true);
+                        $type = $empWH[$day][0]["type"];
                         $interval = ($e->getWorkingHour()->getTolerance())*60;
 
                         $heureDebutNormal = $empWH[$day][0]["beginHour"];
@@ -668,6 +670,7 @@ class ClockinReccordController extends Controller
                         $empAllHistoryTab[]= array($e->getId(),$empAllRecordFinal);
                         $empNameTab[]=$e->getSurname()." ".$e->getLastName();
                         $empCcidTab[]=$e->getEmployeeCcid();
+                        $empTypeTab[]=array($e->getId(),$type);
 
                         // Maintenant il faut éliminer les doublons
                         $don[] = $this->elimineDoublon($tempData,$day,$request);
@@ -681,7 +684,7 @@ class ClockinReccordController extends Controller
 
                         $jsonContent = $serializer->serialize(['clockinRecord' => $don],'json');
 
-                        $content = array("content"=>$jsonContent,"emp"=>$empTab,"empNames"=>$empNameTab,"empCcid"=>$empCcidTab,"allRecords"=>$empAllHistoryTab);
+                        $content = array("content"=>$jsonContent,"emp"=>$empTab,"empNames"=>$empNameTab,"empCcid"=>$empCcidTab,"empType"=>$empTypeTab,"allRecords"=>$empAllHistoryTab);
                     }
                 }
 
