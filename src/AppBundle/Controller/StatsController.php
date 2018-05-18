@@ -382,22 +382,18 @@ class StatsController extends ClockinReccordController
                     if($type == "1"){
                         if($_arr == 0 || $_pau == 0){
                             $lost_time += (int)($this->convertHourInMinutes($heureDebutNormalPause)) - (int)($this->convertHourInMinutes($heureDebutNormal));
-                            print_r("@@@ I entered here for : ".date("Y-m-d",$nowTime)." and lost time : ".$lost_time."\n");
                         }
                         if($_fpa == 0 || $_dep == 0){
                             $lost_time+= (int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureFinNormalPause));
-                            print_r("### In the second block :".date("Y-m-d",$nowTime)." and lost time : ".$lost_time."\n");
                         }
                     }if($type == "4"){
                         if($_arr == 0 || $_dep == 0){
                             $lost_time += (int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal));
-                            print_r("@@@ I entered here for : ".date("Y-m-d",$nowTime)." and lost time : ".$lost_time."\n");
                         }
                     }elseif ($type == "2"){
                         print_r("I entered SECOND CASE for : ".date("Y-m-d",$nowTime)."\n");
                         // in this case the lost time is his quota because of his terminals
                         $lost_time += (int)($his["quota"]);
-                        print_r("§§§ In the else block :".date("Y-m-d",$nowTime)." and lost time : ".$lost_time."\n");
                     }
                 }
 
