@@ -455,6 +455,10 @@
             function loadSelectedEmpData(id) {
 
                 var abs = 0;
+                var fromDate = $("#fromDate").val();
+                var fFromDate = new Date($("#fromDate").val());
+                var toDate = $("#toDate").val();
+                var fToDate = new Date($("#toDate").val());
 
                 // fonction d'ajout de date
                 Date.prototype.addDays = function(days) {
@@ -463,18 +467,18 @@
                     return dat;
                 }
                 $.ajax({
-                    type: 'GET',
+                    type: 'POST',
                     url: "returnOneEmployee/"+id,
+                    data: {'dateFrom':fromDate,'dateTo':toDate},
                     success: function(data) {
+                        console.log("Console ::::");
+                        console.log(data);
+                        console.log("End console ::::");
                         var res = JSON.parse(data);
                         //alert("Le résultat : "+res.emp["id"]);
                         var employeeId = res.emp["id"];
                         var fullName = res.emp["surname"]+" "+res.emp["lastName"];
                         var salary = res.emp["salary"];
-                        var fromDate = $("#fromDate").val();
-                        var fFromDate = new Date($("#fromDate").val());
-                        var toDate = $("#toDate").val();
-                        var fToDate = new Date($("#toDate").val());
 
                         var timeDiff = Math.abs(fToDate.getTime() - fFromDate.getTime());
                         var diffDays = timeDiff / (1000 * 3600 * 24);
@@ -489,7 +493,7 @@
                         $("#salarySpan").text(salary);
                         $("#fromDateSpan").text(fromDate);
                         $("#toDateSpan").text(toDate);
-                        $("#totalSalarySpan").text(precisionRound(totalSalary,0));
+                        $("#totalSalarySpan").text(precisionRound(res.salaryFinal,0));
 
                         // Recuperation des autres informations
                         $.ajax({

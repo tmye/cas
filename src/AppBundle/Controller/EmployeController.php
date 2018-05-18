@@ -294,15 +294,41 @@ class EmployeController extends Controller {
      */
     public function returnOneEmployeeAction(Request $request,$id)
     {
+        $dateFrom = $request->request->get("dateFrom");
+        $dateTo = $request->request->get("dateTo");
+        $timeFrom = strtotime($request->request->get("dateFrom")." 00:00:00");
+        $timeTo = strtotime($request->request->get("dateTo")." 00:00:00");
+        $timeDays = $timeTo-$timeFrom;
+        $days = $timeDays/(60*60*24);
+        $nowTime = $timeFrom;
+
         $em = $this->getDoctrine()->getManager();
         $emp = $em->getRepository("AppBundle:Employe")->find($id);
+        $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
+
+        $toBeSubstracted = 0;
+        for ($cpt=0;$cpt<=$days;$cpt++){
+            $theDay = date('N',$nowTime);
+            $theDay = $this->dateDayNameFrench($theDay);
+            $type = $empWH[$theDay][0]["type"];
+            if($theDay == "samedi" || $theDay == "dimanche"){
+                if($type == null || $type == "null"){
+                    $toBeSubstracted ++;
+                }
+            }
+            $nowTime = $nowTime+86400;
+        }
+        $finallyDays = ($days - $toBeSubstracted)+1; // plus 1 because the first date(nowDate) was not considered
+        // Now we know the final days
+        $salaryPerDays = $emp->getSalary()/30;
+        $salaryFinal = $salaryPerDays*$finallyDays;
 
         $encoders = array(new XmlEncoder(), new JsonEncoder());
         $normalizers = array(new ObjectNormalizer());
 
         $serializer = new Serializer($normalizers, $encoders);
 
-        $jsonContent = $serializer->serialize(['emp' => $emp],'json');
+        $jsonContent = $serializer->serialize(['emp' => $emp,"salaryFinal"=>$salaryFinal],'json');
 
         return new Response($jsonContent);
     }
@@ -418,5 +444,31 @@ class EmployeController extends Controller {
     private function conv_text($value) {
         $result = mb_detect_encoding($value." ","UTF-8,CP125") == "UTF-8" ? iconv("UTF-8", "CP1252", $value ) : $value;
         return $result;
+    }
+
+    private function dateDayNameFrench($day){
+        switch ($day){
+            case 1:
+                return "lundi";
+                break;
+            case 2:
+                return "mardi";
+                break;
+            case 3:
+                return "mercredi";
+                break;
+            case 4:
+                return "jeudi";
+                break;
+            case 5:
+                return "vendredi";
+                break;
+            case 6:
+                return "samedi";
+                break;
+            case 7:
+                return "dimanche";
+                break;
+        }
     }
 }
