@@ -173,6 +173,7 @@ class StatsController extends ClockinReccordController
 
         // On boucle sur les jours sélectionnés
         $i=0;
+        $lost_time = 0;
         $tabType = array();
         for ($cpt=0;$cpt<=$days;$cpt++){
             $theDay = date('N',$nowTime);
@@ -190,7 +191,6 @@ class StatsController extends ClockinReccordController
             $_time_heure_debut = null;
             $_time_minuites_debut = null;
 
-            $lost_time = 0;
 
             // Pour éviter les erreurs de "offset"
             if(($hAN != null) && ($hAN !="")){
@@ -379,16 +379,25 @@ class StatsController extends ClockinReccordController
                     $_fpa = $his["finPause"];
 
                     // Now that we have terminals, we must check the type of workingHour
-                    if($type == "1" || $type == "4"){
+                    if($type == "1"){
                         if($_arr == 0 || $_pau == 0){
-                            $lost_time += (int)($this->convertHourInMinutes($his["pBH"])) - (int)($this->convertHourInMinutes($his["bH"]));
+                            $lost_time += (int)($this->convertHourInMinutes($heureDebutNormalPause)) - (int)($this->convertHourInMinutes($heureDebutNormal));
+                            print_r("@@@ I entered here for : ".date("Y-m-d",$nowTime)." and lost time : ".$lost_time."\n");
                         }
                         if($_fpa == 0 || $_dep == 0){
-                            $lost_time += (int)($this->convertHourInMinutes($his["eH"])) - (int)($this->convertHourInMinutes($his["pEH"]));
+                            $lost_time+= (int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureFinNormalPause));
+                            print_r("### In the second block :".date("Y-m-d",$nowTime)." and lost time : ".$lost_time."\n");
+                        }
+                    }if($type == "4"){
+                        if($_arr == 0 || $_dep == 0){
+                            $lost_time += (int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal));
+                            print_r("@@@ I entered here for : ".date("Y-m-d",$nowTime)." and lost time : ".$lost_time."\n");
                         }
                     }elseif ($type == "2"){
+                        print_r("I entered SECOND CASE for : ".date("Y-m-d",$nowTime)."\n");
                         // in this case the lost time is his quota because of his terminals
                         $lost_time += (int)($his["quota"]);
+                        print_r("§§§ In the else block :".date("Y-m-d",$nowTime)." and lost time : ".$lost_time."\n");
                     }
                 }
 
