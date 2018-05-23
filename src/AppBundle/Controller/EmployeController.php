@@ -292,10 +292,15 @@ class EmployeController extends Controller {
     /**
      * @Route("/returnOneEmployee/{id}",name="returnOneEmployee")
      */
-    public function returnOneEmployeeAction(Request $request,$id)
+    public function returnOneEmployeeAction(Request $request,$id,$fromDate=null,$toDate=null)
     {
-        $dateFrom = $request->request->get("dateFrom");
-        $dateTo = $request->request->get("dateTo");
+        if($fromDate==null && $toDate==null){
+            $dateFrom = $request->request->get("dateFrom");
+            $dateTo = $request->request->get("dateTo");
+        }else{
+            $dateFrom = $fromDate;
+            $dateTo = $toDate;
+        }
         $timeFrom = strtotime($request->request->get("dateFrom")." 00:00:00");
         $timeTo = strtotime($request->request->get("dateTo")." 00:00:00");
         $timeDays = $timeTo-$timeFrom;

@@ -16,7 +16,7 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
 
-class ClockinReccordController extends Controller
+class ClockinReccordController extends EmployeController
 {
 
     static $min_laps = 180;

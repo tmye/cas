@@ -1,0 +1,326 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}C.A.S - Statistiques Personnelles{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/bootstrap-select.min.css') }}">
+{% endblock %}
+
+{% block body %}
+
+    <!-- Modal for ajax loading -->
+    <div id="modal_loading" class="modal ajax_modals">
+        <div class="modal-content">
+            <p class="center">
+                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col l12">
+            <h5 class="page-title">Rapports</h5>
+
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Choisissez les paramètres</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <form method="post" action="{{ path('generatePDF') }}" id="form" class="col l12">
+                                        <div class="row row-no-margin">
+                                            <div class="input-field col s12">
+                                                <div class="row" id="errorContainer">
+                                                    <div class="col l12">
+                                                        <span class="red-text"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="row row-no-margin">
+                                                    <div class="col l6">
+                                                        <span>Veuillez sélectionner la durée de votre choix</span>
+                                                        <br>
+                                                        <input id="fromDate" type="text" name="fromDate" class="datepicker input-customized" placeholder="DU">
+                                                    </div>
+                                                    <span> - </span>
+                                                    <div class="col l6">
+                                                        <input id="toDate" type="text" name="toDate" class="datepicker input-customized" placeholder="AU">
+                                                    </div>
+                                                </div>
+                                                <br>
+                                                <div class="row row-no-margin">
+                                                    <div class="col l5">
+                                                        <select multiple="multiple" id="source" class="browser-default multiple_select_perso">
+                                                            {% for dep in listDep %}
+                                                                <optgroup label="{{ dep.name }}">
+                                                                    {% for emp in listEmployee %}
+                                                                        {% if emp.departement.id == dep.id %}
+                                                                            <option value="{{ emp.id }}">{{ emp.getLastName~" "~emp.getSurname }}</option>
+                                                                        {% endif %}
+                                                                    {% endfor %}
+                                                                </optgroup>
+                                                            {% endfor %}
+                                                        </select>
+                                                        <input type="text" id="textbox" placeholder="Filtrer les employés">
+                                                    </div>
+                                                    <div class="col l2">
+                                                        <input type='button' id='btnAllRight' value='>>'>
+                                                        <input type='button' id='btnRight' value='>'>
+                                                        <input type='button' id='btnLeft' value='<'>
+                                                        <input type='button' id='btnAllLeft' value='<<'>
+                                                    </div>
+                                                    <div class="col l5">
+                                                        <select multiple="multiple" name="destination[]" class="browser-default multiple_select_perso" id="destination">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <br>
+                                                <div class="row row-no-margin">
+                                                    <div class="col l6">
+                                                    </div>
+                                                    <div class="col l6">
+                                                        <span class="right" style="margin-top: 20px">
+                                                            <input type="button" id="submitButton" value="Valider" class="btn-perso-historique">
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset("js/jquery.selectlistactions.js") }}"></script>
+    <script>
+        $(function () {
+            $('#btnRight').click(function (e) {
+                $('select').moveToListAndDelete('#source', '#destination');
+                e.preventDefault();
+            });
+
+            $('#btnAllRight').click(function (e) {
+                $('select').moveAllToListAndDelete('#source', '#destination');
+                e.preventDefault();
+            });
+
+            $('#btnLeft').click(function (e) {
+                $('select').moveToListAndDelete('#destination', '#source');
+                e.preventDefault();
+            });
+
+            $('#btnAllLeft').click(function (e) {
+                $('select').moveAllToListAndDelete('#destination', '#source');
+                e.preventDefault();
+            });
+
+        });
+    </script>
+    <script>
+        jQuery.fn.filterByText = function(textbox, selectSingleMatch) {
+            return this.each(function() {
+                var select = this;
+                var options = [];
+                $(select).find('option').each(function() {
+                    options.push({value: $(this).val(), text: $(this).text()});
+                });
+                $(select).data('options', options);
+                $(textbox).bind('change keyup', function() {
+                    var options = $(select).empty().scrollTop(0).data('options');
+                    var search = $.trim($(this).val());
+                    var regex = new RegExp(search,'gi');
+
+                    $.each(options, function(i) {
+                        var option = options[i];
+                        if(option.text.match(regex) !== null) {
+                            $(select).append(
+                                $('<option>').text(option.text).val(option.value)
+                            );
+                        }
+                    });
+                    if (selectSingleMatch === true &&
+                        $(select).children().length === 1) {
+                        $(select).children().get(0).selected = true;
+                    }
+                });
+            });
+        };
+
+        $(function() {
+            $('#source').filterByText($('#textbox'), true);
+        });
+    </script>
+    <script>
+
+        function precisionRound(number, precision) {
+            var factor = Math.pow(10, precision);
+            return Math.round(number * factor) / factor;
+        }
+
+        var tempsPerduRetards = 0;
+        $(function(){
+            //alert("appel de la fonction");
+            $('#modal1').modal({
+                dismissible: false, // Modal can be dismissed by clicking outside of the modal
+            });
+            $('#modal1').modal('open');
+            /* Création de la fonction qui permet de renvoyer le jour */
+
+            function returnJour(date) {
+                var days = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+                var theDate = new Date(date);
+                var dayName = days[theDate.getDay()];
+
+                return dayName;
+
+            }
+
+            /* Création de la fonction de chargement des données de l'employé sélectionné */
+            function loadSelectedEmpData(id) {
+
+                var abs = 0;
+                var fromDate = $("#fromDate").val();
+                var fFromDate = new Date($("#fromDate").val());
+                var toDate = $("#toDate").val();
+                var fToDate = new Date($("#toDate").val());
+
+                // fonction d'ajout de date
+                Date.prototype.addDays = function(days) {
+                    var dat = new Date(this.valueOf());
+                    dat.setDate(dat.getDate() + days);
+                    return dat;
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: "returnOneEmployee/"+id,
+                    data: {'dateFrom':fromDate,'dateTo':toDate},
+                    success: function(data) {
+                        console.log("Console ::::");
+                        console.log(data);
+                        console.log("End console ::::");
+                        var res = JSON.parse(data);
+                        //alert("Le résultat : "+res.emp["id"]);
+                        var employeeId = res.emp["id"];
+                        var fullName = res.emp["surname"]+" "+res.emp["lastName"];
+                        var salary = res.emp["salary"];
+
+                        var timeDiff = Math.abs(fToDate.getTime() - fFromDate.getTime());
+                        var diffDays = timeDiff / (1000 * 3600 * 24);
+                        diffDays +=1;
+                        var totalSalary = (salary/30)*diffDays;
+                        var salaryPerDay = (salary/30);
+                        var salaryPerMin = (((salary/30)/24)/60);
+
+                        tempsPerduRetards = data.tpr;
+
+                        $("#nameSpan").text(fullName);
+                        $("#salarySpan").text(salary);
+                        $("#fromDateSpan").text(fromDate);
+                        $("#toDateSpan").text(toDate);
+                        $("#totalSalarySpan").text(precisionRound(res.salaryFinal,0));
+
+                        // Recuperation des autres informations
+                        $.ajax({
+                            type: 'POST',
+                            url: "userStats",
+                            data: {'empId':employeeId,'dateFrom':fromDate,'dateTo':toDate},
+                            success: function (data) {
+
+                                // Closing the loading box
+
+                                $('#modal_loading').modal('close');
+                            },
+                            error: function (msg) {
+                                // Closing the loading box
+                                $('#modal_loading').modal('close');
+                                alert("Erreur : "+msg);
+                            }
+                        });
+                    },
+                    error: function(msg) {
+                        alert("Erreur : "+msg);
+                    }
+                });
+            }
+
+
+            var len = {{ listEmployee | length }};
+            var tab = [];
+            {% for el in listEmployee %}
+                tab.push({depId:"{{ el.departement.id }}",id:"{{ el.id }}",ccid:"{{ el.employeeCcid }}",surname:"{{ el.surname }}", lastName:"{{ el.lastName }}"});
+            {% endfor %}
+            console.log("Test");
+            console.log(tab);
+            $("#depSelect").change(function(){
+                /* On vide le contenu de la table */
+                $("#empSelect").html("");
+                /* On récupère le département sélectionné */
+                var selectedDep = $("#depSelect").val();
+                for(var i=0;i<len;i++){
+                    //alert("L'id dep est "+res.employees[i].departement.id);
+                    /* On vérifie si oui ou nom cet employé appartient au département
+                     * Si oui on l'affiche
+                     * Sinon on l'ignore tout simplement
+                     */
+                    var currentEmpDepId = tab[i].depId;
+                    if(currentEmpDepId == selectedDep){
+                        $("#empSelect").append("" +
+                            "<option value="+tab[i].id+">" +tab[i].ccid+" "+tab[i].lastName+" "+tab[i].surname+"</option>"
+                        );
+                    }
+                }
+            });
+
+            $("#submitButton").click(function () {
+
+
+                var dateFrom = new Date($("#fromDate").val()).getTime();
+                var dateTo = new Date($("#toDate").val()).getTime();
+                if($("#destination").val()!=""){
+                    if($("#fromDate").val()!=""){
+                        if($("#toDate").val()!=""){
+                            if(dateFrom < dateTo || dateFrom == dateTo){
+                                $('#modal_loading').modal('open');
+                                console.log($("#destination").val());
+                                $("#errorContainer").hide();
+                                    //console.log($("#destination").val());
+                                    $("#form").submit();
+                            }else {
+                                $("#errorContainer").show();
+                                $("#errorContainer div span").text("Erreur : La date de début ne peut pas etre superieur à la date de fin");
+                                $("#containerMustBeHidden").attr("style","display:none");
+                            }
+                        }else {
+                            $("#errorContainer").show();
+                            $("#errorContainer div span").text("Erreur : veuillez choisir une date de fin valide");
+                            $("#containerMustBeHidden").attr("style","display:none");
+                        }
+                    }else{
+                        $("#errorContainer").show();
+                        $("#errorContainer div span").text("Erreur : veuillez choisir une date de début valide");
+                        $("#containerMustBeHidden").attr("style","display:none");
+                    }
+                }else{
+                    $("#errorContainer").show();
+                    $("#errorContainer div span").text("Erreur : veuillez choisir un employé");
+                    $("#containerMustBeHidden").attr("style","display:none");
+                }
+            });
+        });
+    </script>
+    <script>
+        // On s'attaque aux collapsibles
+        $(function () {
+            $(".cl_PersStats").addClass("collapsible_element_active");
+            $(".navigation_collapsible").collapsible('open',2);
+        });
+    </script>
+{% endblock %}
