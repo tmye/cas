@@ -79,6 +79,29 @@ class StatsController extends ClockinReccordController
         }
     }
 
+    /**
+     * @Route("/rapports",name="rapports")
+     */
+    public function rapportsAction(Request $request)
+    {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+            $em = $this->getDoctrine()->getManager();
+            $listEmployee = $em->getRepository("AppBundle:Employe")->findAll();
+
+            $dep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAllSafe();
+            return $this->render('cas/rapports.html.twig',array(
+                'listDep'=>$dep,
+                'listEmployee'=>$listEmployee
+            ));
+        }else{
+            return $this->redirectToRoute("login");
+        }
+    }
+
     private function dateDayNameFrench($day){
         switch ($day){
             case 1:
@@ -108,13 +131,20 @@ class StatsController extends ClockinReccordController
     /**
      * @Route("/userStats",name="userStats")
     */
-    public function userStatsAction(Request $request){
+    public function userStatsAction(Request $request,$empId=null,$fromeDate=null,$toDate=null){
 
-        $emp = $request->request->get("empId");
-        $dateFrom = $request->request->get("dateFrom");
-        $timeFrom = strtotime($request->request->get("dateFrom")." 00:00:00");
-        $dateTo = $request->request->get("dateTo");
-        $timeTo = strtotime($request->request->get("dateTo")." 00:00:00");
+        // if/else condition because of calling this in the generatePDF function
+        if($empId==null && $fromeDate==null && $toDate==null){
+            $emp = $request->request->get("empId");
+            $dateFrom = $request->request->get("dateFrom");
+            $dateTo = $request->request->get("dateTo");
+        }else{
+            $emp = $empId;
+            $dateFrom = $fromeDate;
+            $dateTo = $toDate;
+        }
+        $timeFrom = strtotime($dateFrom." 00:00:00");
+        $timeTo = strtotime($dateTo." 00:00:00");
 
         $timeDays = $timeTo-$timeFrom;
         $days = $timeDays/(60*60*24);
@@ -380,6 +410,7 @@ class StatsController extends ClockinReccordController
 
                     // Now that we have terminals, we must check the type of workingHour
                     if($type == "1"){
+                        // Un double test a faire
                         if($_arr == 0 || $_pau == 0){
                             $lost_time += (int)($this->convertHourInMinutes($heureDebutNormalPause)) - (int)($this->convertHourInMinutes($heureDebutNormal));
                         }

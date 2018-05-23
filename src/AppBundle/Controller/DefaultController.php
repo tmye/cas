@@ -3,11 +3,13 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Admin;
+use AppBundle\fpdf181\fpdf;
 use AppBundle\Entity\CompanyConfig;
 use AppBundle\Entity\Departement;
 use AppBundle\Entity\Employe;
 use AppBundle\Entity\Expiration;
 use AppBundle\Entity\WorkingHours;
+use AppBundle\fpdf181\tablepdf;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Filesystem\Filesystem;
@@ -17,7 +19,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use TmyeDeviceBundle\Entity\DevicePubPic;
 use TmyeDeviceBundle\Entity\UpdateEntity;
 
-class DefaultController extends Controller
+class DefaultController extends StatsController
 {
 
     /**
@@ -675,5 +677,51 @@ class DefaultController extends Controller
         }else{
             return $this->redirectToRoute("login");
         }
+    }
+
+    /**
+     * @Route("/generatePDF",name="generatePDF")
+     */
+    public function generatePDFAction(Request $request)
+    {
+        //print_r($request->request->get('destination'));
+        $empId = $request->request->get('destination');
+        $fromDate = $request->request->get('fromDate');
+        $toDate = $request->request->get('toDate');
+        $pdf = new tablepdf();
+        $pdf->AddPage();
+        $pdf->SetFont('Arial','B',16);
+        $pdf->Cell(40,10,'Rapport des employé !'.date('d').'/'.date('m').'/'.date('Y'));
+        $pdf->Ln('15');
+        foreach ($empId as $emp){
+            $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($emp);
+
+            $empData = $this->returnOneEmployeeAction($request,$emp,$fromDate,$toDate);
+            $empDataFormated = json_decode($empData->getContent(),true);
+
+            $donnees = $this->userStatsAction($request,$emp,$fromDate,$toDate);
+            $donnees = json_decode($donnees->getContent(),true);
+            $finalSalary = $empDataFormated["salaryFinal"];
+            $finalSalaryPerHour = $finalSalary/24;
+            $finalSalaryPerMin = $finalSalaryPerHour/60;
+            //print_r($empDataFormated);
+            $name = $employe->getSurname();
+            $lastName = $employe->getLastName();
+            $permissions = sizeof($donnees["permissionData"]["retardStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["absenceStats"]);
+
+            $header = array('Nom', 'Prénom(s)', 'Absences', 'Permissions','Retards','Departs');
+            $data = array(
+                array($name,$lastName,$donnees["absences"],$permissions,$donnees["retards"],$donnees["departs"]),
+            );
+            $data2 = array(
+                array("Pertes en argent","",$donnees["absences"]*$finalSalary,0,$donnees["tpr"]*$finalSalaryPerMin,$donnees["tpd"]*$finalSalaryPerMin),
+            );
+
+            $pdf->FancyTable($header,$data,$data2);
+            $pdf->Ln('5');
+        }
+        $pdf->Output();
+
+        //return new Response("OK");
     }
 }
