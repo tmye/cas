@@ -8,6 +8,8 @@
 * Author:  Olivier PLATHEY                                                     *
 *******************************************************************************/
 
+namespace AppBundle\fpdf181;
+
 define('FPDF_VERSION','1.81');
 
 class fpdf

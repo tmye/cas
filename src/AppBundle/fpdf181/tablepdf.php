@@ -7,6 +7,7 @@
  */
 
 namespace AppBundle\fpdf181;
+use AppBundle\fpdf181\fpdf;
 
 
 class tablepdf extends fpdf
