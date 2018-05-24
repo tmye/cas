@@ -691,7 +691,7 @@ class DefaultController extends StatsController
         $pdf = new tablepdf();
         $pdf->AddPage();
         $pdf->SetFont('Arial','B',16);
-        $pdf->Cell(40,10,'Rapport des employé !'.date('d').'/'.date('m').'/'.date('Y'));
+        $pdf->Cell(40,10,'Rapport des employes ! du '.$fromDate.' au '.$toDate);
         $pdf->Ln('15');
         foreach ($empId as $emp){
             $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($emp);
@@ -709,7 +709,7 @@ class DefaultController extends StatsController
             $lastName = $employe->getLastName();
             $permissions = sizeof($donnees["permissionData"]["retardStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["absenceStats"]);
 
-            $header = array('Nom', 'Prénom(s)', 'Absences', 'Permissions','Retards','Departs');
+            $header = array('Nom', 'Prenom(s)', 'Absences', 'Permissions','Retards','Departs');
             $data = array(
                 array($name,$lastName,$donnees["absences"],$permissions,$donnees["retards"],$donnees["departs"]),
             );
