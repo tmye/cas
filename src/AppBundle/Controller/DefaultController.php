@@ -691,7 +691,7 @@ class DefaultController extends StatsController
         $pdf = new tablepdf();
         $pdf->AddPage();
         $pdf->SetFont('Arial','B',16);
-        $pdf->Cell(40,10,'Rapport des employes ! du '.$fromDate.' au '.$toDate);
+        $pdf->Cell(40,10,'Rapport des employes du '.$fromDate.' au '.$toDate);
         $pdf->Ln('15');
         foreach ($empId as $emp){
             $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($emp);
@@ -714,10 +714,13 @@ class DefaultController extends StatsController
                 array($name,$lastName,$donnees["absences"],$permissions,$donnees["retards"],$donnees["departs"]),
             );
             $data2 = array(
+                array("Pertes en temps (min)","",$donnees["absences"]*24,0,$donnees["tpr"],$donnees["tpd"]),
+            );
+            $data3 = array(
                 array("Pertes en argent","",$donnees["absences"]*$finalSalary,0,$donnees["tpr"]*$finalSalaryPerMin,$donnees["tpd"]*$finalSalaryPerMin),
             );
 
-            $pdf->FancyTable($header,$data,$data2);
+            $pdf->FancyTable($header,$data,$data2,$data3);
             $pdf->Ln('5');
         }
         $pdf->Output();
