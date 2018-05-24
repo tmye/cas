@@ -460,7 +460,6 @@ class StatsController extends ClockinReccordController
                         $timePP = ($timeFin - $timeDebut);
                         $tempPP = $timePP/60;
                         $tempsTPP += $tempPP;
-                        print_r("\n Here :::: ".$nowDate." :::: ".$tempPerdu);
                         $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Absence","tempsPerdu"=>$tempPP);
                     }
                 }
