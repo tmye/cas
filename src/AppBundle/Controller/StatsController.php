@@ -400,8 +400,10 @@ class StatsController extends ClockinReccordController
                 // Now we deal with lost time calculations
                 // First of all we need the terminals
                 $his = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('Y-m-d',$nowTime),$employe->getId(),$request);
-                if(($his != null) && ($his != "")){
-                    $his = json_decode($his->getContent(),true);
+                //print_r("(((((((");
+                $his = json_decode($his->getContent(),true);
+                //print_r(")))))))");
+                if((($his["arrive"] != null) && ($his["arrive"] != "")) || (($his["depart"] != null) && ($his["depart"] != "")) || (($his["pause"] != null) && ($his["pause"] != "")) || (($his["finPause"] != null) && ($his["finPause"] != ""))){
                     //print_r($his);
                     $_arr = $his["arrive"];
                     $_dep = $his["depart"];
@@ -411,10 +413,10 @@ class StatsController extends ClockinReccordController
                     // Now that we have terminals, we must check the type of workingHour
                     if($type == "1"){
                         // Un double test a faire
-                        if($_arr == 0 || $_pau == 0){
+                        if(($_arr == 0 && $_pau != 0) || ($_pau == 0 && $_arr != 0)){
                             $lost_time += (int)($this->convertHourInMinutes($heureDebutNormalPause)) - (int)($this->convertHourInMinutes($heureDebutNormal));
                         }
-                        if($_fpa == 0 || $_dep == 0){
+                        if(($_fpa == 0 && $_dep != 0) || ($_dep == 0 && $_fpa !=0)){
                             $lost_time+= (int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureFinNormalPause));
                         }
                     }if($type == "4"){
@@ -422,7 +424,6 @@ class StatsController extends ClockinReccordController
                             $lost_time += (int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal));
                         }
                     }elseif ($type == "2"){
-                        print_r("I entered SECOND CASE for : ".date("Y-m-d",$nowTime)."\n");
                         // in this case the lost time is his quota because of his terminals
                         $lost_time += (int)($his["quota"]);
                     }

@@ -7,15 +7,16 @@
  */
 
 namespace AppBundle\fpdf181;
+use AppBundle\fpdf181\fpdf;
 
 
 class tablepdf extends fpdf
 {
     public function FancyTable($header, $data, $data2){
         // Couleurs, épaisseur du trait et police grasse
-        $this->SetFillColor(255,0,0);
+        $this->SetFillColor(100,100,100);
         $this->SetTextColor(255);
-        $this->SetDrawColor(128,0,0);
+        $this->SetDrawColor(60,60,60);
         $this->SetLineWidth(.3);
         $this->SetFont('helvetica','','11');
         // En-tête
