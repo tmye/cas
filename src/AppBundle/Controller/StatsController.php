@@ -443,7 +443,7 @@ class StatsController extends ClockinReccordController
                 }
             }else if($type == "3"){
                 // Si son workingHour est de type 3
-                if(!$cr->present($employe,$nowTime)){
+                if(!$cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
                     $nowDate = date('d/m/Y',$nowTime);
                     $absences++;
                     $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
