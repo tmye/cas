@@ -714,7 +714,7 @@ class DefaultController extends StatsController
                 array($name,$lastName,$donnees["absences"],$permissions,$donnees["retards"],$donnees["departs"]),
             );
             $data2 = array(
-                array("Pertes en temps (min)","",$donnees["absences"]*24,0,$donnees["tpr"],$donnees["tpd"]),
+                array("Pertes en temps","",$donnees["absences"]*24,0,$donnees["tpr"],$donnees["tpd"]),
             );
             $data3 = array(
                 array("Pertes en argent","",$donnees["absences"]*$finalSalary,0,$donnees["tpr"]*$finalSalaryPerMin,$donnees["tpd"]*$finalSalaryPerMin),
