@@ -693,7 +693,13 @@ class DefaultController extends StatsController
         $pdf->SetFont('Arial','B',16);
         $pdf->Cell(40,10,'Rapport des employes du '.$fromDate.' au '.$toDate);
         $pdf->Ln('15');
+        $i=0;
         foreach ($empId as $emp){
+            $i++;
+            if($i>=7){
+                $pdf->AddPage();
+                $i=0;
+            }
             $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($emp);
 
             $empData = $this->returnOneEmployeeAction($request,$emp,$fromDate,$toDate);
