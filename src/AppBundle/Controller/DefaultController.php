@@ -36,9 +36,9 @@ class DefaultController extends StatsController
         }*/
 
 
-        return new Response(date("Y-m-d H:i:s",1526335200));
+        return new Response(date("Y-m-d H:i:s",1523484000));
         //return new Response(date("Y-m-d H:i:s",(new \DateTime())->getTimestamp()));
-        //return new Response(strtotime("2018-05-13 08:35"));
+        //return new Response(strtotime("2018-04-12 08:35"));
         //return new Response(md5("ebenezer10"));
     }
 
