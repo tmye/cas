@@ -283,7 +283,8 @@ class StatsController extends ClockinReccordController
             */
             if ($type == "1" || $type == "2" || $type == "4"){
                 // Si son workingHour est de type 1 ou 2
-                if(!$cr->present($employe,$nowTime)){
+                //print_r("//// Heure normale d'arrive ".$nowTime." //////\n");
+                if(!$cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
 
                     $nowDate = date('d/m/Y',$nowTime);
                     $absences++;

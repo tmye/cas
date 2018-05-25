@@ -59,6 +59,7 @@ class ClockinRecordRepository extends EntityRepository
         $queryBuilder->andWhere('c.departement = :depId')->setParameter('depId',$depId);
 
         return $queryBuilder->getQuery()->getResult();
+
     }
 
     public function empAllHistory($empId,$min,$max){
@@ -97,16 +98,17 @@ class ClockinRecordRepository extends EntityRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
-    public function present($emp,$date){
-        $queryBuilder = $this->createQueryBuilder('c');
-        $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
-        $queryBuilder->andWhere('c.clockinTime >= :date');
-        $queryBuilder->setParameter('date',$date);
-        $queryBuilder->andWhere('c.clockinTime <= (:maxDate)');
-        $queryBuilder->setParameter('maxDate',$date+86400);
-        if($queryBuilder->getQuery()->getResult() != null){
+    public function present($emp,$date,$bMin,$bMax,$pBMin,$pBMax,$pEMin,$pEMax,$eMin,$eMax){
+
+        $queryResult = $this->empHistory($emp->getId(),$emp->getDepartement()->getId(),$bMin,$bMax,$pBMin,$pBMax,$pEMin,$pEMax,$eMin,$eMax);
+        //print_r("------------WHERE AM I?--------------\n");
+        //print_r($bMin);
+        //print_r($queryResult);
+        if($queryResult != null && sizeof($queryResult)>0){
+            //print_r("*******IN IF BLOCK*******");
             return true;
         }else{
+            //print_r("*******IN ELSE BLOCK*******");
             return false;
         }
     }
