@@ -53,13 +53,12 @@
                                                     <div class="col l12">
                                                         <select multiple="multiple" id="destination" name="destination[]" class="browser-default multiple_select_perso">
                                                             {% for dep in listDep %}
-                                                                <optgroup label="{{ dep.name }}">
-                                                                    {% for emp in listEmployee %}
-                                                                        {% if emp.departement.id == dep.id %}
-                                                                            <option value="{{ emp.id }}">{{ emp.getLastName~" "~emp.getSurname }}</option>
-                                                                        {% endif %}
-                                                                    {% endfor %}
-                                                                </optgroup>
+                                                                <option value="{{ dep.name }}" disabled="disabled">{{ dep.name }}</option>
+                                                                {% for emp in listEmployee %}
+                                                                    {% if emp.departement.id == dep.id %}
+                                                                        <option value="{{ emp.id }}">{{ emp.getLastName~" "~emp.getSurname }}</option>
+                                                                    {% endif %}
+                                                                {% endfor %}
                                                             {% endfor %}
                                                         </select>
                                                     </div>
@@ -94,8 +93,8 @@
         multi( select_element, {
             'enable_search': true,
             'search_placeholder': 'Search...',
-            'non_selected_header': null,
-            'selected_header': null
+            'non_selected_header': 'All options',
+            'selected_header': 'Selected options'
         });
     </script>
     <script>
