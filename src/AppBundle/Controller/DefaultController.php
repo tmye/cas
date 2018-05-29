@@ -55,10 +55,10 @@ class DefaultController extends StatsController
             echo "<br>".$perm->getDescription()."<br>";
         }*/
 
-        //return new Response(date("Y-m-d H:i:s",1523484000));
+        //return new Response(date("Y-m-d H:i:s",1526884200));
         //return new Response(date("Y-m-d H:i:s",(new \DateTime())->getTimestamp()));
-        //return new Response(strtotime("2018-04-12 08:35"));
-        return new Response($this->formatInt(12253008000000));
+        return new Response(strtotime("2018-05-21 12:35"));
+        //return new Response($this->formatInt(12253008000000));
     }
 
     /**
@@ -703,7 +703,6 @@ class DefaultController extends StatsController
      */
     public function generatePDFAction(Request $request)
     {
-        //print_r($request->request->get('destination'));
         $empId = $request->request->get('destination');
         $fromDate = $request->request->get('fromDate');
         $toDate = $request->request->get('toDate');
@@ -720,6 +719,8 @@ class DefaultController extends StatsController
                 $i=0;
             }
             $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($emp);
+            $empWH = json_decode($employe->getWorkingHour()->getWorkingHour(),true);
+            $type = $empWH["lundi"][0]["type"];
 
             $empData = $this->returnOneEmployeeAction($request,$emp,$fromDate,$toDate);
             $empDataFormated = json_decode($empData->getContent(),true);
@@ -729,21 +730,33 @@ class DefaultController extends StatsController
             $finalSalary = ((int)$employe->getSalary())/30;
             $finalSalaryPerHour = $finalSalary/24;
             $finalSalaryPerMin = $finalSalaryPerHour/60;
-            //print_r($empDataFormated);
             $name = $employe->getSurname();
             $lastName = $employe->getLastName();
             $permissions = sizeof($donnees["permissionData"]["retardStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["absenceStats"]);
 
-            $header = array('Nom', 'Prenom(s)', 'Absences', 'Permissions','Retards','Departs','Auth incomp');
-            $data = array(
-                array($name,$lastName,$donnees["absences"],$permissions,$donnees["retards"],$donnees["departs"],"-"),
-            );
-            $data2 = array(
-                array("Pertes en temps","",$donnees["absences"]*24,0,$donnees["tpr"],$donnees["tpd"],null),
-            );
-            $data3 = array(
-                array("Pertes en argent (FCFA)","",$donnees["absences"]*$finalSalary,0,$donnees["tpr"]*$finalSalaryPerMin,$donnees["tpd"]*$finalSalaryPerMin,null),
-            );
+            if($type == "2" or $type == 2){
+                $header = array('Nom', 'Prenom(s)', 'Absences', 'Quota Fait','Quota normal', 'Quota restant','Auth incomp');
+                $data = array(
+                    array($name,$lastName,$donnees["absences"],$donnees["quota_fait"],$donnees["quota_total"],$donnees["quota_total"]-$donnees["quota_fait"],"-"),
+                );
+                $data2 = array(
+                    array("Pertes en temps","",$donnees["absences"]*24,$donnees["quota_fait"],$donnees["quota_total"],$donnees["quota_total"]-$donnees["quota_fait"],$donnees["lost_time"]),
+                );
+                $data3 = array(
+                    array("Pertes en argent (FCFA)","",$donnees["absences"]*$finalSalary,$donnees["quota_fait"]*$finalSalaryPerMin,$donnees["quota_total"]*$finalSalaryPerMin,($donnees["quota_total"]-$donnees["quota_fait"])*$finalSalaryPerMin,$donnees["lost_time"]*$finalSalaryPerMin),
+                );
+            }else{
+                $header = array('Nom', 'Prenom(s)', 'Absences', 'Permissions','Retards','Departs','Auth incomp');
+                $data = array(
+                    array($name,$lastName,$donnees["absences"],$permissions,$donnees["retards"],$donnees["departs"],"-"),
+                );
+                $data2 = array(
+                    array("Pertes en temps","",$donnees["absences"]*24,0,$donnees["tpr"],$donnees["tpd"],null),
+                );
+                $data3 = array(
+                    array("Pertes en argent (FCFA)","",$donnees["absences"]*$finalSalary,0,$donnees["tpr"]*$finalSalaryPerMin,$donnees["tpd"]*$finalSalaryPerMin,null),
+                );
+            }
 
             $pdf->FancyTable($header,$data,$data2,$data3);
             $pdf->Ln('5');

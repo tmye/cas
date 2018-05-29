@@ -31,7 +31,7 @@
                             <div class="collapsible-header active">Choisissez les paramètres</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
-                                    <form class="col l12">
+                                    <form method="post" action="{{ path('generatePDF') }}" id="form" class="col l12">
                                         <div class="row row-no-margin">
                                             <div class="input-field col s12">
                                                 <div class="row" id="errorContainer">
@@ -53,7 +53,7 @@
                                                     <div class="col l6">
                                                         <span>Veuillez sélectionner l'employé</span>
                                                         <br>
-                                                        <select id="empSelect" class="input-customized browser-default">
+                                                        <select name="destination[]" id="empSelect" class="input-customized browser-default">
                                                             <option value='' selected>Employé</option>
                                                         </select>
                                                     </div>
@@ -63,11 +63,11 @@
                                                     <div class="col l6">
                                                         <span>Veuillez sélectionner la durée de votre choix</span>
                                                         <br>
-                                                        <input id="fromDate" type="text" class="datepicker input-customized" placeholder="DU">
+                                                        <input id="fromDate" name="fromDate" type="text" class="datepicker input-customized" placeholder="DU">
                                                     </div>
                                                     <span> - </span>
                                                     <div class="col l6">
-                                                        <input id="toDate" type="text" class="datepicker input-customized" placeholder="AU">
+                                                        <input id="toDate" name="toDate" type="text" class="datepicker input-customized" placeholder="AU">
                                                     </div>
                                                 </div>
                                                 <div class="row row-no-margin">
@@ -419,6 +419,11 @@
                         </canvas>
                     </div>
                 </div>
+                <div class="fixed-action-btn" style="margin-bottom: 30px">
+                    <a class="btn-floating tooltipped pulse green btn-large" id="btnPrint" data-position="top" data-tooltip="Imprimer">
+                        <span class="fa fa-print"></span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -426,6 +431,13 @@
 
 {% block javascripts %}
     <script src="{{ asset("js/Chart.min.js") }}"></script>
+    <script>
+        $(function () {
+            $("#btnPrint").click(function () {
+                $("#form").submit();
+            });
+        });
+    </script>
     <script>
 
         function precisionRound(number, precision) {
@@ -498,6 +510,7 @@
                             url: "userStats",
                             data: {'empId':employeeId,'dateFrom':fromDate,'dateTo':toDate},
                             success: function (data) {
+                                console.log(data);
                                 var type = data.type;
                                 $("#containerMustBeHidden").attr("style","display:block");
                                 $("#absenceSpan").text(data.absences);
@@ -509,7 +522,7 @@
                                 }else if(data.quota_fait < data.quota_total){
                                     var quotaDiff = (data.quota_total - data.quota_fait);
                                     $("#tempsPerduQuotaSpan").text(quotaDiff);
-                                    $("#sommePerduQuotaSpan").text(salaryPerMin*quotaDiff);
+                                    $("#sommePerduQuotaSpan").text(precisionRound(salaryPerMin*quotaDiff,0));
                                 }
                                 $("#quotaTotalSpan").text(data.quota_fait+"/"+data.quota_total);
                                 $("#tprSpan").text(precisionRound(data.tpr,0));
