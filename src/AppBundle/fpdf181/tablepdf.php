@@ -44,8 +44,10 @@ class tablepdf extends fpdf
                 }
                 $cpt++;
             }
+            return $str;
+        }else{
+            return $value;
         }
-        return $str;
     }
 
     public function FancyTable($header, $data, $data2,$data3){
