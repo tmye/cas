@@ -4,7 +4,7 @@
 {% block title %}C.A.S - Statistiques Personnelles{% endblock %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('css/bootstrap-select.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/multi.min.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -50,28 +50,16 @@
                                                 </div>
                                                 <br>
                                                 <div class="row row-no-margin">
-                                                    <div class="col l5">
-                                                        <select multiple="multiple" id="source" class="browser-default multiple_select_perso">
+                                                    <div class="col l12">
+                                                        <select multiple="multiple" id="destination" name="destination[]" class="browser-default multiple_select_perso">
                                                             {% for dep in listDep %}
-                                                                <optgroup label="{{ dep.name }}">
-                                                                    {% for emp in listEmployee %}
-                                                                        {% if emp.departement.id == dep.id %}
-                                                                            <option value="{{ emp.id }}">{{ emp.getLastName~" "~emp.getSurname }}</option>
-                                                                        {% endif %}
-                                                                    {% endfor %}
-                                                                </optgroup>
+                                                                <option value="{{ dep.name }}" disabled="disabled">{{ dep.name }}</option>
+                                                                {% for emp in listEmployee %}
+                                                                    {% if emp.departement.id == dep.id %}
+                                                                        <option value="{{ emp.id }}">{{ emp.getLastName~" "~emp.getSurname }}</option>
+                                                                    {% endif %}
+                                                                {% endfor %}
                                                             {% endfor %}
-                                                        </select>
-                                                        <input type="text" id="textbox" placeholder="Filtrer les employés">
-                                                    </div>
-                                                    <div class="col l2">
-                                                        <input type='button' id='btnAllRight' value='>>'>
-                                                        <input type='button' id='btnRight' value='>'>
-                                                        <input type='button' id='btnLeft' value='<'>
-                                                        <input type='button' id='btnAllLeft' value='<<'>
-                                                    </div>
-                                                    <div class="col l5">
-                                                        <select multiple="multiple" name="destination[]" class="browser-default multiple_select_perso" id="destination">
                                                         </select>
                                                     </div>
                                                 </div>
@@ -99,63 +87,14 @@
 {% endblock %}
 
 {% block javascripts %}
-    <script src="{{ asset("js/jquery.selectlistactions.js") }}"></script>
+    <script src="{{ asset("js/multi.min.js") }}"></script>
     <script>
-        $(function () {
-            $('#btnRight').click(function (e) {
-                $('select').moveToListAndDelete('#source', '#destination');
-                e.preventDefault();
-            });
-
-            $('#btnAllRight').click(function (e) {
-                $('select').moveAllToListAndDelete('#source', '#destination');
-                e.preventDefault();
-            });
-
-            $('#btnLeft').click(function (e) {
-                $('select').moveToListAndDelete('#destination', '#source');
-                e.preventDefault();
-            });
-
-            $('#btnAllLeft').click(function (e) {
-                $('select').moveAllToListAndDelete('#destination', '#source');
-                e.preventDefault();
-            });
-
-        });
-    </script>
-    <script>
-        jQuery.fn.filterByText = function(textbox, selectSingleMatch) {
-            return this.each(function() {
-                var select = this;
-                var options = [];
-                $(select).find('option').each(function() {
-                    options.push({value: $(this).val(), text: $(this).text()});
-                });
-                $(select).data('options', options);
-                $(textbox).bind('change keyup', function() {
-                    var options = $(select).empty().scrollTop(0).data('options');
-                    var search = $.trim($(this).val());
-                    var regex = new RegExp(search,'gi');
-
-                    $.each(options, function(i) {
-                        var option = options[i];
-                        if(option.text.match(regex) !== null) {
-                            $(select).append(
-                                $('<option>').text(option.text).val(option.value)
-                            );
-                        }
-                    });
-                    if (selectSingleMatch === true &&
-                        $(select).children().length === 1) {
-                        $(select).children().get(0).selected = true;
-                    }
-                });
-            });
-        };
-
-        $(function() {
-            $('#source').filterByText($('#textbox'), true);
+        var select_element = document.getElementById('destination');
+        multi( select_element, {
+            'enable_search': true,
+            'search_placeholder': 'Search...',
+            'non_selected_header': 'All options',
+            'selected_header': 'Selected options'
         });
     </script>
     <script>
