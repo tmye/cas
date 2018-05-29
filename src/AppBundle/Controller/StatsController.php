@@ -412,7 +412,7 @@ class StatsController extends ClockinReccordController
                     $_fpa = $his["finPause"];
 
                     // Now that we have terminals, we must check the type of workingHour
-                    if($type == "1"){
+                    if($type == "1" || $type == 1){
                         // Un double test a faire
                         if(($_arr == 0 && $_pau != 0) || ($_pau == 0 && $_arr != 0)){
                             $lost_time += (int)($this->convertHourInMinutes($heureDebutNormalPause)) - (int)($this->convertHourInMinutes($heureDebutNormal));
@@ -420,12 +420,13 @@ class StatsController extends ClockinReccordController
                         if(($_fpa == 0 && $_dep != 0) || ($_dep == 0 && $_fpa !=0)){
                             $lost_time+= (int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureFinNormalPause));
                         }
-                    }if($type == "4"){
+                    }if($type == "4" || $type == 4){
                         if($_arr == 0 || $_dep == 0){
                             $lost_time += (int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal));
                         }
-                    }elseif ($type == "2"){
+                    }elseif ($type == "2" || $type == 2){
                         // in this case the lost time is his quota because of his terminals
+                        //$lost_time += (int)($his["quota"]);
                         $lost_time += (int)($his["quota"]);
                     }
                 }

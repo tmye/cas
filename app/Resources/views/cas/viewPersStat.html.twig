@@ -31,7 +31,7 @@
                             <div class="collapsible-header active">Choisissez les paramètres</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
-                                    <form class="col l12">
+                                    <form method="post" action="{{ path('generatePDF') }}" id="form" class="col l12">
                                         <div class="row row-no-margin">
                                             <div class="input-field col s12">
                                                 <div class="row" id="errorContainer">
@@ -53,7 +53,7 @@
                                                     <div class="col l6">
                                                         <span>Veuillez sélectionner l'employé</span>
                                                         <br>
-                                                        <select id="empSelect" class="input-customized browser-default">
+                                                        <select name="destination[]" id="empSelect" class="input-customized browser-default">
                                                             <option value='' selected>Employé</option>
                                                         </select>
                                                     </div>
@@ -63,11 +63,11 @@
                                                     <div class="col l6">
                                                         <span>Veuillez sélectionner la durée de votre choix</span>
                                                         <br>
-                                                        <input id="fromDate" type="text" class="datepicker input-customized" placeholder="DU">
+                                                        <input id="fromDate" name="fromDate" type="text" class="datepicker input-customized" placeholder="DU">
                                                     </div>
                                                     <span> - </span>
                                                     <div class="col l6">
-                                                        <input id="toDate" type="text" class="datepicker input-customized" placeholder="AU">
+                                                        <input id="toDate" name="toDate" type="text" class="datepicker input-customized" placeholder="AU">
                                                     </div>
                                                 </div>
                                                 <div class="row row-no-margin">
@@ -419,6 +419,11 @@
                         </canvas>
                     </div>
                 </div>
+                <div class="fixed-action-btn" style="margin-bottom: 30px">
+                    <a class="btn-floating tooltipped pulse green btn-large" id="btnPrint" data-position="top" data-tooltip="Imprimer">
+                        <span class="fa fa-print"></span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -426,6 +431,13 @@
 
 {% block javascripts %}
     <script src="{{ asset("js/Chart.min.js") }}"></script>
+    <script>
+        $(function () {
+            $("#btnPrint").click(function () {
+                $("#form").submit();
+            });
+        });
+    </script>
     <script>
 
         function precisionRound(number, precision) {
@@ -471,9 +483,6 @@
                     url: "returnOneEmployee/"+id,
                     data: {'dateFrom':fromDate,'dateTo':toDate},
                     success: function(data) {
-                        console.log("Console ::::");
-                        console.log(data);
-                        console.log("End console ::::");
                         var res = JSON.parse(data);
                         //alert("Le résultat : "+res.emp["id"]);
                         var employeeId = res.emp["id"];
@@ -493,7 +502,7 @@
                         $("#salarySpan").text(salary);
                         $("#fromDateSpan").text(fromDate);
                         $("#toDateSpan").text(toDate);
-                        $("#totalSalarySpan").text(precisionRound(res.salaryFinal,0));
+                        $("#totalSalarySpan").text(precisionRound(totalSalary,0));
 
                         // Recuperation des autres informations
                         $.ajax({
@@ -501,12 +510,8 @@
                             url: "userStats",
                             data: {'empId':employeeId,'dateFrom':fromDate,'dateTo':toDate},
                             success: function (data) {
-                                console.log("Debut");
-                                console.log(data.tabType);
                                 console.log(data);
-                                console.log("Fin");
                                 var type = data.type;
-                                console.log("Type : "+type);
                                 $("#containerMustBeHidden").attr("style","display:block");
                                 $("#absenceSpan").text(data.absences);
                                 $("#retardSpan").text(data.retards);
@@ -517,7 +522,7 @@
                                 }else if(data.quota_fait < data.quota_total){
                                     var quotaDiff = (data.quota_total - data.quota_fait);
                                     $("#tempsPerduQuotaSpan").text(quotaDiff);
-                                    $("#sommePerduQuotaSpan").text(salaryPerMin*quotaDiff);
+                                    $("#sommePerduQuotaSpan").text(precisionRound(salaryPerMin*quotaDiff,0));
                                 }
                                 $("#quotaTotalSpan").text(data.quota_fait+"/"+data.quota_total);
                                 $("#tprSpan").text(precisionRound(data.tpr,0));
@@ -531,7 +536,6 @@
                                 $("#tapSpan").text(precisionRound(stp,0));
                                 $("#papSpan").text(precisionRound(((stp/salary)*100),0));
                                 //var res = JSON.parse(data.test);
-                                console.log(data.pauseStats);
 
                                 // Boucle pour remplir les tableau
 
@@ -723,8 +727,6 @@
                                     }
                                 }
 
-                                console.log("just before");
-
                                 if(data.retardPauseStats.length > 0){
                                     $("#tabRetards8").html("");
                                     for(var l=0;l < data.retardPauseStats.length;l++){
@@ -832,7 +834,6 @@
                                 // Script pour remplir le tableau de stats des permissions
 
                                 $("#tabPermisions").html("");
-                                console.log("Permissions :");
                                 $.each(data.permissionData,function (id) {
                                     $.each(data.permissionData[id],function (el) {
                                         var losedTime = data.permissionData[id][el].tempsPerdu;
@@ -848,7 +849,6 @@
                                                 "<td>"+losedTime+"</td>"+
                                                 "<td>"+precisionRound((data.permissionData[id][el].tempsPerdu*salaryPerMin),0)+"</td>" +
                                             "</tr>");
-                                        console.log(data.permissionData[id][el].date);
                                     });
                                 });
 
@@ -882,9 +882,6 @@
                                 });
 
                                 // Diagramme circulaire des quotas
-                                console.log("### Affichage de donnees");
-                                console.log(data.quota_total);
-                                console.log("### Fin affichage de donnees");
                                 var ctx = document.getElementById('quotaPieChart').getContext('2d');
                                 var myPieChart = new Chart(ctx,{
                                     type: 'pie',
@@ -1756,9 +1753,6 @@
                                 var lundiRetardPauseTabDatas = [];
                                 var lundiFinTabDatas = [];
 
-                                console.log("For now");
-                                console.log(lundiPauseTabDatas);
-                                console.log("Ending");
                                 // For monday
                                 if(lundiPauseTabDatas.length == 0){
                                     $(".lundiDiagDep12").hide();
@@ -1957,8 +1951,6 @@
             {% for el in listEmployee %}
                 tab.push({depId:"{{ el.departement.id }}",id:"{{ el.id }}",ccid:"{{ el.employeeCcid }}",surname:"{{ el.surname }}", lastName:"{{ el.lastName }}"});
             {% endfor %}
-            console.log("Test");
-            console.log(tab);
             $("#depSelect").change(function(){
                 /* On vide le contenu de la table */
                 $("#empSelect").html("");

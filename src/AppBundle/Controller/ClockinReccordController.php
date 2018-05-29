@@ -213,23 +213,12 @@ class ClockinReccordController extends EmployeController
         $df = strtotime($_date." ".$heureFinNormal);
 
         // L'heure à laquelle l'employé est sensé arriver
-        $hSenceA = strtotime(date("H:i",strtotime($dd)));
-        $hSenceD = strtotime(date("H:i",strtotime($df)));
         // Timestamp de la dateheure à laquelle l'employé est sensé arriver
         $dSenceA = $dd;
-        $dSenceD = $df;
         // Borne inférieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
-        $hIInfA = $hSenceA- ($hour_diff * 60);
-        $hIInfD = $hSenceD- ($hour_diff * 60);
-
         $dIInfA = $dSenceA- ($hour_diff * 60);
-        $dIInfD = $dSenceD- ($hour_diff * 60);
         // Borne superieur de l'intervalle d'heure à laquelle l'employé est sensé se présenter
-        $hISupA = $hSenceA+ ($hour_diff * 60);
         $dISupA = $dSenceA+ ($hour_diff * 60);
-
-        $hISupD = $hSenceD+ ($hour_diff * 60);
-        $dISupD = $dSenceD+ ($hour_diff * 60);
 
         if($dIInfA <= $cR->getClockinTime() && $cR->getClockinTime() <= $dISupA){
             return true;
@@ -486,7 +475,7 @@ class ClockinReccordController extends EmployeController
                     $record = $this->miseAJour($record,$element,$day,$request);
                 }
             }else{
-                //print_r($element->getEmploye()->getSurname()." @@@");
+                //print_r($element->getEmploye()->getSurname()." @@@ \n");
                 /*
                  * On vérifie si ce clockinTime est plus ancien
                  * Si c'est le cas on met à jour les données
@@ -494,6 +483,9 @@ class ClockinReccordController extends EmployeController
                 */
                 if($this->plusAncien($record,$element)){
                     //print_r(" ::: Plus ancien \n");
+                    $record = $this->miseAJour($record,$element,$day,$request);
+                }else{
+                    // Il faut quand meme le mettre à jour
                     $record = $this->miseAJour($record,$element,$day,$request);
                 }
             }
@@ -691,6 +683,7 @@ class ClockinReccordController extends EmployeController
             }
 
             if(!empty($emplo) && $emplo != null){
+                $type = $empWH[$day][0]["type"];
                 $array_of_data = array();
                 // Si on est dans le cas où cest un appel depuis un autre controlleur
                 if(isset(json_decode($content["content"],true)["clockinRecord"][0][$emplo]) && !empty(json_decode($content["content"],true)["clockinRecord"][0][$emplo])){
@@ -706,8 +699,13 @@ class ClockinReccordController extends EmployeController
                     $pBH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["pBH"];
                     $pEH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["pEH"];
                 }else{
-                    $quota_en_minuite = 0;
-                    $quota_fait_en_minuite = 0;
+                    if($type == "2" || $type == 2){
+                        $quota_en_minuite = $empWH[$day][0]["quota"]*60;
+                        $quota_fait_en_minuite = 0;
+                    }else{
+                        $quota_en_minuite = 0;
+                        $quota_fait_en_minuite = 0;
+                    }
                     $arrive = null;
                     $depart = null;
                     $pause = null;
@@ -718,7 +716,8 @@ class ClockinReccordController extends EmployeController
                     $pBH = 0;
                     $pEH = 0;
                 }
-                $array_of_data["quota"] = $quota_en_minuite;
+                //print_r($quota_en_minuite);
+                $array_of_data["quota"] = 480;
                 $array_of_data["quota_fait"] = $quota_fait_en_minuite;
                 $array_of_data["arrive"] = $arrive;
                 $array_of_data["depart"] = $depart;
@@ -804,8 +803,6 @@ class ClockinReccordController extends EmployeController
             foreach ($clockinRecordTab as $cr){
                 $empClockinRecordTab[] = $cr->getId();
             }
-            print_r($empTab);
-            print_r($empClockinRecordTab);
             // Si le tableau n'est pas vide,on peut incrémenter
 
             $dataTable[] = $empClockinRecordTab;
