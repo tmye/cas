@@ -446,6 +446,8 @@ class StatsController extends ClockinReccordController
                 }
             }else if($type == "3"){
                 // Si son workingHour est de type 3
+                $his = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('Y-m-d',$nowTime),$employe->getId(),$request);
+                $his = json_decode($his->getContent(),true);
                 if(!$cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
                     $nowDate = date('d/m/Y',$nowTime);
                     $absences++;
@@ -467,10 +469,14 @@ class StatsController extends ClockinReccordController
                         $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Absence","tempsPerdu"=>$tempPP);
                     }
                 }
+            }else if($type == null || $type == "null"){
+                $his = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('Y-m-d',$nowTime),$employe->getId(),$request);
+                $his = json_decode($his->getContent(),true);
             }
 
+            $historiques[] = $his;
             $donneesPermission = array("retardStats"=>$tabRetardsPermission,"retardPauseStats"=>$tabRetardsPausePermission,"pauseStats"=>$tabDepartsPausePermission,"finStats"=> $tabDepartsPermission,"absenceStats"=>$tabAbsencesPermission);
-            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType,"permissionData"=>$donneesPermission,"lost_time"=>$lost_time);
+            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType,"permissionData"=>$donneesPermission,"lost_time"=>$lost_time,"historique"=>$historiques);
             $nowTime = $nowTime+86400;
         }
 

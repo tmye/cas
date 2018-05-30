@@ -128,8 +128,8 @@
                             </tr>
                             <tr>
                                 <td>-</td>
-                                <td><span id="tprSpan"></span> min</td>
-                                <td><span id="tpdSpan"></span> min</td>
+                                <td><span id="tprSpan"></span></td>
+                                <td><span id="tpdSpan"></span></td>
                                 <td colspan="2"><span id="tempsPerduQuotaSpan">-</span></td>
                             </tr>
                             <tr>
@@ -156,6 +156,32 @@
                             <tr>
                                 <td colspan="5">=<span id="tapSpan"></span> FCFA (<span id="papSpan"></span>%)</td>
                             </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col l12">
+                        <h5 class="table-title">Historique des présences</h5>
+                        <br>
+                        <table class="bordered striped">
+                            <thead>
+                            <tr>
+                                <th>Quota</th>
+                                <th>Arrivée</th>
+                                <th>Pause</th>
+                                <th>Fin pause</th>
+                                <th>Départ</th>
+                                <th>Plus de détail</th>
+                            </tr>
+                            </thead>
+
+                            <tbody id="rowsContainer">
+                            <tr>
+                                <td colspan="10">
+                                    <h5 class="center">Aucun résultat</h5>
+                                </td>
+                            </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -511,7 +537,7 @@
                             data: {'empId':employeeId,'dateFrom':fromDate,'dateTo':toDate},
                             success: function (data) {
                                 console.log(data);
-                                var type = data.type;
+                                var type = data.tabType["lundi"];
                                 $("#containerMustBeHidden").attr("style","display:block");
                                 $("#absenceSpan").text(data.absences);
                                 $("#retardSpan").text(data.retards);
@@ -525,17 +551,125 @@
                                     $("#sommePerduQuotaSpan").text(precisionRound(salaryPerMin*quotaDiff,0));
                                 }
                                 $("#quotaTotalSpan").text(data.quota_fait+"/"+data.quota_total);
-                                $("#tprSpan").text(precisionRound(data.tpr,0));
-                                $("#tpdSpan").text(precisionRound(data.tpd,0));
+                                var stp = 0;
+                                if(type == 2 || type == "2"){
+                                    $("#tprSpan").text("-");
+                                    $("#tpdSpan").text("-");
+                                    $("#sprSpan").text(0);
+                                    $("#spdSpan").text(0);
+                                    stp = (salaryPerDay*data.nbreAbsences)+(data.lost_time*salaryPerMin);
+                                }else{
+                                    $("#tprSpan").text(precisionRound(data.tpr,0)+" min");
+                                    $("#tpdSpan").text(precisionRound(data.tpd,0)+" min");
+                                    $("#sprSpan").text(precisionRound(salaryPerMin*data.tpr,0));
+                                    $("#spdSpan").text(precisionRound(salaryPerMin*data.tpd,0));
+                                    stp = (salaryPerMin*data.tpr)+(salaryPerMin*data.tpd)+(salaryPerDay*data.nbreAbsences)+(data.lost_time*salaryPerMin);
+                                }
                                 $("#tpAuthSpan").text(precisionRound(data.lost_time,0));
                                 $("#spAuthSpan").text(precisionRound(data.lost_time*salaryPerMin,0));
-                                $("#sprSpan").text(precisionRound(salaryPerMin*data.tpr,0));
-                                $("#spdSpan").text(precisionRound(salaryPerMin*data.tpd,0));
                                 $("#spaSpan").text(precisionRound(salaryPerDay*data.nbreAbsences,0));
-                                var stp = (salaryPerMin*data.tpr)+(salaryPerMin*data.tpd)+(salaryPerDay*data.nbreAbsences)+(data.lost_time*salaryPerMin);
                                 $("#tapSpan").text(precisionRound(stp,0));
                                 $("#papSpan").text(precisionRound(((stp/salary)*100),0));
                                 //var res = JSON.parse(data.test);
+
+                                var i=0;
+                                $.each(data.historique,function (arrayID) {
+                                    i++;
+                                    var empId = returnEmployeeId(arrayID,data.emp);
+                                    if(typeof (data.historique[arrayID][empId]) != "undefined" && data.empType[arrayID][1] != null){
+                                        //alert("finalement");
+                                        switch (res.clockinRecord[arrayID][empId].type){
+                                            case "1":
+                                                $("#rowsContainer").append("" +
+                                                    "<tr>" +
+                                                    "<td>" + res.clockinRecord[arrayID][empId].quota + "</td>" +
+                                                    "<td><span class='redSpan_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].bH+"</span></td>" +
+                                                    "<td><span class='redSpanPauseBegin_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].pause +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].pBH+"</span></td>" +
+                                                    "<td><span class='redSpanPauseEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].finPause +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].pEH+"</span></td>" +
+                                                    "<td><span class='redSpanEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].eH+"</span></td>" +
+                                                    "<td><button data-target='modal1' class='detail_button modal-trigger' onclick='demander("+(i-1)+")' tag='"+(i-1)+"' style=''>Détails</button></td>" +
+                                                    "</tr>"
+                                                );
+                                                if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
+                                                    $(".redSpan_1_"+i).css("color","red");
+                                                }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
+                                                    $(".redSpanPauseBegin_1_"+i).css("color","red");
+                                                }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
+                                                    $(".redSpanPauseEnd_1_"+i).css("color","red");
+                                                }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
+                                                    $(".redSpanEnd_1_"+i).css("color","red");
+                                                }
+                                                break;
+                                            case "2":
+                                                $("#rowsContainer").append("" +
+                                                    "<tr>" +
+                                                    "<td>" + res.clockinRecord[arrayID][empId].quota + "</td>" +
+                                                    "<td><span class='redSpan_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].bH+"</span></td>" +
+                                                    "<td><span class='redSpanPauseBegin_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                    "<td><span class='redSpanPauseEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                    "<td><span class='redSpanEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].eH+"</span></td>" +
+                                                    "<td><button data-target='modal1' class='detail_button modal-trigger' onclick='demander("+(i-1)+")' tag='"+(i-1)+"' style=''>Détails</button></td>" +
+                                                    "</tr>"
+                                                );
+                                                if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
+                                                    $(".redSpan_2_"+i).css("color","red");
+                                                }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
+                                                    $(".redSpanPauseBegin_2_"+i).css("color","red");
+                                                }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
+                                                    $(".redSpanPauseEnd_2_"+i).css("color","red");
+                                                }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
+                                                    $(".redSpanEnd_2_"+i).css("color","red");
+                                                }
+                                                break;
+                                            case "3":
+                                                $("#rowsContainer").append("" +
+                                                    "<tr>" +
+                                                    "<td>" + res.clockinRecord[arrayID][empId].id + "</td>" +
+                                                    "<td>" + res.clockinRecord[arrayID][empId].nom + " " + res.clockinRecord[arrayID][empId].prenom + "</td>" +
+                                                    "<td>" + res.clockinRecord[arrayID][empId].function + "</td>" +
+                                                    "<td>" + convertType(res.clockinRecord[arrayID][empId].type) + "</td>" +
+                                                    "<td colspan='6' class='green lighten-2 white-text center'> Présent </td>" +
+                                                    "</tr>"
+                                                );
+                                                break;
+                                            case "4":
+                                                $("#rowsContainer").append("" +
+                                                    "<tr>" +
+                                                    "<td>" + res.clockinRecord[arrayID][empId].quota + "</td>" +
+                                                    "<td><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].bH+"</span></td>" +
+                                                    "<td><span class='redSpanPauseBegin_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                    "<td><span class='redSpanPauseEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                    "<td><span class='redSpanEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].eH+"</span></td>" +
+                                                    "<td><button data-target='modal1' class='detail_button modal-trigger' onclick='demander("+(i-1)+")' tag='"+(i-1)+"' style=''>Détails</button></td>" +
+                                                    "</tr>"
+                                                );
+                                                if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
+                                                    $(".redSpan_3_"+i).css("color","red");
+                                                }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
+                                                    $(".redSpanPauseBegin_3_"+i).css("color","red");
+                                                }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
+                                                    $(".redSpanPauseEnd_3_"+i).css("color","red");
+                                                }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
+                                                    $(".redSpanEnd_3_"+i).css("color","red");
+                                                }
+                                                break;
+                                        }
+                                    }else if(data.empType[arrayID][1] == "null" || data.empType[arrayID][1] == null){
+                                        $("#rowsContainer").append("" +
+                                            "<tr>" +
+                                            "<td colspan='10' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:green'> Présence non requise </span></td>" +
+                                            "</tr>"
+                                        );
+                                    }else{
+                                        console.log(data.emp);
+                                        //alert("nexiste pas");
+                                        $("#rowsContainer").append("" +
+                                            "<tr>" +
+                                            "<td colspan='10' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence : </span><span style='font-weight: bold;color:black;'>" + data.empNames[arrayID] + " ("+ data.empCcid[arrayID] +")</span></td>" +
+                                            "</tr>"
+                                        );
+                                    }
+                                });
 
                                 // Boucle pour remplir les tableau
 
@@ -635,31 +769,31 @@
                                         var leJour = dateObject.getDay();
                                         switch (leJour){
                                             case 1:
-                                                lundiPauseTabDatas.push(data.pauseStats[j].temps);
+                                                lundiPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,0));
                                                 lundiPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 2:
-                                                mardiPauseTabDatas.push(data.pauseStats[j].temps);
+                                                mardiPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,0));
                                                 mardiPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 3:
-                                                mercrediPauseTabDatas.push(data.pauseStats[j].temps);
+                                                mercrediPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,0));
                                                 mercrediPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 4:
-                                                jeudiPauseTabDatas.push(data.pauseStats[j].temps);
+                                                jeudiPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,0));
                                                 jeudiPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 5:
-                                                vendrediPauseTabDatas.push(data.pauseStats[j].temps);
+                                                vendrediPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,0));
                                                 vendrediPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 6:
-                                                samediPauseTabDatas.push(data.pauseStats[j].temps);
+                                                samediPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,0));
                                                 samediPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 0:
-                                                dimanchePauseTabDatas.push(data.pauseStats[j].temps);
+                                                dimanchePauseTabDatas.push(precisionRound(data.pauseStats[j].temps,0));
                                                 dimanchePauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                         }
@@ -688,31 +822,31 @@
                                         var leJour = dateObject.getDay();
                                         switch (leJour){
                                             case 1:
-                                                lundiFinTabDatas.push(data.finStats[k].temps);
+                                                lundiFinTabDatas.push(precisionRound(data.finStats[k].temps,0));
                                                 lundiFinTabLabels.push(data.finStats[k].date);
                                                 break;
                                             case 2:
-                                                mardiFinTabDatas.push(data.finStats[k].temps);
+                                                mardiFinTabDatas.push(precisionRound(data.finStats[k].temps,0));
                                                 mardiFinTabLabels.push(data.finStats[k].date);
                                                 break;
                                             case 3:
-                                                mercrediFinTabDatas.push(data.finStats[k].temps);
+                                                mercrediFinTabDatas.push(precisionRound(data.finStats[k].temps,0));
                                                 mercrediFinTabLabels.push(data.finStats[k].date);
                                                 break;
                                             case 4:
-                                                jeudiFinTabDatas.push(data.finStats[k].temps);
+                                                jeudiFinTabDatas.push(precisionRound(data.finStats[k].temps,0));
                                                 jeudiFinTabLabels.push(data.finStats[k].date);
                                                 break;
                                             case 5:
-                                                vendrediFinTabDatas.push(data.finStats[k].temps);
+                                                vendrediFinTabDatas.push(precisionRound(data.finStats[k].temps,0));
                                                 vendrediFinTabLabels.push(data.finStats[k].date);
                                                 break;
                                             case 6:
-                                                samediFinTabDatas.push(data.finStats[k].temps);
+                                                samediFinTabDatas.push(precisionRound(data.finStats[k].temps,0));
                                                 samediFinTabLabels.push(data.finStats[k].date);
                                                 break;
                                             case 0:
-                                                dimancheFinTabDatas.push(data.finStats[k].temps);
+                                                dimancheFinTabDatas.push(precisionRound(data.finStats[k].temps,0));
                                                 dimancheFinTabLabels.push(data.finStats[k].date);
                                                 break;
                                         }
@@ -741,31 +875,31 @@
                                         var leJour = dateObject.getDay();
                                         switch (leJour){
                                             case 1:
-                                                lundiRetardPauseTabDatas.push(data.retardPauseStats[l].temps);
+                                                lundiRetardPauseTabDatas.push(precisionRound(data.retardPauseStats[l].temps,0));
                                                 lundiRetardPauseTabLabels.push(data.retardStats[l].date);
                                                 break;
                                             case 2:
-                                                mardiRetardPauseTabDatas.push(data.retardPauseStats[l].temps);
+                                                mardiRetardPauseTabDatas.push(precisionRound(data.retardPauseStats[l].temps,0));
                                                 mardiRetardPauseTabLabels.push(data.retardPauseStats[l].date);
                                                 break;
                                             case 3:
-                                                mercrediRetardPauseTabDatas.push(data.retardPauseStats[l].temps);
+                                                mercrediRetardPauseTabDatas.push(precisionRound(data.retardPauseStats[l].temps,0));
                                                 mercrediRetardPauseTabLabels.push(data.retardPauseStats[l].date);
                                                 break;
                                             case 4:
-                                                jeudiRetardPauseTabDatas.push(data.retardPauseStats[l].temps);
+                                                jeudiRetardPauseTabDatas.push(precisionRound(data.retardPauseStats[l].temps,0));
                                                 jeudiRetardPauseTabLabels.push(data.retardPauseStats[l].date);
                                                 break;
                                             case 5:
-                                                vendrediRetardPauseTabDatas.push(data.retardPauseStats[l].temps);
+                                                vendrediRetardPauseTabDatas.push(precisionRound(data.retardPauseStats[l].temps,0));
                                                 vendrediRetardPauseTabLabels.push(data.retardPauseStats[l].date);
                                                 break;
                                             case 6:
-                                                samediRetardPauseTabDatas.push(data.retardPauseStats[l].temps);
+                                                samediRetardPauseTabDatas.push(precisionRound(data.retardPauseStats[l].temps,0));
                                                 samediRetardPauseTabLabels.push(data.retardPauseStats[l].date);
                                                 break;
                                             case 0:
-                                                dimancheRetardPauseTabDatas.push(data.retardPauseStats[l].temps);
+                                                dimancheRetardPauseTabDatas.push(precisionRound(data.retardPauseStats[l].temps,0));
                                                 dimancheRetardPauseTabLabels.push(data.retardPauseStats[l].date);
                                                 break;
                                         }
@@ -794,31 +928,31 @@
                                         var leJour = dateObject.getDay();
                                         switch (leJour){
                                             case 1:
-                                                lundiRetardTabDatas.push(data.retardStats[m].temps);
+                                                lundiRetardTabDatas.push(precisionRound(data.retardStats[m].temps,0));
                                                 lundiRetardTabLabels.push(data.retardStats[m].date);
                                                 break;
                                             case 2:
-                                                mardiRetardTabDatas.push(data.retardStats[m].temps);
+                                                mardiRetardTabDatas.push(precisionRound(data.retardStats[m].temps,0));
                                                 mardiRetardTabLabels.push(data.retardStats[m].date);
                                                 break;
                                             case 3:
-                                                mercrediRetardTabDatas.push(data.retardStats[m].temps);
+                                                mercrediRetardTabDatas.push(precisionRound(data.retardStats[m].temps,0));
                                                 mercrediRetardTabLabels.push(data.retardStats[m].date);
                                                 break;
                                             case 4:
-                                                jeudiRetardTabDatas.push(data.retardStats[m].temps);
+                                                jeudiRetardTabDatas.push(precisionRound(data.retardStats[m].temps,0));
                                                 jeudiRetardTabLabels.push(data.retardStats[m].date);
                                                 break;
                                             case 5:
-                                                vendrediRetardTabDatas.push(data.retardStats[m].temps);
+                                                vendrediRetardTabDatas.push(precisionRound(data.retardStats[m].temps,0));
                                                 vendrediRetardTabLabels.push(data.retardStats[m].date);
                                                 break;
                                             case 6:
-                                                samediRetardTabDatas.push(data.retardStats[m].temps);
+                                                samediRetardTabDatas.push(precisionRound(data.retardStats[m].temps,0));
                                                 samediRetardTabLabels.push(data.retardStats[m].date);
                                                 break;
                                             case 0:
-                                                dimancheRetardTabDatas.push(data.retardStats[m].temps);
+                                                dimancheRetardTabDatas.push(precisionRound(data.retardStats[m].temps,0));
                                                 dimancheRetardTabLabels.push(data.retardStats[m].date);
                                                 break;
                                         }
