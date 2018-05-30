@@ -427,7 +427,9 @@ class StatsController extends ClockinReccordController
                     }elseif ($type == "2" || $type == 2){
                         // in this case the lost time is his quota because of his terminals
                         //$lost_time += (int)($his["quota"]);
-                        $lost_time += (int)($his["quota"]);
+                        if($_arr == 0 || $_dep == 0){
+                            $lost_time += (int)($his["quota"]);
+                        }
                     }
                 }
 

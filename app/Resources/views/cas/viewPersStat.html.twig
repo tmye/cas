@@ -623,8 +623,9 @@
                                 var dimancheRetardPauseTabLabels = [];
                                 var dimancheFinTabLabels = [];
 
+                                // Before any action else we must delete the content
+                                $("#tabDepartsPrematures12").html("");
                                 if(data.pauseStats.length > 0){
-                                    $("#tabDepartsPrematures12").html("");
                                     for(var j=0;j < data.pauseStats.length;j++){
 
                                         var laDate = data.pauseStats[j].date;
@@ -675,8 +676,9 @@
                                     }
                                 }
 
+                                // Before any action else we must delete the content
+                                $("#tabDepartsPrematures17").html("");
                                 if(data.finStats.length > 0){
-                                    $("#tabDepartsPrematures17").html("");
                                     for(var k=0;k < data.finStats.length;k++){
 
                                         var laDate = data.finStats[k].date;
@@ -727,8 +729,9 @@
                                     }
                                 }
 
+                                // Before any action else we must delete the content
+                                $("#tabRetards8").html("");
                                 if(data.retardPauseStats.length > 0){
-                                    $("#tabRetards8").html("");
                                     for(var l=0;l < data.retardPauseStats.length;l++){
 
                                         var laDate = data.retardPauseStats[l].date;
@@ -779,8 +782,9 @@
                                     }
                                 }
 
+                                // Before any action else we must delete the content
+                                $("#tabRetards14").html("");
                                 if(data.retardStats.length > 0){
-                                    $("#tabRetards14").html("");
                                     for(var m=0;m < data.retardStats.length;m++){
 
                                         var laDate = data.retardStats[m].date;
@@ -1747,11 +1751,6 @@
                                 /*
                                 * Now the last verification is if the datas are null
                                 */
-
-                                var lundiPauseTabDatas = [];
-                                var lundiRetardTabDatas = [];
-                                var lundiRetardPauseTabDatas = [];
-                                var lundiFinTabDatas = [];
 
                                 // For monday
                                 if(lundiPauseTabDatas.length == 0){

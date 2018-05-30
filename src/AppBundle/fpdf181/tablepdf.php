@@ -19,9 +19,9 @@ class tablepdf extends fpdf
         $hour = floor (($value - $day * 1440) / 60);
         $min = $value - ($day * 1440) - ($hour * 60);
 
-        if($value > (60*24)){
+        if($value >= (60*24)){
             return $day."J ".$hour."H ".$min."min";
-        }elseif ($value > 60){
+        }elseif ($value >= 60){
             return $hour."H ".$min."min";
         }else{
             return $min." min";
