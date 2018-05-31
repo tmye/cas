@@ -869,7 +869,8 @@
                                         var leJour = dateObject.getDay();
                                         switch (leJour){
                                             case 1:
-                                                lundiRetardPauseTabDatas.push(precisionRound(data.retardPauseStats[l].temps,0));
+                                                //lundiRetardPauseTabDatas.push(precisionRound(data.retardPauseStats[l].temps,0));
+                                                lundiRetardPauseTabDatas.push(precisionRound(0.33333333333,0));
                                                 lundiRetardPauseTabLabels.push(data.retardStats[l].date);
                                                 break;
                                             case 2:

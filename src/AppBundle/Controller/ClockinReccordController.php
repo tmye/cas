@@ -700,7 +700,7 @@ class ClockinReccordController extends EmployeController
                     $pEH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["pEH"];
                 }else{
                     if($type == "2" || $type == 2){
-                        $quota_en_minuite = $empWH[$day][0]["quota"]*60;
+                        $quota_en_minuite = ((int)$empWH[$day][0]["quota"])*60;
                         $quota_fait_en_minuite = 0;
                     }else{
                         $quota_en_minuite = 0;
