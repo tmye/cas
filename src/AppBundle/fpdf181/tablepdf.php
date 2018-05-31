@@ -88,7 +88,7 @@ class tablepdf extends fpdf
             $this->Cell($w[3],6,"-",'LR',0,'R',$fill);
             $this->Cell($w[4],6,$this->convertHour($row[4]),'LR',0,'L',$fill);
             $this->Cell($w[5],6,$this->convertHour($row[5]),'LR',0,'L',$fill);
-            $this->Cell($w[5],6,$this->convertHour($row[6]),'LR',0,'L',$fill);
+            $this->Cell($w[5],6,$row[6],'LR',0,'L',$fill);
             $this->Ln();
             $fill = !$fill;
         }
