@@ -717,7 +717,7 @@ class ClockinReccordController extends EmployeController
                     $pEH = 0;
                 }
                 //print_r($quota_en_minuite);
-                $array_of_data["date"] = $day;
+                $array_of_data["date"] = $dat;
                 $array_of_data["type"] = $type;
                 $array_of_data["quota"] = 480;
                 $array_of_data["quota_fait"] = $quota_fait_en_minuite;
