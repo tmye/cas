@@ -55,9 +55,9 @@ class DefaultController extends StatsController
             echo "<br>".$perm->getDescription()."<br>";
         }*/
 
-        //return new Response(date("Y-m-d H:i:s",1526884200));
+        return new Response(date("Y-m-d H:i:s",1537163970));
         //return new Response(date("Y-m-d H:i:s",(new \DateTime())->getTimestamp()));
-        return new Response(strtotime("2018-05-27 13:55"));
+        //return new Response(strtotime("2018-05-27 13:55"));
         //return new Response($this->formatInt(12253008000000));
     }
 
@@ -735,15 +735,24 @@ class DefaultController extends StatsController
             $permissions = sizeof($donnees["permissionData"]["retardStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["absenceStats"]);
 
             if($type == "2" or $type == 2){
+                $quota_restant = $donnees["quota_total"]-$donnees["quota_fait"];
+                if ($quota_restant > 0){
+                    $qr = $quota_restant;
+                }else{
+                    $qr = 0;
+                }
                 $header = array('Nom', 'Prenom(s)', 'Absences', 'Quota Fait','Quota normal', 'Quota restant','Auth incomp');
                 $data = array(
-                    array($name,$lastName,$donnees["absences"],$donnees["quota_fait"],$donnees["quota_total"],$donnees["quota_total"]-$donnees["quota_fait"],"-"),
+                    array($name,$lastName,$donnees["absences"],$donnees["quota_fait"],$donnees["quota_total"],$qr,"-"),
                 );
                 $data2 = array(
-                    array("Pertes en temps","",$donnees["absences"]*24,$donnees["quota_fait"],$donnees["quota_total"],$donnees["quota_total"]-$donnees["quota_fait"],$donnees["lost_time"]),
+                    array("Pertes en temps","",$donnees["absences"]*24,$donnees["quota_fait"],$donnees["quota_total"],$qr,$donnees["lost_time"]),
                 );
                 $data3 = array(
-                    array("Pertes en argent (FCFA)","",$donnees["absences"]*$finalSalary,$donnees["quota_fait"]*$finalSalaryPerMin,$donnees["quota_total"]*$finalSalaryPerMin,($donnees["quota_total"]-$donnees["quota_fait"])*$finalSalaryPerMin,$donnees["lost_time"]*$finalSalaryPerMin),
+                    array("Pertes en argent (FCFA)","",$donnees["absences"]*$finalSalary,$donnees["quota_fait"]*$finalSalaryPerMin,$donnees["quota_total"]*$finalSalaryPerMin,$qr*$finalSalaryPerMin,$donnees["lost_time"]*$finalSalaryPerMin),
+                );
+                $data4 = array(
+                    array("Total","",($donnees["absences"]*$finalSalary)+($qr*$finalSalaryPerMin)),
                 );
             }else{
                 $header = array('Nom', 'Prenom(s)', 'Absences', 'Permissions','Retards','Departs','Auth incomp');
@@ -756,9 +765,12 @@ class DefaultController extends StatsController
                 $data3 = array(
                     array("Pertes en argent (FCFA)","",$donnees["absences"]*$finalSalary,0,$donnees["tpr"]*$finalSalaryPerMin,$donnees["tpd"]*$finalSalaryPerMin,$donnees["lost_time"]*$finalSalaryPerMin),
                 );
+                $data4 = array(
+                    array("Total","",($donnees["absences"]*$finalSalary)+($donnees["tpr"]*$finalSalaryPerMin)+($donnees["tpd"]*$finalSalaryPerMin)+($donnees["lost_time"]*$finalSalaryPerMin)),
+                );
             }
 
-            $pdf->FancyTable($header,$data,$data2,$data3);
+            $pdf->FancyTable($header,$data,$data2,$data3,$data4);
             $pdf->Ln('5');
         }
         $pdf->Output();

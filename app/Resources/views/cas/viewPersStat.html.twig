@@ -798,7 +798,7 @@
                                             "<tr>"+
                                                 "<td>"+data.pauseStats[j].date+"</td>"+
                                                 "<td>"+data.pauseStats[j].heureDepart+"</td>"+
-                                                "<td>"+data.pauseStats[j].temps+" Min</td>"+
+                                                "<td>"+precisionRound(data.pauseStats[j].temps,0)+" Min</td>"+
                                             "</tr>"
                                         );
                                     }
@@ -851,7 +851,7 @@
                                             "<tr>"+
                                             "<td>"+data.finStats[k].date+"</td>"+
                                             "<td>"+data.finStats[k].heureDepart+"</td>"+
-                                            "<td>"+data.finStats[k].temps+" Min</td>"+
+                                            "<td>"+precisionRound(data.finStats[k].temps,0)+" Min</td>"+
                                             "</tr>"
                                         );
                                     }
@@ -869,8 +869,7 @@
                                         var leJour = dateObject.getDay();
                                         switch (leJour){
                                             case 1:
-                                                //lundiRetardPauseTabDatas.push(precisionRound(data.retardPauseStats[l].temps,0));
-                                                lundiRetardPauseTabDatas.push(precisionRound(0.33333333333,0));
+                                                lundiRetardPauseTabDatas.push(precisionRound(data.retardPauseStats[l].temps,0));
                                                 lundiRetardPauseTabLabels.push(data.retardStats[l].date);
                                                 break;
                                             case 2:
@@ -905,7 +904,7 @@
                                             "<tr>"+
                                             "<td>"+data.retardPauseStats[l].date+"</td>"+
                                             "<td>"+data.retardPauseStats[l].heureRetard+"</td>"+
-                                            "<td>"+data.retardPauseStats[l].temps+" Min</td>"+
+                                            "<td>"+precisionRound(data.retardPauseStats[l].temps,0)+" Min</td>"+
                                             "</tr>"
                                         );
                                     }
@@ -958,7 +957,7 @@
                                             "<tr>"+
                                             "<td>"+data.retardStats[m].date+"</td>"+
                                             "<td>"+data.retardStats[m].heureRetard+"</td>"+
-                                            "<td>"+data.retardStats[m].temps+" Min</td>"+
+                                            "<td>"+precisionRound(data.retardStats[m].temps,0)+" Min</td>"+
                                             "</tr>"
                                         );
                                     }

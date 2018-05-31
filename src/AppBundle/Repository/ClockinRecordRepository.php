@@ -101,14 +101,9 @@ class ClockinRecordRepository extends EntityRepository
     public function present($emp,$date,$bMin,$bMax,$pBMin,$pBMax,$pEMin,$pEMax,$eMin,$eMax){
 
         $queryResult = $this->empHistory($emp->getId(),$emp->getDepartement()->getId(),$bMin,$bMax,$pBMin,$pBMax,$pEMin,$pEMax,$eMin,$eMax);
-        //print_r("------------WHERE AM I?--------------\n");
-        //print_r($bMin);
-        //print_r($queryResult);
         if($queryResult != null && sizeof($queryResult)>0){
-            //print_r("*******IN IF BLOCK*******");
             return true;
         }else{
-            //print_r("*******IN ELSE BLOCK*******");
             return false;
         }
     }

@@ -615,7 +615,7 @@ class StatsController extends ClockinReccordController
             */
             if ($type == "1" || $type == "2" || $type == "4") {
                 // Si son workingHour est de type 1
-                if (!$cr->present($employe, $nowTime)) {
+                if (!$cr->present($employe, $nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)) {
                     $absences++;
                     $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
                     $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
@@ -671,7 +671,7 @@ class StatsController extends ClockinReccordController
                 }
             }else if($type == 3){
                 // Si son workingHour est de type 3
-                if(!$cr->present($employe,$nowTime)){
+                if(!$cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
                     $absences++;
                     $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
                     $timeFin = strtotime($empWH[$theDay][0]["endHour"]);

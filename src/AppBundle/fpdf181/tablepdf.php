@@ -50,7 +50,7 @@ class tablepdf extends fpdf
         }
     }
 
-    public function FancyTable($header, $data, $data2,$data3){
+    public function FancyTable($header, $data, $data2,$data3,$data4){
         // Couleurs, épaisseur du trait et police grasse
         $this->SetFillColor(100,100,100);
         $this->SetTextColor(255);
@@ -96,11 +96,19 @@ class tablepdf extends fpdf
         {
             $this->Cell($w[0],6,$row[0],'LT',0,'L',$fill);
             $this->Cell($w[1],6,$row[1],'TR',0,'L',$fill);
-            $this->Cell($w[2],6,$this->formatInt(ceil($row[2])),'LR',0,'R',$fill);
-            $this->Cell($w[3],6,'-','LR',0,'R',$fill);
-            $this->Cell($w[4],6,$this->formatInt(ceil($row[4])),'LR',0,'L',$fill);
-            $this->Cell($w[5],6,$this->formatInt(ceil($row[5])),'LR',0,'L',$fill);
-            $this->Cell($w[5],6,$this->formatInt(ceil($row[6])),'LR',0,'L',$fill);
+            $this->Cell($w[2],6,$this->formatInt(ceil($row[2])),'LRB',0,'R',$fill);
+            $this->Cell($w[3],6,'-','LRB',0,'R',$fill);
+            $this->Cell($w[4],6,$this->formatInt(ceil($row[4])),'LRB',0,'L',$fill);
+            $this->Cell($w[5],6,$this->formatInt(ceil($row[5])),'LRB',0,'L',$fill);
+            $this->Cell($w[5],6,$this->formatInt(ceil($row[6])),'LRB',0,'L',$fill);
+            $this->Ln();
+            $fill = !$fill;
+        }
+        foreach($data4 as $row)
+        {
+            $this->Cell($w[0],6,$row[0],'LT',0,'L',$fill);
+            $this->Cell($w[1],6,$row[1],'TR',0,'L',$fill);
+            $this->Cell(125,6,$this->formatInt(ceil($row[2])),'LRT',0,'R',$fill);
             $this->Ln();
             $fill = !$fill;
         }
