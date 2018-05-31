@@ -45,31 +45,146 @@ class ClockinReccordController extends EmployeController
      */
     public function randomClockinRecordAction(Request $request)
     {
+        $dateFrom = "2018-05-21";
+        $dateTo = "2018-05-27";
+        $employees = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
+        $timeFrom = strtotime($dateFrom." 00:00:00");
+        $timeTo = strtotime($dateTo." 00:00:00");
+        $timeDays = $timeTo-$timeFrom;
+        $days = $timeDays/(60*60*24);
+        $em = $this->getDoctrine()->getManager();
+        foreach ($employees as $emp){
+            $nowTime = $timeFrom;
+            $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
+            // Lundi because the are the same
+            $type = $empWH["lundi"][0]["type"];
+            for ($cpt=0;$cpt<=$days;$cpt++) {
+                $randNumber = rand(-3600,3600);
+                switch ($type){
+                    case "1":
+                        $hd = strtotime(date('Y-m-d',$nowTime)." 08:00:00")+$randNumber;
+                        $hp = strtotime(date('Y-m-d',$nowTime)." 12:00:00")+$randNumber;
+                        $hfp = strtotime(date('Y-m-d',$nowTime)." 14:00:00")+$randNumber;
+                        $hf = strtotime(date('Y-m-d',$nowTime)." 17:00:00")+$randNumber;
 
-        for($cpt = 0;$cpt<100;$cpt++){
+                        print_r($hd);
+                        print_r($hp);
+                        print_r($hfp);
+                        print_r($hf);
 
-            $rand_employe_id = random_int(1,2);
-            $rand_departement_id = random_int(1,2);
-            $rand_employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($rand_employe_id);
-            $rand_departement = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->find($rand_departement_id);
-            $rand_device = random_int(1,15);
-            $rand_timestamp = random_int(-432000,432000);
+                        $cr = new ClockinRecord();
+                        $cr->setEmploye($emp);
+                        $cr->setDepartement($emp->getDepartement());
+                        $cr->setDeviceId(1);
+                        $cr->setClockinTime($hd);
+                        $cr->setPic("pic");
+                        $cr->setVerify(1);
+                        $em->persist($cr);
+                        $em->flush();
 
-            $a = strtotime("14 February 2018");
-            $b = $a-$rand_timestamp;
+                        $cr = new ClockinRecord();
+                        $cr->setEmploye($emp);
+                        $cr->setDepartement($emp->getDepartement());
+                        $cr->setDeviceId(1);
+                        $cr->setClockinTime($hp);
+                        $cr->setPic("pic");
+                        $cr->setVerify(1);
+                        $em->persist($cr);
+                        $em->flush();
 
-            print_r($b);
-            echo "<br>";
+                        $cr = new ClockinRecord();
+                        $cr->setEmploye($emp);
+                        $cr->setDepartement($emp->getDepartement());
+                        $cr->setDeviceId(1);
+                        $cr->setClockinTime($hfp);
+                        $cr->setPic("pic");
+                        $cr->setVerify(1);
+                        $em->persist($cr);
+                        $em->flush();
 
-            $cr = new ClockinRecord();
-            $cr->setEmploye($rand_employe);
-            $cr->setDepartement($rand_departement);
-            $cr->setDeviceId($rand_device);
-            $cr->setClockinTime($b);
+                        $cr = new ClockinRecord();
+                        $cr->setEmploye($emp);
+                        $cr->setDepartement($emp->getDepartement());
+                        $cr->setDeviceId(1);
+                        $cr->setClockinTime($hf);
+                        $cr->setPic("pic");
+                        $cr->setVerify(1);
+                        $em->persist($cr);
+                        $em->flush();
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($cr);
-            $em->flush();
+                        break;
+                    case "2":
+                        $hd = strtotime(date('Y-m-d',$nowTime)." 08:00:00")+$randNumber;
+                        $hf = strtotime(date('Y-m-d',$nowTime)." 17:00:00")+$randNumber;
+
+                        print_r($hd);
+                        print_r($hf);
+
+                        $cr = new ClockinRecord();
+                        $cr->setEmploye($emp);
+                        $cr->setDepartement($emp->getDepartement());
+                        $cr->setDeviceId(1);
+                        $cr->setClockinTime($hd);
+                        $cr->setPic("pic");
+                        $cr->setVerify(1);
+                        $em->persist($cr);
+                        $em->flush();
+
+                        $cr = new ClockinRecord();
+                        $cr->setEmploye($emp);
+                        $cr->setDepartement($emp->getDepartement());
+                        $cr->setDeviceId(1);
+                        $cr->setClockinTime($hf);
+                        $cr->setPic("pic");
+                        $cr->setVerify(1);
+                        $em->persist($cr);
+                        $em->flush();
+                        break;
+                    case "3":
+                        $h = strtotime(date('Y-m-d',$nowTime)." 08:00:00")+$randNumber;
+
+                        print_r($h);
+
+                        $cr = new ClockinRecord();
+                        $cr->setEmploye($emp);
+                        $cr->setDepartement($emp->getDepartement());
+                        $cr->setDeviceId(1);
+                        $cr->setClockinTime($h);
+                        $cr->setPic("pic");
+                        $cr->setVerify(1);
+                        $em->persist($cr);
+                        $em->flush();
+                        break;
+                    case "4":
+                        $hd = strtotime(date('Y-m-d',$nowTime)." 08:00:00")+$randNumber;
+                        $hf = strtotime(date('Y-m-d',$nowTime)." 17:00:00")+$randNumber;
+
+                        print_r($hd);
+                        print_r($hf);
+
+                        $cr = new ClockinRecord();
+                        $cr->setEmploye($emp);
+                        $cr->setDepartement($emp->getDepartement());
+                        $cr->setDeviceId(1);
+                        $cr->setClockinTime($hd);
+                        $cr->setPic("pic");
+                        $cr->setVerify(1);
+                        $em->persist($cr);
+                        $em->flush();
+
+                        $cr = new ClockinRecord();
+                        $cr->setEmploye($emp);
+                        $cr->setDepartement($emp->getDepartement());
+                        $cr->setDeviceId(1);
+                        $cr->setClockinTime($hf);
+                        $cr->setPic("pic");
+                        $cr->setVerify(1);
+                        $em->persist($cr);
+                        $em->flush();
+                        break;
+                }
+                $nowTime = $nowTime+86400;
+            }
         }
         return new Response("Ok");
     }
