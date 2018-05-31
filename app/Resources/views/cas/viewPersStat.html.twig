@@ -166,12 +166,11 @@
                         <table class="bordered striped">
                             <thead>
                             <tr>
-                                <th>Quota</th>
                                 <th>Arrivée</th>
                                 <th>Pause</th>
                                 <th>Fin pause</th>
                                 <th>Départ</th>
-                                <th>Plus de détail</th>
+                                <th>Quota</th>
                             </tr>
                             </thead>
 
@@ -571,63 +570,55 @@
                                 $("#tapSpan").text(precisionRound(stp,0));
                                 $("#papSpan").text(precisionRound(((stp/salary)*100),0));
                                 //var res = JSON.parse(data.test);
-
                                 var i=0;
-                                $.each(data.historique,function (arrayID) {
+                                $("#rowsContainer").html("");
+                                    $.each(data.historique,function (arrayID) {
                                     i++;
-                                    var empId = returnEmployeeId(arrayID,data.emp);
-                                    if(typeof (data.historique[arrayID][empId]) != "undefined" && data.empType[arrayID][1] != null){
-                                        //alert("finalement");
-                                        switch (res.clockinRecord[arrayID][empId].type){
+                                    if((data.historique[arrayID]["arrive"] != "" && data.historique[arrayID]["arrive"] != null) || (data.historique[arrayID]["depart"] != "" && data.historique[arrayID]["depart"] != null) || (data.historique[arrayID]["pause"] != "" && data.historique[arrayID]["pause"] != null) || (data.historique[arrayID]["finPause"] != "" && data.historique[arrayID]["finPause"] != null)){
+                                        switch (data.historique[arrayID]["type"]){
                                             case "1":
                                                 $("#rowsContainer").append("" +
                                                     "<tr>" +
-                                                    "<td>" + res.clockinRecord[arrayID][empId].quota + "</td>" +
-                                                    "<td><span class='redSpan_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].bH+"</span></td>" +
-                                                    "<td><span class='redSpanPauseBegin_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].pause +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].pBH+"</span></td>" +
-                                                    "<td><span class='redSpanPauseEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].finPause +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].pEH+"</span></td>" +
-                                                    "<td><span class='redSpanEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].eH+"</span></td>" +
-                                                    "<td><button data-target='modal1' class='detail_button modal-trigger' onclick='demander("+(i-1)+")' tag='"+(i-1)+"' style=''>Détails</button></td>" +
+                                                    "<td><span class='redSpan_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
+                                                    "<td><span class='redSpanPauseBegin_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["pause"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["pBH"]+"</span></td>" +
+                                                    "<td><span class='redSpanPauseEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["finPause"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["pEH"]+"</span></td>" +
+                                                    "<td><span class='redSpanEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
+                                                    "<td>0</td>" +
                                                     "</tr>"
                                                 );
-                                                if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
+                                                if(data.historique[arrayID]["arrive"] > data.historique[arrayID]["bH"]){
                                                     $(".redSpan_1_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
+                                                }if(data.historique[arrayID]["pause"] < data.historique[arrayID]["pBH"]){
                                                     $(".redSpanPauseBegin_1_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
+                                                }if(data.historique[arrayID]["finPause"] > data.historique[arrayID]["pEH"]){
                                                     $(".redSpanPauseEnd_1_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
+                                                }if(data.historique[arrayID]["depart"] < data.historique[arrayID]["eH"]){
                                                     $(".redSpanEnd_1_"+i).css("color","red");
                                                 }
                                                 break;
                                             case "2":
                                                 $("#rowsContainer").append("" +
                                                     "<tr>" +
-                                                    "<td>" + res.clockinRecord[arrayID][empId].quota + "</td>" +
-                                                    "<td><span class='redSpan_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].bH+"</span></td>" +
+                                                    "<td><span class='redSpan_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
                                                     "<td><span class='redSpanPauseBegin_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
                                                     "<td><span class='redSpanPauseEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
-                                                    "<td><span class='redSpanEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].eH+"</span></td>" +
-                                                    "<td><button data-target='modal1' class='detail_button modal-trigger' onclick='demander("+(i-1)+")' tag='"+(i-1)+"' style=''>Détails</button></td>" +
+                                                    "<td><span class='redSpanEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
+                                                    "<td>" + data.historique[arrayID]["quota"] + "Min</td>" +
                                                     "</tr>"
                                                 );
-                                                if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
+                                                if(data.historique[arrayID]["arrive"] > data.historique[arrayID]["bH"]){
                                                     $(".redSpan_2_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
+                                                }if(data.historique[arrayID]["pause"] < data.historique[arrayID]["pBH"]){
                                                     $(".redSpanPauseBegin_2_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
+                                                }if(data.historique[arrayID]["finPause"] > data.historique[arrayID]["pEH"]){
                                                     $(".redSpanPauseEnd_2_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
+                                                }if(data.historique[arrayID]["depart"] < data.historique[arrayID]["eH"]){
                                                     $(".redSpanEnd_2_"+i).css("color","red");
                                                 }
                                                 break;
                                             case "3":
                                                 $("#rowsContainer").append("" +
                                                     "<tr>" +
-                                                    "<td>" + res.clockinRecord[arrayID][empId].id + "</td>" +
-                                                    "<td>" + res.clockinRecord[arrayID][empId].nom + " " + res.clockinRecord[arrayID][empId].prenom + "</td>" +
-                                                    "<td>" + res.clockinRecord[arrayID][empId].function + "</td>" +
-                                                    "<td>" + convertType(res.clockinRecord[arrayID][empId].type) + "</td>" +
                                                     "<td colspan='6' class='green lighten-2 white-text center'> Présent </td>" +
                                                     "</tr>"
                                                 );
@@ -635,37 +626,34 @@
                                             case "4":
                                                 $("#rowsContainer").append("" +
                                                     "<tr>" +
-                                                    "<td>" + res.clockinRecord[arrayID][empId].quota + "</td>" +
-                                                    "<td><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].bH+"</span></td>" +
+                                                    "<td><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
                                                     "<td><span class='redSpanPauseBegin_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
                                                     "<td><span class='redSpanPauseEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
-                                                    "<td><span class='redSpanEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].eH+"</span></td>" +
-                                                    "<td><button data-target='modal1' class='detail_button modal-trigger' onclick='demander("+(i-1)+")' tag='"+(i-1)+"' style=''>Détails</button></td>" +
+                                                    "<td><span class='redSpanEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
+                                                    "<td>0</td>" +
                                                     "</tr>"
                                                 );
-                                                if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
+                                                if(data.historique[arrayID]["arrive"] > data.historique[arrayID]["bH"]){
                                                     $(".redSpan_3_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
+                                                }if(data.historique[arrayID]["pause"] < data.historique[arrayID]["pBH"]){
                                                     $(".redSpanPauseBegin_3_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
+                                                }if(data.historique[arrayID]["finPause"] > data.historique[arrayID]["pEH"]){
                                                     $(".redSpanPauseEnd_3_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
+                                                }if(data.historique[arrayID]["depart"] < data.historique[arrayID]["eH"]){
                                                     $(".redSpanEnd_3_"+i).css("color","red");
                                                 }
                                                 break;
                                         }
-                                    }else if(data.empType[arrayID][1] == "null" || data.empType[arrayID][1] == null){
+                                    }else if(data.historique[arrayID]["type"] == "null" || data.historique[arrayID]["type"] == null){
                                         $("#rowsContainer").append("" +
                                             "<tr>" +
                                             "<td colspan='10' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:green'> Présence non requise </span></td>" +
                                             "</tr>"
                                         );
                                     }else{
-                                        console.log(data.emp);
-                                        //alert("nexiste pas");
                                         $("#rowsContainer").append("" +
                                             "<tr>" +
-                                            "<td colspan='10' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence : </span><span style='font-weight: bold;color:black;'>" + data.empNames[arrayID] + " ("+ data.empCcid[arrayID] +")</span></td>" +
+                                            "<td colspan='10' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence</span></td>" +
                                             "</tr>"
                                         );
                                     }
