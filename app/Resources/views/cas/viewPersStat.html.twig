@@ -536,6 +536,9 @@
                             url: "userStats",
                             data: {'empId':employeeId,'dateFrom':fromDate,'dateTo':toDate},
                             success: function (data) {
+                                // We need to empty some fields
+                                $("#tempsPerduQuotaSpan").text("-");
+
                                 console.log(data);
                                 var type = data.tabType["lundi"];
                                 $("#containerMustBeHidden").attr("style","display:block");
