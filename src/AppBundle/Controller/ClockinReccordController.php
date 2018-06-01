@@ -224,12 +224,24 @@ class ClockinReccordController extends EmployeController
      * ou false sinon
     */
     public function arrive(ClockinRecord $cR,$day,$request){
-
         $empWH = json_decode($cR->getEmploye()->getWorkingHour()->getWorkingHour(),true);
-        $interval = ($cR->getEmploye()->getWorkingHour()->getTolerance())*60;
-
         $heureDebutNormal = $empWH[$day][0]["beginHour"];
         $heureFinNormal = $empWH[$day][0]["endHour"];
+        $type = $empWH["lundi"][0]["type"];
+        if($type == 2 || $type == "2"){
+            $beginHourExploded = explode(":",$heureDebutNormal);
+            $endHourExploded = explode(":",$heureFinNormal);
+            if(sizeof($beginHourExploded)>1){
+                $beginHourInMinutes = (((int)$beginHourExploded[0])*60)+((int)$beginHourExploded[1]);
+                $endHourInMinutes = (((int)$endHourExploded[0])*60)+((int)$endHourExploded[1]);
+
+                $interval = (($endHourInMinutes - $beginHourInMinutes)/2)*60;
+            }else{
+                $interval = 0;
+            }
+        }else{
+            $interval = ($cR->getEmploye()->getWorkingHour()->getTolerance())*60;
+        }
 
         $_date = date('d-m-Y',$cR->getClockinTime());
 
@@ -271,16 +283,25 @@ class ClockinReccordController extends EmployeController
     public function depart(ClockinRecord $cR,$day,$request){
 
         $empWH = json_decode($cR->getEmploye()->getWorkingHour()->getWorkingHour(),true);
-        $interval = ($cR->getEmploye()->getWorkingHour()->getTolerance())*60;
-
-
         $heureDebutNormal = $empWH[$day][0]["beginHour"];
         $heureFinNormal = $empWH[$day][0]["endHour"];
+        $type = $empWH["lundi"][0]["type"];
+        if($type == 2 || $type == "2"){
+            $beginHourExploded = explode(":",$heureDebutNormal);
+            $endHourExploded = explode(":",$heureFinNormal);
+            if(sizeof($beginHourExploded)>1){
+                $beginHourInMinutes = (((int)$beginHourExploded[0])*60)+((int)$beginHourExploded[1]);
+                $endHourInMinutes = (((int)$endHourExploded[0])*60)+((int)$endHourExploded[1]);
 
+                $interval = (($endHourInMinutes - $beginHourInMinutes)/2)*60;
+            }else{
+                $interval = 0;
+            }
+        }else{
+            $interval = ($cR->getEmploye()->getWorkingHour()->getTolerance())*60;
+        }
         $_date = date('d-m-Y',$cR->getClockinTime());
-
         $df = strtotime($_date." ".$heureFinNormal);
-
         // L'heure à laquelle l'employé est sensé partir
         $hSenceD = strtotime(date("H:i",strtotime($df)));
         // Timestamp de la dateheure à laquelle l'employé est sensé partir
@@ -648,8 +669,21 @@ class ClockinReccordController extends EmployeController
                 $heureFinPauseNormal = $empWH[$day][0]["pauseEndHour"];
 
                 $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
-                $type = $empWH[$day][0]["type"];
-                $interval = ($emp->getWorkingHour()->getTolerance())*60;
+                $type = $empWH["lundi"][0]["type"];
+                if($type == 2 || $type == "2"){
+                    $beginHourExploded = explode(":",$heureDebutNormal);
+                    $endHourExploded = explode(":",$heureFinNormal);
+                    if(sizeof($beginHourExploded)>1){
+                        $beginHourInMinutes = (((int)$beginHourExploded[0])*60)+((int)$beginHourExploded[1]);
+                        $endHourInMinutes = (((int)$endHourExploded[0])*60)+((int)$endHourExploded[1]);
+
+                        $interval = (($endHourInMinutes - $beginHourInMinutes)/2)*60;
+                    }else{
+                        $interval = 0;
+                    }
+                }else{
+                    $interval = ($emp->getWorkingHour()->getTolerance())*60;
+                }
 
                 // Pour le calcul d'un depart prématuré de pause,Calculons l'intervalle
 
@@ -723,13 +757,27 @@ class ClockinReccordController extends EmployeController
                 if(sizeof($emp)>0){
                     foreach ($emp as $e){
                         $empWH = json_decode($e->getWorkingHour()->getWorkingHour(),true);
-                        $type = $empWH[$day][0]["type"];
-                        $interval = ($e->getWorkingHour()->getTolerance())*60;
+                        $type = $empWH["lundi"][0]["type"];
 
                         $heureDebutNormal = $empWH[$day][0]["beginHour"];
                         $heureDebutPauseNormal = $empWH[$day][0]["pauseBeginHour"];
                         $heureFinNormal = $empWH[$day][0]["endHour"];
                         $heureFinPauseNormal = $empWH[$day][0]["pauseEndHour"];
+
+                        if($type == 2 || $type == "2"){
+                            $beginHourExploded = explode(":",$heureDebutNormal);
+                            $endHourExploded = explode(":",$heureFinNormal);
+                            if(sizeof($beginHourExploded)>1){
+                                $beginHourInMinutes = (((int)$beginHourExploded[0])*60)+((int)$beginHourExploded[1]);
+                                $endHourInMinutes = (((int)$endHourExploded[0])*60)+((int)$endHourExploded[1]);
+
+                                $interval = (($endHourInMinutes - $beginHourInMinutes)/2)*60;
+                            }else{
+                                $interval = 0;
+                            }
+                        }else{
+                            $interval = ($e->getWorkingHour()->getTolerance())*60;
+                        }
 
                         $pauseBeginHourExploded = explode(":",$heureDebutPauseNormal);
                         $pauseEndHourExploded = explode(":",$heureFinPauseNormal);
@@ -764,6 +812,9 @@ class ClockinReccordController extends EmployeController
                         // On récupère les données appartenant au département sélectionné
 
                         $tempData = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empHistory($e->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
+                        /*foreach ($tempData as $cr){
+                            print_r("----".$cr->getEmploye()->getId()." : ".$cr->getClockinTime()." (".date('Y-m-d H:i:s',$cr->getClockinTime()).")\n");
+                        }*/
                         $min = strtotime($_date." 00:00:00");
                         $max = strtotime($_date." 23:59:59");
 

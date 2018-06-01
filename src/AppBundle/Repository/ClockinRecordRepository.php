@@ -37,6 +37,19 @@ class ClockinRecordRepository extends EntityRepository
     }
 
     public function empHistory($empId,$depId,$bMin,$bMax,$pBMin,$pBMax,$pEMin,$pEMax,$eMin,$eMax){
+        $cur_date = date('Y-m-d',$pBMax);
+        $cur_time_min = strtotime($cur_date." 00:00:00");
+        $cur_time_max = strtotime($cur_date." 23:59:00");
+        if($bMin < $cur_time_min){
+            $bMin = $cur_time_min;
+        }
+        if($eMax > $cur_time_max){
+            $eMax = $cur_time_max;
+            /*print_r("**Trace : $empId : $bMin (".date('Y-m-d H:i:s',$bMin).") : $cur_date\n");
+            print_r("++Trace : $empId : $bMax (".date('Y-m-d H:i:s',$bMax).") : $cur_date\n");
+            print_r("@Trace : $empId : $eMax (".date('Y-m-d H:i:s',$eMax).") : $cur_date\n");
+            print_r("#Trace : $empId : $eMin (".date('Y-m-d H:i:s',$eMin).") : $cur_date\n");
+        */}
         $queryBuilder = $this->createQueryBuilder('c');
 
         $queryBuilder->where('c.clockinTime BETWEEN :bMin AND :bMax');
@@ -57,9 +70,9 @@ class ClockinRecordRepository extends EntityRepository
 
         $queryBuilder->andWhere('c.employe = :empId')->setParameter('empId',$empId);
         $queryBuilder->andWhere('c.departement = :depId')->setParameter('depId',$depId);
+        $queryBuilder->addOrderBy('c.clockinTime','ASC');
 
         return $queryBuilder->getQuery()->getResult();
-
     }
 
     public function empAllHistory($empId,$min,$max){
@@ -69,6 +82,7 @@ class ClockinRecordRepository extends EntityRepository
         $queryBuilder->setParameter('max',$max);
 
         $queryBuilder->andWhere('c.employe = :empId')->setParameter('empId',$empId);
+        $queryBuilder->addOrderBy('c.clockinTime','ASC');
 
         return $queryBuilder->getQuery()->getResult();
     }

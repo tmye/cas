@@ -146,6 +146,11 @@
             $('#modal_detail').modal('open');
         }
 
+        function precisionRound(number, precision) {
+            var factor = Math.pow(10, precision);
+            return Math.round(number * factor) / factor;
+        }
+
         function convertType(type) {
             switch (type){
                 case "1":
@@ -239,7 +244,7 @@
                                                     "<td>" + res.clockinRecord[arrayID][empId].nom + " " + res.clockinRecord[arrayID][empId].prenom + "</td>" +
                                                     "<td>" + res.clockinRecord[arrayID][empId].function + "</td>" +
                                                     "<td>" + convertType(res.clockinRecord[arrayID][empId].type) + "</td>" +
-                                                    "<td>" + res.clockinRecord[arrayID][empId].quota + "</td>" +
+                                                    "<td>" + precisionRound(res.clockinRecord[arrayID][empId].quota_fait/60,2) + "/" +res.clockinRecord[arrayID][empId].quota + "</td>" +
                                                     "<td><span class='redSpan_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].bH+"</span></td>" +
                                                     "<td><span class='redSpanPauseBegin_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
                                                     "<td><span class='redSpanPauseEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
