@@ -124,7 +124,7 @@
                                 <td colspan="2"><span id="quotaTotalSpan"></span></td>
                             </tr>
                             <tr>
-                                <th colspan="5" class="center">Total Temps Perdu</th>
+                                <th colspan="5" class="center">Total Temps Perdu (En Minuites)</th>
                             </tr>
                             <tr>
                                 <td>-</td>
@@ -544,13 +544,13 @@
                                 $("#departSpan").text(data.departs);
                                 // On fait d'abord un test
                                 if(data.quota_fait > data.quota_total){
-                                    $("#quotaTotalSpan").text(data.quota_total+"/"+data.quota_total);
+                                    $("#quotaTotalSpan").text(precisionRound(data.quota_total/60,1)+"/"+data.quota_total/60);
                                 }else if(data.quota_fait < data.quota_total){
                                     var quotaDiff = (data.quota_total - data.quota_fait);
                                     $("#tempsPerduQuotaSpan").text(quotaDiff);
                                     $("#sommePerduQuotaSpan").text(precisionRound(salaryPerMin*quotaDiff,0));
                                 }
-                                $("#quotaTotalSpan").text(data.quota_fait+"/"+data.quota_total);
+                                $("#quotaTotalSpan").text(precisionRound(data.quota_fait/60,1)+"/"+data.quota_total/60);
                                 var stp = 0;
                                 if(type == 2 || type == "2"){
                                     $("#tprSpan").text("-");
