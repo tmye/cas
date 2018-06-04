@@ -314,7 +314,7 @@ class StatsController extends ClockinReccordController
                 if($retardDiff != null){
                     $nowDate = date('d/m/Y',$nowTime);
                     $permDate = date('Y-m-d',$nowTime);
-                    if(!$pR->enPermission($employe,$permDate,date("H:i",$retardDiff[1]->getClockinTime()),$heureDebutNormal)) {
+                    if(!$pR->enPermission($employe,$permDate,date("H:i",$retardDiff[1]),$heureDebutNormal)) {
                         $retards++;
                         $sommeRetards +=$retardDiff[0];
                         $tempsPerdusRetards += $retardDiff[0]/(60);
@@ -339,7 +339,7 @@ class StatsController extends ClockinReccordController
                 if($retardPauseDiff != null){
                     $nowDate = date('d/m/Y',$nowTime);
                     $permDate = date('Y-m-d',$nowTime);
-                    if(!$pR->enPermission($employe,$permDate,date("H:i",$retardPauseDiff[1]->getClockinTime()),$heureFinNormalPause)){
+                    if(!$pR->enPermission($employe,$permDate,date("H:i",$retardPauseDiff[1]),$heureFinNormalPause)){
                         $retards++;
                         $sommeRetards +=$retardPauseDiff[0];
                         $tempsPerdusRetardsPause = $retardPauseDiff[0]/(60);
@@ -363,7 +363,7 @@ class StatsController extends ClockinReccordController
                 if($departDiff != null){
                     $nowDate = date('d/m/Y',$nowTime);
                     $permDate = date('Y-m-d',$nowTime);
-                    if(!$pR->enPermission($employe,$permDate,date("H:i",$departDiff[1]->getClockinTime()),$heureFinNormal)){
+                    if(!$pR->enPermission($employe,$permDate,date("H:i",$departDiff[1]),$heureFinNormal)){
                         $departs++;
                         $sommeDeparts +=$departDiff[0];
                         $tempsPerdusDepartsFin = ($departDiff[0])/(60);
@@ -388,7 +388,7 @@ class StatsController extends ClockinReccordController
                 if($departPauseDiff[0] != null){
                     $nowDate = date('d/m/Y',$nowTime);
                     $permDate = date('Y-m-d',$nowTime);
-                    if(!$pR->enPermission($employe,$permDate,date("H:i",$departPauseDiff[1]->getClockinTime()),$heureDebutNormalPause)){
+                    if(!$pR->enPermission($employe,$permDate,date("H:i",$departPauseDiff[1]),$heureDebutNormalPause)){
                         $i++;
                         $departsPause++;
                         // Pour prendre en compte les departs de 12 h aussi
