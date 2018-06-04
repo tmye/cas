@@ -45,13 +45,13 @@ class PermissionRepository extends EntityRepository
             if($r->getDateFrom()->format("Y-m-d") == $date){
                 $recycledResult[]=$r;
             }
-            $permissionHourB = strtotime($date.' '.$r->getTimeTo());
         }
 
         if(sizeof($recycledResult)>0){
 
             $firstResult = $recycledResult[0];
             $permissionHourA = strtotime($date.' '.$firstResult->getTimeFrom());
+            $permissionHourB = strtotime($date.' '.$firstResult->getTimeTo());
 
             $empHourA = strtotime($date.' '.$normalHour);
             $empHourB = strtotime($date.' '.$savedHour);
