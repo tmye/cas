@@ -31,9 +31,7 @@ class tablepdf extends fpdf
     public function convertInHour($value){
 
         $value = (int)$value;
-        $day = floor ($value / 1440);
-        $hour = floor (($value - $day * 1440) / 60);
-        $min = $value - ($day * 1440) - ($hour * 60);
+        $hour = floor ($value  / 60);
 
         return $hour."H ";
     }
@@ -83,7 +81,7 @@ class tablepdf extends fpdf
             $this->Cell($w[0],6,$row[0],'LR',0,'L',$fill);
             $this->Cell($w[1],6,$row[1],'LR',0,'L',$fill);
             $this->Cell($w[2],6,$row[2],'LR',0,'R',$fill);
-            $this->Cell($w[3],6,$row[3],'LR',0,'R',$fill);
+            $this->Cell($w[3],6,$this->convertInHour($row[3]),'LR',0,'R',$fill);
             $this->Cell($w[4],6,$this->convertInHour($row[4]),'LR',0,'L',$fill);
             $this->Cell($w[5],6,$row[5],'LR',0,'L',$fill);
             $this->Cell($w[5],6,$row[6],'LR',0,'L',$fill);
