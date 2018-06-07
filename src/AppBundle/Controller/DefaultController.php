@@ -47,18 +47,21 @@ class DefaultController extends StatsController
      */
     public function functionTestAction(Request $request)
     {
-        $date = "2018-06-04";
-        $heureNormaleArrivee = "08:00";
+        /*$date = "2018-06-04";
+        $result = $this->getDoctrine()->getManager()->getRepository("AppBundle:NullDate")->dayIsNull($date);
+        print_r($result);
+        return $result;
+        /*$heureNormaleArrivee = "08:00";
         $heureEnregistre = "23:59";
         $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission(36,$date,$heureEnregistre,$heureNormaleArrivee);
         print_r($p);
-        /*foreach ($p as $perm){
+        foreach ($p as $perm){
             echo "<br>".$perm->getDescription()."<br>";
         }*/
 
         //return new Response(date("Y-m-d H:i:s",1537163970));
         //return new Response(date("Y-m-d H:i:s",(new \DateTime())->getTimestamp()));
-        //return new Response(strtotime("2018-05-21 11:55"));
+        return new Response(strtotime("2018-05-21 17:15"));
         //return new Response($this->formatInt(12253008000000));
     }
 
