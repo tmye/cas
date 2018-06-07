@@ -670,6 +670,7 @@ class ClockinReccordController extends EmployeController
 
                 $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
                 $type = $empWH["lundi"][0]["type"];
+                $dayType = $empWH[$day][0]["type"];
                 if($type == 2 || $type == "2"){
                     $beginHourExploded = explode(":",$heureDebutNormal);
                     $endHourExploded = explode(":",$heureFinNormal);
@@ -734,7 +735,7 @@ class ClockinReccordController extends EmployeController
                 }
 
                 $empTab[]=$emp->getId();
-                $empAllHistoryTab[]=array($emp->getId(),$empAllRecordFinal);
+                $empAllHistoryTab[]=array($emp->getId(),$empAllRecordFinal,$dayType);
                 $empNameTab[]=$emp->getSurname()." ".$emp->getLastName();
                 $empCcidTab[]=$emp->getEmployeeCcid();
                 $empTypeTab[]=array($emp->getId(),$type);
@@ -758,6 +759,7 @@ class ClockinReccordController extends EmployeController
                     foreach ($emp as $e){
                         $empWH = json_decode($e->getWorkingHour()->getWorkingHour(),true);
                         $type = $empWH["lundi"][0]["type"];
+                        $dayType = $empWH[$day][0]["type"];
 
                         $heureDebutNormal = $empWH[$day][0]["beginHour"];
                         $heureDebutPauseNormal = $empWH[$day][0]["pauseBeginHour"];
@@ -825,7 +827,7 @@ class ClockinReccordController extends EmployeController
                         }
 
                         $empTab[]=$e->getId();
-                        $empAllHistoryTab[]= array($e->getId(),$empAllRecordFinal);
+                        $empAllHistoryTab[]= array($e->getId(),$empAllRecordFinal,$dayType);
                         $empNameTab[]=$e->getSurname()." ".$e->getLastName();
                         $empCcidTab[]=$e->getEmployeeCcid();
                         $empTypeTab[]=array($e->getId(),$type);
