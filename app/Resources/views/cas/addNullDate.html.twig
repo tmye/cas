@@ -1,0 +1,120 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}C.A.S - Département{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col l12">
+            <h5 class="h5_title page-title"><span class="fa fa-calendar-alt"></span> Gestion des jours perdus</h5>
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Définissez un jour null</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                {% for message in  app.session.flashbag.get('notice') %}
+                                    <div class="row">
+                                        <div class="col l12">
+                                            <div class="operation_message">
+                                                {{ message }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                <div class="row">
+                                    <div class="col l12">
+                                        Les jours null sont des jours qui ont été perdus dû à des coupures de courants et les jours férés.
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col l12">
+                                        {%  if message is defined and message is not null %}
+                                            <div class="operation_message">
+                                                {{ message }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    {{ form_start(form) }}
+                                    <div class="input-field col s5">
+                                        {{ form_row(form.jour, {'attr': {'class': 'input-customized datepicker','placeholder':'Date'}}) }}
+                                    </div>
+                                    <div class="input-field col s5">
+                                        {{ form_row(form.motif, {'attr': {'class': 'input-customized','placeholder':'Motif de la nullité'}}) }}
+                                    </div>
+                                    <div class="input-field col l2">
+                                        {{ form_rest(form) }}
+                                    </div>
+                                    {{ form_end(form) }}
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <h5 class="h5_title page-title">Liste des jours perdus</h5>
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Liste des jours null</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <div class="col l12">
+                                        <table class="table bordered striped highlight">
+                                            <thead>
+                                                <tr>
+                                                    <th>Jour</th>
+                                                    <th>Motif</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for jour in listJourNull %}
+                                                    <tr>
+                                                        <td>{{ jour.jour }}</td>
+                                                        <td>{{ jour.motif }}</td>
+                                                        <td>
+                                                            <a href="{{ path('editNullDate',{'id':jour.id}) }}">
+                                                                <button class="simple-button-decoration blue white-text">
+                                                                    <span class="fa fa-edit"></span>
+                                                                    Modifier
+                                                                </button>
+                                                            </a>
+                                                            <button class="simple-button-decoration red white-text deleteND" identify="{{ path('deleteNullDate',{'id':jour.id}) }}">
+                                                                <span class="fa fa-times"></span>
+                                                                Supprimer
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function(){
+            $(".deleteND").click(function(){
+                var rep = confirm("Etes-vous sur de vouloir supprimer ce département?");
+                var id = this.getAttribute('identify');
+                if(rep==true){
+                    window.location.href = id;
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}

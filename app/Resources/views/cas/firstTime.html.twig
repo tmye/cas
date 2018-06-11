@@ -1,0 +1,181 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}C.A.S - Initialisation{% endblock %}
+
+{% block body %}
+
+    <!-- Modal for ajax loading -->
+    <div id="modal_loading" class="modal ajax_modals">
+        <div class="modal-content">
+            <p class="center">
+                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col l12">
+            <h5 class="h5_title"><span class="fa fa-database"></span> Initialisation de l'application</h5>
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Formulaire d'ajout d'informations</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <div class="col l12">
+                                        <input type="text" id="compName" placeholder="Le nom de votre société">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col l3 center">
+                                        <img src="" id="preview" alt="preview" style="width: 100%">
+                                    </div>
+                                    <div class="col l9">
+                                        <input type="file" class="fileInput" id="fileInput" placeholder="Votre logo">
+                                    </div>
+                                </div>
+                                <h6>Ajoutez un administrateur global</h6>
+                                <div class="row">
+                                    <div class="col l4">
+                                        <input type="text" id="adminSurname" placeholder="Nom">
+                                    </div>
+                                    <div class="col l4">
+                                        <input type="text" id="adminName" placeholder="Prénom(s)">
+                                    </div>
+                                    <div class="col l4">
+                                        <input type="text" id="adminAdress" placeholder="Adresse">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col l4">
+                                        <input type="text" id="adminPhoneNumber" placeholder="Numéro de téléphone">
+                                    </div>
+                                    <div class="col l4">
+                                        <input type="text" id="adminUsername" placeholder="Choisissez un pseudo">
+                                    </div>
+                                    <div class="col l4">
+                                        <input type="password" id="adminFirstPassword" placeholder="Mot de passe">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col l4">
+                                        <input type="password" id="adminSecondPassword" placeholder="Confirmation du mot de passe">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col l12">
+                                        <input type="button" value="Initialiser" class="btn" id="submitButton">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function () {
+
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#preview').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            $(".fileInput").change(function() {
+                readURL(this);
+            });
+
+            $("#submitButton").click(function () {
+                // We verify if all fields are not empty
+                if($("#compName").val()){
+                    if($(".fileInput").val()){
+                        if($("#adminName").val()){
+                            if($("#adminSurname").val()){
+                                if($("#adminAdress").val()){
+                                    if($("#adminPhoneNumber").val()){
+                                        if($("#adminFirstPassword").val()){
+                                            if($("#adminFirstPassword").val().length >= 6){
+                                                if($("#adminFirstPassword").val() == $("#adminSecondPassword").val()){
+                                                    $('#modal_loading').modal('open');
+                                                    // After the verifications we can deal with the ajax queries
+                                                    var formdata = new FormData();
+                                                    var fInput = document.getElementById("fileInput");
+                                                    console.log(fInput);
+                                                    formdata.append("compName",$("#compName").val());
+                                                    formdata.append("image",fInput.files[0]);
+                                                    formdata.append("adminName",$("#adminName").val());
+                                                    formdata.append("adminSurname",$("#adminSurname").val());
+                                                    formdata.append("adminAdress",$("#adminAdress").val());
+                                                    formdata.append("adminPhoneNumber",$("#adminPhoneNumber").val());
+                                                    formdata.append("adminUsername",$("#adminUsername").val());
+                                                    formdata.append("adminPassword",$("#adminFirstPassword").val());
+                                                    console.log(fInput);
+                                                    $.ajax({
+                                                        url: "{{ path('initializeApplication') }}",
+                                                        type: "POST",
+                                                        data: formdata,
+                                                        cache:false,
+                                                        contentType: false,
+                                                        processData: false,
+                                                        success: function(data) {
+                                                            // W're making a test here for redirection
+                                                            if(data == 1){
+                                                                window.location.href = "{{ path('homepage') }}";
+                                                            }
+
+                                                            $('#modal_loading').modal('close');
+
+                                                        },
+                                                        error: function() {
+                                                            alert("Erreur");
+
+                                                            $('#modal_loading').modal('close');
+
+                                                        }
+                                                    });
+                                                }else {
+                                                    alert("Erreur : Les mot de passes sont differents");
+                                                }
+                                            }else {
+                                                alert("Erreur : Mot de passe trop court.8 caracteres minimum");
+                                            }
+                                        }else {
+                                            alert("Erreur : Tous les champs sont obligatoires");
+                                        }
+                                    }else {
+                                        alert("Erreur : Tous les champs sont obligatoires");
+                                    }
+                                }else {
+                                    alert("Erreur : Tous les champs sont obligatoires");
+                                }
+                            }else {
+                                alert("Erreur : Tous les champs sont obligatoires");
+                            }
+                        }else {
+                            alert("Erreur : Tous les champs sont obligatoires");
+                        }
+                    }else {
+                        alert("Erreur : Tous les champs sont obligatoires 555");
+                    }
+                }else{
+                    alert("Erreur : Tous les champs sont obligatoires");
+                }
+                // End of verification
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}C.A.S - Département{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col l12">
+            <h5 class="h5_title page-title"><span class="fa fa-link"></span> Gestion des Départements</h5>
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Formulaire d'ajout d'un nouveau département</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                {% for message in  app.session.flashbag.get('notice') %}
+                                    <div class="row">
+                                        <div class="col l12">
+                                            <div class="operation_message">
+                                                {{ message }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                <div class="row">
+                                    <div class="col l12">
+                                        {%  if message is defined and message is not null %}
+                                            <div class="operation_message">
+                                                {{ message }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    {{ form_start(form) }}
+                                    <div class="input-field col s5">
+                                        {{ form_row(form.name, {'attr': {'class': 'input-customized','placeholder':'Nom du département'}}) }}
+                                    </div>
+                                    <div class="input-field col s5">
+                                        {{ form_row(form.maxCount, {'attr': {'class': 'input-customized','placeholder':'Nombre maximum d\'employés'}}) }}
+                                    </div>
+                                    <div class="input-field col l2">
+                                        {{ form_rest(form) }}
+                                    </div>
+
+                                    {{ form_widget(form.creer, { 'label': 'Créer','attr': {'class':'btn'} }) }}
+
+                                    {{ form_end(form) }}
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Liste des départements</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <table class="col l12 centered striped bordered condensed">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Nom</th>
+                                            <th>Membres</th>
+                                            <th>Membres maximum</th>
+                                            <th>Date de création</th>
+                                            <th>Créé par</th>
+                                            <th>#Modification</th>
+                                        </tr>
+                                        {% for dep in listDep %}
+                                            <tr>
+                                                <td>{{ dep.id }}</td>
+                                                <td>{{ dep.name }}</td>
+                                                <td>{{ "A compter avec une requete" }}</td>
+                                                <td>{{ dep.maxCount }}</td>
+                                                <td>{{ dep.CreateDate | date('d-m-Y H:i:s') }}</td>
+                                                <td>{{ dep.author }}</td>
+                                                <td>
+                                                    <a href="{{ path("editDepartement",{'id':dep.id}) }}">
+                                                        <button class="simple-button-decoration blue"><span class="fa fa-pencil-alt white-text"></span></button>
+                                                    </a>
+                                                    <button class="simple-button-decoration red deleteDep" identify="{{ path('deleteDepartement',{'id':dep.id}) }}"><span class="fa fa-trash white-text"></span></button>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function(){
+            $(".deleteDep").click(function(){
+                var rep = confirm("Etes-vous sur de vouloir supprimer ce département?");
+                var id = this.getAttribute('identify');
+                if(rep==true){
+                    window.location.href = id;
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}

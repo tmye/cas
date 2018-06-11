@@ -1,0 +1,170 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}C.A.S - Socité{% endblock %}
+
+{% block body %}
+
+    <!-- Modal for ajax loading -->
+    <div id="modal_loading" class="modal ajax_modals">
+        <div class="modal-content">
+            <p class="center">
+                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col l12">
+            <h5>Changer le nom de la société</h5>
+
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Changement de nom</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <form class="col l12" id="main_form">
+                                        <span id="type1">
+                                            <div class="row firstOne">
+                                                <div class="col l12">
+                                                    {% if token is defined and token is not null and token == 1 %}
+                                                        <h6 style="font-size: 20px">
+                                                            <span class="fa fa-exclamation-triangle orange-text"></span> Votre configuration actuelle n'est pas valide.Veuillez changer vos paramètres actuels.
+                                                        </h6>
+                                                        <br>
+                                                    {% endif %}
+                                                    <h5>Nom de la société</h5>
+                                                    <span>Changer le nom de la société</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <input type="text" id="companyName" placeholder="Entrez le nouveau nom de la société">
+                                                <br><br>
+                                                <input type="button" id="submitSocietyName" class="btn" value="Changer">
+                                            </div>
+                                        </span>
+                                    </form>
+                                </div>
+                                <div class="row">
+                                    <form class="col l12" id="main_form">
+                                        <span id="type1">
+                                            <div class="row firstOne">
+                                                <div class="col l12">
+                                                    <h5>Logo de la société</h5>
+                                                    <span>Changer le logo de la société</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="row">
+                                                    <div class="col l8">
+                                                        <input type="file" class="fileInput" id="fileInput">
+                                                        <br><br>
+                                                        <input type="button" id="submitSocietyLogo" class="btn" value="Changer">
+                                                    </div>
+                                                    <div class="col l4">
+                                                        <img src="" id="preview" alt="companyLogo" class="companyLogoPreview">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function () {
+            $("#submitSocietyName").click(function () {
+                $('#modal_loading').modal('open');
+                $.ajax({
+                    type: 'POST',
+                    url: "changeSocietyName",
+                    data: {'name':$("#companyName").val()},
+                    success: function(data) {
+                        alert(data);
+                        $('#modal_loading').modal('close');
+                    },
+                    error: function () {
+                    }
+                });
+                // Closing the loading box
+
+            });
+
+            // Section du logo de la société
+
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#preview').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            $(".fileInput").change(function() {
+                readURL(this);
+            });
+
+            /*$("#previewButton").click(function(){
+                $(".fileInput").click();
+            });*/
+
+            // Requete ajax de soumission de l'image
+
+            $("#submitSocietyLogo").click(function(){
+                $('#modal_loading').modal('open');
+                var formdata = new FormData();
+                var fInput = document.getElementById("fileInput");
+                console.log(fInput);
+                formdata.append("image",fInput.files[0]);
+                console.log(fInput);
+
+                $.ajax({
+                    url: "{{ path('changeSocietyLogo') }}",
+                    type: "POST",
+                    data: formdata,
+                    cache:false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        alert(data);
+                        $('#modal_loading').modal('close');
+                    },
+                    error: function() {
+                        // Closing the loading box
+                        $('#modal_loading').modal('close');
+                        alert("Erreur");
+                    }
+                });
+                // Closing the loading box
+
+                /*$.ajax({
+                    url: "{path('syncPubCoverAll')}",
+                    type: "POST",
+                    data: {"deps":tab},
+                    success: function(data) {
+                        alert(data);
+                    },
+                    error: function() {
+                        alert("Erreur");
+                    }
+                });*/
+            });
+
+        });
+    </script>
+{% endblock %}

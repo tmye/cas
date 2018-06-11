@@ -1,0 +1,217 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}C.A.S - Accueil{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col l12">
+            <h5>Accueil</h5>
+
+            <!-- Petites sections carrées -->
+
+            <div class="row">
+                <div class="col l3 m6 s12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Retards<span class="badge teal lighten-2 white-text spanRetard"></span></div>
+                            <div class="collapsible-body center">
+                                <a href="{{ path("depStat") }}" class="fa fa-th-list fa-4x red-text text-lighten-3"></a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col l3 m6 s12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Départs<span class="badge teal lighten-2 white-text spanDepart"></span></div>
+                            <div class="collapsible-body center">
+                                <a href="{{ path("depStat") }}" class="fa fa-paper-plane fa-4x teal-text text-lighten-3"></a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col l3 m6 s12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Permissions<span class="badge teal lighten-2 white-text spanPermission"></span></div>
+                            <div class="collapsible-body center">
+                                <a href="{{ path("viewPermission") }}" class="fa fa-th-list fa-4x grey-text text-lighten-3"></a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col l3 m6 s12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Absences<span class="badge teal lighten-2 white-text spanAbsence"></span></div>
+                            <div class="collapsible-body center">
+                                <a href="{{ path("depStat") }}" class="fa fa-th-list fa-4x blue-text text-lighten-3"></a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Section du classement des tops -->
+
+            <div class="row">
+                <div class="col l6 m6 s12">
+                    <h5>Top retardataires</h5>
+                    <br>
+                    <span class="info_container_retards">
+                    </span>
+                </div>
+                <div class="col l6 m6 s12">
+                    <h5>Top départs prématurés</h5>
+                    <br>
+                    <span class="info_container_departs">
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        function precisionRound(number, precision) {
+            var factor = Math.pow(10, precision);
+            return Math.round(number * factor) / factor;
+        }
+
+        // Recuperation des autres informations
+        $.ajax({
+            type: 'POST',
+            url: "homeStats",
+            success: function (data) {
+                console.log(data);
+                //console.log(data);
+                $(".spanRetard").text(data.retards);
+                $(".spanDepart").text(data.departs);
+                $(".spanPermission").text(data.permissions);
+                $(".spanAbsence").text(data.absences);
+
+                var tailleClassRet = Object.keys(data.classementRetard).length;
+                var tailleClassDep = Object.keys(data.classementDepart).length;
+                console.log(data.classementDepart);
+
+                var cpt =0;
+
+                console.log("taille du tableau de retards : "+tailleClassRet);
+                console.log("taille du tableau de departs : "+tailleClassDep);
+
+                // First of all we must convert the json object to an array
+                var tabR = [];
+                $.each(data.classementRetard,function (arrayID) {
+                    tabR.push([data.classementRetard[arrayID]["name"],data.classementRetard[arrayID]["cumul"],data.classementRetard[arrayID]["dep"]]);
+                });
+                var tabD = [];
+                $.each(data.classementDepart,function (arrayID) {
+                    tabD.push([data.classementDepart[arrayID]["name"],data.classementDepart[arrayID]["cumul"],data.classementDepart[arrayID]["dep"]]);
+                });
+
+                // Sorting the data to obtain just three entries
+                var tempTab = [];
+                for(var i=0;i<(tabR.length-1);i++){
+                    for(var j=0;j<(tabR.length-1);j++){
+                        if(tabR[j+1][1] > tabR[j][1]){
+                            tempTab = [tabR[j+1][0],tabR[j+1][1],tabR[j+1][2]];
+                            tabR[j+1] = [tabR[j][0],tabR[j][1],tabR[j][2]];
+                            tabR[j] = tempTab;
+                        }
+                    }
+
+                }
+                var tempTab = [];
+                for(var i=0;i<(tabD.length-1);i++){
+                    for(var j=0;j<(tabD.length-1);j++){
+                        if(tabD[j+1][1] > tabD[j][1]){
+                            tempTab = [tabD[j+1][0],tabD[j+1][1],tabD[j+1][2]];
+                            tabD[j+1] = [tabD[j][0],tabD[j][1],tabD[j][2]];
+                            tabD[j] = tempTab;
+                        }
+                    }
+
+                }
+
+                // Now that we have all tabs sorted,we can now show datas
+                // But before that we must verify if datas >= 3
+
+                if(tabR.length >= 3){
+                    for (var i=0;i<3;i++){
+                        $(".info_container_retards").append("" +
+                            "<div class='valignwrapper' style='padding-bottom: 30px'>\n" +
+                            "    <i class='fa fa-user top'></i>\n" +
+                            "    <span class='top user-info-home'>\n" +
+                            "        <span>"+tabR[i][0]+"</span>\n" +
+                            "        <br>\n" +
+                            "        <span>"+precisionRound(tabR[i][1],0)+"</span> min\n" +
+                            "        <br>\n" +
+                            "        <span>"+tabR[i][2]+"</span>\n" +
+                            "    </span>\n" +
+                            "</div>"
+                        );
+                    }
+                }else {
+                    $.each(tabR,function (arrayID) {
+                        $(".info_container_retards").append("" +
+                            "<div class='valignwrapper' style='padding-bottom: 30px'>\n" +
+                            "    <i class='fa fa-user top'></i>\n" +
+                            "    <span class='top user-info-home'>\n" +
+                            "        <span>"+tabR[arrayID][0]+"</span>\n" +
+                            "        <br>\n" +
+                            "        <span>"+precisionRound(tabR[arrayID][1],0)+"</span> min\n" +
+                            "        <br>\n" +
+                            "        <span>"+tabR[arrayID][2]+"</span>\n" +
+                            "    </span>\n" +
+                            "</div>"
+                        );
+                        console.log("Index : "+arrayID);
+                        cpt++;
+                    });
+                }
+
+                if(tabD >= 3){
+                    for (var i=0;i<3;i++){
+                        $(".info_container_departs").append("" +
+                            "<div class='valignwrapper' style='padding-bottom: 30px'>\n" +
+                            "    <i class='fa fa-user top'></i>\n" +
+                            "    <span class='top user-info-home'>\n" +
+                            "        <span>"+tabD[i][0]+"</span>\n" +
+                            "        <br>\n" +
+                            "        <span>"+precisionRound(tabD[i][1],0)+"</span> min\n" +
+                            "        <br>\n" +
+                            "        <span>"+tabD[i][2]+"</span>\n" +
+                            "    </span>\n" +
+                            "</div>"
+                        );
+                    }
+                }else {
+                    $.each(tabD,function (arrayID) {
+                        $(".info_container_departs").append("" +
+                            "<div class='valignwrapper' style='padding-bottom: 30px'>\n" +
+                            "    <i class='fa fa-user top'></i>\n" +
+                            "    <span class='top user-info-home'>\n" +
+                            "        <span>"+tabD[arrayID][0]+"</span>\n" +
+                            "        <br>\n" +
+                            "        <span>"+precisionRound(tabD[arrayID][1],0)+"</span> min\n" +
+                            "        <br>\n" +
+                            "        <span>"+tabD[arrayID][2]+"</span>\n" +
+                            "    </span>\n" +
+                            "</div>");
+                        console.log("Index : "+arrayID);
+                        cpt++;
+                    });
+                }
+            },
+            error: function(msg) {
+                console.log(msg);
+            }
+        });
+    </script>
+
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}

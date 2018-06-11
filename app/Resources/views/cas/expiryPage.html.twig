@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}C.A.S - Expiration{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col l12">
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Expiration de votre license</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <form class="col l12" id="main_form">
+                                        <span id="type1">
+                                            <div class="row firstOne">
+                                                <div class="col l12">
+                                                    <img src="{{ asset('img/sad_emoji.png') }}" class="middle-align" style="width: 70px;height: 70px">
+                                                    <h5 class="middle-align">
+                                                        Oups!!
+                                                    </h5>
+                                                    <h6 style="margin-left: 70px;font-size: 16px">
+                                                        Nous sommes sincèrement désolé mais votre license est arrivée à expiration.Veuillez renouveller votre
+                                                        <br><br>
+                                                        license en allant sur <a href="#">cette page</a> ou en contactant votre fournisseur aux adresses suivantes:
+                                                        <br><br>
+                                                        <p>
+                                                            <span class="fa fa-mobile-alt"></span> +228 92 10 84 87
+                                                        </p>
+                                                        <p>
+                                                            <span class="fa fa-phone-volume"></span> +228 22 43 23 10
+                                                        </p>
+                                                        <p>
+                                                            <span class="fa fa-at"></span> contact@tmye.org
+                                                        </p>
+                                                    </h6>
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function () {
+            $("#submitExpiryDate").click(function () {
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('expiryDate') }}",
+                    data: {'date':$("#expiryDate").val()},
+                    success: function(data) {
+                        alert(data);
+                    },
+                    error: function () {
+                        alert("Erreur");
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

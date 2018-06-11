@@ -1,0 +1,8 @@
+#tmye_device_homepage:
+#    path:     /
+#    defaults: { _controller: Tmye:TmyeDeviceBundle:Default:index }
+
+
+#tmye_device_api:
+#    path:     /api/data/get
+#    defaults: { _controller: Tmye:TmyeDeviceBundle:MachineSys:index_get }

@@ -1,0 +1,181 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}C.A.S - Employé{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col l12">
+            <h5 class="page-title">Informations sur un employé</h5>
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible popout" data-collapsible="">
+                        <li>
+                            <div class="collapsible-header active">
+                                Choix du département
+                            </div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <div class="col l6">
+                                        <span>Veuillez choisir le département <span class="red-text">*</span></span>
+                                    </div>
+                                    <div class="col l6">
+                                        <select class="input-customized browser-default" id="depSelect">
+                                            <option value="" selected>Département</option>
+                                            {% for dep in listDep %}
+                                                <option value="{{ dep.id }}">{{ dep.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col l12">
+                                        <table class="bordered striped">
+                                            <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Profil</th>
+                                                <th>Nom et prénoms</th>
+                                                <th>Fonction</th>
+                                                <th>Salaire</th>
+                                                <th>Téléphone</th>
+                                                <th>Adresse</th>
+                                                <th>Empreintes</th>
+                                                <th>Edit</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="rowsContainer">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {# Script Ajax de chargement des données #}
+    <script>
+        $(function(){
+            /* Création de la fonction de chargement des données */
+
+            function loadData () {
+                var idEl = $("#depSelect").val();
+                var link = '{{ path("returnEmployees") }}';
+                //alert(link);
+                $.ajax({
+                    type: 'GET',
+                    url: link,
+                    success: function(data) {
+                        console.log(data);
+                        //alert("Le résultat : "+data);
+                        //alert("la longueur : "+data.length);
+                        /* Au changement d'un département,plus de requete.On ne fait que charger les données */
+                        $("#depSelect").change(function(){
+                            /* On vide le contenu de la table */
+                            $("#rowsContainer").html("");
+                            /* On récupère le département sélectionné */
+                            var selectedDep = $("#depSelect").val();
+
+                            for(var i=0;i<data.length;i++){
+                                var cpt = 0;
+                                if(typeof (data[i].fingerprint) == "string"){
+                                    //console.log(data[i].fingerprint);
+                                    var str = data[i].fingerprint;
+                                    var strEscaped = str.replace(/"/g,'\"');
+                                    console.log(strEscaped);
+                                    //JSON.parse(strEscaped);
+
+                                    if (str == null || str.length == 0) {
+                                        /* no fingerprint */
+                                    } else {
+
+                                        var res = JSON.parse(str);
+                                        console.log(res);
+                                        if(res[0] != null && res[0] != ""){
+                                            cpt++;
+                                            if(res[1] != null && res[1] != ""){
+                                                cpt++;
+                                            }
+                                        }
+                                    }
+                                }
+                                //alert("L'id dep est "+res.employees[i].departement.id);
+                                /* On vérifie si oui ou nom cet employé appartient au département
+                                 * Si oui on l'affiche
+                                 * Sinon on l'ignore tout simplement
+                                 */
+                                if(data[i].dep == selectedDep){
+                                    //var mDate = new Date(data[i].hireDate.timestamp*1000).toLocaleDateString();
+                                    // On choisi l'image par défaut si l'employé n'en a pas
+                                    var img = null;
+                                    if(data[i].picPath != null && data[i].picPath != ""){
+                                        img = '{{ asset(""~ user_profile_pictures)~"/" }}'+data[i].picPath;
+                                    }else {
+                                        img = '{{ asset("img/avatar.jpg") }}';
+                                    }
+                                    $("#rowsContainer").append("" +
+                                        "<tr>" +
+                                        "<td>"+data[i].id+"</td>" +
+                                        "<td><img src="+img+" alt=\" profil_picture\" style=\"width:50px;height:50px\"></td>" +
+                                        "<td>"+data[i].surname+" "+data[i].lastName+"</td>" +
+                                        "<td>"+data[i].function+"</td>" +
+                                        "<td>"+data[i].salary+"</td>" +
+                                        "<td>"+data[i].contact+"</td>" +
+                                        "<td>"+data[i].adress+"</td>" +
+                                        "<td class='replaceTd' id="+"replaceTd"+i+" tag="+cpt+"></td>" +
+                                        "<td><a href=\"editEmployee/"+data[i].id+"\"><button class=\"white-text blue simple-button-decoration\"><span class=\"fa fa-pencil-alt\"></span></button></a> <button class=\"white-text red simple-button-decoration\" onclick=\"demander("+data[i].id+")\"><span class=\"fa fa-trash\"></span></button></td>" +
+                                        "</tr>"
+                                    );
+                                    // On affiche les icones
+                                    $.each($("#rowsContainer tr .replaceTd"),function (arrayID) {
+                                        var id = this.getAttribute("id");
+                                        switch (this.getAttribute("tag")){
+                                            case "1":
+                                                $("#"+id).html("<span class='material-icons'></span>");
+                                                break;
+                                            case "2":
+                                                $("#"+id).html("<span class='material-icons'></span><span class='material-icons'></span>");
+                                                break;
+                                            default:
+                                                $("#"+id).html("<span class=''>No fingerprint</span>");
+                                                break;
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    },
+                    error: function(msg) {
+                        alert("erreur"); }
+                });
+            }
+            loadData();
+        });
+    </script>
+    <script>
+        function demander(theId) {
+            var rep = confirm("Etes-vous sur de vouloir supprimer cet employé?");
+            var path = "deleteEmployee/";
+            path += theId;
+            if(rep==true){
+                window.location.href = path;
+            }
+        }
+    </script>
+    <script>
+        // On s'attaque aux collapsibles
+        $(function () {
+            $(".cl_vEmp").addClass("collapsible_element_active");
+            $(".navigation_collapsible").collapsible('open',5);
+        });
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}

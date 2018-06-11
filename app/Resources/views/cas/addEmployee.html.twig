@@ -1,0 +1,265 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}C.A.S - Employé{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col l12">
+            <h5 class="page-title">Nouvel Employé</h5>
+
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Formulaire d'ajout d'un nouvel employé</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                {% for message in  app.session.flashbag.get('notice') %}
+                                    <div class="row">
+                                        <div class="col l12">
+                                            <div class="operation_message">
+                                                {{ message }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                <div class="row">
+                                    <div class="col l12">
+                                            <span class="detailSpan" style="display: none">Détails de l'heure de travail sélectionnée</span>
+
+                                        <!-- Past here -->
+
+                                        {% for wh in whList %}
+                                            <table class="bordered striped centered hideTable" id="{{ wh.workingHour.code }}" style="display: none">
+                                                <thead>
+                                                <tr>
+                                                    <th>Code</th>
+                                                    <th>Lundi</th>
+                                                    <th>Mardi</th>
+                                                    <th>Mercredi</th>
+                                                    <th>Jeudi</th>
+                                                    <th>Vendredi</th>
+                                                    <th>Samedi</th>
+                                                    <th>Dimanche</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <td>{{ wh.workingHour.code }}</td>
+                                                    <td>
+                                                        {% if wh.workingHour.lundi[0].type == 1 %}
+                                                            {{ "Heures définies" }}
+                                                        {% elseif wh.workingHour.lundi[0].type == 2 %}
+                                                            {{ "Quota horraire" }}
+                                                            <br>
+                                                            {{ "Quota : "~wh.workingHour.lundi[0].quota }}
+                                                        {% elseif wh.workingHour.lundi[0].type == 3 %}
+                                                            {{ "Présence" }}
+                                                        {% else %}
+                                                            {{ "<span class='fa fa-times red white-text'></span>Présence non requise" }}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if wh.workingHour.mardi[0].type == 1 %}
+                                                            {{ "Heures définies" }}
+                                                        {% elseif wh.workingHour.mardi[0].type == 2 %}
+                                                            {{ "Quota horraire" }}
+                                                            <br>
+                                                            {{ "Quota : "~wh.workingHour.mardi[0].quota }}
+                                                        {% elseif wh.workingHour.mardi[0].type == 3 %}
+                                                            {{ "Présence" }}
+                                                        {% else %}
+                                                            {{ "<span class='fa fa-times red white-text'></span>Présence non requise" }}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if wh.workingHour.mercredi[0].type == 1 %}
+                                                            {{ "Heures définies" }}
+                                                        {% elseif wh.workingHour.mercredi[0].type == 2 %}
+                                                            {{ "Quota horraire" }}
+                                                            <br>
+                                                            {{ "Quota : "~wh.workingHour.mercredi[0].quota }}
+                                                        {% elseif wh.workingHour.mercredi[0].type == 3 %}
+                                                            {{ "Présence" }}
+                                                        {% else %}
+                                                            {{ "<span class='fa fa-times red white-text'></span>Présence non requise" }}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if wh.workingHour.jeudi[0].type == 1 %}
+                                                            {{ "Heures définies" }}
+                                                        {% elseif wh.workingHour.jeudi[0].type == 2 %}
+                                                            {{ "Quota horraire" }}
+                                                            <br>
+                                                            {{ "Quota : "~wh.workingHour.jeudi[0].quota }}
+                                                        {% elseif wh.workingHour.jeudi[0].type == 3 %}
+                                                            {{ "Présence" }}
+                                                        {% else %}
+                                                            {{ "<span class='fa fa-times red white-text'></span>Présence non requise" }}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if wh.workingHour.vendredi[0].type == 1 %}
+                                                            {{ "Heures définies" }}
+                                                        {% elseif wh.workingHour.vendredi[0].type == 2 %}
+                                                            {{ "Quota horraire" }}
+                                                            <br>
+                                                            {{ "Quota : "~wh.workingHour.vendredi[0].quota }}
+                                                        {% elseif wh.workingHour.vendredi[0].type == 3 %}
+                                                            {{ "Présence" }}
+                                                        {% else %}
+                                                            {{ "<span class='fa fa-times red white-text'></span>Présence non requise" }}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if wh.workingHour.samedi[0].type == 1 %}
+                                                            {{ "Heures définies" }}
+                                                        {% elseif wh.workingHour.samedi[0].type == 2 %}
+                                                            {{ "Quota horraire" }}
+                                                            <br>
+                                                            {{ "Quota : "~wh.workingHour.samedi[0].quota }}
+                                                        {% elseif wh.workingHour.samedi[0].type == 3 %}
+                                                            {{ "Présence" }}
+                                                        {% else %}
+                                                            {{ "<span class='fa fa-times red white-text'></span>Présence non requise" }}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if wh.workingHour.dimanche[0].type == 1 %}
+                                                            {{ "Heures définies" }}
+                                                        {% elseif wh.workingHour.dimanche[0].type == 2 %}
+                                                            {{ "Quota horraire" }}
+                                                            <br>
+                                                            {{ "Quota : "~wh.workingHour.dimanche[0].quota }}
+                                                        {% elseif wh.workingHour.dimanche[0].type == 3 %}
+                                                            {{ "Présence" }}
+                                                        {% else %}
+                                                            {{ "<span class='fa fa-times red white-text'></span>Présence non requise" }}
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        {% endfor %}
+
+
+
+                                        {% if form is defined and form is not null %}
+                                            {{ form_start(form) }}
+                                            <div class="row">
+                                                <div class="input-field col s4">
+                                                    <span>Nom</span>
+                                                    {{ form_row(form.surname, {'attr': {'class': 'input-customized','placeholder':'Votre Nom'}}) }}
+                                                </div>
+                                                <div class="input-field col s8">
+                                                    <span>Prénom</span>
+                                                    {{ form_row(form.last_name, {'attr': {'class': 'input-customized','placeholder':'Prénom'}}) }}
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="input-field col s4">
+                                                    <span>Adresse</span>
+                                                    {{ form_row(form.adress, {'attr': {'class': 'input-customized','placeholder':'Une petite description'}}) }}
+                                                </div>
+                                                <div class="input-field col s4">
+                                                    <span>Contact</span>
+                                                    {{ form_row(form.contact, {'attr': {'class':'input-customized','placeholder':'Le titre de la permission'}}) }}
+                                                </div>
+                                                <div class="input-field col s4">
+                                                    <span>Fonction</span>
+                                                    {{ form_row(form.function, {'attr': {'class': 'input-customized','placeholder':'Une petite description'}}) }}
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="input-field col s4">
+                                                    <span>Salaire</span>
+                                                    {{ form_row(form.salary, {'attr': {'class':'input-customized','placeholder':'Le titre de la permission'}}) }}
+                                                </div>
+                                                <div class="input-field col s4">
+                                                    <span>Date d'embauche</span>
+                                                    {{ form_row(form.hire_date, {'attr': {'class': 'input-customized datepicker','placeholder':'Une petite description'}}) }}
+                                                </div>
+                                                <div class="input-field col s4">
+                                                    <span>Département</span>
+                                                    {{ form_row(form.departement) }}
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="input-field col s4">
+                                                    <span>Heure de travail</span>
+                                                    {{ form_row(form.workingHour, {'attr':{'class':'selectWorkingHour'}}) }}
+                                                </div>
+                                                <div class="input-field col s4 center">
+                                                    <span>Photo de profil</span>
+                                                    {{ form_row(form.picture, {'attr': {'class':'fileInput','placeholder':'Le titre de la permission','style':'display:none'}}) }}
+                                                    <button id="previewButton" type="button" style="width: 180px;height: 30px;border: solid 1px rgba(0,0,0,0.2);margin-top: 20px">Choisir une image</button>
+                                                </div>
+                                                <div class="input-field col s4 center">
+                                                    {% if employe is defined and employe.picture is not null %}
+                                                        <img id="preview" src="{{ asset('/')~user_profile_pictures~'/'~employe.picture }}" alt="image_preview" class="employee_image_preview" width="100" height="100">
+                                                    {% else %}
+                                                        <img id="preview" src="{{ asset('img/guest.png') }}" alt="image_preview" class="employee_image_preview" width="100" height="100">
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            {{ form_row(form.picture, {'attr': {'accept': '.gif,.jpg,.jpeg,.png'}}) }}
+                                            <br>
+
+                                            {{ form_widget(form.creer, { 'label': 'Créer','attr': {'class':'btn'} }) }}
+
+                                            {{ form_end(form) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function(){
+
+            $('.hideTable').hide();
+
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#preview').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            $(".fileInput").change(function() {
+                readURL(this);
+            });
+
+            $("#previewButton").click(function(){
+                $(".fileInput").click();
+            });
+
+            $(".selectWorkingHour").change(function(){
+                var c = $(".selectWorkingHour input").val();
+                $('.hideTable').hide();
+                $('.detailSpan').show();
+                $('#'+c).show();
+            });
+        });
+    </script>
+    <script>
+        // On s'attaque aux collapsibles
+        $(function () {
+            $(".cl_Emp").addClass("collapsible_element_active");
+            $(".navigation_collapsible").collapsible('open',5);
+        });
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}

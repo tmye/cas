@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}C.A.S - Permission{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col l12">
+            <h5 class="page-title">Nouvelle permission</h5>
+
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Formulaire d'ajout d'une nouvelle permission </div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <div class="col l12">
+                                        <div class="row">
+                                            <div class="col l12">
+                                                {%  if message is defined and message is not null %}
+                                                    <div class="operation_message">
+                                                        {{ message }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {{ form_start(form) }}
+                                            <div class="row">
+                                                <div class="input-field col s6">
+                                                    <span>Titre de la permission</span>
+                                                    {{ form_row(form.title, {'attr': {'class': 'input-customized','placeholder':'Le titre de la permission'}}) }}
+                                                </div>
+                                                <div class="input-field col s6">
+                                                    <span>Description</span>
+                                                    {{ form_row(form.description, {'attr': {'class': 'input-customized','placeholder':'Une petite description'}}) }}
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="input-field col s3">
+                                                    <span>Date de début</span>
+                                                    {{ form_row(form.dateFrom, {'attr': {'class': 'input-customized datepicker','placeholder':'Date de début'}}) }}
+                                                </div>
+                                                <div class="input-field col s3">
+                                                    <span>Heure de début</span>
+                                                    {{ form_row(form.timeFrom, {'attr': {'class': 'input-customized timepicker','placeholder':'Date de début'}}) }}
+                                                </div>
+                                                <div class="input-field col s3">
+                                                    <span>Date de fin</span>
+                                                    {{ form_row(form.dateTo, {'attr': {'class': 'input-customized datepicker','placeholder':'Date de fin'}}) }}
+                                                </div>
+                                                <div class="input-field col s3">
+                                                    <span>Heure de fin</span>
+                                                    {{ form_row(form.timeTo, {'attr': {'class': 'input-customized timepicker','placeholder':'Date de début'}}) }}
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="input-field col s12">
+                                                    <span>Choisir l'employé</span>
+                                                    {{ form_row(form.employee) }}
+                                                </div>
+                                            </div>
+                                            {{ form_rest(form) }}
+                                        {{ form_end(form) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        // On s'attaque aux collapsibles
+        $(function () {
+            $(".cl_Perm").addClass("collapsible_element_active");
+            $(".navigation_collapsible").collapsible('open',3);
+        });
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}

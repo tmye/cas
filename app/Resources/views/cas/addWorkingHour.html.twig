@@ -1,0 +1,663 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}C.A.S - Heure de Travail{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col l12">
+            <h5 class="page-title">Gestion des heures de travail</h5>
+
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header">Ajouter un nouvel heure</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <div class="col l12">
+
+                                        <!-- Formulaire pour lundi -->
+
+                                        <div class="row">
+                                            <div class="input-field col s6">
+                                                <span>Nom de code</span>
+                                                <input type="text" id="code" class="input-customized">
+                                            </div>
+                                            <div class="input-field col s6">
+                                                <span>Type</span>
+                                                <select id="form_type_all" name="form[type]">
+                                                    <option value="1">Heures figées</option>
+                                                    <option value="2">Quota horraire</option>
+                                                    <option value="3">Présence</option>
+                                                    <option value="4">Heures figées sans pause</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <h5 class="permissionsSeparator whH5">Lundi</h5>
+                                        <div class="row">
+                                            <div class="collapseSectionLundi">
+                                                <div class="input-field col l3">
+                                                    <span>Début</span>
+                                                    <input type="text" id="lundiBH" class="input-customized timepicker">
+                                                </div>
+                                                <div class="input-field col l3">
+                                                    <span>Fin</span>
+                                                    <input type="text" id="lundiEH" class="input-customized timepicker">
+                                                </div>
+                                                <div class="input-field col l2">
+                                                    <span>Début pause</span>
+                                                    <input type="text" id="lundiPBH" class="input-customized timepicker">
+                                                </div>
+                                                <div class="input-field col l2">
+                                                    <span>Fin pause</span>
+                                                    <input type="text" id="lundiPEH" class="input-customized timepicker">
+                                                </div>
+                                            </div>
+                                            <div class="input-field col l2 quotaSectionLundi">
+                                                <span>Quota horraire</span>
+                                                <input type="number" id="lundiQuota" min="1" max="8" class="input-customized">
+                                            </div>
+                                        </div>
+
+                                        <!-- Formulaire pour mardi -->
+
+                                        <h5 class="permissionsSeparator whH5">Mardi</h5>
+                                        <div class="row">
+                                            <div class="collapseSectionMardi">
+                                                <div class="input-field col l3">
+                                                    <span>Début</span>
+                                                    <input type="text" id="mardiBH" class="input-customized timepicker">
+                                                </div>
+                                                <div class="input-field col l3">
+                                                    <span>Fin</span>
+                                                    <input type="text" id="mardiEH" class="input-customized timepicker">
+                                                </div>
+                                                <div class="input-field col l2">
+                                                    <span>Début pause</span>
+                                                    <input type="text" id="mardiPBH" class="input-customized timepicker">
+                                                </div>
+                                                <div class="input-field col l2">
+                                                    <span>Fin pause</span>
+                                                    <input type="text" id="mardiPEH" class="input-customized timepicker">
+                                                </div>
+                                            </div>
+                                            <div class="input-field col l2 quotaSectionMardi">
+                                                <span>Quota horraire</span>
+                                                <input type="number" id="mardiQuota" min="1" max="8" class="input-customized">
+                                            </div>
+                                        </div>
+
+                                        <!-- Formulaire pour mercredi -->
+
+                                        <h5 class="permissionsSeparator whH5">Mercredi</h5>
+                                        <div class="row">
+                                            <div class="collapseSectionMercredi">
+                                                <div class="input-field col l3">
+                                                    <span>Début</span>
+                                                    <input type="text" id="mercrediBH" class="input-customized timepicker">
+                                                </div>
+                                                <div class="input-field col l3">
+                                                    <span>Fin</span>
+                                                    <input type="text" id="mercrediEH" class="input-customized timepicker">
+                                                </div>
+                                                <div class="input-field col l2">
+                                                    <span>Début pause</span>
+                                                    <input type="text" id="mercrediPBH" class="input-customized timepicker">
+                                                </div>
+                                                <div class="input-field col l2">
+                                                    <span>Fin pause</span>
+                                                    <input type="text" id="mercrediPEH" class="input-customized timepicker">
+                                                </div>
+                                            </div>
+                                            <div class="input-field col s2 quotaSectionMercredi">
+                                                <span>Quota horraire</span>
+                                                <input type="number" id="mercrediQuota" min="1" max="8" class="input-customized">
+                                            </div>
+                                        </div>
+
+                                        <!-- Formulaire pour jeudi -->
+
+                                        <h5 class="permissionsSeparator whH5">Jeudi</h5>
+                                        <div class="row">
+                                            <div class="collapseSectionJeudi">
+                                                <div class="input-field col l3">
+                                                    <span>Début</span>
+                                                    <input type="text" id="jeudiBH" class="input-customized timepicker">
+                                                </div>
+                                                <div class="input-field col l3">
+                                                    <span>Fin</span>
+                                                    <input type="text" id="jeudiEH" class="input-customized timepicker">
+                                                </div>
+                                                <div class="input-field col l2">
+                                                    <span>Début pause</span>
+                                                    <input type="text" id="jeudiPBH" class="input-customized timepicker">
+                                                </div>
+                                                <div class="input-field col l2">
+                                                    <span>Fin pause</span>
+                                                    <input type="text" id="jeudiPEH" class="input-customized timepicker">
+                                                </div>
+                                            </div>
+                                            <div class="input-field col s2 quotaSectionJeudi">
+                                                <span>Quota horraire</span>
+                                                <input type="number" id="jeudiQuota" min="1" max="8" class="input-customized">
+                                            </div>
+                                        </div>
+
+                                        <!-- Formulaire pour Vendredi -->
+
+                                        <h5 class="permissionsSeparator whH5">Vendredi</h5>
+                                        <div class="row">
+                                            <div class="collapseSectionVendredi">
+                                                <div class="input-field col l3">
+                                                    <span>Début</span>
+                                                    <input type="text" id="vendrediBH" class="input-customized timepicker">
+                                                </div>
+                                                <div class="input-field col l3">
+                                                    <span>Fin</span>
+                                                    <input type="text" id="vendrediEH" class="input-customized timepicker">
+                                                </div>
+                                                <div class="input-field col l2">
+                                                    <span>Début pause</span>
+                                                    <input type="text" id="vendrediPBH" class="input-customized timepicker">
+                                                </div>
+                                                <div class="input-field col l2">
+                                                    <span>Fin pause</span>
+                                                    <input type="text" id="vendrediPEH" class="input-customized timepicker">
+                                                </div>
+                                            </div>
+                                            <div class="input-field col s2 quotaSectionVendredi">
+                                                <span>Quota horraire</span>
+                                                <input type="number" id="vendrediQuota" min="1" max="8" class="input-customized">
+                                            </div>
+                                        </div>
+
+                                        <!-- Formulaire pour Samedi -->
+
+                                        <h5 class="permissionsSeparator whH5">Samedi</h5>
+                                        <p style="margin-top: 0px">
+                                            <input type="checkbox" class="checkItSamedi" id="filled-in-box-samedi" />
+                                            <label for="filled-in-box-samedi">Présence non requise</label>
+                                        </p>
+                                        <div class="row maybeHiddenSamedi">
+                                            <div class="collapseSectionSamedi">
+                                                <div class="input-field col l3">
+                                                    <span>Début</span>
+                                                    <input type="text" id="samediBH" class="input-customized timepicker">
+                                                </div>
+                                                <div class="input-field col l3">
+                                                    <span>Fin</span>
+                                                    <input type="text" id="samediEH" class="input-customized timepicker">
+                                                </div>
+                                                <div class="input-field col l2">
+                                                    <span>Début pause</span>
+                                                    <input type="text" id="samediPBH" class="input-customized timepicker">
+                                                </div>
+                                                <div class="input-field col l2">
+                                                    <span>Fin pause</span>
+                                                    <input type="text" id="samediPEH" class="input-customized timepicker">
+                                                </div>
+                                            </div>
+                                            <div class="input-field col s2 quotaSectionSamedi">
+                                                <span>Quota horraire</span>
+                                                <input type="number" id="samediQuota" min="1" max="8" class="input-customized">
+                                            </div>
+                                        </div>
+
+                                        <!-- Formulaire pour Dimanche -->
+
+                                        <h5 class="permissionsSeparator whH5">Dimanche</h5>
+                                        <p style="margin-top: 0px">
+                                            <input type="checkbox" class="checkItDimanche" id="filled-in-box-dimanche" />
+                                            <label for="filled-in-box-dimanche">Présence non requise</label>
+                                        </p>
+                                        <div class="row maybeHiddenDimanche">
+                                            <div class="collapseSectionDimanche">
+                                                <div class="input-field col l3">
+                                                    <span>Début</span>
+                                                    <input type="text" id="dimancheBH" class="input-customized timepicker">
+                                                </div>
+                                                <div class="input-field col l3">
+                                                    <span>Fin</span>
+                                                    <input type="text" id="dimancheEH" class="input-customized timepicker">
+                                                </div>
+                                                <div class="input-field col l2">
+                                                    <span>Début pause</span>
+                                                    <input type="text" id="dimanchePBH" class="input-customized timepicker">
+                                                </div>
+                                                <div class="input-field col l2">
+                                                    <span>Fin pause</span>
+                                                    <input type="text" id="dimanchePEH" class="input-customized timepicker">
+                                                </div>
+                                            </div>
+                                            <div class="input-field col s2 quotaSectionDimanche">
+                                                <span>Quota horraire</span>
+                                                <input type="number" id="dimancheQuota" min="1" max="8" class="input-customized">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col l12">
+                                        <button id="btnSave">Enregistrer</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="collapsible-header active">Liste des heures de travail</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <div class="col l12">
+                                        <table class="bordered striped centered">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Nom de code</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                            {% for wh in whList %}
+                                                <tr>
+                                                    <td>{{ wh.id }}</td>
+                                                    <td>{{ wh.workingHour.code }}</td>
+                                                    {#<td>{% if wh.pauseBeginHour is not null %}{{ wh.pauseBeginHour | date("H:i") }}{% else %}{{ "-" }}{% endif %}</td>#}
+                                                    <td>
+                                                        <a href="{{ path("editWorkingHour",{'id':wh.id}) }}">
+                                                            <button class="simple-button-decoration blue"><span class="fa fa-pencil-alt white-text"></span></button>
+                                                        </a>
+                                                        <button data-target="modal-formulaire{{ wh.id }}" class="simple-button-decoration green lighten-2 machineDep modal-trigger" identify="{{ wh.id }}"><span class="fa fa-eye white-text"></span></button>
+                                                        <button class="simple-button-decoration red deleteWh" identify="{{ wh.id }}"><span class="fa fa-trash white-text"></span></button>
+                                                    </td>
+                                                </tr>
+                                                <div id="modal-formulaire{{ wh.id }}" class="modal modal-fixed-footer">
+                                                    <div class="modal-content">
+                                                        <h5>Détails de cette heure de travail</h5>
+                                                        <hr>
+                                                        <p>Détails supplémentaires</p>
+                                                        <div class="row">
+                                                            <div class="col s12">
+                                                                <ol>
+                                                                    <div class="row">
+                                                                        <div class="col l4">
+                                                                            <li>
+                                                                                Lundi
+                                                                                <ul>
+                                                                                    <li>Type : {{ wh.workingHour.lundi[0].type }}</li>
+                                                                                    {% if wh.workingHour.lundi[0].type == "2" %}
+                                                                                        <li>Quota horraire : {{ wh.workingHour.lundi[0].quota }}</li>
+                                                                                    {% endif %}
+                                                                                </ul>
+                                                                            </li>
+                                                                        </div>
+                                                                        <div class="col l4">
+                                                                            <li>
+                                                                                Mardi
+                                                                                <ul>
+                                                                                    <li>Type : {{ wh.workingHour.mardi[0].type }}</li>
+                                                                                    {% if wh.workingHour.mardi[0].type == "2" %}
+                                                                                        <li>Quota horraire : {{ wh.workingHour.mardi[0].quota }}</li>
+                                                                                    {% endif %}
+                                                                                </ul>
+                                                                            </li>
+                                                                        </div>
+                                                                        <div class="col l4">
+                                                                            <li>
+                                                                                Mercredi
+                                                                                <ul>
+                                                                                    <li>Type : {{ wh.workingHour.mercredi[0].type }}</li>
+                                                                                    {% if wh.workingHour.mercredi[0].type == "2" %}
+                                                                                        <li>Quota horraire : {{ wh.workingHour.mercredi[0].quota }}</li>
+                                                                                    {% endif %}
+                                                                                </ul>
+                                                                            </li>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col l4">
+                                                                            <li>
+                                                                                Jeudi
+                                                                                <ul>
+                                                                                    <li>Type : {{ wh.workingHour.jeudi[0].type }}</li>
+                                                                                    {% if wh.workingHour.jeudi[0].type == "2" %}
+                                                                                        <li>Quota horraire : {{ wh.workingHour.jeudi[0].quota }}</li>
+                                                                                    {% endif %}
+                                                                                </ul>
+                                                                            </li>
+                                                                        </div>
+                                                                        <div class="col l4">
+                                                                            <li>
+                                                                                Vendredi
+                                                                                <ul>
+                                                                                    <li>Type : {{ wh.workingHour.vendredi[0].type }}</li>
+                                                                                    {% if wh.workingHour.vendredi[0].type == "2" %}
+                                                                                        <li>Quota horraire : {{ wh.workingHour.vendredi[0].quota }}</li>
+                                                                                    {% endif %}
+                                                                                </ul>
+                                                                            </li>
+                                                                        </div>
+                                                                        <div class="col l4">
+                                                                            <li>
+                                                                                Samedi
+                                                                                <ul>
+                                                                                    <li>Type : {{ wh.workingHour.samedi[0].type }}</li>
+                                                                                    {% if wh.workingHour.samedi[0].type == "2" %}
+                                                                                        <li>Quota horraire : {{ wh.workingHour.samedi[0].quota }}</li>
+                                                                                    {% endif %}
+                                                                                </ul>
+                                                                            </li>
+                                                                        </div>
+                                                                        <div class="col l4">
+                                                                            <li>
+                                                                                Dimanche
+                                                                                <ul>
+                                                                                    <li>Type : {{ wh.workingHour.dimanche[0].type }}</li>
+                                                                                    {% if wh.workingHour.dimanche[0].type == "2" %}
+                                                                                        <li>Quota horraire : {{ wh.workingHour.dimanche[0].quota }}</li>
+                                                                                    {% endif %}
+                                                                                </ul>
+                                                                            </li>
+                                                                        </div>
+                                                                    </div>
+                                                                </ol>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function(){
+
+            function desactive(jour){
+                $('#'+jour+'PBH').val('');
+                $('#'+jour+'PEH').val('');
+                $('#'+jour+'PBH').attr('disabled','disabled');
+                $('#'+jour+'PBH').css('background-color','#ccc');
+                $('#'+jour+'PEH').attr('disabled','disabled');
+                $('#'+jour+'PEH').css('background-color','#ccc');
+            }
+            function desactiveTout(jour){
+                $('#'+jour+'BH').val('');
+                $('#'+jour+'EH').val('');
+                $('#'+jour+'BH').attr('disabled','disabled');
+                $('#'+jour+'BH').css('background-color','#ccc');
+                $('#'+jour+'EH').attr('disabled','disabled');
+                $('#'+jour+'EH').css('background-color','#ccc');
+                desactive(jour);
+
+            }
+            function reactive(jour){
+                $('#'+jour+'PBH').removeAttr('disabled');
+                $('#'+jour+'PBH').css('background-color','#fff');
+                $('#'+jour+'PEH').removeAttr('disabled');
+                $('#'+jour+'PEH').css('background-color','#fff');
+            }
+            function reactiveHeure(jour){
+                $('#'+jour+'BH').removeAttr('disabled');
+                $('#'+jour+'BH').css('background-color','#fff');
+                $('#'+jour+'EH').removeAttr('disabled');
+                $('#'+jour+'EH').css('background-color','#fff');
+            }
+
+            // Lundi
+            $('.quotaSectionLundi input').val('');
+            $('.quotaSectionLundi input').attr('disabled','disabled');
+            $('.quotaSectionLundi input').css('background-color','#ccc');
+            $('.quotaSectionMardi input').val('');
+            $('.quotaSectionMardi input').attr('disabled','disabled');
+            $('.quotaSectionMardi input').css('background-color','#ccc');
+            $('.quotaSectionMercredi input').val('');
+            $('.quotaSectionMercredi input').attr('disabled','disabled');
+            $('.quotaSectionMercredi input').css('background-color','#ccc');
+            $('.quotaSectionJeudi input').val('');
+            $('.quotaSectionJeudi input').attr('disabled','disabled');
+            $('.quotaSectionJeudi input').css('background-color','#ccc');
+            $('.quotaSectionVendredi input').val('');
+            $('.quotaSectionVendredi input').attr('disabled','disabled');
+            $('.quotaSectionVendredi input').css('background-color','#ccc');
+            $('.quotaSectionSamedi input').val('');
+            $('.quotaSectionSamedi input').attr('disabled','disabled');
+            $('.quotaSectionSamedi input').css('background-color','#ccc');
+            $('.quotaSectionDimanche input').val('');
+            $('.quotaSectionDimanche input').attr('disabled','disabled');
+            $('.quotaSectionDimanche input').css('background-color','#ccc');
+
+            $("#form_type_all").change(function(){
+                switch($('#form_type_all').val()){
+                    case "1":
+                        $('.quotaSectionLundi input').val('');
+                        $('.quotaSectionLundi input').attr('disabled','disabled');
+                        $('.quotaSectionLundi input').css('background-color','#ccc');
+                        $('.quotaSectionMardi input').val('');
+                        $('.quotaSectionMardi input').attr('disabled','disabled');
+                        $('.quotaSectionMardi input').css('background-color','#ccc');
+                        $('.quotaSectionMercredi input').val('');
+                        $('.quotaSectionMercredi input').attr('disabled','disabled');
+                        $('.quotaSectionMercredi input').css('background-color','#ccc');
+                        $('.quotaSectionJeudi input').val('');
+                        $('.quotaSectionJeudi input').attr('disabled','disabled');
+                        $('.quotaSectionJeudi input').css('background-color','#ccc');
+                        $('.quotaSectionVendredi input').val('');
+                        $('.quotaSectionVendredi input').attr('disabled','disabled');
+                        $('.quotaSectionVendredi input').css('background-color','#ccc');
+                        $('.quotaSectionSamedi input').val('');
+                        $('.quotaSectionSamedi input').attr('disabled','disabled');
+                        $('.quotaSectionSamedi input').css('background-color','#ccc');
+                        $('.quotaSectionDimanche input').val('');
+                        $('.quotaSectionDimanche input').attr('disabled','disabled');
+                        $('.quotaSectionDimanche input').css('background-color','#ccc');
+
+                        reactive("lundi");
+                        reactiveHeure("lundi");
+                        reactive("mardi");
+                        reactiveHeure("mardi");
+                        reactive("mercredi");
+                        reactiveHeure("mercredi");
+                        reactive("jeudi");
+                        reactiveHeure("jeudi");
+                        reactive("vendredi");
+                        reactiveHeure("vendredi");
+                        reactive("samedi");
+                        reactiveHeure("samedi");
+                        reactive("dimanche");
+                        reactiveHeure("dimanche");
+                        break;
+                    case "2":
+                        $('.quotaSectionLundi input').removeAttr('disabled');
+                        $('.quotaSectionLundi input').css('background-color','#fff');
+                        $('.quotaSectionMardi input').removeAttr('disabled');
+                        $('.quotaSectionMardi input').css('background-color','#fff');
+                        $('.quotaSectionMercredi input').removeAttr('disabled');
+                        $('.quotaSectionMercredi input').css('background-color','#fff');
+                        $('.quotaSectionJeudi input').removeAttr('disabled');
+                        $('.quotaSectionJeudi input').css('background-color','#fff');
+                        $('.quotaSectionVendredi input').removeAttr('disabled');
+                        $('.quotaSectionVendredi input').css('background-color','#fff');
+                        $('.quotaSectionSamedi input').removeAttr('disabled');
+                        $('.quotaSectionSamedi input').css('background-color','#fff');
+                        $('.quotaSectionDimanche input').removeAttr('disabled');
+                        $('.quotaSectionDimanche input').css('background-color','#fff');
+
+                        desactive("lundi");
+                        reactiveHeure("lundi");
+                        desactive("mardi");
+                        reactiveHeure("mardi");
+                        desactive("mercredi");
+                        reactiveHeure("mercredi");
+                        desactive("jeudi");
+                        reactiveHeure("jeudi");
+                        desactive("vendredi");
+                        reactiveHeure("vendredi");
+                        desactive("samedi");
+                        reactiveHeure("samedi");
+                        desactive("dimanche");
+                        reactiveHeure("dimanche");
+                        break;
+                    case "3":
+                        $('.quotaSectionLundi input').val('');
+                        $('.quotaSectionLundi input').attr('disabled','disabled');
+                        $('.quotaSectionLundi input').css('background-color','#ccc');
+                        $('.quotaSectionMardi input').val('');
+                        $('.quotaSectionMardi input').attr('disabled','disabled');
+                        $('.quotaSectionMardi input').css('background-color','#ccc');
+                        $('.quotaSectionMercredi input').val('');
+                        $('.quotaSectionMercredi input').attr('disabled','disabled');
+                        $('.quotaSectionMercredi input').css('background-color','#ccc');
+                        $('.quotaSectionJeudi input').val('');
+                        $('.quotaSectionJeudi input').attr('disabled','disabled');
+                        $('.quotaSectionJeudi input').css('background-color','#ccc');
+                        $('.quotaSectionVendredi input').val('');
+                        $('.quotaSectionVendredi input').attr('disabled','disabled');
+                        $('.quotaSectionVendredi input').css('background-color','#ccc');
+                        $('.quotaSectionSamedi input').val('');
+                        $('.quotaSectionSamedi input').attr('disabled','disabled');
+                        $('.quotaSectionSamedi input').css('background-color','#ccc');
+                        $('.quotaSectionDimanche input').val('');
+                        $('.quotaSectionDimanche input').attr('disabled','disabled');
+                        $('.quotaSectionDimanche input').css('background-color','#ccc');
+
+                        desactive("lundi");
+                        desactive("mardi");
+                        desactive("mercredi");
+                        desactive("jeudi");
+                        desactive("vendredi");
+                        desactive("samedi");
+                        desactive("dimanche");
+                        break;
+                    case "4":
+                        $('.quotaSectionLundi input').val('');
+                        $('.quotaSectionLundi input').attr('disabled','disabled');
+                        $('.quotaSectionLundi input').css('background-color','#ccc');
+                        $('.quotaSectionMardi input').val('');
+                        $('.quotaSectionMardi input').attr('disabled','disabled');
+                        $('.quotaSectionMardi input').css('background-color','#ccc');
+                        $('.quotaSectionMercredi input').val('');
+                        $('.quotaSectionMercredi input').attr('disabled','disabled');
+                        $('.quotaSectionMercredi input').css('background-color','#ccc');
+                        $('.quotaSectionJeudi input').val('');
+                        $('.quotaSectionJeudi input').attr('disabled','disabled');
+                        $('.quotaSectionJeudi input').css('background-color','#ccc');
+                        $('.quotaSectionVendredi input').val('');
+                        $('.quotaSectionVendredi input').attr('disabled','disabled');
+                        $('.quotaSectionVendredi input').css('background-color','#ccc');
+                        $('.quotaSectionSamedi input').val('');
+                        $('.quotaSectionSamedi input').attr('disabled','disabled');
+                        $('.quotaSectionSamedi input').css('background-color','#ccc');
+                        $('.quotaSectionDimanche input').val('');
+                        $('.quotaSectionDimanche input').attr('disabled','disabled');
+                        $('.quotaSectionDimanche input').css('background-color','#ccc');
+
+                        desactive("lundi");
+                        reactiveHeure("lundi");
+                        desactive("mardi");
+                        reactiveHeure("mardi");
+                        desactive("mercredi");
+                        reactiveHeure("mercredi");
+                        desactive("jeudi");
+                        reactiveHeure("jeudi");
+                        desactive("vendredi");
+                        reactiveHeure("vendredi");
+                        desactive("samedi");
+                        reactiveHeure("samedi");
+                        desactive("dimanche");
+                        reactiveHeure("dimanche");
+                        break;
+                }
+            });
+        });
+    </script>
+
+    <script>
+        var saturdayType = null;
+        var sundayType = null;
+        $(function(){
+            $(".checkItSamedi").change(function() {
+                if(this.checked) {
+                    saturdayType = "null";
+                    $('.maybeHiddenSamedi').hide();
+                    $('.quotaSectionSamedi input').val("");
+                }else{
+                    saturdayType = $('#form_type_all').val("");
+                    $('.maybeHiddenSamedi').show();
+                }
+            });
+
+            $(".checkItDimanche").change(function() {
+                if(this.checked) {
+                    sundayType = "null";
+                    $('.maybeHiddenDimanche').hide();
+                    $('.quotaSectionDianche input').val("");
+                }else{
+                    sundayType = $('#form_type_all').val("");
+                    $('.maybeHiddenDimanche').show();
+                }
+            });
+        });
+
+
+        $("#btnSave").click(function(){
+            var obj = {"code":$("#code").val(),"lundi":[{"type":$("#form_type_all").val(),"quota":$("#lundiQuota").val(),"beginHour":$("#lundiBH").val(),"pauseBeginHour":$("#lundiPBH").val(),"pauseEndHour":$("#lundiPEH").val(),"endHour":$("#lundiEH").val()}],"mardi":[{"type":$("#form_type_all").val(),"quota":$("#mardiQuota").val(),"beginHour":$("#mardiBH").val(),"pauseBeginHour":$("#mardiPBH").val(),"pauseEndHour":$("#mardiPEH").val(),"endHour":$("#mardiEH").val()}],"mercredi":[{"type":$("#form_type_all").val(),"quota":$("#mercrediQuota").val(),"beginHour":$("#mercrediBH").val(),"pauseBeginHour":$("#mercrediPBH").val(),"pauseEndHour":$("#mercrediPEH").val(),"endHour":$("#mercrediEH").val()}],"jeudi":[{"type":$("#form_type_all").val(),"quota":$("#jeudiQuota").val(),"beginHour":$("#jeudiBH").val(),"pauseBeginHour":$("#jeudiPBH").val(),"pauseEndHour":$("#jeudiPEH").val(),"endHour":$("#jeudiEH").val()}],"vendredi":[{"type":$("#form_type_all").val(),"quota":$("#vendrediQuota").val(),"beginHour":$("#vendrediBH").val(),"pauseBeginHour":$("#vendrediPBH").val(),"pauseEndHour":$("#vendrediPEH").val(),"endHour":$("#vendrediEH").val()}],"samedi":[{"type":saturdayType,"quota":$("#samediQuota").val(),"beginHour":$("#samediBH").val(),"pauseBeginHour":$("#samediPBH").val(),"pauseEndHour":$("#samediPEH").val(),"endHour":$("#samediEH").val()}],"dimanche":[{"type":sundayType,"quota":$("#dimancheQuota").val(),"beginHour":$("#dimancheBH").val(),"pauseBeginHour":$("#dimanchePBH").val(),"pauseEndHour":$("#dimanchePEH").val(),"endHour":$("#dimancheEH").val()}]};
+            var json_string = JSON.stringify(obj);
+            $.ajax({
+                type: 'POST',
+                url: 'persistWorkingHour',
+                data: { json_s:json_string,code:$("#code").val() },
+                timeout: 0,
+                success:
+                    function (data) {
+                        if(data==1){
+                            alert("Enregistrement effectué avec succès");
+                            window.location.href = "addWorkingHour";
+                        }else{
+                            alert("Erreur inconnue");
+                        }
+                    },
+                error:
+                    function () {
+                        alert('La requête n\'a pas abouti');
+                    }
+            });
+        });
+    </script>
+
+    <script>
+        $(function(){
+            $(".deleteWh").click(function(){
+                var rep = confirm("Etes-vous sur de vouloir supprimer cette heure de travail?");
+                var id = this.getAttribute('identify');
+                var path = "deleteWorkingHour/";
+                path += id;
+                if(rep==true){
+                    window.location.href = path;
+                }
+            });
+        });
+    </script>
+    <script>
+        // On s'attaque aux collapsibles
+        $(function () {
+            $(".cl_WH").addClass("collapsible_element_active");
+            $(".navigation_collapsible").collapsible('open',6);
+        });
+    </script>
+
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}

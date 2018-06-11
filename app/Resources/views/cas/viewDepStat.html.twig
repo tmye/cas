@@ -1,0 +1,309 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}C.A.S - Statistiques Département{% endblock %}
+
+{% block body %}
+
+    <!-- Modal for ajax loading -->
+    <div id="modal_loading" class="modal ajax_modals">
+        <div class="modal-content">
+            <p class="center">
+                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col l12">
+            <h5 class="page-title">Statistiques</h5>
+
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Choisissez les paramètres</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <form class="col l12">
+                                        <div class="row row-no-margin">
+                                            <div class="row row-no-margin" id="errorContainer">
+                                                <div class="col l12">
+                                                    <span class="red-text"></span>
+                                                </div>
+                                            </div>
+                                            <div class="row row-no-margin">
+                                                <div class="col l12">
+                                                    <p>Veuillez sélectionner les départements</p>
+                                                    <br>
+                                                    {% for dep in listDep %}
+                                                        <span class="checkboxes" tag="{{ dep.id }}" id="depSpan{{ dep.id }}" style="padding-right: 20px">
+                                                            <input type="checkbox" id="checkbox{{ dep.id }}" />
+                                                            <label for="checkbox{{ dep.id }}">{{ dep.name }}</label>
+                                                        </span>
+                                                    {% endfor %}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="row row-no-margin">
+                                                <div class="col l6">
+                                                    <span>Veuillez sélectionner la durée de votre choix</span>
+                                                    <br>
+                                                    <input type="text" id="fromDate" class="datepicker input-customized" placeholder="DU">
+                                                </div>
+                                                <span> - </span>
+                                                <div class="col l6">
+                                                    <input type="text" id="toDate" class="datepicker input-customized" placeholder="AU">
+                                                </div>
+                                            </div>
+                                            <div class="row row-no-margin">
+                                                <div class="col l6">
+                                                </div>
+                                                <div class="col l6">
+                                                    <span class="right" style="margin-top: 20px">
+                                                        <input type="button" id="submitButton" value="Valider" class="btn-perso-historique">
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col l6 appendCanvas">
+                    <canvas id="myChart"></canvas>
+                </div>
+                <div class="col l6 appendCanvas2">
+                    <canvas id="myChart2"></canvas>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col l6 appendCanvas3">
+                    <canvas id="myChart3"></canvas>
+                </div>
+                <div class="col l6 appendCanvas4">
+                    <canvas id="myChart4"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset("js/Chart.min.js") }}"></script>
+    <script>
+        var dateFrom = null;
+        var dateTo = null;
+        var checkA = [];
+        var checkB = [];
+        // Evenement à déclencher si on clique sur le boutton de soumission
+        $("#submitButton").click(function () {
+
+
+            // A chaque fois que le bouton est cliqué,on doit vider le tableau
+            checkB = [];
+            var dateFrom = $("#fromDate").val();
+            var dateTo = $("#toDate").val();
+            var elmnts = $(".checkboxes");
+            // On rempli le tableau des departements
+            for(var i=0;i<elmnts.length;i++){
+                var nodeElementId = elmnts[i].getAttribute("tag");
+                checkA.push(nodeElementId);
+            }
+            // On vérifie si au moins un des départements a été coché
+            var arLength = checkA.length;
+            var oneChecked = false;
+            var i=0;
+            while((oneChecked == false) && (i<arLength)){
+                var e = document.getElementById("checkbox"+checkA[i]);
+                if(e.checked == true){
+                    oneChecked = true;
+                }
+                i++;
+            }
+            // On reparcours le tableau pour voir quels sont les départements qui ont été cochés
+            for(var i=0;i<elmnts.length;i++){
+                var el = document.getElementById("checkbox"+checkA[i]);
+                if(el.checked == true){
+                    checkB.push(checkA[i]);
+                }
+            }
+            console.log("Tableau final : "+checkB);
+
+            // On fait un test pour afficher un message d'erreur
+            if (oneChecked){
+                if($("#depSelect").val()!=""){
+                    if($("#empSelect").val()!=""){
+                        if($("#fromDate").val()!=""){
+                            if($("#toDate").val()!=""){
+                                //alert("condition : "+(dateFrom == dateTo));
+                                if(dateFrom < dateTo || dateFrom == dateTo){
+                                    $('#modal_loading').modal('open');
+                                    $("#errorContainer").hide();
+                                    console.log(checkB);
+                                    console.log(dateFrom);
+                                    loadSelectedDepsData(checkB,dateFrom,dateTo);
+                                    // Opérations sur les données des diagrammes
+                                    // Affichage des diagrammes en fonction des données reçues
+
+                                }else {
+                                    $("#errorContainer").show();
+                                    $("#errorContainer div span").text("Erreur : La date de début ne peut pas etre superieur à la date de fin");
+                                    $("#containerMustBeHidden").attr("style","display:none");
+                                }
+                            }else {
+                                $("#errorContainer").show();
+                                $("#errorContainer div span").text("Erreur : veuillez choisir une date de fin valide");
+                                $("#containerMustBeHidden").attr("style","display:none");
+                            }
+                        }else{
+                            $("#errorContainer").show();
+                            $("#errorContainer div span").text("Erreur : veuillez choisir une date de début valide");
+                            $("#containerMustBeHidden").attr("style","display:none");
+                        }
+                    }else{
+                        $("#errorContainer").show();
+                        $("#errorContainer div span").text("Erreur : veuillez choisir un employé");
+                        $("#containerMustBeHidden").attr("style","display:none");
+                    }
+                }else{
+                    $("#errorContainer").show();
+                    $("#errorContainer div span").text("Erreur : veuillez choisir un département");
+                    $("#containerMustBeHidden").attr("style","display:none");
+                }
+            }else{
+                $("#errorContainer").show();
+                $("#errorContainer div span").text("Erreur : Veuillez sélectionner au moins un département");
+            }
+        });
+
+
+        /* Création de la fonction de chargement des données de l'employé sélectionné */
+        function loadSelectedDepsData(checkB,dateFrom,dateTo) {
+            var abs = 0;
+
+            // fonction d'ajout de date
+            Date.prototype.addDays = function(days) {
+                var dat = new Date(this.valueOf());
+                dat.setDate(dat.getDate() + days);
+                return dat;
+            }
+
+            // Intervalle de retard
+            var interval = 180*60; // 10800 3Heures
+            $.ajax({
+                type: 'POST',
+                url: "depStats",
+                data: {'deps':checkB,'dateFrom':dateFrom,'dateTo':dateTo,'interval':interval},
+                success: function (data) {
+                    elLength = Object.keys(data).length;
+                    var labels = [];
+                    var dataRetardTemps = [];
+                    var dataRetardArgent = [];
+                    var dataDepartTemps = [];
+                    var dataDepartArgent = [];
+                    for (var i=0;i<elLength;i++){
+                        labels.push(data[i]["departement"]);
+                        dataRetardTemps.push(data[i]["tpr"]);
+                        dataRetardArgent.push(data[i]["spr"]);
+                        dataDepartTemps.push(data[i]["tpd"]);
+                        dataDepartArgent.push(data[i]["spd"]);
+                    }
+                    console.log(data);
+                    console.log("Length of elements : "+data.length);
+                    console.log("Labels : "+labels);
+
+                    // Les diagrammes
+                    $("#myChart").remove();
+                    var element = "<canvas id='myChart'></canvas>";
+                    $(".appendCanvas").append(element);
+                    var ctx = document.getElementById('myChart').getContext('2d');
+                    var chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: "Statistiques des pertes retards estimés en temps",
+                                backgroundColor: 'rgb(255, 99, 132)',
+                                borderColor: 'rgb(255, 99, 132)',
+                                data: dataRetardTemps,
+                            }]
+                        },
+                    });
+
+                    $("#myChart2").remove();
+                    var element = "<canvas id='myChart2'></canvas>";
+                    $(".appendCanvas2").append(element);
+                    var ctx = document.getElementById('myChart2').getContext('2d');
+                    var chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: "Statistiques des pertes retards estimés en argent",
+                                backgroundColor: 'rgb(255, 99, 132)',
+                                borderColor: 'rgb(255, 99, 132)',
+                                data: dataRetardArgent,
+                            }]
+                        },
+                    });
+
+                    $("#myChart3").remove();
+                    var element = "<canvas id='myChart3'></canvas>";
+                    $(".appendCanvas3").append(element);
+                    var ctx = document.getElementById('myChart3').getContext('2d');
+                    var chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: "Statistiques des pertes départs estimés en temps",
+                                backgroundColor: 'skyblue',
+                                borderColor: 'skyblue',
+                                data: dataDepartTemps,
+                            }]
+                        },
+                    });
+
+                    $("#myChart4").remove();
+                    var element = "<canvas id='myChart4'></canvas>";
+                    $(".appendCanvas4").append(element);
+                    var ctx = document.getElementById('myChart4').getContext('2d');
+                    var chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: "Statistiques des pertes départs estimés en argent",
+                                backgroundColor: 'skyblue',
+                                borderColor: 'skyblue',
+                                data: dataDepartArgent,
+                            }]
+                        },
+                    });
+
+                    // Closing the loading box
+                    $('#modal_loading').modal('close');
+                },
+                error: function (msg) {
+                    // Closing the loading box
+                    $('#modal_loading').modal('close');
+                    alert("Erreur :"+msg);
+                }
+            });
+        }
+    </script>
+    <script>
+        // On s'attaque aux collapsibles
+        $(function () {
+            $(".cl_DepStats").addClass("collapsible_element_active");
+            $(".navigation_collapsible").collapsible('open',2);
+        });
+    </script>
+{% endblock %}
