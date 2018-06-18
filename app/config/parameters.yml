@@ -5,6 +5,13 @@ parameters:
     database_name: symfony
     database_user: root
     database_password: root
+
+    second_database_host: 127.0.0.1
+    second_database_port: 3306
+    second_database_name: symfony_2
+    second_database_user: root
+    second_database_password: root
+
     mailer_transport: smtp
     mailer_host: 127.0.0.1
     mailer_user: null
@@ -16,4 +23,3 @@ parameters:
     fingerprints: fingerprints
     default_password: 555
     web_dir: "%kernel.root_dir%/../web"
-    modif: "modified"
