@@ -11,6 +11,7 @@ parameters:
     second_database_name: symfony_2
     second_database_user: root
     second_database_password: root
+    perso_dbname:   qjhyg
 
     mailer_transport: smtp
     mailer_host: 127.0.0.1

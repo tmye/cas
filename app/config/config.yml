@@ -1,4 +1,5 @@
 imports:
+    - { resource: perso.yml }
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: services.yml }
@@ -48,17 +49,9 @@ doctrine:
           driver:   pdo_mysql
           host:     "%database_host%"
           port:     "%database_port%"
-          dbname:   "%database_name%"
+          dbname:   "%perso_dbname%"
           user:     "%database_user%"
           password: "%database_password%"
-          charset:  UTF8
-        forum:
-          driver:   pdo_mysql
-          host:     "%second_database_host%"
-          port:     "%second_database_port%"
-          dbname:   "%second_database_name%"
-          user:     "%second_database_user%"
-          password: "%second_database_password%"
           charset:  UTF8
         # if using pdo_sqlite as your database driver:
         #   1. add the path in parameters.yml

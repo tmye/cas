@@ -1,0 +1,11 @@
+doctrine:
+    dbal:
+      default_connection: forum # précise la connexion utilisée par défaut
+      connections:
+        forum:
+            driver:   pdo_mysql
+            host:     "%second_database_host%"
+            port:     "%second_database_port%"
+            user:     "%second_database_user%"
+            password: "%second_database_password%"
+            charset:  UTF8
