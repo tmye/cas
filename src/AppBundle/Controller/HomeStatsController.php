@@ -135,6 +135,8 @@ class HomeStatsController extends Controller
                 $pauseBeginHourExploded = explode(":",$heureDebutNormalPause);
                 $pauseEndHourExploded = explode(":",$heureFinNormalPause);
 
+                $interval = ($emp->getWorkingHour()->getTolerance())*60;
+
 
                 if(sizeof($pauseBeginHourExploded)>1){
                     $pauseBeginHourInMinutes = (((int)$pauseBeginHourExploded[0])*60)+((int)$pauseBeginHourExploded[1]);
@@ -152,14 +154,14 @@ class HomeStatsController extends Controller
                 if(sizeof($beginHourExploded)>1){
                     $beginHourInMinutes = (((int)$beginHourExploded[0])*60)+((int)$beginHourExploded[1]);
                     $endHourInMinutes = (((int)$endHourExploded[0])*60)+((int)$endHourExploded[1]);
-                    $heureNormaleArrive = $beginHourInMinutes*60;
-                    $heureNormaleDepart = $endHourInMinutes*60;
                 }else{
                     $heureNormaleArrive = 0;
                     $heureNormaleDepart = 0;
                 }
+                $heureNormaleArrive = $beginHourInMinutes*60;
+                $heureNormaleDepart = $endHourInMinutes*60;
 
-                if(!$cr->present($emp,$nowTime)){
+                if(!$cr->present($emp,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
                     $absences++;
                 }
 
