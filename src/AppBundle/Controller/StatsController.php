@@ -477,7 +477,7 @@ class StatsController extends ClockinReccordController
                 if(!$cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
                     $permDate = date('Y-m-d',$nowTime);
                     if(!$pR->enPermission($employe,$permDate,"23:59","08:00")) {
-                        if ($nD->dayIsNull($permDate)) {
+                        if (!$nD->dayIsNull($permDate)) {
                             $nowDate = date('d/m/Y',$nowTime);
                             $absences++;
                             $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
