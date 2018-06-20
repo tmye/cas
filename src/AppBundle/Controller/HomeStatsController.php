@@ -122,6 +122,7 @@ class HomeStatsController extends Controller
                 $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
                 $type = $empWH[$theDay][0]["type"];
                 $name = $emp->getSurname()." ".$emp->getLastName();
+                $picture = $emp->getPicture();
                 $dep = $emp->getDepartement()->getName();
 
                 // Pour le calcul d'un depart prématuré de pause,Calculons l'intervalle
@@ -175,9 +176,9 @@ class HomeStatsController extends Controller
                         if ($this->exist($tabClassementRetard, $emp->getId())) {
                             $lastNumber = $tabClassementRetard[$emp->getId()]["nombre"];
                             $lastCumul = $tabClassementRetard[$emp->getId()]["cumul"];
-                            $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusRetards);
+                            $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusRetards,"picture"=>$picture);
                         } else {
-                            $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusRetards);
+                            $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusRetards,"picture"=>$picture);
                         }
                     }
                     $retardPauseDiff = $cr->retardPause($emp,$nowTime,$interval_pause,$heureNormaleArrivePause);
@@ -189,9 +190,9 @@ class HomeStatsController extends Controller
                         if ($this->exist($tabClassementRetard, $emp->getId())) {
                             $lastNumber = $tabClassementRetard[$emp->getId()]["nombre"];
                             $lastCumul = $tabClassementRetard[$emp->getId()]["cumul"];
-                            $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusRetards);
+                            $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusRetards,"picture"=>$picture);
                         } else {
-                            $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusRetards);
+                            $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusRetards,"picture"=>$picture);
                         }
                     }
                     $departDiff = $cr->departPremature($emp, $nowTime, $interval,$heureNormaleDepart);
@@ -204,9 +205,9 @@ class HomeStatsController extends Controller
                         if ($this->exist($tabClassementDepart, $emp->getId())) {
                             $lastNumber = $tabClassementDepart[$emp->getId()]["nombre"];
                             $lastCumul = $tabClassementDepart[$emp->getId()]["cumul"];
-                            $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusDeparts);
+                            $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusDeparts,"picture"=>$picture);
                         } else {
-                            $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusDeparts);
+                            $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusDeparts,"picture"=>$picture);
                         }
                     }
                     $departPauseDiff = $cr->departPausePremature($emp, $nowTime, $interval_pause,$heureNormaleDepartPause);
@@ -221,9 +222,9 @@ class HomeStatsController extends Controller
                         if ($this->exist($tabClassementDepart, $emp->getId())) {
                             $lastNumber = $tabClassementDepart[$emp->getId()]["nombre"];
                             $lastCumul = $tabClassementDepart[$emp->getId()]["cumul"];
-                            $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusDeparts);
+                            $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusDeparts,"picture"=>$picture);
                         } else {
-                            $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusDeparts);
+                            $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusDeparts,"picture"=>$picture);
                         }
                     }
                 }
