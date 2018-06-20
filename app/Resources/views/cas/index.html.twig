@@ -75,6 +75,16 @@
 
 {% block javascripts %}
     <script>
+        function convertInHour(minutes) {
+            if(minutes>=60){
+                var hours = Math.trunc(minutes/60);
+                var min = minutes-(hours*60);
+                return hours+"H "+min;
+            }else{
+                return minutes;
+            }
+        }
+
         function precisionRound(number, precision) {
             var factor = Math.pow(10, precision);
             return Math.round(number * factor) / factor;
@@ -104,11 +114,11 @@
                 // First of all we must convert the json object to an array
                 var tabR = [];
                 $.each(data.classementRetard,function (arrayID) {
-                    tabR.push([data.classementRetard[arrayID]["name"],data.classementRetard[arrayID]["cumul"],data.classementRetard[arrayID]["dep"]]);
+                    tabR.push([data.classementRetard[arrayID]["name"],data.classementRetard[arrayID]["cumul"],data.classementRetard[arrayID]["dep"],data.classementRetard[arrayID]["picture"]]);
                 });
                 var tabD = [];
                 $.each(data.classementDepart,function (arrayID) {
-                    tabD.push([data.classementDepart[arrayID]["name"],data.classementDepart[arrayID]["cumul"],data.classementDepart[arrayID]["dep"]]);
+                    tabD.push([data.classementDepart[arrayID]["name"],data.classementDepart[arrayID]["cumul"],data.classementDepart[arrayID]["dep"],data.classementDepart[arrayID]["picture"]]);
                 });
 
                 // Sorting the data to obtain just three entries
@@ -143,30 +153,42 @@
 
                 if(tabR.length >= 3){
                     for (var i=0;i<3;i++){
+                        var image = null;
+                        if(tabR[i][3]==null || tabR[1][3]=="null"){
+                            image = "{{ asset('img/avatar.jpg') }}";
+                        }else{
+                            image = "user_profile_pictures/"+tabR[i][3];
+                        }
                         $(".info_container_retards").append("" +
-                            "<div class='valignwrapper' style='padding-bottom: 30px'>\n" +
-                            "    <i class='fa fa-user top'></i>\n" +
+                            "<div class='card' style='padding: 20px'>\n" +
+                            "    <img src='"+image+"' class='circle'/>\n" +
                             "    <span class='top user-info-home'>\n" +
-                            "        <span>"+tabR[i][0]+"</span>\n" +
+                            "        <span class='grey-text text-darken-2'><b>"+tabR[i][0]+"</b></span>\n" +
                             "        <br>\n" +
-                            "        <span>"+precisionRound(tabR[i][1],0)+"</span> min\n" +
+                            "        <span>"+convertInHour(precisionRound(tabR[i][1],0))+"</span> min\n" +
                             "        <br>\n" +
-                            "        <span>"+tabR[i][2]+"</span>\n" +
+                            "        <span><b>"+tabR[i][2]+"</b></span>\n" +
                             "    </span>\n" +
                             "</div>"
                         );
                     }
                 }else {
                     $.each(tabR,function (arrayID) {
+                        var image = null;
+                        if(tabR[arrayID][3]==null || tabR[arrayID][3]=="null"){
+                            image = "{{ asset('img/avatar.jpg') }}";
+                        }else{
+                            image = "user_profile_pictures/"+tabR[arrayID][3];
+                        }
                         $(".info_container_retards").append("" +
-                            "<div class='valignwrapper' style='padding-bottom: 30px'>\n" +
-                            "    <i class='fa fa-user top'></i>\n" +
+                            "<div class='card' style='padding: 20px'>\n" +
+                            "    <img src='"+image+"' class='circle' width='50' height='50'/>\n" +
                             "    <span class='top user-info-home'>\n" +
-                            "        <span>"+tabR[arrayID][0]+"</span>\n" +
+                            "        <span class='grey-text text-darken-2'><b>"+tabR[arrayID][0]+"</b></span>\n" +
                             "        <br>\n" +
-                            "        <span>"+precisionRound(tabR[arrayID][1],0)+"</span> min\n" +
+                            "        <span>"+convertInHour(precisionRound(tabR[arrayID][1],0))+"</span> min\n" +
                             "        <br>\n" +
-                            "        <span>"+tabR[arrayID][2]+"</span>\n" +
+                            "        <span><b>"+tabR[arrayID][2]+"</b></span>\n" +
                             "    </span>\n" +
                             "</div>"
                         );
@@ -177,30 +199,42 @@
 
                 if(tabD >= 3){
                     for (var i=0;i<3;i++){
+                        var image = null;
+                        if(tabD[i][3]==null || tabD[1][3]=="null"){
+                            image = "{{ asset('img/avatar.jpg') }}";
+                        }else{
+                            image = "user_profile_pictures/"+tabD[i][3];
+                        }
                         $(".info_container_departs").append("" +
-                            "<div class='valignwrapper' style='padding-bottom: 30px'>\n" +
-                            "    <i class='fa fa-user top'></i>\n" +
+                            "<div class='card' style='padding: 20px'>\n" +
+                            "    <img src='"+image+"' class='circle'/>\n" +
                             "    <span class='top user-info-home'>\n" +
-                            "        <span>"+tabD[i][0]+"</span>\n" +
+                            "        <span class='grey-text text-darken-2'><b>"+tabD[i][0]+"</b></span>\n" +
                             "        <br>\n" +
-                            "        <span>"+precisionRound(tabD[i][1],0)+"</span> min\n" +
+                            "        <span>"+convertInHour(precisionRound(tabD[i][1],0))+"</span> min\n" +
                             "        <br>\n" +
-                            "        <span>"+tabD[i][2]+"</span>\n" +
+                            "        <span><b>"+tabD[i][2]+"</b></span>\n" +
                             "    </span>\n" +
                             "</div>"
                         );
                     }
                 }else {
                     $.each(tabD,function (arrayID) {
+                        var image = null;
+                        if(tabD[arrayID][3]==null || tabD[arrayID][3]=="null"){
+                            image = "{{ asset('img/avatar.jpg') }}";
+                        }else{
+                            image = "user_profile_pictures/"+tabD[arrayID][3];
+                        }
                         $(".info_container_departs").append("" +
-                            "<div class='valignwrapper' style='padding-bottom: 30px'>\n" +
-                            "    <i class='fa fa-user top'></i>\n" +
+                            "<div class='card' style='padding: 20px'>\n" +
+                            "    <img src='"+image+"' class='circle' width='50' height='50'/>\n" +
                             "    <span class='top user-info-home'>\n" +
-                            "        <span>"+tabD[arrayID][0]+"</span>\n" +
+                            "        <span class='grey-text text-darken-2'><b>"+tabD[arrayID][0]+"</b></span>\n" +
                             "        <br>\n" +
-                            "        <span>"+precisionRound(tabD[arrayID][1],0)+"</span> min\n" +
+                            "        <span>"+convertInHour(precisionRound(tabD[arrayID][1],0))+"</span> min\n" +
                             "        <br>\n" +
-                            "        <span>"+tabD[arrayID][2]+"</span>\n" +
+                            "        <span><b>"+tabD[arrayID][2]+"</b></span>\n" +
                             "    </span>\n" +
                             "</div>");
                         console.log("Index : "+arrayID);
