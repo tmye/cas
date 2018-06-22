@@ -1,9 +1,10 @@
 <?php
 
-namespace AppBundle\Entity;
+namespace MultipleConnectionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Admin
@@ -13,6 +14,15 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class Admin implements UserInterface
 {
+    /**
+     * @ORM\ManyToOne(targetEntity="MultipleConnectionBundle\Entity\CompanyConfig")
+     * @ORM\JoinColumn(nullable=false)
+     * @Assert\Valid()
+     */
+
+    private $company;
+
+
     /**
      * @var int
      *
@@ -78,6 +88,13 @@ class Admin implements UserInterface
      */
     private $roles;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="society", type="string", length=255, unique=false)
+     */
+    private $society;
+
 
     // Getters ad setters
 
@@ -91,7 +108,7 @@ class Admin implements UserInterface
      *
      * @param string $salt
      *
-     * @return Employe
+     * @return Admin
      */
     public function setSalt($salt)
     {
@@ -286,5 +303,29 @@ class Admin implements UserInterface
     public function getAddress()
     {
         return $this->address;
+    }
+
+    /**
+     * Set society
+     *
+     * @param string $society
+     *
+     * @return Admin
+     */
+    public function setSociety($society)
+    {
+        $this->society = $society;
+
+        return $this;
+    }
+
+    /**
+     * Get society
+     *
+     * @return string
+     */
+    public function getSociety()
+    {
+        return $this->society;
     }
 }

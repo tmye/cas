@@ -1,8 +1,8 @@
 imports:
-    - { resource: perso.yml }
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: services.yml }
+    - { resource: "@MultipleConnectionBundle/Resources/config/services.yml" }
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
@@ -40,18 +40,34 @@ twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
 
+# Swiftmailer Configuration
+swiftmailer:
+    transport: "%mailer_transport%"
+    host:      "%mailer_host%"
+    username:  "%mailer_user%"
+    password:  "%mailer_password%"
+    spool:     { type: memory }
+
 # Doctrine Configuration
 doctrine:
     dbal:
-      default_connection: forum # précise la connexion utilisée par défaut
+      default_connection: cas # précise la connexion utilisée par défaut
       connections:
-        site:
+        cas:
           driver:   pdo_mysql
           host:     "%database_host%"
           port:     "%database_port%"
-          dbname:   "%perso_dbname%"
+          dbname:   "%database_name%"
           user:     "%database_user%"
           password: "%database_password%"
+          charset:  UTF8
+        test:
+          driver:   pdo_mysql
+          host:     "%second_database_host%"
+          port:     "%second_database_port%"
+          dbname:   "%second_database_name%"
+          user:     "%second_database_user%"
+          password: "%second_database_password%"
           charset:  UTF8
         # if using pdo_sqlite as your database driver:
         #   1. add the path in parameters.yml
@@ -62,25 +78,17 @@ doctrine:
 
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
-        default_entity_manager: site # précise l'em utilisé par défaut (lors de l'utilisation de la ligne de commande par exemple)
+        default_entity_manager: cas # précise l'em utilisé par défaut (lors de l'utilisation de la ligne de commande par exemple)
         entity_managers:
-          site:
-            connection: site
+          cas:
+            connection: cas
+            mappings:
+              MultipleConnectionBundle: ~
+              AppBundle : ~
+              UserBundle: ~
+          test:
+            connection: test
             mappings:
               AppBundle : ~
               TmyeDeviceBundle : ~
               UserBundle: ~
-          forum:
-            connection: forum
-            mappings:
-              AppBundle : ~
-              TmyeDeviceBundle : ~
-              UserBundle: ~
-
-# Swiftmailer Configuration
-swiftmailer:
-    transport: "%mailer_transport%"
-    host:      "%mailer_host%"
-    username:  "%mailer_user%"
-    password:  "%mailer_password%"
-    spool:     { type: memory }

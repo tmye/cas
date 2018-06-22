@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Entity;
+namespace MultipleConnectionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * CompanyConfig
  *
  * @ORM\Table(name="company_config")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\CompanyConfigRepository")
+ * @ORM\Entity(repositoryClass="MultipleConnectionBundle\Repository\CompanyConfigRepository")
  */
 class CompanyConfig
 {
@@ -24,21 +24,21 @@ class CompanyConfig
     /**
      * @var string
      *
-     * @ORM\Column(name="company_name", type="string", length=255, nullable=true)
+     * @ORM\Column(name="companyName", type="string", length=255, unique=true)
      */
     private $companyName;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="company_logo", type="string", length=255, nullable=true)
+     * @ORM\Column(name="companyLogo", type="string", length=255)
      */
     private $companyLogo;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="expiration_date", type="string", length=255, nullable=true)
+     * @ORM\Column(name="expirationDate", type="string", length=255)
      */
     private $expirationDate;
 

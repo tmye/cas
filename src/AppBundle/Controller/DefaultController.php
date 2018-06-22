@@ -2,20 +2,21 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Admin;
 use AppBundle\fpdf181\fpdf;
-use AppBundle\Entity\CompanyConfig;
 use AppBundle\Entity\Departement;
 use AppBundle\Entity\Employe;
 use AppBundle\Entity\Expiration;
 use AppBundle\Entity\WorkingHours;
 use AppBundle\fpdf181\tablepdf;
+use MultipleConnectionBundle\Entity\Admin;
+use MultipleConnectionBundle\Entity\CompanyConfig;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use TmyeDeviceBundle\Entity\DevicePubPic;
 use TmyeDeviceBundle\Entity\UpdateEntity;
 
@@ -59,10 +60,18 @@ class DefaultController extends StatsController
             echo "<br>".$perm->getDescription()."<br>";
         }*/
 
+        /*$fichier = new \SplFileObject($this->getParameter("conf_dir")."/config.yml","r+");
+        $fichier->seek(54);
+        $fichier->flock(LOCK_EX);
+        $fichier->fwrite("a1\na2\na3\na4\n");
+        */
+
         //return new Response(date("Y-m-d H:i:s",1537163970));
         //return new Response(date("Y-m-d H:i:s",(new \DateTime())->getTimestamp()));
-        return new Response(strtotime("2018-05-21 17:15"));
+        //return new Response(strtotime("2018-05-21 17:15"));
         //return new Response($this->formatInt(12253008000000));
+        return new Response(sha1("5555"));
+        return new Response("OK");
     }
 
     /**
@@ -78,7 +87,7 @@ class DefaultController extends StatsController
      */
     public function initializeApplicationAction(Request $request)
     {
-        $admins = $this->getDoctrine()->getManager()->getRepository("AppBundle:Admin");
+        $admins = $this->getDoctrine()->getManager('cas')->getRepository("MultipleConnectionBundle:Admin");
 
         // Searching for already used username
         $i = 0;
@@ -94,42 +103,55 @@ class DefaultController extends StatsController
 
         if($found == false){
             $cc = new CompanyConfig();
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->getDoctrine()->getManager('cas');
             if(isset($_FILES["image"]["name"]) && !empty($_FILES["image"]["name"])){
-                $resultat = move_uploaded_file($_FILES['image']['tmp_name'],"company_images/".basename($_FILES["image"]["name"]));
-                $cc->setCompanyName($request->request->get("compName"));
-                $cc->setCompanyLogo($_FILES["image"]["name"]);
-                $em->persist($cc);
-                $em->flush();
+                $message = \Swift_Message::newInstance()
+                    ->setSubject('Hello Email')
+                    ->setFrom('exemple@example.com')
+                    ->setTo('nikaboue10@gmail.com')
+                    ->setBody($this->renderView('cas/mail.html.twig'), 'text/html');
 
-                $session = new Session();
-                $session->set("companyLogo",$_FILES['image']['name']);
-                $session->set("companyName",$request->request->get("name"));
-                // We are done with the companyConfiguration.Now we must persist an Admin
-                $e = new Admin();
-                $e->setName($request->request->get("adminName"));
-                $e->setSurname($request->request->get("adminSurname"));
-                $e->setUsername($request->request->get("adminUsername"));
-                $e->setPassword(md5($request->request->get("adminPassword")));
-                $e->setRoles(array("ROLE_SUPER_ADMIN"));
-                $e->setAddress($request->request->get("adminAdress"));
-                $e->setPhonenumber($request->request->get("adminPhoneNumber"));
+                $sending_status = $this->get('mailer')->send($message);
+                if($sending_status>0){
+                    $resultat = move_uploaded_file($_FILES['image']['tmp_name'],"company_images/".basename($_FILES["image"]["name"]));
+                    $cc->setCompanyName(strtolower($request->request->get("compName")));
+                    $cc->setCompanyLogo($_FILES["image"]["name"]);
+                    $em->persist($cc);
+                    $em->flush();
 
-                // We continue with the rest of the admin (Employee) properties
+                    $session = new Session();
+                    $session->set("companyLogo",$_FILES['image']['name']);
+                    $session->set("companyName",$request->request->get("name"));
+                    // We are done with the companyConfiguration.Now we must persist an Admin
+                    $e = new Admin();
+                    $e->setName($request->request->get("adminName"));
+                    $e->setSurname($request->request->get("adminSurname"));
+                    $e->setUsername($request->request->get("adminUsername"));
+                    $e->setPassword(md5($request->request->get("adminPassword")));
+                    $e->setRoles(array("ROLE_SUPER_ADMIN"));
+                    $e->setAddress($request->request->get("adminAdress"));
+                    $e->setPhonenumber($request->request->get("adminPhoneNumber"));
+                    $e->setSociety(strtolower($request->request->get("compName")));
+                    $e->setCompany($cc);
 
-                $em->persist($e);
-                $em->flush();
+                    // We continue with the rest of the admin (Employee) properties
 
-                // After persistance operation, we must edit initialization file
+                    $em->persist($e);
+                    $em->flush();
 
-                $file = fopen($this->getParameter("web_dir")."/first_time",'r+');
-                fseek($file,0);
-                fputs($file,sha1("initialized"));
-                fclose($file);
+                    // After persistance operation, we must edit initialization file
 
-                // Now that all operations are achieved, we can return a response
+                    $file = fopen($this->getParameter("web_dir")."/first_time",'r+');
+                    fseek($file,0);
+                    fputs($file,sha1("initialized"));
+                    fclose($file);
 
-                return new Response(1);
+                    // Now that all operations are achieved, we can return a response
+
+                    return new Response(1);
+                }else{
+                    throw new HttpException("Erreur d'envoi du mail");
+                }
             }else{
                 return new Response("Erreur avec la soumission du logo");
             }

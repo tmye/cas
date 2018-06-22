@@ -1,0 +1,4 @@
+services:
+#    multiple_connection.example:
+#        class: MultipleConnectionBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]

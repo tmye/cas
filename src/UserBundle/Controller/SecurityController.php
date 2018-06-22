@@ -24,7 +24,7 @@ class SecurityController extends Controller
         if(sha1("initialized") == $valeur){
             // Is not the first time
             $session = new Session();
-            $cc = $this->getDoctrine()->getManager()->getRepository("AppBundle:CompanyConfig")->findAll();
+            $cc = $this->getDoctrine()->getManager('cas')->getRepository("MultipleConnectionBundle:CompanyConfig")->findAll();
             if(($cc != null) && (!empty($cc))){
                 $cc = $cc[0];
                 $compName = $cc->getCompanyName();

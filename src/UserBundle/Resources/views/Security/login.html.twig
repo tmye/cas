@@ -15,13 +15,6 @@
             {% endif %}
             <form action="{{ path("login_check") }}" method="post" class="login_container">
                 <p class="center">Bienvenue sur C.A.S.Veuillez-vous authentifier pour continuer</p>
-
-                <label for="username">Société</label>
-                <select class="browser-default input-customized-login" style="width: 100%">
-                    <option value="site">Site</option>
-                    <option value="forum">Forum</option>
-                </select>
-
                 <br>
                 <br>
 
@@ -43,6 +36,12 @@
                 <br>
                 <br>
                 <input type="submit" id="_submit" name="_submit" value="Se connecter" class="btn-perso-historique green white-text" style="width: 100%"/>
+
+                <br>
+                <br>
+                <a href="{{ path('firstTimeInitialization') }}">
+                    <input type="button" value="Nouvelle société" class="btn-perso-historique blue white-text" style="width: 100%"/>
+                </a>
             </form>
             <p class="center" style="color: #0366d6;font-size: 13px">&copy; Copyrights 2018 C.A.S.Tous droits réservés</p>
         </div>

@@ -1,18 +1,28 @@
 <?php
 
-namespace AppBundle\Entity;
+namespace MultipleConnectionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Admin
  *
  * @ORM\Table(name="admin")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\AdminRepository")
+ * @ORM\Entity(repositoryClass="MultipleConnectionBundle\Repository\AdminRepository")
  */
 class Admin implements UserInterface
 {
+    /**
+     * @ORM\ManyToOne(targetEntity="MultipleConnectionBundle\Entity\CompanyConfig")
+     * @ORM\JoinColumn(nullable=false)
+     * @Assert\Valid()
+     */
+
+    private $company;
+
+
     /**
      * @var int
      *
@@ -98,7 +108,7 @@ class Admin implements UserInterface
      *
      * @param string $salt
      *
-     * @return Employe
+     * @return Admin
      */
     public function setSalt($salt)
     {
@@ -293,5 +303,53 @@ class Admin implements UserInterface
     public function getAddress()
     {
         return $this->address;
+    }
+
+    /**
+     * Set society
+     *
+     * @param string $society
+     *
+     * @return Admin
+     */
+    public function setSociety($society)
+    {
+        $this->society = $society;
+
+        return $this;
+    }
+
+    /**
+     * Get society
+     *
+     * @return string
+     */
+    public function getSociety()
+    {
+        return $this->society;
+    }
+
+    /**
+     * Set company
+     *
+     * @param \MultipleConnectionBundle\Entity\CompanyConfig $company
+     *
+     * @return Admin
+     */
+    public function setCompany(\MultipleConnectionBundle\Entity\CompanyConfig $company)
+    {
+        $this->company = $company;
+
+        return $this;
+    }
+
+    /**
+     * Get company
+     *
+     * @return \MultipleConnectionBundle\Entity\CompanyConfig
+     */
+    public function getCompany()
+    {
+        return $this->company;
     }
 }
