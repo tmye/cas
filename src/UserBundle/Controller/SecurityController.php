@@ -16,39 +16,28 @@ class SecurityController extends Controller
 {
     public function loginAction(){
 
-        // Trying to read the file content
-
-        $file = fopen($this->getParameter("web_dir")."/first_time",'r+');
-        $valeur = fgets($file);
-        // Testing the value returned
-        if(sha1("initialized") == $valeur){
-            // Is not the first time
-            $session = new Session();
-            $cc = $this->getDoctrine()->getManager('cas')->getRepository("MultipleConnectionBundle:CompanyConfig")->findAll();
-            if(($cc != null) && (!empty($cc))){
-                $cc = $cc[0];
-                $compName = $cc->getCompanyName();
-                $compLogo = $cc->getCompanyLogo();
-                $compExpiration = $cc->getExpirationDate();
-                $session->set("companyName",$compName);
-                $session->set("companyLogo",$compLogo);
-                $session->set("expiryDate",$compExpiration);
-            }else{
-                $cc = null;
-                $session->set("companyName",null);
-                $session->set("companyLogo",null);
-                return $this->redirectToRoute("changeSocietyName");
-            }
-
-            if($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED')){
-                return $this->redirectToRoute("homepage");
-            }
+        // Is not the first time
+        $session = new Session();
+        $cc = $this->getDoctrine()->getManager('cas')->getRepository("MultipleConnectionBundle:CompanyConfig")->findAll();
+        if(($cc != null) && (!empty($cc))){
+            $cc = $cc[0];
+            $compName = $cc->getCompanyName();
+            $compLogo = $cc->getCompanyLogo();
+            $compExpiration = $cc->getExpirationDate();
+            $session->set("companyName",$compName);
+            //$session->set("companyName",$compName);
+            $session->set("companyLogo",$compLogo);
+            $session->set("expiryDate",$compExpiration);
         }else{
-            // Is the first time application is launched
-            // Execute some instructions before updating the file
-            return $this->redirectToRoute("firstTimeInitialization");
+            $cc = null;
+            $session->set("companyName",null);
+            $session->set("companyLogo",null);
+            return $this->redirectToRoute("changeSocietyName");
         }
-        fclose($file);
+
+        if($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED')){
+            return $this->redirectToRoute("homepage");
+        }
 
         // Les éventuelles erreurs de soumission
         $authenticationUtils = $this->get('security.authentication_utils');

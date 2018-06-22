@@ -139,13 +139,6 @@ class DefaultController extends StatsController
                     $em->persist($e);
                     $em->flush();
 
-                    // After persistance operation, we must edit initialization file
-
-                    $file = fopen($this->getParameter("web_dir")."/first_time",'r+');
-                    fseek($file,0);
-                    fputs($file,sha1("initialized"));
-                    fclose($file);
-
                     // Now that all operations are achieved, we can return a response
 
                     return new Response(1);
@@ -504,6 +497,14 @@ class DefaultController extends StatsController
     public function indexAction(Request $request)
     {
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            // Here we must retrieve user infos and select the suitable database
+            $user = $this->get('security.token_storage')->getToken()->getUser();
+            $cas_em = $this->getDoctrine()->getManager('cas');
+            $cc = $cas_em->getRepository('MultipleConnectionBundle:CompanyConfig')->find($user->getCompany()->getId());
+            $connection = $cc->getCompanyName();
+            $session = new Session();
+            $session->set("connection",$connection);
+
             $expiry_service = $this->container->get('app_bundle_expired');
             $expiry_service->hasExpired();
             if($expiry_service->hasExpired()){
