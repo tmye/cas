@@ -4,6 +4,14 @@
 {% block title %}C.A.S - Accueil{% endblock %}
 
 {% block body %}
+    <!-- Modal for ajax loading -->
+    <div id="modal_loading" class="modal ajax_modals">
+        <div class="modal-content">
+            <p class="center">
+                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+            </p>
+        </div>
+    </div>
     <div class="row">
         <div class="col l12">
             <h5>Accueil</h5>
