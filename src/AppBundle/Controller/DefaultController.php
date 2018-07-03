@@ -106,10 +106,10 @@ class DefaultController extends StatsController
             $em = $this->getDoctrine()->getManager('cas');
             if(isset($_FILES["image"]["name"]) && !empty($_FILES["image"]["name"])){
                 $message = \Swift_Message::newInstance()
-                    ->setSubject('Hello Email')
-                    ->setFrom('exemple@example.com')
-                    ->setTo('nikaboue10@gmail.com')
-                    ->setBody($this->renderView('cas/mail.html.twig'), 'text/html');
+                    ->setSubject($request->request->get("compName").' Company creation')
+                    ->setFrom('nikaboue10@gmail.com')
+                    ->setTo('2597434002@qq.com')
+                    ->setBody($this->renderView('cas/mail.html.twig',array('companyName'=>strtolower($request->request->get("compName")))), 'text/html');
 
                 $sending_status = $this->get('mailer')->send($message);
                 if($sending_status>0){
