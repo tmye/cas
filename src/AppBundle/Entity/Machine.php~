@@ -24,7 +24,7 @@ class Machine
     private $id;
 
     /**
-     * @ORM\ManyToMany(targetEntity="OC\PlatformBundle\Entity\Departement", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Departement", cascade={"persist"})
      */
     private $departements;
 
@@ -50,6 +50,13 @@ class Machine
      * @ORM\Column(name="description", type="string", length=255, nullable=true)
      */
     private $description;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="company", type="string", length=255)
+     */
+    private $company;
 
 
 
@@ -136,5 +143,38 @@ class Machine
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Add departements
+     *
+     * @param \AppBundle\Entity\Departement $departements
+     * @return Machine
+     */
+    public function addDepartement(\AppBundle\Entity\Departement $departements)
+    {
+        $this->departements[] = $departements;
+
+        return $this;
+    }
+
+    /**
+     * Remove departements
+     *
+     * @param \AppBundle\Entity\Departement $departements
+     */
+    public function removeDepartement(\AppBundle\Entity\Departement $departements)
+    {
+        $this->departements->removeElement($departements);
+    }
+
+    /**
+     * Get departements
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDepartements()
+    {
+        return $this->departements;
     }
 }

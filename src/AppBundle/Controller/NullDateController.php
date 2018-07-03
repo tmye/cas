@@ -57,6 +57,8 @@ class NullDateController extends Controller {
      */
     public function addNullDateAction(Request $request)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
@@ -74,13 +76,13 @@ class NullDateController extends Controller {
                 $form->handleRequest($request);
                 if ($form->isValid()) {
 
-                    $em = $this->getDoctrine()->getManager();
+                    $em = $this->getDoctrine()->getManager($session->get("connection"));
                     $em->persist($nullDate);
                     $em->flush();
 
                     $request->getSession()->getFlashBag()->add('notice', 'Cette date a bien été ajouté aux exceptions.');
 
-                    $list = $this->getDoctrine()->getManager()->getRepository("AppBundle:NullDate")->findAll();
+                    $list = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:NullDate")->findAll();
                     return $this->redirectToRoute("addNullDate",array(
                         'listJourNull'=>$list
                     ));
@@ -92,7 +94,7 @@ class NullDateController extends Controller {
             // À ce stade, le formulaire n'est pas valide car :
             // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
             // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
-            $list = $this->getDoctrine()->getManager()->getRepository("AppBundle:NullDate")->findAll();
+            $list = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:NullDate")->findAll();
             return $this->render('cas/addNullDate.html.twig',array(
                 'listJourNull'=>$list,
                 'form' => $form->createView()
@@ -108,12 +110,14 @@ class NullDateController extends Controller {
      */
     public function editNullDateAction(Request $request,$id)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("addNullDate");
             }
-            $nullDate = $this->getDoctrine()->getManager()->getRepository("AppBundle:NullDate")->find($id);
+            $nullDate = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:NullDate")->find($id);
             $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $nullDate);
             $formBuilder
                 ->add('jour', TextType::class,array('label'=>' '))
@@ -125,13 +129,13 @@ class NullDateController extends Controller {
                 $form->handleRequest($request);
                 if ($form->isValid()) {
 
-                    $em = $this->getDoctrine()->getManager();
+                    $em = $this->getDoctrine()->getManager($session->get("connection"));
                     $em->persist($nullDate);
                     $em->flush();
 
                     $request->getSession()->getFlashBag()->add('notice', 'Cette date a bien été modifée.');
 
-                    $list = $this->getDoctrine()->getManager()->getRepository("AppBundle:NullDate")->findAll();
+                    $list = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:NullDate")->findAll();
                     return $this->redirectToRoute("addNullDate",array(
                         'listJourNull'=>$list
                     ));
@@ -143,7 +147,7 @@ class NullDateController extends Controller {
             // À ce stade, le formulaire n'est pas valide car :
             // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
             // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
-            $list = $this->getDoctrine()->getManager()->getRepository("AppBundle:NullDate")->findAll();
+            $list = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:NullDate")->findAll();
             return $this->render('cas/addNullDate.html.twig',array(
                 'listJourNull'=>$list,
                 'form' => $form->createView()
@@ -159,20 +163,22 @@ class NullDateController extends Controller {
      */
     public function deleteNullDateAction(Request $request,$id)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("addNullDate");
             }
-            $nullDate = $this->getDoctrine()->getManager()->getRepository("AppBundle:NullDate")->find($id);
+            $nullDate = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:NullDate")->find($id);
 
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->getDoctrine()->getManager($session->get("connection"));
             $em->remove($nullDate);
             $em->flush();
 
             $request->getSession()->getFlashBag()->add('notice', 'Cette date a bien été supprimée.');
 
-            $list = $this->getDoctrine()->getManager()->getRepository("AppBundle:NullDate")->findAll();
+            $list = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:NullDate")->findAll();
             return $this->redirectToRoute("addNullDate",array(
                 'listJourNull'=>$list
             ));

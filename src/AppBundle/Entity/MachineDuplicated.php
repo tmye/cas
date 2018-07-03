@@ -9,10 +9,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Machine
  *
- * @ORM\Table(name="machine")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\MachineRepository")
+ * @ORM\Table(name="machine_duplicated")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\MachineDuplicatedRepository")
  */
-class Machine
+class MachineDuplicated
 {
     /**
      * @var int
@@ -22,11 +22,6 @@ class Machine
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Departement", cascade={"persist"})
-     */
-    private $departements;
 
     /**
      * @var string
@@ -51,12 +46,18 @@ class Machine
      */
     private $description;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="company", type="string", length=255, nullable=true)
+     */
+    private $company;
+
 
 
 
     public function __construct()
     {
-        $this->departements = new ArrayCollection();
     }
 
     /**
@@ -73,7 +74,7 @@ class Machine
      * Set name
      *
      * @param string $name
-     * @return Machine
+     * @return MachineDuplicated
      */
     public function setName($name)
     {
@@ -96,7 +97,7 @@ class Machine
      * Set machineId
      *
      * @param integer $machineId
-     * @return Machine
+     * @return MachineDuplicated
      */
     public function setMachineId($machineId)
     {
@@ -119,7 +120,7 @@ class Machine
      * Set description
      *
      * @param string $description
-     * @return Machine
+     * @return MachineDuplicated
      */
     public function setDescription($description)
     {
@@ -138,37 +139,28 @@ class Machine
         return $this->description;
     }
 
+
     /**
-     * Add departements
+     * Set company
      *
-     * @param \AppBundle\Entity\Departement $departements
-     * @return Machine
+     * @param string $company
+     *
+     * @return MachineDuplicated
      */
-    public function addDepartement(\AppBundle\Entity\Departement $departements)
+    public function setCompany($company)
     {
-        $this->departements[] = $departements;
+        $this->company = $company;
 
         return $this;
     }
 
     /**
-     * Remove departements
+     * Get company
      *
-     * @param \AppBundle\Entity\Departement $departements
+     * @return string
      */
-    public function removeDepartement(\AppBundle\Entity\Departement $departements)
+    public function getCompany()
     {
-        $this->departements->removeElement($departements);
+        return $this->company;
     }
-
-    /**
-     * Get departements
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getDepartements()
-    {
-        return $this->departements;
-    }
-
 }

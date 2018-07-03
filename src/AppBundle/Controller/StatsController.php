@@ -17,10 +17,9 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\Session\Session;
+
 
 class StatsController extends ClockinReccordController
 {
@@ -29,8 +28,9 @@ class StatsController extends ClockinReccordController
      */
     
     public function tAction(Request $request){
-        $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find(26);
-        $cr = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord");
+        $session = new Session();
+        $employe = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->find(26);
+        $cr = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:ClockinRecord");
         $je = json_decode($employe->getWorkingHour()->getWorkingHour(),true);
         $theDay = "lundi";
         $interval = 180*60;
@@ -61,15 +61,17 @@ class StatsController extends ClockinReccordController
      */
     public function persStatAction(Request $request)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
             }
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->getDoctrine()->getManager($session->get("connection"));
             $listEmployee = $em->getRepository("AppBundle:Employe")->findAll();
 
-            $dep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAllSafe();
+            $dep = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement")->findAllSafe();
             return $this->render('cas/viewPersStat.html.twig',array(
                 'listDep'=>$dep,
                 'listEmployee'=>$listEmployee
@@ -84,15 +86,17 @@ class StatsController extends ClockinReccordController
      */
     public function rapportsAction(Request $request)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
             }
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->getDoctrine()->getManager($session->get("connection"));
             $listEmployee = $em->getRepository("AppBundle:Employe")->findAll();
 
-            $dep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAllSafe();
+            $dep = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement")->findAllSafe();
             return $this->render('cas/rapports.html.twig',array(
                 'listDep'=>$dep,
                 'listEmployee'=>$listEmployee
@@ -132,7 +136,7 @@ class StatsController extends ClockinReccordController
      * @Route("/userStats",name="userStats")
     */
     public function userStatsAction(Request $request,$empId=null,$fromeDate=null,$toDate=null){
-
+        $session = new Session();
         // if/else condition because of calling this in the generatePDF function
         if($empId==null && $fromeDate==null && $toDate==null){
             $emp = $request->request->get("empId");
@@ -144,8 +148,8 @@ class StatsController extends ClockinReccordController
             $dateTo = $toDate;
         }
 
-        $pR = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission");
-        $nD = $this->getDoctrine()->getManager()->getRepository("AppBundle:NullDate");
+        $pR = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission");
+        $nD = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:NullDate");
 
         $timeFrom = strtotime($dateFrom." 00:00:00");
         $timeTo = strtotime($dateTo." 00:00:00");
@@ -154,10 +158,10 @@ class StatsController extends ClockinReccordController
         $days = $timeDays/(60*60*24);
 
         $nowTime = $timeFrom;
-        $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($emp);
+        $employe = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->find($emp);
         $interval = ($employe->getWorkingHour()->getTolerance())*60;
         $empWH = json_decode($employe->getWorkingHour()->getWorkingHour(),true);
-        $cr = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord");
+        $cr = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:ClockinRecord");
 
         $absences=0;
         $retards = 0;
@@ -300,7 +304,7 @@ class StatsController extends ClockinReccordController
                             $tempPerdu = $timePerdusAbsences/60;
                             $tempsPerdusAbsences += $tempPerdu;
                             $sommeAbsences +=$tempsPerdusAbsences;
-                            $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$empWH[$theDay][0]["endHour"],$empWH[$theDay][0]["beginHour"]);
+                            $p = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$empWH[$theDay][0]["endHour"],$empWH[$theDay][0]["beginHour"]);
                             if($p){
                                 /*
                                  * We need some other variables to avoid conflicts with userStats variables
@@ -327,7 +331,7 @@ class StatsController extends ClockinReccordController
                             $tabRetards[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$perte_temps);
 
                             // Now we deal with the permissions calculations
-                            $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$ct,$empWH[$theDay][0]["beginHour"]);
+                            $p = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$ct,$empWH[$theDay][0]["beginHour"]);
 
                             if($p){
                                 /*
@@ -354,7 +358,7 @@ class StatsController extends ClockinReccordController
                             $tabRetardsPause[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$tempsPerdusRetardsPause);
 
                             // Now we deal with the permissions calculations
-                            $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$ct,$empWH[$theDay][0]["pauseEndHour"]);
+                            $p = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$ct,$empWH[$theDay][0]["pauseEndHour"]);
                             if($p){
                                 /*
                                  * We need some other variables to avoid conflicts with userStats variables
@@ -381,7 +385,7 @@ class StatsController extends ClockinReccordController
                             $tabDeparts[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsFin);
 
                             // Now we deal with the permissions calculations
-                            $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$ct,$empWH[$theDay][0]["endHour"]);
+                            $p = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$ct,$empWH[$theDay][0]["endHour"]);
                             if($p){
                                 /*
                                  * We need some other variables to avoid conflicts with userStats variables
@@ -411,7 +415,7 @@ class StatsController extends ClockinReccordController
                             $tabDepartsPause[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsPause);
 
                             // Now we deal with the permissions calculations
-                            $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$ct,$empWH[$theDay][0]["pauseBeginHour"]);
+                            $p = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$ct,$empWH[$theDay][0]["pauseBeginHour"]);
                             if($p){
                                 /*
                                  * We need some other variables to avoid conflicts with userStats variables
@@ -487,7 +491,7 @@ class StatsController extends ClockinReccordController
                             //$tempsPerdusAbsences = $tempPerdu;
                             //$sommeAbsences +=$tempsPerdusAbsences;
 
-                            $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$empWH[$theDay][0]["endHour"],$empWH[$theDay][0]["beginHour"]);
+                            $p = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$empWH[$theDay][0]["endHour"],$empWH[$theDay][0]["beginHour"]);
                             if($p){
                                 /*
                                  * We need some other variables to avoid conflicts with userStats variables
@@ -532,12 +536,14 @@ class StatsController extends ClockinReccordController
      */
     public function depStatAction(Request $request)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
             }
-            $dep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAllSafe();
+            $dep = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement")->findAllSafe();
             return $this->render('cas/viewDepStat.html.twig',array(
                 'listDep'=>$dep
             ));
@@ -552,7 +558,7 @@ class StatsController extends ClockinReccordController
      * Mais directement dans l'URL
      * Ceci permettrait de l'utiliser dans la fonction depStats*/
     private function _userStatsAction($emp,$dateFrom,$dateTo,$interval){
-
+        $session = new Session();
         $timeFrom = strtotime($dateFrom." 00:00:00");
         $timeTo = strtotime($dateTo." 00:00:00");
 
@@ -560,9 +566,9 @@ class StatsController extends ClockinReccordController
         $days = $timeDays/(60*60*24);
 
         $nowTime = $timeFrom;
-        $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($emp);
+        $employe = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->find($emp);
         $empWH = json_decode($employe->getWorkingHour()->getWorkingHour(),true);
-        $cr = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord");
+        $cr = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:ClockinRecord");
 
         $absences=0;
         $retards = 0;
@@ -728,6 +734,7 @@ class StatsController extends ClockinReccordController
      */
     public function depStatsAction(Request $request)
     {
+        $session = new Session();
 
         // On récupère les départements envoyés
         $deps = $request->request->get("deps");
@@ -757,7 +764,7 @@ class StatsController extends ClockinReccordController
             $sommeTotaleDepart = 0;
             $perteRetardTemps = 0;
             $perteDepartTemps = 0;
-            $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($dep);
+            $emp = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->employeeByDep($dep);
             // On parcours aussi tous les employés pour additionner leur stats
             foreach ($emp as $e){
                 $empSalary = $e->getSalary();
@@ -783,7 +790,7 @@ class StatsController extends ClockinReccordController
                 $perteDepartTemps += $stats ["tpd"];
             }
             // Nom du département courant
-            $depName = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->find("$dep")->getName();
+            $depName = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement")->find("$dep")->getName();
             // On met les informations de tous les départements dans un tableau
             $tabStats[]= array("departementId"=>$dep,"departement"=>$depName,"tpr"=>$perteRetardTemps,"tpd"=>$perteDepartTemps,"spr"=>ceil($sommeTotaleRetard),"spd"=>ceil($sommeTotaleDepart));
         }

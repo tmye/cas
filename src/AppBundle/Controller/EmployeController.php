@@ -43,6 +43,8 @@ class EmployeController extends Controller {
     public function addEmployeeAction(Request $request)
     {
 
+        $session = new Session();
+
         //print_r($this->get('session')->getFlashBag()->get('notice'));
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
@@ -77,12 +79,14 @@ class EmployeController extends Controller {
                 ->add('function', TextType::class,array('label'=>' '))
                 ->add('hire_date', DateTimeType::class,array('widget'=>'single_text','label'=>' '))
                 ->add('departement',EntityType::class,array(
+                    'em'=>$session->get("connection"),
                     'label'=>' ',
                     'class' => 'AppBundle:Departement',
                     'choice_label' => 'name',
                     'multiple' => false,
                 ))
                 ->add('workingHour',EntityType::class,array(
+                    'em'=>$session->get("connection"),
                     'label'=>' ',
                     'class' => 'AppBundle:WorkingHours',
                     'choice_label' => 'code',
@@ -112,7 +116,7 @@ class EmployeController extends Controller {
                         $employe->setPicture($fileName);
                     }
 
-                    $em = $this->getDoctrine()->getManager();
+                    $em = $this->getDoctrine()->getManager($session->get("connection"));
 
                     $em->persist($employe);
                     $em->flush();
@@ -161,13 +165,14 @@ class EmployeController extends Controller {
      */
     public function editEmployeeAction(Request $request, $id)
     {
+        $session = new Session();
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
             }
-            $employe = $this->getDoctrine()->getManager()->getRepository('AppBundle:Employe')->find($id);
+            $employe = $this->getDoctrine()->getManager($session->get("connection"))->getRepository('AppBundle:Employe')->find($id);
             $last_picture = $employe->getPicture();
 
             if($employe != null){
@@ -195,12 +200,14 @@ class EmployeController extends Controller {
                 ->add('function', TextType::class,array('label'=>' '))
                 ->add('hire_date', DateTimeType::class,array('widget'=>'single_text','label'=>' '))
                 ->add('departement',EntityType::class,array(
+                    'em'=>$session->get("connection"),
                     'label'=>' ',
                     'class' => 'AppBundle:Departement',
                     'choice_label' => 'name',
                     'multiple' => false,
                 ))
                 ->add('workingHour',EntityType::class,array(
+                    'em'=>$session->get("connection"),
                     'label'=>' ',
                     'class' => 'AppBundle:WorkingHours',
                     'choice_label' => 'code',
@@ -237,7 +244,7 @@ class EmployeController extends Controller {
                         $employe->setPicture($last_picture);
                     }
 
-                    $em = $this->getDoctrine()->getManager();
+                    $em = $this->getDoctrine()->getManager($session->get("connection"));
 
                     $em->persist($employe);
                     $em->flush();
@@ -274,12 +281,14 @@ class EmployeController extends Controller {
      */
     public function viewEmployeeAction(Request $request)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
             }
-            $depRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement");
+            $depRep = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement");
             $listDep = $depRep->findAll();
             return $this->render('cas/viewEmployee.html.twig', array(
                 'listDep' => $listDep,
@@ -294,6 +303,8 @@ class EmployeController extends Controller {
      */
     public function returnOneEmployeeAction(Request $request,$id,$fromDate=null,$toDate=null)
     {
+        $session = new Session();
+
         if($fromDate==null && $toDate==null){
             $dateFrom = $request->request->get("dateFrom");
             $dateTo = $request->request->get("dateTo");
@@ -307,7 +318,7 @@ class EmployeController extends Controller {
         $days = $timeDays/(60*60*24);
         $nowTime = $timeFrom;
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->getDoctrine()->getManager($session->get("connection"));
         $emp = $em->getRepository("AppBundle:Employe")->find($id);
         $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
 
@@ -343,8 +354,10 @@ class EmployeController extends Controller {
      */
     public function returnEmployeesAction(Request $request)
     {
+        $session = new Session();
+
         $tab = array();
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->getDoctrine()->getManager($session->get("connection"));
         $emp = $em->getRepository("AppBundle:Employe")->findAll();
         foreach ($emp as $e){
             $tempTab = [];
@@ -371,14 +384,16 @@ class EmployeController extends Controller {
      */
     public function deleteEmployeeAction(Request $request, $id)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
             }
-            $emp = $this->getDoctrine()->getManager()->getRepository('AppBundle:Employe')->find($id);
+            $emp = $this->getDoctrine()->getManager($session->get("connection"))->getRepository('AppBundle:Employe')->find($id);
             if ($emp != null) {
-                $em = $this->getDoctrine()->getManager();
+                $em = $this->getDoctrine()->getManager($session->get("connection"));
                 $em->remove($emp);
                 $em->flush();
 
@@ -400,12 +415,14 @@ class EmployeController extends Controller {
                     ->add('function', TextType::class,array('label'=>' '))
                     ->add('hire_date', DateTimeType::class,array('widget'=>'single_text','label'=>' '))
                     ->add('departement',EntityType::class,array(
+                        'em'=>$session->get("connection"),
                         'label'=>' ',
                         'class' => 'AppBundle:Departement',
                         'choice_label' => 'name',
                         'multiple' => false,
                     ))
                     ->add('workingHour',EntityType::class,array(
+                        'em'=>$session->get("connection"),
                         'label'=>' ',
                         'class' => 'AppBundle:WorkingHours',
                         'choice_label' => 'code',
@@ -430,7 +447,9 @@ class EmployeController extends Controller {
 
     protected function returnWorkingHoursAction()
     {
-        $whList = $this->getDoctrine()->getManager()->getRepository("AppBundle:WorkingHours")->safeWorkingHour();
+        $session = new Session();
+
+        $whList = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:WorkingHours")->safeWorkingHour();
         $tab = array();
 
         foreach ($whList as $wh){

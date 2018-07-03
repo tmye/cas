@@ -14,6 +14,8 @@ use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
+
 
 class HomeStatsController extends Controller
 {
@@ -72,6 +74,8 @@ class HomeStatsController extends Controller
      */
     public function homeStatsAction(Request $request)
     {
+        $session = new Session();
+
         $jour = date("Y").'-'.date("m").'-'.date("d");
         $tab = $this->jourSemaine($jour);
         //echo "<br><br> Jour : $tab[0] <br><br>";
@@ -102,14 +106,14 @@ class HomeStatsController extends Controller
         //$temp["depart"] = [];
 
         // On récupère les clockinRecord pour une fois
-        $cr = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord");
+        $cr = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:ClockinRecord");
         $clockinR = $cr->findAll();
         // On boucle sur les jours sélectionnés
         $i=0;
         $interval = 3000; // 30 Minuites
 
         // On récupère tous les employés
-        $listEmp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeSafe();
+        $listEmp = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->employeeSafe();
         // On boucle sur les jours
         for ($cpt=0;$cpt<$tab[0];$cpt++){
             $theDay = date('N',$nowTime);
@@ -240,9 +244,10 @@ class HomeStatsController extends Controller
     }
 
     private function permissionSelect(){
+        $session = new Session();
         $i=0;
         $permissionsTab = array();
-        $permissions = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findAll();
+        $permissions = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission")->findAll();
         foreach ($permissions as $perm){
             $createTime = $perm->getCreateTime();
             $createTimeString = $createTime->format('Y-m-d H:i:s');

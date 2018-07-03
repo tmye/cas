@@ -49,12 +49,12 @@ class DefaultController extends StatsController
     public function functionTestAction(Request $request)
     {
         /*$date = "2018-06-04";
-        $result = $this->getDoctrine()->getManager()->getRepository("AppBundle:NullDate")->dayIsNull($date);
+        $result = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:NullDate")->dayIsNull($date);
         print_r($result);
         return $result;
         /*$heureNormaleArrivee = "08:00";
         $heureEnregistre = "23:59";
-        $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission(36,$date,$heureEnregistre,$heureNormaleArrivee);
+        $p = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission")->enPermission(36,$date,$heureEnregistre,$heureNormaleArrivee);
         print_r($p);
         foreach ($p as $perm){
             echo "<br>".$perm->getDescription()."<br>";
@@ -158,15 +158,16 @@ class DefaultController extends StatsController
      */
     public function changeSocietyNameAction(Request $request,$name = null)
     {
+        $session = new Session();
+
         $name = $request->request->get("name");
-        $cc = $this->getDoctrine()->getManager()->getRepository("AppBundle:CompanyConfig")->findAll();
-        $em = $this->getDoctrine()->getManager();
+        $cc = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:CompanyConfig")->findAll();
+        $em = $this->getDoctrine()->getManager($session->get("connection"));
         if($cc != null){
             $cc = $cc[0];
             $cc->setCompanyName($name);
             $em->flush();
 
-            $session = new Session();
             $session->set("companyName",$name);
         }else{
             $newCC = new CompanyConfig();
@@ -174,7 +175,6 @@ class DefaultController extends StatsController
             $em->persist($newCC);
             $em->flush();
 
-            $session = new Session();
             $session->set("companyName",$name);
         }
         return new Response("OK");
@@ -193,23 +193,21 @@ class DefaultController extends StatsController
      */
     public function expiryDateAction(Request $request)
     {
+        $session = new Session();
+
         $date = $request->request->get("date");
-        $ex = $this->getDoctrine()->getManager()->getRepository("AppBundle:Expiration")->findAll();
-        $em = $this->getDoctrine()->getManager();
+        $ex = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Expiration")->findAll();
+        $em = $this->getDoctrine()->getManager($session->get("connection"));
         if($ex != null){
             $ex = $ex[0];
             $ex->setExpiryDate($date);
             $em->flush();
-
-            $session = new Session();
             $session->set("expiryDate",$date);
         }else{
             $newEX = new Expiration;
             $newEX->setExpiryDate($date);
             $em->persist($newEX);
             $em->flush();
-
-            $session = new Session();
             $session->set("expiryDate",$date);
         }
         return new Response("OK");
@@ -220,8 +218,10 @@ class DefaultController extends StatsController
      */
     public function changeSocietyLogoAction(Request $request,$name = null)
     {
-        $cc = $this->getDoctrine()->getManager()->getRepository("AppBundle:CompanyConfig")->findAll();
-        $em = $this->getDoctrine()->getManager();
+        $session = new Session();
+
+        $cc = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:CompanyConfig")->findAll();
+        $em = $this->getDoctrine()->getManager($session->get("connection"));
         if($cc != null){
             if(isset($_FILES["image"]["name"]) && !empty($_FILES["image"]["name"])){
                 $cc = $cc[0];
@@ -234,7 +234,6 @@ class DefaultController extends StatsController
 
                 $resultat = move_uploaded_file($_FILES['image']['tmp_name'],"company_images/".basename($_FILES["image"]["name"]));
                 $em->flush();
-                $session = new Session();
                 $session->set("companyLogo",$_FILES['image']['name']);
             }else{
                 return new Response("Erreur");
@@ -250,9 +249,11 @@ class DefaultController extends StatsController
      */
     public function uploadCoverAllAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
-        $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
-        $devices = $this->getDoctrine()->getManager()->getRepository("TmyeDeviceBundle:DevicePubPic")->findAll();
+        $session = new Session();
+
+        $em = $this->getDoctrine()->getManager($session->get("connection"));
+        $machines = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Machine")->findAll();
+        $devices = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("TmyeDeviceBundle:DevicePubPic")->findAll();
 
         if ($devices != null){
             foreach ($devices as $dev){
@@ -320,9 +321,11 @@ class DefaultController extends StatsController
      */
     public function uploadCoverDepAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
+        $session = new Session();
 
-        $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
+        $em = $this->getDoctrine()->getManager($session->get("connection"));
+
+        $machines = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Machine")->findAll();
         $tab = array();
         foreach ($machines as $mac){
             foreach ($mac->getDepartements() as $dep){
@@ -334,7 +337,7 @@ class DefaultController extends StatsController
 
         // Maintenant que j'ai la liste des machines de ce département je peux faire les traitements
 
-        $devices = $this->getDoctrine()->getManager()->getRepository("TmyeDeviceBundle:DevicePubPic")->deviceByArray($tab);
+        $devices = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("TmyeDeviceBundle:DevicePubPic")->deviceByArray($tab);
         if ($devices != null) {
             foreach ($devices as $dev){
                 if(isset($_FILES["first_image_input_2"]["name"]) && !empty($_FILES["first_image_input_2"]["name"])){
@@ -404,11 +407,13 @@ class DefaultController extends StatsController
      */
     public function uploadCoverMacAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
+        $session = new Session();
+
+        $em = $this->getDoctrine()->getManager($session->get("connection"));
 
         $mac = $request->request->get("macId");
         echo "\n Mac Id : ".$mac."\n";
-        $devices = $this->getDoctrine()->getManager()->getRepository("TmyeDeviceBundle:DevicePubPic")->findBy(array("deviceid"=>$_POST["macId"]));
+        $devices = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("TmyeDeviceBundle:DevicePubPic")->findBy(array("deviceid"=>$_POST["macId"]));
 
         if ($devices != null) {
             foreach ($devices as $dev){
@@ -474,9 +479,11 @@ class DefaultController extends StatsController
      */
     public function returnCoverMacAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
+        $session = new Session();
+
+        $em = $this->getDoctrine()->getManager($session->get("connection"));
         $code = $request->request->get("code");
-        $device = $this->getDoctrine()->getManager()->getRepository("TmyeDeviceBundle:DevicePubPic")->findOneBy(array("deviceid"=>$code));
+        $device = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("TmyeDeviceBundle:DevicePubPic")->findOneBy(array("deviceid"=>$code));
 
         $t = array();
         if(!empty($device)){
@@ -527,12 +534,13 @@ class DefaultController extends StatsController
      */
     public function historiqueAction(Request $request)
     {
+        $session = new Session();
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
             }
-            $listDep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAllSafe();
+            $listDep = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement")->findAllSafe();
             return $this->render('cas/historique.html.twig',array('listDep'=>$listDep));
         }else{
             return $this->redirectToRoute("login");
@@ -573,13 +581,15 @@ class DefaultController extends StatsController
      */
     public function switchAction(Request $request)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
             }
-            $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
-            $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
+            $departements = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement")->findAll();
+            $machines = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Machine")->findAll();
             return $this->render('cas/switch.html.twig',array(
                 'departements'=>$departements,
                 'machines'=>$machines
@@ -611,12 +621,14 @@ class DefaultController extends StatsController
      */
     public function manageEmpProfilePictureAction(Request $request)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
             }
-            $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            $departements = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement")->findAll();
             return $this->render('cas/manageEmpProfilePicture.html.twig',array(
                 "departements"=>$departements
             ));
@@ -631,12 +643,14 @@ class DefaultController extends StatsController
      */
     public function manageEmpFingerprintAction(Request $request)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
             }
-            $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            $departements = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement")->findAll();
             return $this->render('cas/manageEmpFingerprint.html.twig',array(
                 "departements"=>$departements
             ));
@@ -650,12 +664,14 @@ class DefaultController extends StatsController
      */
     public function manageEmployeeAction(Request $request)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
             }
-            $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            $departements = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement")->findAll();
             return $this->render('cas/manageEmployee.html.twig',array(
                 "departements"=>$departements
             ));
@@ -670,13 +686,15 @@ class DefaultController extends StatsController
      */
     public function manageDeleteDataAction(Request $request)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
             }
-            $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
-            $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            $machines = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Machine")->findAll();
+            $departements = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement")->findAll();
             return $this->render('cas/delete.html.twig',array(
                 "departements"=>$departements,
                 "machines"=>$machines
@@ -691,13 +709,15 @@ class DefaultController extends StatsController
      */
     public function manageDepartementAction(Request $request)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
             }
-            $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
-            $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            $machines = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Machine")->findAll();
+            $departements = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement")->findAll();
             return $this->render('cas/manageDepartement.html.twig',array(
                 "departements"=>$departements,
                 "machines"=>$machines
@@ -730,6 +750,8 @@ class DefaultController extends StatsController
      */
     public function generatePDFAction(Request $request)
     {
+        $session = new Session();
+
         $empId = $request->request->get('destination');
         $fromDate = $request->request->get('fromDate');
         $toDate = $request->request->get('toDate');
@@ -745,7 +767,7 @@ class DefaultController extends StatsController
                 $pdf->AddPage();
                 $i=0;
             }
-            $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($emp);
+            $employe = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->find($emp);
             $empWH = json_decode($employe->getWorkingHour()->getWorkingHour(),true);
             $type = $empWH["lundi"][0]["type"];
 

@@ -61,7 +61,7 @@ doctrine:
           user:     "%database_user%"
           password: "%database_password%"
           charset:  UTF8
-        test:
+        tmye:
           driver:   pdo_mysql
           host:     "%second_database_host%"
           port:     "%second_database_port%"
@@ -85,9 +85,10 @@ doctrine:
             mappings:
               MultipleConnectionBundle: ~
               AppBundle : ~
+              TmyeDeviceBundle : ~
               UserBundle: ~
-          test:
-            connection: test
+          tmye:
+            connection: tmye
             mappings:
               AppBundle : ~
               TmyeDeviceBundle : ~

@@ -19,6 +19,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\Session\Session;
+
 
 class DepartementController extends Controller
 {
@@ -28,6 +30,8 @@ class DepartementController extends Controller
      */
     public function departementAction(Request $request)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
@@ -35,7 +39,7 @@ class DepartementController extends Controller
             }
 
             // Recuperation des departements existants
-            $depRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement");
+            $depRep = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement");
             $listDep = $depRep->findAll();
 
             $departement = new Departement();
@@ -59,7 +63,7 @@ class DepartementController extends Controller
             if ($request->isMethod('POST')) {
                 $form->handleRequest($request);
                 if ($form->isValid()) {
-                    $em = $this->getDoctrine()->getManager();
+                    $em = $this->getDoctrine()->getManager($session->get("connection"));
 
                     $em->persist($departement);
                     $em->flush();
@@ -87,27 +91,29 @@ class DepartementController extends Controller
      */
     public function deleteDepartementAction(Request $request, $id)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
             }
             // On vérifie que le département est vide
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->getDoctrine()->getManager($session->get("connection"));
             $qb = $em->createQueryBuilder();
             $qb->select('e')
                 ->from('AppBundle:Employe','e')
                 ->andWhere('e.departement='.$id);
             $listEmployee = $qb->getQuery()->getArrayResult();
 
-            $dep = $this->getDoctrine()->getManager()->getRepository('AppBundle:Departement')->find($id);
+            $dep = $this->getDoctrine()->getManager($session->get("connection"))->getRepository('AppBundle:Departement')->find($id);
             if ($dep != null) {
                 if($listEmployee == null){
-                    $em = $this->getDoctrine()->getManager();
+                    $em = $this->getDoctrine()->getManager($session->get("connection"));
                     $em->remove($dep);
                     $em->flush();
 
-                    $depRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement");
+                    $depRep = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement");
                     $listDep = $depRep->findAll();
 
                     $departement = new Departement();
@@ -135,7 +141,7 @@ class DepartementController extends Controller
                         'listDep' => $listDep
                     ));
                 }else{
-                    $depRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement");
+                    $depRep = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement");
                     $listDep = $depRep->findAll();
 
                     $departement = new Departement();
@@ -177,16 +183,18 @@ class DepartementController extends Controller
      */
     public function editDepartementAction(Request $request, $id)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
             }
-            $departement = $this->getDoctrine()->getManager()->getRepository('AppBundle:Departement')->find($id);
+            $departement = $this->getDoctrine()->getManager($session->get("connection"))->getRepository('AppBundle:Departement')->find($id);
 
             // Recuperation des departements existants
 
-            $depRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement");
+            $depRep = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement");
             $listDep = $depRep->findAll();
 
             if($departement != null){
@@ -213,7 +221,7 @@ class DepartementController extends Controller
             if ($request->isMethod('POST')) {
                 $form->handleRequest($request);
                 if ($form->isValid()) {
-                    $em = $this->getDoctrine()->getManager();
+                    $em = $this->getDoctrine()->getManager($session->get("connection"));
                     $em->persist($departement);
                     $em->flush();
 
