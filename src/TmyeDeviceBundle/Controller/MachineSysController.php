@@ -8,6 +8,7 @@
 
 namespace TmyeDeviceBundle\Controller;
 
+use AppBundle\Controller\MachineDuplicatedController;
 use AppBundle\Entity\ClockinRecord;
 use AppBundle\Entity\Employe;
 use TmyeDeviceBundle\Entity\ConfigEntity;
@@ -31,6 +32,12 @@ class MachineSysController extends BaseController
     public function index_getAction (Request $request) {
 
         $sn = trim($request->query->get("sn"));
+
+        /* send new entity manager */
+        $manager = (new MachineDuplicatedController())->returnCompanyAction($sn);
+        echo "manager is ".$manager;
+
+
         $all = $this->UpdateEntityRepo()->findBy(
             ['deviceId' => $sn ],
             ['priority' => 'DESC', 'id' => 'ASC']
@@ -43,6 +50,8 @@ class MachineSysController extends BaseController
         /*
             group updateEntites by update types and give a priority to the type clean
          */
+
+
         $res['status'] = 1;
         $res['info'] = 'ok';
         $res['data'] = [];

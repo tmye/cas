@@ -30,9 +30,8 @@ class MachineDuplicatedController extends Controller {
     /**
      * @Route("/returnCompany/{mac}",name="returnCompany")
      */
-    public function returnCompanyAction(Request $request,$mac)
+    public function returnCompanyAction($device_id)
     {
-        $session = new Session();
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
@@ -40,7 +39,7 @@ class MachineDuplicatedController extends Controller {
                 return $this->redirectToRoute("expiryPage");
             }
             $md = $this->getDoctrine()->getManager("cas")->getRepository("AppBundle:MachineDuplicated")->findOneBy(array(
-                "machineId"=>$mac
+                "machineId"=>$device_id
             ));
             if($md != null  && !empty($md)){
                 return $md->getCompany();
