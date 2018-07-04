@@ -28,11 +28,6 @@ class SecurityController extends Controller
             //$session->set("companyName",$compName);
             $session->set("companyLogo",$compLogo);
             $session->set("expiryDate",$compExpiration);
-        }else{
-            $cc = null;
-            $session->set("companyName",null);
-            $session->set("companyLogo",null);
-            return $this->redirectToRoute("changeSocietyName");
         }
 
         if($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED')){

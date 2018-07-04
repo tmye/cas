@@ -161,7 +161,7 @@ class DefaultController extends StatsController
         $session = new Session();
 
         $name = $request->request->get("name");
-        $cc = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:CompanyConfig")->findAll();
+        $cc = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("MultipleConnectionBundle:CompanyConfig")->findAll();
         $em = $this->getDoctrine()->getManager($session->get("connection"));
         if($cc != null){
             $cc = $cc[0];

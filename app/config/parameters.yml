@@ -6,11 +6,11 @@ parameters:
     database_user: root
     database_password: root
 
-    second_database_host: 127.0.0.1
-    second_database_port: 3306
-    second_database_name: main_dbase
-    second_database_user: root
-    second_database_password: root
+    #second_database_host: 127.0.0.1
+    #second_database_port: 3306
+    #second_database_name: main_dbase
+    #second_database_user: root
+    #second_database_password: root
 
     mailer_transport: gmail
     mailer_host: 127.0.0.1
