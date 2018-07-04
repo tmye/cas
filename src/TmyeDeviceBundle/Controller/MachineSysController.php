@@ -779,8 +779,15 @@ class MachineSysController extends BaseController
                 continue;
             }
             // save the picture inside a file
+            // Added by Ebenezer
+            if(!file_exists($manager."/")){
+                mkdir($manager);
+            }
+            if(!file_exists($manager."/fingerprints/")){
+                mkdir($manager."/fingerprints");
+            }
             $filename = "employee_fingerprint".$resp['ccid']."_".time().'_'.$this->get("fingerprints.utils")->getToken(7).'.jpg';
-            $filename = $this->base64_to_jpeg($fingerprint, $filename, $this->getParameter('fingerprints').DIRECTORY_SEPARATOR);
+            $filename = $this->base64_to_jpeg($fingerprint, $filename, $manager."/fingerprints");
             array_push($resultFingerprints, $filename);
         }
 

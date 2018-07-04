@@ -69,10 +69,23 @@ doctrine:
           user:     "%second_database_user%"
           password: "%second_database_password%"
           charset:  UTF8
-<<<<<<< HEAD
-=======
+        jimscom:
+          driver:   pdo_mysql
+          host:     "%third_database_host%"
+          port:     "%third_database_port%"
+          dbname:   "%third_database_name%"
+          user:     "%third_database_user%"
+          password: "%third_database_password%"
+          charset:  UTF8
+        prog:
+          driver:   pdo_mysql
+          host:     "%fourth_database_host%"
+          port:     "%fourth_database_port%"
+          dbname:   "%fourth_database_name%"
+          user:     "%fourth_database_user%"
+          password: "%fourth_database_password%"
+          charset:  UTF8
 
->>>>>>> c1c9b41704ea2d3ce370ae926e6caa90f3a6cbb9
         # if using pdo_sqlite as your database driver:
         #   1. add the path in parameters.yml
         #     e.g. database_path: "%kernel.root_dir%/../var/data/data.sqlite"
@@ -96,8 +109,16 @@ doctrine:
             mappings:
               AppBundle : ~
               TmyeDeviceBundle : ~
-<<<<<<< HEAD
               UserBundle: ~
-=======
+          jimscom:
+            connection: jimscom
+            mappings:
+              AppBundle : ~
+              TmyeDeviceBundle : ~
               UserBundle: ~
->>>>>>> c1c9b41704ea2d3ce370ae926e6caa90f3a6cbb9
+          prog:
+            connection: prog
+            mappings:
+              AppBundle : ~
+              TmyeDeviceBundle : ~
+              UserBundle: ~
