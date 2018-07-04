@@ -503,9 +503,27 @@ class DefaultController extends StatsController
      */
     public function indexAction(Request $request)
     {
+        $session = new Session();
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             // Here we must retrieve user infos and select the suitable database
             $user = $this->get('security.token_storage')->getToken()->getUser();
+
+            $user_society = $user->getSociety();
+            $cc = $this->getDoctrine()->getManager('cas')->getRepository("MultipleConnectionBundle:CompanyConfig")->findOneBy(array(
+                'companyName'=>$user_society
+            ));
+
+            if(($cc != null) && (!empty($cc)) && ($cc->getIsActivated() == 1)){
+                $compName = $cc->getCompanyName();
+                $compLogo = $cc->getCompanyLogo();
+                $compExpiration = $cc->getExpirationDate();
+                $session->set("companyName",$compName);
+                $session->set("companyLogo",$compLogo);
+                $session->set("expiryDate",$compExpiration);
+            }else{
+                return $this->redirectToRoute('logout');
+            }
+
             $cas_em = $this->getDoctrine()->getManager('cas');
             $cc = $cas_em->getRepository('MultipleConnectionBundle:CompanyConfig')->find($user->getCompany()->getId());
             $connection = $cc->getCompanyName();

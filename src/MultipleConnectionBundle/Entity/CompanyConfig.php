@@ -42,6 +42,17 @@ class CompanyConfig
      */
     private $expirationDate;
 
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="isActivated", type="integer")
+     */
+    private $isActivated;
+
+    public function __construct(){
+        $this->isActivated = 0;
+    }
+
 
     /**
      * Get id
@@ -123,5 +134,29 @@ class CompanyConfig
     public function getExpirationDate()
     {
         return $this->expirationDate;
+    }
+
+    /**
+     * Set isActivated
+     *
+     * @param integer $isActivated
+     *
+     * @return CompanyConfig
+     */
+    public function setIsActivated($isActivated)
+    {
+        $this->isActivated = $isActivated;
+
+        return $this;
+    }
+
+    /**
+     * Get isActivated
+     *
+     * @return integer
+     */
+    public function getIsActivated()
+    {
+        return $this->isActivated;
     }
 }

@@ -38,9 +38,16 @@ class CompanyConfig
     /**
      * @var string
      *
-     * @ORM\Column(name="expirationDate", type="string", length=255)
+     * @ORM\Column(name="expirationDate", type="string", length=255, nullable=true)
      */
     private $expirationDate;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="isActivated", type="integer")
+     */
+    private $isActivated;
 
 
     /**

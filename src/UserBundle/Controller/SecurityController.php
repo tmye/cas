@@ -16,24 +16,9 @@ class SecurityController extends Controller
 {
     public function loginAction(){
 
-        // Is not the first time
-        $session = new Session();
-        $cc = $this->getDoctrine()->getManager('cas')->getRepository("MultipleConnectionBundle:CompanyConfig")->findAll();
-        if(($cc != null) && (!empty($cc))){
-            $cc = $cc[0];
-            $compName = $cc->getCompanyName();
-            $compLogo = $cc->getCompanyLogo();
-            $compExpiration = $cc->getExpirationDate();
-            $session->set("companyName",$compName);
-            //$session->set("companyName",$compName);
-            $session->set("companyLogo",$compLogo);
-            $session->set("expiryDate",$compExpiration);
-        }
-
         if($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED')){
             return $this->redirectToRoute("homepage");
         }
-
         // Les éventuelles erreurs de soumission
         $authenticationUtils = $this->get('security.authentication_utils');
         return $this->render('UserBundle:Security:login.html.twig', array(
