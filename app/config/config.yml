@@ -61,14 +61,15 @@ doctrine:
           user:     "%database_user%"
           password: "%database_password%"
           charset:  UTF8
-#        tmye:
-#          driver:   pdo_mysql
-#          host:     "%second_database_host%"
-#          port:     "%second_database_port%"
-#          dbname:   "%second_database_name%"
-#          user:     "%second_database_user%"
-#          password: "%second_database_password%"
-#          charset:  UTF8
+        tmye:
+          driver:   pdo_mysql
+          host:     "%second_database_host%"
+          port:     "%second_database_port%"
+          dbname:   "%second_database_name%"
+          user:     "%second_database_user%"
+          password: "%second_database_password%"
+          charset:  UTF8
+
         # if using pdo_sqlite as your database driver:
         #   1. add the path in parameters.yml
         #     e.g. database_path: "%kernel.root_dir%/../var/data/data.sqlite"
@@ -87,9 +88,9 @@ doctrine:
               AppBundle : ~
               TmyeDeviceBundle : ~
               UserBundle: ~
-#          tmye:
-#            connection: tmye
-#            mappings:
-#              AppBundle : ~
-#              TmyeDeviceBundle : ~
-#              UserBundle: ~
+          tmye:
+            connection: tmye
+            mappings:
+              AppBundle : ~
+              TmyeDeviceBundle : ~
+              UserBundle: ~
