@@ -69,6 +69,10 @@ doctrine:
           user:     "%second_database_user%"
           password: "%second_database_password%"
           charset:  UTF8
+<<<<<<< HEAD
+=======
+
+>>>>>>> c1c9b41704ea2d3ce370ae926e6caa90f3a6cbb9
         # if using pdo_sqlite as your database driver:
         #   1. add the path in parameters.yml
         #     e.g. database_path: "%kernel.root_dir%/../var/data/data.sqlite"
@@ -92,4 +96,8 @@ doctrine:
             mappings:
               AppBundle : ~
               TmyeDeviceBundle : ~
+<<<<<<< HEAD
               UserBundle: ~
+=======
+              UserBundle: ~
+>>>>>>> c1c9b41704ea2d3ce370ae926e6caa90f3a6cbb9

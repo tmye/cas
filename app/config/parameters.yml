@@ -4,7 +4,7 @@ parameters:
     database_port: 3306
     database_name: cas_dbase
     database_user: root
-    database_password: root
+    database_password: 123456
 
     second_database_host: 127.0.0.1
     second_database_port: 3306
