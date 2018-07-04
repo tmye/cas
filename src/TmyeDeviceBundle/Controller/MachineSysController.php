@@ -821,10 +821,18 @@ class MachineSysController extends BaseController
         if ($employee == null)
             return;
 
+        // Added by Ebenezer
+        if(!file_exists($manager."/")){
+            mkdir($manager);
+        }
+        if(!file_exists($manager.DIRECTORY_SEPARATOR.$this->getParameter('user_profile_pictures').DIRECTORY_SEPARATOR)){
+            mkdir($manager."/".$this->getParameter('user_profile_pictures'));
+        }
+
         // create a name under which to save the current profile picture
         $filename = "employee_headpic".$resp['ccid']."_".time().'_'.$this->get("fingerprints.utils")->getToken(7).'.jpg';
         // save the profile picture under the directory
-        /*$filename = */ $this->base64_to_jpeg($profilePicture, $filename, $this->getParameter('user_profile_pictures').DIRECTORY_SEPARATOR);
+        /*$filename = */ $this->base64_to_jpeg($profilePicture, $filename, $manager.DIRECTORY_SEPARATOR.$this->getParameter('user_profile_pictures'));
 
         $employee->setPicture($filename);
         $this->persist($manager, $employee);
