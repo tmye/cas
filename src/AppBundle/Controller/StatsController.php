@@ -17,9 +17,10 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpFoundation\Session\Session;
-
 
 class StatsController extends ClockinReccordController
 {
@@ -28,7 +29,6 @@ class StatsController extends ClockinReccordController
      */
     
     public function tAction(Request $request){
-        $session = new Session();
         $employe = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->find(26);
         $cr = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:ClockinRecord");
         $je = json_decode($employe->getWorkingHour()->getWorkingHour(),true);
@@ -61,8 +61,6 @@ class StatsController extends ClockinReccordController
      */
     public function persStatAction(Request $request)
     {
-        $session = new Session();
-
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
@@ -86,8 +84,6 @@ class StatsController extends ClockinReccordController
      */
     public function rapportsAction(Request $request)
     {
-        $session = new Session();
-
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
@@ -136,7 +132,7 @@ class StatsController extends ClockinReccordController
      * @Route("/userStats",name="userStats")
     */
     public function userStatsAction(Request $request,$empId=null,$fromeDate=null,$toDate=null){
-        $session = new Session();
+
         // if/else condition because of calling this in the generatePDF function
         if($empId==null && $fromeDate==null && $toDate==null){
             $emp = $request->request->get("empId");
@@ -536,8 +532,6 @@ class StatsController extends ClockinReccordController
      */
     public function depStatAction(Request $request)
     {
-        $session = new Session();
-
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
@@ -558,7 +552,7 @@ class StatsController extends ClockinReccordController
      * Mais directement dans l'URL
      * Ceci permettrait de l'utiliser dans la fonction depStats*/
     private function _userStatsAction($emp,$dateFrom,$dateTo,$interval){
-        $session = new Session();
+
         $timeFrom = strtotime($dateFrom." 00:00:00");
         $timeTo = strtotime($dateTo." 00:00:00");
 
@@ -734,7 +728,6 @@ class StatsController extends ClockinReccordController
      */
     public function depStatsAction(Request $request)
     {
-        $session = new Session();
 
         // On récupère les départements envoyés
         $deps = $request->request->get("deps");

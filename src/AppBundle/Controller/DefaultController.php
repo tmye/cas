@@ -68,10 +68,10 @@ class DefaultController extends StatsController
 
         //return new Response(date("Y-m-d H:i:s",1537163970));
         //return new Response(date("Y-m-d H:i:s",(new \DateTime())->getTimestamp()));
-        //return new Response(strtotime("2018-05-21 17:15"));
+        return new Response(strtotime("2018-07-06 08:15"));
         //return new Response($this->formatInt(12253008000000));
-        return new Response(sha1("5555"));
-        return new Response("OK");
+        //return new Response(sha1("5555"));
+        //return new Response("OK");
     }
 
     /**
@@ -109,12 +109,16 @@ class DefaultController extends StatsController
                     ->setSubject($request->request->get("compName").' Company creation')
                     ->setFrom('nikaboue10@gmail.com')
                     ->setTo('2597434002@qq.com')
-                    ->setBody($this->renderView('cas/mail.html.twig',array('companyName'=>strtolower($request->request->get("compName")))), 'text/html');
+                    ->setBody($this->renderView('cas/mail.html.twig',array(
+                        'companyName'=>strtolower($request->request->get("compName")),
+                        'mail'=>$request->request->get("compEmail")
+                    )), 'text/html');
 
                 $sending_status = $this->get('mailer')->send($message);
                 if($sending_status>0){
                     $resultat = move_uploaded_file($_FILES['image']['tmp_name'],"company_images/".basename($_FILES["image"]["name"]));
                     $cc->setCompanyName(strtolower($request->request->get("compName")));
+                    $cc->setEmail($request->request->get("compEmail"));
                     $cc->setCompanyLogo($_FILES["image"]["name"]);
                     $em->persist($cc);
                     $em->flush();

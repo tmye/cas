@@ -9,12 +9,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 
 class ClockinReccordController extends EmployeController
@@ -47,7 +47,6 @@ class ClockinReccordController extends EmployeController
     public function randomClockinRecordAction(Request $request)
     {
         $session = new Session();
-
         $dateFrom = "2018-05-21";
         $dateTo = "2018-05-27";
         $employees = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->findAll();

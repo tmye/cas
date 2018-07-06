@@ -787,7 +787,7 @@ class MachineSysController extends BaseController
                 mkdir($manager."/fingerprints");
             }
             $filename = "employee_fingerprint".$resp['ccid']."_".time().'_'.$this->get("fingerprints.utils")->getToken(7).'.jpg';
-            $filename = $this->base64_to_jpeg($fingerprint, $filename, $manager."/fingerprints");
+            $filename = $this->base64_to_jpeg($fingerprint, $filename, $manager."/fingerprints/");
             array_push($resultFingerprints, $filename);
         }
 
@@ -832,7 +832,7 @@ class MachineSysController extends BaseController
         // create a name under which to save the current profile picture
         $filename = "employee_headpic".$resp['ccid']."_".time().'_'.$this->get("fingerprints.utils")->getToken(7).'.jpg';
         // save the profile picture under the directory
-        /*$filename = */ $this->base64_to_jpeg($profilePicture, $filename, $manager.DIRECTORY_SEPARATOR.$this->getParameter('user_profile_pictures'));
+        /*$filename = */ $this->base64_to_jpeg($profilePicture, $filename, $manager.DIRECTORY_SEPARATOR.$this->getParameter('user_profile_pictures').DIRECTORY_SEPARATOR);
 
         $employee->setPicture($filename);
         $this->persist($manager, $employee);

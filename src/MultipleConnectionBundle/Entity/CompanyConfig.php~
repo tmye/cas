@@ -49,6 +49,18 @@ class CompanyConfig
      */
     private $isActivated;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="email", type="string", length=255)
+     */
+    private $email;
+
+
+    public function __construct(){
+        $this->isActivated = 0;
+    }
+
 
     /**
      * Get id
@@ -130,5 +142,29 @@ class CompanyConfig
     public function getExpirationDate()
     {
         return $this->expirationDate;
+    }
+
+    /**
+     * Set isActivated
+     *
+     * @param integer $isActivated
+     *
+     * @return CompanyConfig
+     */
+    public function setIsActivated($isActivated)
+    {
+        $this->isActivated = $isActivated;
+
+        return $this;
+    }
+
+    /**
+     * Get isActivated
+     *
+     * @return integer
+     */
+    public function getIsActivated()
+    {
+        return $this->isActivated;
     }
 }

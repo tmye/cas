@@ -24,8 +24,11 @@
                             <div class="collapsible-header active">Formulaire d'ajout d'informations</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
-                                    <div class="col l12">
+                                    <div class="col l6">
                                         <input type="text" id="compName" placeholder="Le nom de votre société">
+                                    </div>
+                                    <div class="col l6">
+                                        <input type="email" id="compEmail" placeholder="Adresse mail de votre société">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -99,56 +102,61 @@
             $("#submitButton").click(function () {
                 // We verify if all fields are not empty
                 if($("#compName").val()){
-                    if($(".fileInput").val()){
-                        if($("#adminName").val()){
-                            if($("#adminSurname").val()){
-                                if($("#adminAdress").val()){
-                                    if($("#adminPhoneNumber").val()){
-                                        if($("#adminFirstPassword").val()){
-                                            if($("#adminFirstPassword").val().length >= 6){
-                                                if($("#adminFirstPassword").val() == $("#adminSecondPassword").val()){
-                                                    $('#modal_loading').modal('open');
-                                                    // After the verifications we can deal with the ajax queries
-                                                    var formdata = new FormData();
-                                                    var fInput = document.getElementById("fileInput");
-                                                    console.log(fInput);
-                                                    formdata.append("compName",$("#compName").val());
-                                                    formdata.append("image",fInput.files[0]);
-                                                    formdata.append("adminName",$("#adminName").val());
-                                                    formdata.append("adminSurname",$("#adminSurname").val());
-                                                    formdata.append("adminAdress",$("#adminAdress").val());
-                                                    formdata.append("adminPhoneNumber",$("#adminPhoneNumber").val());
-                                                    formdata.append("adminUsername",$("#adminUsername").val());
-                                                    formdata.append("adminPassword",$("#adminFirstPassword").val());
-                                                    console.log(fInput);
-                                                    $.ajax({
-                                                        url: "{{ path('initializeApplication') }}",
-                                                        type: "POST",
-                                                        data: formdata,
-                                                        cache:false,
-                                                        contentType: false,
-                                                        processData: false,
-                                                        success: function(data) {
-                                                            // W're making a test here for redirection
-                                                            if(data == 1){
-                                                                window.location.href = "{{ path('homepage') }}";
+                    if($("#compEmail").val()){
+                        if($(".fileInput").val()){
+                            if($("#adminName").val()){
+                                if($("#adminSurname").val()){
+                                    if($("#adminAdress").val()){
+                                        if($("#adminPhoneNumber").val()){
+                                            if($("#adminFirstPassword").val()){
+                                                if($("#adminFirstPassword").val().length >= 6){
+                                                    if($("#adminFirstPassword").val() == $("#adminSecondPassword").val()){
+                                                        $('#modal_loading').modal('open');
+                                                        // After the verifications we can deal with the ajax queries
+                                                        var formdata = new FormData();
+                                                        var fInput = document.getElementById("fileInput");
+                                                        console.log(fInput);
+                                                        formdata.append("compName",$("#compName").val());
+                                                        formdata.append("compEmail",$("#compEmail").val());
+                                                        formdata.append("image",fInput.files[0]);
+                                                        formdata.append("adminName",$("#adminName").val());
+                                                        formdata.append("adminSurname",$("#adminSurname").val());
+                                                        formdata.append("adminAdress",$("#adminAdress").val());
+                                                        formdata.append("adminPhoneNumber",$("#adminPhoneNumber").val());
+                                                        formdata.append("adminUsername",$("#adminUsername").val());
+                                                        formdata.append("adminPassword",$("#adminFirstPassword").val());
+                                                        console.log(fInput);
+                                                        $.ajax({
+                                                            url: "{{ path('initializeApplication') }}",
+                                                            type: "POST",
+                                                            data: formdata,
+                                                            cache:false,
+                                                            contentType: false,
+                                                            processData: false,
+                                                            success: function(data) {
+                                                                // W're making a test here for redirection
+                                                                if(data == 1){
+                                                                    window.location.href = "{{ path('homepage') }}";
+                                                                }
+
+                                                                $('#modal_loading').modal('close');
+
+                                                            },
+                                                            error: function() {
+                                                                alert("Erreur");
+
+                                                                $('#modal_loading').modal('close');
+
                                                             }
-
-                                                            $('#modal_loading').modal('close');
-
-                                                        },
-                                                        error: function() {
-                                                            alert("Erreur");
-
-                                                            $('#modal_loading').modal('close');
-
-                                                        }
-                                                    });
+                                                        });
+                                                    }else {
+                                                        alert("Erreur : Les mot de passes sont differents");
+                                                    }
                                                 }else {
-                                                    alert("Erreur : Les mot de passes sont differents");
+                                                    alert("Erreur : Mot de passe trop court.8 caracteres minimum");
                                                 }
                                             }else {
-                                                alert("Erreur : Mot de passe trop court.8 caracteres minimum");
+                                                alert("Erreur : Tous les champs sont obligatoires");
                                             }
                                         }else {
                                             alert("Erreur : Tous les champs sont obligatoires");
@@ -163,10 +171,10 @@
                                 alert("Erreur : Tous les champs sont obligatoires");
                             }
                         }else {
-                            alert("Erreur : Tous les champs sont obligatoires");
+                            alert("Erreur : Tous les champs sont obligatoires 555");
                         }
                     }else {
-                        alert("Erreur : Tous les champs sont obligatoires 555");
+                        alert("Erreur : Tous les champs sont obligatoires");
                     }
                 }else{
                     alert("Erreur : Tous les champs sont obligatoires");
