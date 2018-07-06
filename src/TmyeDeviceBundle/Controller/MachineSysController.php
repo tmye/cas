@@ -509,6 +509,9 @@ class MachineSysController extends BaseController
         $clockin = new ClockinRecord();
 
         $tmpEmp = $this->EmployeeRepo($manager)->findOneByEmployeeCcid(intval($resp['ccid']));
+        // Ebenezer
+        $this->info("DEBUG MESSAGE 1 ::: ".$resp['ccid']);
+        $this->info("DEBUG MESSAGE 2 ::: ".$tmpEmp->getLastName());
         $clockin->setEmploye($tmpEmp);
         $clockin->setClockinTime((new \DateTime($resp['time']))->getTimestamp());
         $clockin->setVerify($resp['verify']);
