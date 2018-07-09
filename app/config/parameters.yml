@@ -24,6 +24,12 @@ parameters:
     fourth_database_user: root
     fourth_database_password: root
 
+    fifth_database_host: 127.0.0.1
+    fifth_database_port: 3306
+    fifth_database_name: togocel
+    fifth_database_user: root
+    fifth_database_password: root
+
     mailer_transport: gmail
     mailer_host: 127.0.0.1
     mailer_user: nikaboue10@gmail.com
