@@ -65,7 +65,7 @@ class PermissionController extends Controller {
                     },
                     'multiple' => false,
                 ))
-                ->add('Cr&eacute;er', SubmitType::class);
+                ->add('Créer', SubmitType::class);
             // À partir du formBuilder, on génère le formulaire
 
             $form = $formBuilder->getForm();

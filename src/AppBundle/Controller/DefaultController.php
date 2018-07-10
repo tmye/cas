@@ -780,6 +780,10 @@ class DefaultController extends StatsController
         $pdf = new tablepdf();
         $pdf->AddPage();
         $pdf->SetFont('Arial','B',16);
+        $pdf->Image($this->getParameter("web_dir")."/company_images/".$session->get("companyLogo"),10,10,20,20);
+        //$pdf->Cell(22,20,"");
+        //$pdf->Cell(500,10,$session->get("companyName"));
+        $pdf->Ln('25');
         $pdf->Cell(40,10,'Rapport des employes du '.$fromDate.' au '.$toDate);
         $pdf->Ln('15');
         $i=0;

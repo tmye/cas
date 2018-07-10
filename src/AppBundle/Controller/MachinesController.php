@@ -81,7 +81,7 @@ class MachinesController extends Controller
 
                     $request->getSession()->getFlashBag()->add('notice', 'Machine bien enregistrée.');
 
-                    return new Response("OK machine enregistrée");
+                    return $this->redirectToRoute("addMachine");
                 }
             }
 
