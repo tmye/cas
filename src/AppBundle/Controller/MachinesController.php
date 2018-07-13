@@ -141,9 +141,9 @@ class MachinesController extends Controller
                         $em->persist($machine);
                         $em->flush();
 
-                        $request->getSession()->getFlashBag()->add('notice', 'Machine bien enregistrée.');
+                        $request->getSession()->getFlashBag()->add('notice', 'Cette machine a bien été modifiée.');
 
-                        return new Response("OK machine modifiée");
+                        //return $this->redirectToRoute("addMachine");
                     }
                 }
 
@@ -155,7 +155,7 @@ class MachinesController extends Controller
                     'machines' => $machines
                 ));
             }else{
-                throw new NotFoundHttpException("Le département d'id " . $id . " n'existe pas.");
+                throw new NotFoundHttpException("La machine d'id " . $id . " n'existe pas.");
             }
         }else{
             return $this->redirectToRoute("login");
@@ -179,7 +179,8 @@ class MachinesController extends Controller
                 $em = $this->getDoctrine()->getManager($session->get("connection"));
                 $em->remove($machine);
                 $em->flush();
-                return new Response("Cette machine a été supprimée de la base de données");
+                $request->getSession()->getFlashBag()->add('notice', 'Cette machine bien été supprimée.');
+                return $this->redirectToRoute("addMachine");
             } else{
                 throw new NotFoundHttpException("La machine d'id " . $id . " n'existe pas.");
             }

@@ -238,9 +238,17 @@ class PermissionController extends Controller {
                 return $this->redirectToRoute("expiryPage");
             }
             $permRep = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission");
+
+            $numberOfStack = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission")->countPermission(0);
+            $numberOfGranted = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission")->countPermission(1);
+            $numberOfRefused = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission")->countPermission(2);
+
             $listPerm = $permRep->findByOrder();
             return $this->render('cas/viewPermission.html.twig', array(
                 'listPerm' => $listPerm,
+                'stack'=>$numberOfStack,
+                'granted'=>$numberOfGranted,
+                'refused'=>$numberOfRefused
             ));
         }else{
             return $this->redirectToRoute("login");
