@@ -25,9 +25,24 @@
                                 <div class="row">
                                     <div class="col l12">
                                         <ul class="tabs">
-                                            <li class="tab col s3"><a href="#pending" class="active">En attentes</a></li>
-                                            <li class="tab col s3"><a href="#not_granted">Refusées</a></li>
-                                            <li class="tab col s3"><a href="#granted">Accordées</a></li>
+                                            <li class="tab col s3">
+                                                <a href="#pending" class="active">
+                                                    En attentes
+                                                    <span class="badge blue white-text" style="position: relative;top: 12px">{{ stack }}</span>
+                                                </a>
+                                            </li>
+                                            <li class="tab col s3">
+                                                <a href="#not_granted">
+                                                    Refusées
+                                                    <span class="badge red darken-3 white-text" style="position: relative;top: 12px">{{ refused }}</span>
+                                                </a>
+                                            </li>
+                                            <li class="tab col s3">
+                                                <a href="#granted">
+                                                    Accordées
+                                                    <span class="badge teal white-text" style="position: relative;top: 12px">{{ granted }}</span>
+                                                </a>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>

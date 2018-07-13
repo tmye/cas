@@ -14,6 +14,15 @@
                         <li>
                             <div class="collapsible-header active">Ajouter une nouvelle machine à la base de données</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
+                                {% for message in  app.session.flashbag.get('notice') %}
+                                    <div class="row">
+                                        <div class="col l12">
+                                            <div class="operation_message">
+                                                {{ message }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
                                 <div class="row">
                                     <div class="col l12">
                                         {{ form_start(form) }}
@@ -34,11 +43,21 @@
                                                 <br>
                                             </div>
                                         </div>
-                                            <p style="margin-top: -50px">
-                                                <input type="checkbox" class="checkIt" id="filled-in-box" />
-                                                <label for="filled-in-box">Tous les départements</label>
-                                            </p>
+                                        <p style="margin-top: -50px">
+                                            <input type="checkbox" class="checkIt" id="filled-in-box" />
+                                            <label for="filled-in-box">Tous les départements</label>
+                                        </p>
                                         <br><br>
+                                        <div class="row" style="position: relative;top: -40px">
+                                            <div class="input-field col s12">
+                                                {{ form_row(form.departements, {'attr': {'class': ''}}) }}
+                                            </div>
+                                        </div>
+                                        <div class="row" style="position: relative;top: -40px">
+                                            <div class="input-field col s12">
+                                                {{ form_widget(form.Ajouter, { 'label': 'Ajouter','attr': {'class':'btn'} }) }}
+                                            </div>
+                                        </div>
                                         <div class="row" style="position: relative;top: -40px">
                                             <div class="input-field col s12">
                                                 {{ form_rest(form) }}
