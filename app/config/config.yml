@@ -113,7 +113,7 @@ doctrine:
               TmyeDeviceBundle : ~
               UserBundle: ~
           tmye:
-            connection: tmye
+            connection: tmy
             mappings:
               AppBundle : ~
               TmyeDeviceBundle : ~
