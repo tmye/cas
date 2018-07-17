@@ -14,6 +14,7 @@ use AppBundle\Entity\MachineDuplicated;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -105,57 +106,61 @@ class MachinesController extends Controller
     {
         $session = new Session();
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
-            $expiry_service = $this->container->get('app_bundle_expired');
-            if ($expiry_service->hasExpired()) {
-                return $this->redirectToRoute("expiryPage");
-            }
-            $machines = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Machine")->findAll();
-            $machine = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Machine")->find($id);
-
-            if($machine != null){
-                // On crée le FormBuilder grâce au service form factory
-                $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $machine);
-
-                // On ajoute les champs de l'entité que l'on veut à notre formulaire
-                $formBuilder
-                    ->add('name', TextType::class, array('label' =>' '))
-                    ->add('machineId', TextType::class, array('label' =>' '))
-                    ->add('description', TextareaType::class, array('label' =>' '))
-                    ->add('departements', EntityType::class,array(
-                        'em'=>$session->get("connection"),
-                        'class'=>'AppBundle:Departement',
-                        'label'=>' ',
-                        'choice_label' => 'name',
-                        'multiple' => true,
-                    ))
-                    ->add('Modifier', SubmitType::class);
-
-                // À partir du formBuilder, on génère le formulaire
-
-                $form = $formBuilder->getForm();
-
-                if ($request->isMethod('POST')) {
-                    $form->handleRequest($request);
-                    if ($form->isValid()) {
-                        $em = $this->getDoctrine()->getManager($session->get("connection"));
-                        $em->persist($machine);
-                        $em->flush();
-
-                        $request->getSession()->getFlashBag()->add('notice', 'Cette machine a bien été modifiée.');
-
-                        //return $this->redirectToRoute("addMachine");
-                    }
+            if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
+                $expiry_service = $this->container->get('app_bundle_expired');
+                if ($expiry_service->hasExpired()) {
+                    return $this->redirectToRoute("expiryPage");
                 }
+                $machines = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Machine")->findAll();
+                $machine = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Machine")->find($id);
 
-                // À ce stade, le formulaire n'est pas valide car :
-                // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
-                // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
-                return $this->render('api/addMachine.html.twig', array(
-                    'form' => $form->createView(),
-                    'machines' => $machines
-                ));
+                if($machine != null){
+                    // On crée le FormBuilder grâce au service form factory
+                    $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $machine);
+
+                    // On ajoute les champs de l'entité que l'on veut à notre formulaire
+                    $formBuilder
+                        ->add('name', TextType::class, array('label' =>' '))
+                        ->add('machineId', TextType::class, array('label' =>' '))
+                        ->add('description', TextareaType::class, array('label' =>' '))
+                        ->add('departements', EntityType::class,array(
+                            'em'=>$session->get("connection"),
+                            'class'=>'AppBundle:Departement',
+                            'label'=>' ',
+                            'choice_label' => 'name',
+                            'multiple' => true,
+                        ))
+                        ->add('Modifier', SubmitType::class);
+
+                    // À partir du formBuilder, on génère le formulaire
+
+                    $form = $formBuilder->getForm();
+
+                    if ($request->isMethod('POST')) {
+                        $form->handleRequest($request);
+                        if ($form->isValid()) {
+                            $em = $this->getDoctrine()->getManager($session->get("connection"));
+                            $em->persist($machine);
+                            $em->flush();
+
+                            $request->getSession()->getFlashBag()->add('notice', 'Cette machine a bien été modifiée.');
+
+                            //return $this->redirectToRoute("addMachine");
+                        }
+                    }
+
+                    // À ce stade, le formulaire n'est pas valide car :
+                    // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
+                    // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
+                    return $this->render('api/addMachine.html.twig', array(
+                        'form' => $form->createView(),
+                        'machines' => $machines
+                    ));
+                }else{
+                    throw new NotFoundHttpException("La machine d'id " . $id . " n'existe pas.");
+                }
             }else{
-                throw new NotFoundHttpException("La machine d'id " . $id . " n'existe pas.");
+                throw new AccessDeniedException("Accès réservé aux administrateurs");
             }
         }else{
             return $this->redirectToRoute("login");

@@ -8,6 +8,7 @@
 
 namespace AppBundle\Controller;
 
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -168,95 +169,99 @@ class EmployeController extends Controller {
         $session = new Session();
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
-            $expiry_service = $this->container->get('app_bundle_expired');
-            if($expiry_service->hasExpired()){
-                return $this->redirectToRoute("expiryPage");
-            }
-            $employe = $this->getDoctrine()->getManager($session->get("connection"))->getRepository('AppBundle:Employe')->find($id);
-            $last_picture = $employe->getPicture();
+            if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
+                $expiry_service = $this->container->get('app_bundle_expired');
+                if ($expiry_service->hasExpired()) {
+                    return $this->redirectToRoute("expiryPage");
+                }
+                $employe = $this->getDoctrine()->getManager($session->get("connection"))->getRepository('AppBundle:Employe')->find($id);
+                $last_picture = $employe->getPicture();
 
-            if($employe != null){
-                $employe->setLastUpdate(new \DateTime());
-                $employe->setGodfatherCcid($this->getUser()->getId());
-            }else{
-                throw new NotFoundHttpException("L'employé d'id " . $id . " n'existe pas.");
-            }
-
-            // On crée le FormBuilder grâce au service form factory
-            $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $employe);
-
-            // On ajoute les champs de l'entité que l'on veut à notre formulaire
-            $formBuilder
-                ->add('surname', TextType::class,array('label'=>' '))
-                ->add('last_name', TextType::class,array('label'=>' '))
-                ->add('adress', TextType::class,array('label'=>' '))
-                ->add('contact', TextType::class,array('label'=>' '))
-                ->add('salary', IntegerType::class,array('label'=>' '))
-                ->add('picture', FileType::class,array(
-                    'required'=>false,
-                    'label'=>' ',
-                    'data_class' => null
-                ))
-                ->add('function', TextType::class,array('label'=>' '))
-                ->add('hire_date', DateTimeType::class,array('widget'=>'single_text','label'=>' '))
-                ->add('departement',EntityType::class,array(
-                    'em'=>$session->get("connection"),
-                    'label'=>' ',
-                    'class' => 'AppBundle:Departement',
-                    'choice_label' => 'name',
-                    'multiple' => false,
-                ))
-                ->add('workingHour',EntityType::class,array(
-                    'em'=>$session->get("connection"),
-                    'label'=>' ',
-                    'class' => 'AppBundle:WorkingHours',
-                    'choice_label' => 'code',
-                    'multiple' => false,
-                ))
-                ->add('creer', SubmitType::class);
-            // À partir du formBuilder, on génère le formulaire
-
-            $form = $formBuilder->getForm();
-
-            if ($request->isMethod('POST')) {
-                $form->handleRequest($request);
-                if ($form->isValid()) {
-
-                    /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
-
-                    $file = $employe->getPicture();
-
-                    $user_profile_pictures = $this->getParameter("user_profile_pictures");
-                    if(isset($file) && !empty($file)){
-                        $timest = time();
-                        $fileName = $employe->getEmployeeCcid().'_'.$timest.'.'.$file->guessExtension();
-                        // Move the file to the directory where images are stored
-                        $file->move($user_profile_pictures, $fileName);
-                        // Before setting the new file name to the employee,we must delete the older picture
-                        if($last_picture != null && !empty($last_picture)){
-                            //if($last_picture != "default-profile.png"){
-                            if(!strpos($last_picture,"default")){
-                                unlink($user_profile_pictures."/".$last_picture);
-                            }
-                        }
-                        $employe->setPicture($fileName);
-                    }else{
-                        $employe->setPicture($last_picture);
-                    }
-
-                    $em = $this->getDoctrine()->getManager($session->get("connection"));
-
-                    $em->persist($employe);
-                    $em->flush();
-
-
-                    //return $this->redirectToRoute('viewEmploye');
-
-                    $wh = $this->returnWorkingHoursAction();
-                    $this->get('session')->getFlashBag()->set('notice', 'Cet employé a été modifié avec succès');
-                    return $this->redirectToRoute("editEmployee",array("id"=>$id));
+                if ($employe != null) {
+                    $employe->setLastUpdate(new \DateTime());
+                    $employe->setGodfatherCcid($this->getUser()->getId());
+                } else {
+                    throw new NotFoundHttpException("L'employé d'id " . $id . " n'existe pas.");
                 }
 
+                // On crée le FormBuilder grâce au service form factory
+                $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $employe);
+
+                // On ajoute les champs de l'entité que l'on veut à notre formulaire
+                $formBuilder
+                    ->add('surname', TextType::class, array('label' => ' '))
+                    ->add('last_name', TextType::class, array('label' => ' '))
+                    ->add('adress', TextType::class, array('label' => ' '))
+                    ->add('contact', TextType::class, array('label' => ' '))
+                    ->add('salary', IntegerType::class, array('label' => ' '))
+                    ->add('picture', FileType::class, array(
+                        'required' => false,
+                        'label' => ' ',
+                        'data_class' => null
+                    ))
+                    ->add('function', TextType::class, array('label' => ' '))
+                    ->add('hire_date', DateTimeType::class, array('widget' => 'single_text', 'label' => ' '))
+                    ->add('departement', EntityType::class, array(
+                        'em' => $session->get("connection"),
+                        'label' => ' ',
+                        'class' => 'AppBundle:Departement',
+                        'choice_label' => 'name',
+                        'multiple' => false,
+                    ))
+                    ->add('workingHour', EntityType::class, array(
+                        'em' => $session->get("connection"),
+                        'label' => ' ',
+                        'class' => 'AppBundle:WorkingHours',
+                        'choice_label' => 'code',
+                        'multiple' => false,
+                    ))
+                    ->add('creer', SubmitType::class);
+                // À partir du formBuilder, on génère le formulaire
+
+                $form = $formBuilder->getForm();
+
+                if ($request->isMethod('POST')) {
+                    $form->handleRequest($request);
+                    if ($form->isValid()) {
+
+                        /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
+
+                        $file = $employe->getPicture();
+
+                        $user_profile_pictures = $this->getParameter("user_profile_pictures");
+                        if (isset($file) && !empty($file)) {
+                            $timest = time();
+                            $fileName = $employe->getEmployeeCcid() . '_' . $timest . '.' . $file->guessExtension();
+                            // Move the file to the directory where images are stored
+                            $file->move($user_profile_pictures, $fileName);
+                            // Before setting the new file name to the employee,we must delete the older picture
+                            if ($last_picture != null && !empty($last_picture)) {
+                                //if($last_picture != "default-profile.png"){
+                                if (!strpos($last_picture, "default")) {
+                                    unlink($user_profile_pictures . "/" . $last_picture);
+                                }
+                            }
+                            $employe->setPicture($fileName);
+                        } else {
+                            $employe->setPicture($last_picture);
+                        }
+
+                        $em = $this->getDoctrine()->getManager($session->get("connection"));
+
+                        $em->persist($employe);
+                        $em->flush();
+
+
+                        //return $this->redirectToRoute('viewEmploye');
+
+                        $wh = $this->returnWorkingHoursAction();
+                        $this->get('session')->getFlashBag()->set('notice', 'Cet employé a été modifié avec succès');
+                        return $this->redirectToRoute("editEmployee", array("id" => $id));
+                    }
+
+                }
+            }else{
+                throw new AccessDeniedException("Accès réservé aux administrateurs");
             }
 
             $wh = $this->returnWorkingHoursAction();

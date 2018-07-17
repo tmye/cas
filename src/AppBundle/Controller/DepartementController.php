@@ -11,6 +11,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Departement;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\HttpFoundation\Request;
@@ -186,55 +187,58 @@ class DepartementController extends Controller
         $session = new Session();
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
-            $expiry_service = $this->container->get('app_bundle_expired');
-            if($expiry_service->hasExpired()){
-                return $this->redirectToRoute("expiryPage");
-            }
-            $departement = $this->getDoctrine()->getManager($session->get("connection"))->getRepository('AppBundle:Departement')->find($id);
+            if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
+                $expiry_service = $this->container->get('app_bundle_expired');
+                if($expiry_service->hasExpired()){
+                    return $this->redirectToRoute("expiryPage");
+                }
+                $departement = $this->getDoctrine()->getManager($session->get("connection"))->getRepository('AppBundle:Departement')->find($id);
 
-            // Recuperation des departements existants
+                // Recuperation des departements existants
 
-            $depRep = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement");
-            $listDep = $depRep->findAll();
+                $depRep = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement");
+                $listDep = $depRep->findAll();
 
-            if($departement != null){
-                $departement->setLastUpdate(new \DateTime());
-                $departement->setCreateDate(new \DateTime());
-                $departement->setAuthor($this->getUser()->getUsername());
-            }else{
-                throw new NotFoundHttpException("Le département d'id " . $id . " n'existe pas.");
-            }
-
-            // On crée le FormBuilder grâce au service form factory
-            $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $departement);
-
-            // On ajoute les champs de l'entité que l'on veut à notre formulaire
-            $formBuilder
-                ->add('name', TextType::class)
-                ->add('maxCount', IntegerType::class,array('label'=>' '))
-                ->add('creer', SubmitType::class);
-
-            // À partir du formBuilder, on génère le formulaire
-
-            $form = $formBuilder->getForm();
-
-            if ($request->isMethod('POST')) {
-                $form->handleRequest($request);
-                if ($form->isValid()) {
-                    $em = $this->getDoctrine()->getManager($session->get("connection"));
-                    $em->persist($departement);
-                    $em->flush();
-
-                    return $this->render("cas/departement.html.twig",array(
-                        'message'=>"Ce département a été modifié",
-                        'form' => $form->createView(),
-                        'listDep' => $listDep
-                    ));
-
+                if($departement != null){
+                    $departement->setLastUpdate(new \DateTime());
+                    $departement->setCreateDate(new \DateTime());
+                    $departement->setAuthor($this->getUser()->getUsername());
+                }else{
+                    throw new NotFoundHttpException("Le département d'id " . $id . " n'existe pas.");
                 }
 
-            }
+                // On crée le FormBuilder grâce au service form factory
+                $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $departement);
 
+                // On ajoute les champs de l'entité que l'on veut à notre formulaire
+                $formBuilder
+                    ->add('name', TextType::class)
+                    ->add('maxCount', IntegerType::class,array('label'=>' '))
+                    ->add('creer', SubmitType::class);
+
+                // À partir du formBuilder, on génère le formulaire
+
+                $form = $formBuilder->getForm();
+
+                if ($request->isMethod('POST')) {
+                    $form->handleRequest($request);
+                    if ($form->isValid()) {
+                        $em = $this->getDoctrine()->getManager($session->get("connection"));
+                        $em->persist($departement);
+                        $em->flush();
+
+                        return $this->render("cas/departement.html.twig",array(
+                            'message'=>"Ce département a été modifié",
+                            'form' => $form->createView(),
+                            'listDep' => $listDep
+                        ));
+
+                    }
+
+                }
+            }else{
+                throw new AccessDeniedException("Accès réservé aux administrateurs");
+            }
             // À ce stade, le formulaire n'est pas valide car :
             // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
             // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau

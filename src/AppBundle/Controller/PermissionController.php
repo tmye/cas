@@ -9,6 +9,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Permission;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -164,54 +165,58 @@ class PermissionController extends Controller {
         $session = new Session();
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
-            $expiry_service = $this->container->get('app_bundle_expired');
-            if ($expiry_service->hasExpired()) {
-                return $this->redirectToRoute("expiryPage");
-            }
-
-            $permission = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission")->find($id);
-
-            $permission->setUpdateTime(new \DateTime());
-            $permission->setState(0);
-            //$permission->setAskerId($this->getUser()->getId());
-
-            // On crée le FormBuilder grâce au service form factory
-            $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $permission);
-
-            // On ajoute les champs de l'entité que l'on veut à notre formulaire
-            $formBuilder
-                ->add('title', TextType::class)
-                ->add('description', TextType::class)
-                ->add('dateFrom', DateTimeType::class)
-                ->add('timeFrom', TextType::class, array('label' => ' '))
-                ->add('dateTo', DateTimeType::class)
-                ->add('timeTo', TextType::class, array('label' => ' '))
-                ->add('state', IntegerType::class)
-                ->add('employee', EntityType::class, array(
-                    'class' => 'AppBundle:Employe',
-                    'choice_label' => 'employee_ccid',
-                    'multiple' => false,
-                ))
-                ->add('Modifier', SubmitType::class);
-            // À partir du formBuilder, on génère le formulaire
-
-            $form = $formBuilder->getForm();
-
-            if ($request->isMethod('POST')) {
-                $form->handleRequest($request);
-                if ($form->isValid()) {
-                    $em = $this->getDoctrine()->getManager($session->get("connection"));
-
-                    $em->persist($permission);
-                    $em->flush();
-
-                    $request->getSession()->getFlashBag()->add('notice', 'Permission bien modifiée.');
-
-                    return $this->render("cas/addPermission.html.twig", array(
-                        'form' => $form->createView(),
-                        'message' => "Cette permission a été modifiée avec succès"
-                    ));
+            if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
+                $expiry_service = $this->container->get('app_bundle_expired');
+                if ($expiry_service->hasExpired()) {
+                    return $this->redirectToRoute("expiryPage");
                 }
+
+                $permission = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission")->find($id);
+
+                $permission->setUpdateTime(new \DateTime());
+                $permission->setState(0);
+                //$permission->setAskerId($this->getUser()->getId());
+
+                // On crée le FormBuilder grâce au service form factory
+                $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $permission);
+
+                // On ajoute les champs de l'entité que l'on veut à notre formulaire
+                $formBuilder
+                    ->add('title', TextType::class)
+                    ->add('description', TextType::class)
+                    ->add('dateFrom', DateTimeType::class)
+                    ->add('timeFrom', TextType::class, array('label' => ' '))
+                    ->add('dateTo', DateTimeType::class)
+                    ->add('timeTo', TextType::class, array('label' => ' '))
+                    ->add('state', IntegerType::class)
+                    ->add('employee', EntityType::class, array(
+                        'class' => 'AppBundle:Employe',
+                        'choice_label' => 'employee_ccid',
+                        'multiple' => false,
+                    ))
+                    ->add('Modifier', SubmitType::class);
+                // À partir du formBuilder, on génère le formulaire
+
+                $form = $formBuilder->getForm();
+
+                if ($request->isMethod('POST')) {
+                    $form->handleRequest($request);
+                    if ($form->isValid()) {
+                        $em = $this->getDoctrine()->getManager($session->get("connection"));
+
+                        $em->persist($permission);
+                        $em->flush();
+
+                        $request->getSession()->getFlashBag()->add('notice', 'Permission bien modifiée.');
+
+                        return $this->render("cas/addPermission.html.twig", array(
+                            'form' => $form->createView(),
+                            'message' => "Cette permission a été modifiée avec succès"
+                        ));
+                    }
+                }
+            }else{
+                throw new AccessDeniedException("Accès réservé aux administrateurs");
             }
 
             // À ce stade, le formulaire n'est pas valide car :

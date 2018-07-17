@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\WorkingHours;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -90,30 +91,34 @@ class WorkingHoursController extends Controller
         $session = new Session();
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
-            $expiry_service = $this->container->get('app_bundle_expired');
-            if ($expiry_service->hasExpired()) {
-                return $this->redirectToRoute("expiryPage");
-            }
-            if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
-                $wh = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:WorkingHours")->find($id);
-                if($wh == null){
-                    throw new NotFoundHttpException("Ce workingHour n'a pas été trouvé");
+            if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
+                $expiry_service = $this->container->get('app_bundle_expired');
+                if ($expiry_service->hasExpired()) {
+                    return $this->redirectToRoute("expiryPage");
                 }
-                $tab = array();
+                if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+                    $wh = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:WorkingHours")->find($id);
+                    if($wh == null){
+                        throw new NotFoundHttpException("Ce workingHour n'a pas été trouvé");
+                    }
+                    $tab = array();
 
-                $json_wh = json_decode($wh->getWorkingHour(),true);
-                $tab[] = ['id'=>$wh->getId(),'workingHour'=>(array)json_decode($wh->getWorkingHour())];
+                    $json_wh = json_decode($wh->getWorkingHour(),true);
+                    $tab[] = ['id'=>$wh->getId(),'workingHour'=>(array)json_decode($wh->getWorkingHour())];
 
-                return $this->render('cas/editWorkingHour.html.twig', array(
-                    'id'=>$id,
-                    'wh'=>$wh,
-                    'whJson'=>$json_wh
-                ));
+                    return $this->render('cas/editWorkingHour.html.twig', array(
+                        'id'=>$id,
+                        'wh'=>$wh,
+                        'whJson'=>$json_wh
+                    ));
+                }else{
+                    return $this->redirectToRoute("login");
+                }
             }else{
                 return $this->redirectToRoute("login");
             }
         }else{
-            return $this->redirectToRoute("login");
+            throw new AccessDeniedException("Accès réservé aux administrateurs");
         }
     }
 
