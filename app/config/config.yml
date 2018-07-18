@@ -61,37 +61,13 @@ doctrine:
           user:     "%database_user%"
           password: "%database_password%"
           charset:  UTF8
-        tmye:
+        kaba:
           driver:   pdo_mysql
-          host:     "%second_database_host%"
-          port:     "%second_database_port%"
-          dbname:   "%second_database_name%"
-          user:     "%second_database_user%"
-          password: "%second_database_password%"
-          charset:  UTF8
-        jimscom:
-          driver:   pdo_mysql
-          host:     "%third_database_host%"
-          port:     "%third_database_port%"
-          dbname:   "%third_database_name%"
-          user:     "%third_database_user%"
-          password: "%third_database_password%"
-          charset:  UTF8
-        prog:
-          driver:   pdo_mysql
-          host:     "%fourth_database_host%"
-          port:     "%fourth_database_port%"
-          dbname:   "%fourth_database_name%"
-          user:     "%fourth_database_user%"
-          password: "%fourth_database_password%"
-          charset:  UTF8
-        togocel:
-          driver:   pdo_mysql
-          host:     "%fifth_database_host%"
-          port:     "%fifth_database_port%"
-          dbname:   "%fifth_database_name%"
-          user:     "%fifth_database_user%"
-          password: "%fifth_database_password%"
+          host:     "127.0.0.1"
+          port:     null
+          dbname:   "kaba"
+          user:     "root"
+          password: "root"
           charset:  UTF8
 
         # if using pdo_sqlite as your database driver:
@@ -112,26 +88,8 @@ doctrine:
               AppBundle : ~
               TmyeDeviceBundle : ~
               UserBundle: ~
-          tmye:
-            connection: tmye
-            mappings:
-              AppBundle : ~
-              TmyeDeviceBundle : ~
-              UserBundle: ~
-          jimscom:
-            connection: jimscom
-            mappings:
-              AppBundle : ~
-              TmyeDeviceBundle : ~
-              UserBundle: ~
-          prog:
-            connection: prog
-            mappings:
-              AppBundle : ~
-              TmyeDeviceBundle : ~
-              UserBundle: ~
-          togocel:
-            connection: togocel
+          kaba:
+            connection: kaba
             mappings:
               AppBundle : ~
               TmyeDeviceBundle : ~

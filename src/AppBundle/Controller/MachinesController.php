@@ -1278,7 +1278,7 @@ class MachinesController extends Controller
      */
     public function syncAllAction(Request $request)
     {
-        //$a = $this->syncDeleteForAllAction($request);
+        $a = $this->syncDeleteForAllAction($request);
         $b = $this->syncDepartementAction($request);
         $c = $this->syncEmpAction($request);
         $d = $this->syncEmpFAction($request);

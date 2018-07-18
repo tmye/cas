@@ -48,7 +48,7 @@ class ClockinReccordController extends EmployeController
     {
         $session = new Session();
         $dateFrom = "2018-07-01";
-        $dateTo = "2018-07-09";
+        $dateTo = "2018-07-18";
         $employees = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->findAll();
         $timeFrom = strtotime($dateFrom." 00:00:00");
         $timeTo = strtotime($dateTo." 00:00:00");
