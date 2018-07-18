@@ -10,7 +10,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Departement;
 use AppBundle\Entity\Machine;
-use AppBundle\Entity\MachineDuplicated;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -37,7 +36,7 @@ class MachinesController extends Controller
             if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
             }
-            $machines = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Machine")->findAll();
+            $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
             $machine = new Machine();
             //$machine->setCompany($session->get("connection"));
 
@@ -50,7 +49,6 @@ class MachinesController extends Controller
                 ->add('machineId', TextType::class, array('label' =>' '))
                 ->add('description', TextareaType::class, array('label' =>' '))
                 ->add('departements', EntityType::class,array(
-                    'em'=>$session->get("connection"),
                     'class'=>'AppBundle:Departement',
                     'label'=>' ',
                     'choice_label' => 'name',
@@ -65,20 +63,9 @@ class MachinesController extends Controller
             if ($request->isMethod('POST')) {
                 $form->handleRequest($request);
                 if ($form->isValid()) {
-                    $em = $this->getDoctrine()->getManager($session->get("connection"));
+                    $em = $this->getDoctrine()->getManager();
                     $em->persist($machine);
                     $em->flush();
-
-                    $cas_machine = new MachineDuplicated();
-                    $cas_machine->setName($machine->getName());
-                    $cas_machine->setMachineId($machine->getMachineId());
-                    $cas_machine->setDescription($machine->getDescription());
-                    $cas_machine->setCompany($session->get("connection"));
-
-                    $cas_em = $this->getDoctrine()->getManager("cas");
-                    $cas_em->persist($cas_machine);
-                    $cas_em->flush();
-
                     $request->getSession()->getFlashBag()->add('notice', 'Machine bien enregistrée.');
 
                     return $this->redirectToRoute("addMachine");
@@ -109,8 +96,8 @@ class MachinesController extends Controller
             if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
             }
-            $machines = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Machine")->findAll();
-            $machine = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Machine")->find($id);
+            $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
+            $machine = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->find($id);
 
             if($machine != null){
                 // On crée le FormBuilder grâce au service form factory
@@ -122,7 +109,6 @@ class MachinesController extends Controller
                     ->add('machineId', TextType::class, array('label' =>' '))
                     ->add('description', TextareaType::class, array('label' =>' '))
                     ->add('departements', EntityType::class,array(
-                        'em'=>$session->get("connection"),
                         'class'=>'AppBundle:Departement',
                         'label'=>' ',
                         'choice_label' => 'name',
@@ -137,7 +123,7 @@ class MachinesController extends Controller
                 if ($request->isMethod('POST')) {
                     $form->handleRequest($request);
                     if ($form->isValid()) {
-                        $em = $this->getDoctrine()->getManager($session->get("connection"));
+                        $em = $this->getDoctrine()->getManager();
                         $em->persist($machine);
                         $em->flush();
 
@@ -174,9 +160,9 @@ class MachinesController extends Controller
                 return $this->redirectToRoute("expiryPage");
             }
             // On vérifie que le département n'est pas vide
-            $machine = $this->getDoctrine()->getManager($session->get("connection"))->getRepository('AppBundle:Machine')->find($id);
+            $machine = $this->getDoctrine()->getManager()->getRepository('AppBundle:Machine')->find($id);
             if ($machine != null) {
-                $em = $this->getDoctrine()->getManager($session->get("connection"));
+                $em = $this->getDoctrine()->getManager();
                 $em->remove($machine);
                 $em->flush();
                 $request->getSession()->getFlashBag()->add('notice', 'Cette machine bien été supprimée.');
@@ -201,9 +187,9 @@ class MachinesController extends Controller
             if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
             }
-            $machines = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Machine")->findAll();
-            $departements = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement")->findAll();
-            $machines = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Machine")->findAll();
+            $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
+            $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
+            $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
             return $this->render('cas/pubCovers.html.twig',array(
                 'departements'=>$departements,
                 'machines'=>$machines
@@ -218,7 +204,7 @@ class MachinesController extends Controller
     private function returnMachinesForSelectedDeps($tab){
         $session = new Session();
 
-        $emMac = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Machine");
+        $emMac = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine");
         $tabMac = array();
         foreach ($tab as $depId){
             $data = $emMac->machineByDep($depId);
@@ -234,7 +220,7 @@ class MachinesController extends Controller
     {
         $session = new Session();
 
-        $em = $this->getDoctrine()->getManager($session->get("connection"));
+        $em = $this->getDoctrine()->getManager();
 
         /*
          * Must do a test
@@ -243,7 +229,7 @@ class MachinesController extends Controller
         if($request->request->get("deps") != null && !empty($request->request->get("deps"))){
             $tabDeps = $request->request->get("deps");
         }else{
-            $result = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement")->findAll();
+            $result = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
             foreach ($result as $dep){
                 $tabDeps[]=$dep->getId();
             }
@@ -278,7 +264,7 @@ class MachinesController extends Controller
                 // On boucle sur tous les departements
                 foreach ($tabDeps as $d){
                     // On boucle sur les employes
-                    $empl = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->employeeByDep($d);
+                    $empl = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($d);
                     foreach ($empl as $ee){
                         $found = 0;
                         while($found == 0 && $i < sizeof($donnees)){
@@ -308,7 +294,7 @@ class MachinesController extends Controller
             foreach ($tab[0] as $mac){
                 foreach ($tabDeps as $d){
                     // On boucle sur les employes
-                    $empl = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->employeeByDep($d);
+                    $empl = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($d);
                     foreach ($empl as $ee){
                         $found = 0;
                         while($found == 0 && $i < sizeof($donnees)){
@@ -346,7 +332,7 @@ class MachinesController extends Controller
     {
         $session = new Session();
 
-        $em = $this->getDoctrine()->getManager($session->get("connection"));
+        $em = $this->getDoctrine()->getManager();
 
         /*
          * Must do a test
@@ -355,7 +341,7 @@ class MachinesController extends Controller
         if($request->request->get("deps") != null && !empty($request->request->get("deps"))){
             $tabDeps = $request->request->get("deps");
         }else{
-            $result = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement")->findAll();
+            $result = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
             foreach ($result as $dep){
                 $tabDeps[]=$dep->getId();
             }
@@ -394,7 +380,7 @@ class MachinesController extends Controller
                 // On boucle sur tous les departements
                 foreach ($tabDeps as $d){
                     // On boucle sur les employes
-                    $empl = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->employeeByDep($d);
+                    $empl = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($d);
                     foreach ($empl as $ee){
                         $found = 0;
                         while($found == 0 && $i < sizeof($donnees)){
@@ -424,7 +410,7 @@ class MachinesController extends Controller
                 // On boucle sur tous les departements
                 foreach ($tabDeps as $d){
                     // On boucle sur les employes
-                    $empl = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->employeeByDep($d);
+                    $empl = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($d);
                     foreach ($empl as $ee){
                         $found = 0;
                         while($found == 0 && $i < sizeof($donnees)){
@@ -461,7 +447,7 @@ class MachinesController extends Controller
     {
         $session = new Session();
 
-        $em = $this->getDoctrine()->getManager($session->get("connection"));
+        $em = $this->getDoctrine()->getManager();
 
         /*
          * Must do a test
@@ -470,7 +456,7 @@ class MachinesController extends Controller
         if($request->request->get("deps") != null && !empty($request->request->get("deps"))){
             $tabDeps = $request->request->get("deps");
         }else{
-            $result = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement")->findAll();
+            $result = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
             foreach ($result as $dep){
                 $tabDeps[]=$dep->getId();
             }
@@ -504,7 +490,7 @@ class MachinesController extends Controller
                 // On boucle sur tous les departements
                 foreach ($tabDeps as $d){
                     // On boucle sur les employes
-                    $empl = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->employeeByDep($d);
+                    $empl = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($d);
                     foreach ($empl as $ee){
                         $found = 0;
                         while($found == 0 && $i < sizeof($donnees)){
@@ -535,7 +521,7 @@ class MachinesController extends Controller
                 // On boucle sur tous les departements
                 foreach ($tabDeps as $d){
                     // On boucle sur les employes
-                    $empl = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->employeeByDep($d);
+                    $empl = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($d);
                     foreach ($empl as $ee){
                         $found = 0;
                         while($found == 0 && $i < sizeof($donnees)){
@@ -573,7 +559,7 @@ class MachinesController extends Controller
     {
         $session = new Session();
 
-        $em = $this->getDoctrine()->getManager($session->get("connection"));
+        $em = $this->getDoctrine()->getManager();
 
         /*
          * Must do a test
@@ -582,7 +568,7 @@ class MachinesController extends Controller
         if($request->request->get("deps") != null && !empty($request->request->get("deps"))){
             $tabDeps = $request->request->get("deps");
         }else{
-            $result = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement")->findAll();
+            $result = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
             foreach ($result as $dep){
                 $tabDeps[]=$dep->getId();
             }
@@ -686,7 +672,7 @@ class MachinesController extends Controller
     {
         $session = new Session();
 
-        $em = $this->getDoctrine()->getManager($session->get("connection"));
+        $em = $this->getDoctrine()->getManager();
 
         $mac = $request->request->get("mac");
         echo "Mac : ".$mac;
@@ -734,7 +720,7 @@ class MachinesController extends Controller
     {
         $session = new Session();
 
-        $em = $this->getDoctrine()->getManager($session->get("connection"));
+        $em = $this->getDoctrine()->getManager();
 
         /*
          * Must do a test
@@ -743,7 +729,7 @@ class MachinesController extends Controller
         if($request->request->get("deps") != null && !empty($request->request->get("deps"))){
             $tabDeps = $request->request->get("deps");
         }else{
-            $result = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement")->findAll();
+            $result = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
             foreach ($result as $dep){
                 $tabDeps[]=$dep->getId();
             }
@@ -850,7 +836,7 @@ class MachinesController extends Controller
     {
         $session = new Session();
 
-        $em = $this->getDoctrine()->getManager($session->get("connection"));
+        $em = $this->getDoctrine()->getManager();
 
         $mac = $request->request->get("mac");
         echo "Mac : ".$mac;
@@ -899,7 +885,7 @@ class MachinesController extends Controller
     {
         $session = new Session();
 
-        $em = $this->getDoctrine()->getManager($session->get("connection"));
+        $em = $this->getDoctrine()->getManager();
 
         /*
          * Must do a test
@@ -908,7 +894,7 @@ class MachinesController extends Controller
         if($request->request->get("deps") != null && !empty($request->request->get("deps"))){
             $tabDeps = $request->request->get("deps");
         }else{
-            $result = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement")->findAll();
+            $result = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
             foreach ($result as $dep){
                 $tabDeps[]=$dep->getId();
             }
@@ -1012,7 +998,7 @@ class MachinesController extends Controller
     {
         $session = new Session();
 
-        $em = $this->getDoctrine()->getManager($session->get("connection"));
+        $em = $this->getDoctrine()->getManager();
 
         /*
          * Must do a test
@@ -1021,7 +1007,7 @@ class MachinesController extends Controller
         if($request->request->get("deps") != null && !empty($request->request->get("deps"))){
             $tabDeps = $request->request->get("deps");
         }else{
-            $result = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Departement")->findAll();
+            $result = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
             foreach ($result as $dep){
                 $tabDeps[]=$dep->getId();
             }
@@ -1125,7 +1111,7 @@ class MachinesController extends Controller
     {
         $session = new Session();
 
-        $em = $this->getDoctrine()->getManager($session->get("connection"));
+        $em = $this->getDoctrine()->getManager();
 
         $tabDeps = $request->request->get("deps");
         $tab = $this->returnMachinesForSelectedDeps($tabDeps);
@@ -1227,7 +1213,7 @@ class MachinesController extends Controller
     {
         $session = new Session();
 
-        $em = $this->getDoctrine()->getManager($session->get("connection"));
+        $em = $this->getDoctrine()->getManager();
 
         $mac = $request->request->get("mac");
         echo "Mac : ".$mac;
@@ -1273,7 +1259,7 @@ class MachinesController extends Controller
      */
     public function syncAllAction(Request $request)
     {
-        //$a = $this->syncDeleteForAllAction($request);
+        $a = $this->syncDeleteForAllAction($request);
         $b = $this->syncDepartementAction($request);
         $c = $this->syncEmpAction($request);
         $d = $this->syncEmpFAction($request);

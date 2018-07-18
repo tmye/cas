@@ -57,7 +57,6 @@ class PermissionController extends Controller {
                 ->add('dateTo', DateTimeType::class,array('widget'=>'single_text','label'=>' '))
                 ->add('timeTo', TextType::class,array('label'=>' '))
                 ->add('employee',EntityType::class,array(
-                    'em'=>$session->get("connection"),
                     'label'=>' ',
                     'class' => 'AppBundle:Employe',
                     'choice_label' => function ($employee) {
@@ -74,7 +73,7 @@ class PermissionController extends Controller {
                 $form->handleRequest($request);
                 if ($form->isValid()) {
 
-                    $em = $this->getDoctrine()->getManager($session->get("connection"));
+                    $em = $this->getDoctrine()->getManager();
 
                     $dateFrom = $request->request->get("form")["dateFrom"];
                     $dateTo = $request->request->get("form")["dateTo"];
@@ -98,7 +97,7 @@ class PermissionController extends Controller {
                             $permission = new Permission();
 
                             $empId = (int)$request->request->get("form")["employee"];
-                            $emp = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:employe")->find($empId);
+                            $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:employe")->find($empId);
 
                             $permission->setTitle($request->request->get("form")["title"]);
                             $permission->setDescription($request->request->get("form")["description"]);
@@ -169,7 +168,7 @@ class PermissionController extends Controller {
                 return $this->redirectToRoute("expiryPage");
             }
 
-            $permission = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission")->find($id);
+            $permission = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->find($id);
 
             $permission->setUpdateTime(new \DateTime());
             $permission->setState(0);
@@ -200,7 +199,7 @@ class PermissionController extends Controller {
             if ($request->isMethod('POST')) {
                 $form->handleRequest($request);
                 if ($form->isValid()) {
-                    $em = $this->getDoctrine()->getManager($session->get("connection"));
+                    $em = $this->getDoctrine()->getManager();
 
                     $em->persist($permission);
                     $em->flush();
@@ -237,11 +236,11 @@ class PermissionController extends Controller {
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
             }
-            $permRep = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission");
+            $permRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission");
 
-            $numberOfStack = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission")->countPermission(0);
-            $numberOfGranted = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission")->countPermission(1);
-            $numberOfRefused = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission")->countPermission(2);
+            $numberOfStack = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(0);
+            $numberOfGranted = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(1);
+            $numberOfRefused = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(2);
 
             $listPerm = $permRep->findByOrder();
             return $this->render('cas/viewPermission.html.twig', array(
@@ -268,9 +267,9 @@ class PermissionController extends Controller {
                 return $this->redirectToRoute("expiryPage");
             }
 
-            $perm = $this->getDoctrine()->getManager($session->get("connection"))->getRepository('AppBundle:Permission')->find($id);
+            $perm = $this->getDoctrine()->getManager()->getRepository('AppBundle:Permission')->find($id);
             if ($perm != null) {
-                $em = $this->getDoctrine()->getManager($session->get("connection"));
+                $em = $this->getDoctrine()->getManager();
                 $em->remove($perm);
                 $em->flush();
                 return $this->render("cas/addPermission.html.twig",array(
@@ -291,12 +290,12 @@ class PermissionController extends Controller {
     {
         $session = new Session();
 
-        $perm = $this->getDoctrine()->getManager($session->get("connection"))->getRepository('AppBundle:Permission')->find($id);
+        $perm = $this->getDoctrine()->getManager()->getRepository('AppBundle:Permission')->find($id);
         if ($perm != null) {
             $perm->setState(1);
-            $em = $this->getDoctrine()->getManager($session->get("connection"));
+            $em = $this->getDoctrine()->getManager();
             $em->flush();
-            $permRep = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission");
+            $permRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission");
             $listPerm = $permRep->findByOrder();
             return $this->render("cas/viewPermission.html.twig",array(
                 'message'=>"Cette permission a été accordée",
@@ -314,12 +313,12 @@ class PermissionController extends Controller {
     {
         $session = new Session();
 
-        $perm = $this->getDoctrine()->getManager($session->get("connection"))->getRepository('AppBundle:Permission')->find($id);
+        $perm = $this->getDoctrine()->getManager()->getRepository('AppBundle:Permission')->find($id);
         if ($perm != null) {
             $perm->setState(2);
-            $em = $this->getDoctrine()->getManager($session->get("connection"));
+            $em = $this->getDoctrine()->getManager();
             $em->flush();
-            $permRep = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Permission");
+            $permRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission");
             $listPerm = $permRep->findByOrder();
             return $this->render("cas/viewPermission.html.twig",array(
                 'message'=>"Cette permission a été rejetée",
