@@ -61,8 +61,9 @@ class DefaultController extends StatsController
 
         //return new Response(date("Y-m-d H:i:s",1537163970));
         //return new Response(date("Y-m-d H:i:s",(new \DateTime())->getTimestamp()));
-        return new Response(strtotime("2018-07-05 08:30"));
+        //return new Response(strtotime("2018-07-05 08:30"));
         //return new Response($this->formatInt(12253008000000));
+        return $this->render("cas/errorPage.html.twig");
     }
 
     /**

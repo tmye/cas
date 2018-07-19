@@ -2059,9 +2059,10 @@
 
                                 // For departures chart
                                 if(data.nbreAbsences == 0){
-                                    $(".departuresChart").hide();
+                                    $(".myChartContainer").append("<h5>Aucune absence enregistrée</h5>");
+                                    $("#myChart").hide();
                                 }else{
-                                    $(".departuresChart").show();
+                                    $("#myChart").show();
                                 }
 
                                 // Closing the loading box
