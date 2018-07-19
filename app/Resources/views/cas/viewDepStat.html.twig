@@ -195,6 +195,11 @@
                 return dat;
             }
 
+            function precisionRound(number, precision) {
+                var factor = Math.pow(10, precision);
+                return Math.round(number * factor) / factor;
+            }
+
             // Intervalle de retard
             var interval = 180*60; // 10800 3Heures
             $.ajax({
@@ -210,10 +215,10 @@
                     var dataDepartArgent = [];
                     for (var i=0;i<elLength;i++){
                         labels.push(data[i]["departement"]);
-                        dataRetardTemps.push(data[i]["tpr"]);
-                        dataRetardArgent.push(data[i]["spr"]);
-                        dataDepartTemps.push(data[i]["tpd"]);
-                        dataDepartArgent.push(data[i]["spd"]);
+                        dataRetardTemps.push(precisionRound(data[i]["tpr"],0));
+                        dataRetardArgent.push(precisionRound(data[i]["spr"],0));
+                        dataDepartTemps.push(precisionRound(data[i]["tpd"],0));
+                        dataDepartArgent.push(precisionRound(data[i]["spd"],0));
                     }
                     console.log(data);
                     console.log("Length of elements : "+data.length);
