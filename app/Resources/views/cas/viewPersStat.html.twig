@@ -162,9 +162,6 @@
                 <div class="row">
                     <div class="col l12">
                         <h5 class="table-title">Historique des présences</h5>
-                        <br>
-                        <span class="fa fa-circle" style="color: red"></span>
-                        <span style="color: red">Retards ou départs prématurés</span>
                         <br><br>
                         <table class="bordered striped">
                             <thead>
@@ -186,8 +183,15 @@
                             </tr>
                             </tbody>
                         </table>
+                        <br>
+                        <span class="fa fa-circle" style="color: red"></span>
+                        <span style="color: red">Retards ou départs prématurés</span>
+                        <br>
+                        <span class="fa fa-circle" style="color: black"></span>
+                        <span style="color: black">Heures conformes</span>
                     </div>
                 </div>
+
                 <div class="row">
                     <h5 class="table-title">Permissions</h5>
                     <table class="center">
@@ -2059,9 +2063,10 @@
 
                                 // For departures chart
                                 if(data.nbreAbsences == 0){
-                                    $(".departuresChart").hide();
+                                    $(".myChartContainer").append("<h5>Aucune absence enregistrée</h5>");
+                                    $("#myChart").hide();
                                 }else{
-                                    $(".departuresChart").show();
+                                    $("#myChart").show();
                                 }
 
                                 // Closing the loading box
