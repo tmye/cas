@@ -708,12 +708,18 @@ class DefaultController extends StatsController
      */
     public function generatePDFAction(Request $request)
     {
+        $session = new Session();
+
         $empId = $request->request->get('destination');
         $fromDate = $request->request->get('fromDate');
         $toDate = $request->request->get('toDate');
         $pdf = new tablepdf();
         $pdf->AddPage();
         $pdf->SetFont('Arial','B',16);
+        $pdf->Image($this->getParameter("web_dir")."/company_images/".$session->get("companyLogo"),10,10,20,20);
+        //$pdf->Cell(22,20,"");
+        //$pdf->Cell(500,10,$session->get("companyName"));
+        $pdf->Ln('25');
         $pdf->Cell(40,10,'Rapport des employes du '.$fromDate.' au '.$toDate);
         $pdf->Ln('15');
         $i=0;
@@ -723,7 +729,7 @@ class DefaultController extends StatsController
                 $pdf->AddPage();
                 $i=0;
             }
-            $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($emp);
+            $employe = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->find($emp);
             $empWH = json_decode($employe->getWorkingHour()->getWorkingHour(),true);
             $type = $empWH["lundi"][0]["type"];
 
@@ -757,7 +763,8 @@ class DefaultController extends StatsController
                     array("Pertes en argent (FCFA)","",$donnees["absences"]*$finalSalary,$donnees["quota_fait"]*$finalSalaryPerMin,"-",$qr*$finalSalaryPerMin,$donnees["lost_time"]*$finalSalaryPerMin),
                 );
                 $data4 = array(
-                    array("Total","",($donnees["absences"]*$finalSalary)+($qr*$finalSalaryPerMin)),
+                    //array("Total","",($donnees["absences"]*$finalSalary)+($qr*$finalSalaryPerMin)),
+                    array("Total","",($donnees["absences"]*$finalSalary)),
                 );
             }else{
                 $header = array('Nom', 'Prenom(s)', 'Absences', 'Permissions','Retards','Departs','Auth incomp');
