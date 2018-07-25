@@ -59,11 +59,25 @@ class DefaultController extends StatsController
             echo "<br>".$perm->getDescription()."<br>";
         }*/
 
+        //require('fpdf181/fpdf.php');
+
+        $pdf = new FPDF();
+        $pdf->AddPage();
+        $pdf->SetFont('Arial','B',16);
+        $pdf->Cell(40,10,'Hello World !');
+
+        $pdf2 = new FPDF();
+        $pdf2->AddPage();
+        $pdf2->SetFont('Arial','B',16);
+        $pdf2->Cell(40,10,'Bonjour le monde !');
+
+        $pdf->Output();
+
         //return new Response(date("Y-m-d H:i:s",1537163970));
         //return new Response(date("Y-m-d H:i:s",(new \DateTime())->getTimestamp()));
         //return new Response(strtotime("2018-07-05 08:30"));
         //return new Response($this->formatInt(12253008000000));
-        return $this->render("cas/errorPage.html.twig");
+        //return $this->render("cas/errorPage.html.twig");
     }
 
     /**
@@ -713,15 +727,22 @@ class DefaultController extends StatsController
         $empId = $request->request->get('destination');
         $fromDate = $request->request->get('fromDate');
         $toDate = $request->request->get('toDate');
+        $t = $request->request->get('type');
         $pdf = new tablepdf();
-        $pdf->AddPage();
-        $pdf->SetFont('Arial','B',16);
-        $pdf->Image($this->getParameter("web_dir")."/company_images/".$session->get("companyLogo"),10,10,20,20);
-        //$pdf->Cell(22,20,"");
-        //$pdf->Cell(500,10,$session->get("companyName"));
-        $pdf->Ln('25');
-        $pdf->Cell(40,10,'Rapport des employes du '.$fromDate.' au '.$toDate);
-        $pdf->Ln('15');
+        if($t != "1"){
+            $pdf->AddPage();
+            $pdf->SetFont('Arial','B',16);
+            $pdf->Image($this->getParameter("web_dir")."/company_images/".$session->get("companyLogo"),10,10,20,20);
+            $pdf->Image($this->getParameter("web_dir")."/img/fingerprint.jpg",180,10,12,12);
+            $pdf->Ln('25');
+            $pdf->Cell(500,10,$session->get("companyName"));
+            $pdf->Cell(500,10,$session->get("companyName"));
+            $pdf->Ln('17');
+            $pdf->Cell(25,10,"");
+            $pdf->SetFont('Arial','BU',16);
+            $pdf->Cell(40,10,'Rapport des employes du '.$fromDate.' au '.$toDate);
+            $pdf->Ln('15');
+        }
         $i=0;
         foreach ($empId as $emp){
             $i++;
@@ -781,7 +802,21 @@ class DefaultController extends StatsController
                     array("Total","",($donnees["absences"]*$finalSalary)+($donnees["tpr"]*$finalSalaryPerMin)+($donnees["tpd"]*$finalSalaryPerMin)+($donnees["lost_time"]*$finalSalaryPerMin)),
                 );
             }
-
+            switch ($t){
+                case "1":
+                    $pdf->AddPage();
+                    $pdf->SetFont('Arial','B',16);
+                    $pdf->Image($this->getParameter("web_dir")."/company_images/".$session->get("companyLogo"),10,10,20,20);
+                    $pdf->Image($this->getParameter("web_dir")."/img/fingerprint.jpg",180,10,12,12);
+                    $pdf->Ln('25');
+                    $pdf->Cell(500,10,$session->get("companyName"));
+                    $pdf->Ln('17');
+                    $pdf->Cell(25,10,"");
+                    $pdf->SetFont('Arial','BU',16);
+                    $pdf->Cell(40,10,'Rapport des employes du '.$fromDate.' au '.$toDate);
+                    $pdf->Ln('15');
+                    break;
+            }
             $pdf->FancyTable($header,$data,$data2,$data3,$data4);
             $pdf->Ln('5');
         }

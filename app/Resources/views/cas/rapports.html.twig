@@ -29,7 +29,7 @@
                             <div class="collapsible-header active">Choisissez les paramètres</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
-                                    <form method="post" action="{{ path('generatePDF') }}" id="form" class="col l12">
+                                    <form method="post" action="{{ path('generatePDF') }}" target="_blank" id="form" class="col l12">
                                         <div class="row row-no-margin">
                                             <div class="input-field col s12">
                                                 <div class="row" id="errorContainer">
@@ -46,6 +46,7 @@
                                                     <span> - </span>
                                                     <div class="col l6">
                                                         <input id="toDate" type="text" name="toDate" class="datepicker input-customized" placeholder="AU">
+                                                        <input id="type" type="hidden" name="type">
                                                     </div>
                                                 </div>
                                                 <br>
@@ -69,6 +70,7 @@
                                                     </div>
                                                     <div class="col l6">
                                                         <span class="right" style="margin-top: 20px">
+                                                            <input type="button" id="submitIndividualButton" value="Individuel" class="btn-perso-historique">
                                                             <input type="button" id="submitButton" value="Valider" class="btn-perso-historique">
                                                         </span>
                                                     </div>
@@ -142,9 +144,6 @@
                     url: "returnOneEmployee/"+id,
                     data: {'dateFrom':fromDate,'dateTo':toDate},
                     success: function(data) {
-                        console.log("Console ::::");
-                        console.log(data);
-                        console.log("End console ::::");
                         var res = JSON.parse(data);
                         //alert("Le résultat : "+res.emp["id"]);
                         var employeeId = res.emp["id"];
@@ -183,6 +182,7 @@
                                 alert("Erreur : "+msg);
                             }
                         });
+                        $('#modal_loading').modal('close');
                     },
                     error: function(msg) {
                         alert("Erreur : "+msg);
@@ -219,8 +219,6 @@
             });
 
             $("#submitButton").click(function () {
-
-
                 var dateFrom = new Date($("#fromDate").val()).getTime();
                 var dateTo = new Date($("#toDate").val()).getTime();
                 if($("#destination").val()!=""){
@@ -231,7 +229,46 @@
                                 console.log($("#destination").val());
                                 $("#errorContainer").hide();
                                     //console.log($("#destination").val());
-                                    $("#form").submit();
+                                $("#type").val("0");
+                                $("#form").submit();
+                                $('#modal_loading').modal('close');
+                            }else {
+                                $("#errorContainer").show();
+                                $("#errorContainer div span").text("Erreur : La date de début ne peut pas etre superieur à la date de fin");
+                                $("#containerMustBeHidden").attr("style","display:none");
+                            }
+                        }else {
+                            $("#errorContainer").show();
+                            $("#errorContainer div span").text("Erreur : veuillez choisir une date de fin valide");
+                            $("#containerMustBeHidden").attr("style","display:none");
+                        }
+                    }else{
+                        $("#errorContainer").show();
+                        $("#errorContainer div span").text("Erreur : veuillez choisir une date de début valide");
+                        $("#containerMustBeHidden").attr("style","display:none");
+                    }
+                }else{
+                    $("#errorContainer").show();
+                    $("#errorContainer div span").text("Erreur : veuillez choisir un employé");
+                    $("#containerMustBeHidden").attr("style","display:none");
+                }
+            });
+
+            // The same thing but for the individual printing
+            $("#submitIndividualButton").click(function () {
+                var dateFrom = new Date($("#fromDate").val()).getTime();
+                var dateTo = new Date($("#toDate").val()).getTime();
+                if($("#destination").val()!=""){
+                    if($("#fromDate").val()!=""){
+                        if($("#toDate").val()!=""){
+                            if(dateFrom < dateTo || dateFrom == dateTo){
+                                $('#modal_loading').modal('open');
+                                console.log($("#destination").val());
+                                $("#errorContainer").hide();
+                                //console.log($("#destination").val());
+                                $("#type").val("1");
+                                $("#form").submit();
+                                $('#modal_loading').modal('close');
                             }else {
                                 $("#errorContainer").show();
                                 $("#errorContainer div span").text("Erreur : La date de début ne peut pas etre superieur à la date de fin");

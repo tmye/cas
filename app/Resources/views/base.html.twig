@@ -142,8 +142,18 @@
                             <img src="{{ asset("company_images/"~app.session.get('companyLogo')) }}" class="middle-align" style="height: 60%;width: auto;border-radius: 0%">
                         {% endif %}
                         <span class="black-text middle-align">{{ app.session.get('companyName') }}</span>
-                        <span class="right black-text">Expiration : {{ app.session.get('expiryDate') }}</span>
                     </a>
+                    <ul id="theme_dropdown" class="dropdown-content">
+                        <li><a href="#!">Orange</a></li>
+                        <li><a href="#!">Teal</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#!">Dark</a></li>
+                        <li><a href="#!">Default</a></li>
+                    </ul>
+                    <ul id="nav-mobile" class="right hide-on-med-and-down">
+                        <li><a href="#" class="black-text">Expiration : {{ app.session.get('expiryDate') }}</a></li>
+                        <li><a href="#" class="black-text dropdown-trigger" data-activates="theme_dropdown">Theme : Default</a></li>
+                    </ul>
                 </div>
             </nav>
         </div>
@@ -189,8 +199,13 @@
 
     <script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
     <script src="{{ asset('materialize/js/materialize.min.js') }}"></script>
+    <script>
+        $(function () {
+            $(".dropdown-trigger").dropdown();
+        });
+    </script>
 
-    {% block javascripts %}{% endblock %}
     <script src="{{ asset('js/script.js') }}"></script>
+    {% block javascripts %}{% endblock %}
     </body>
 </html>

@@ -31,7 +31,7 @@
                             <div class="collapsible-header active">Choisissez les paramètres</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
-                                    <form method="post" action="{{ path('generatePDF') }}" id="form" class="col l12">
+                                    <form method="post" action="{{ path('generatePDF') }}" target="_blank" id="form" class="col l12">
                                         <div class="row row-no-margin">
                                             <div class="input-field col s12">
                                                 <div class="row" id="errorContainer">
@@ -561,7 +561,7 @@
                                 }else if(data.quota_fait < data.quota_total){
                                     var quotaDiff = (data.quota_total - data.quota_fait);
                                     $("#tempsPerduQuotaSpan").text(quotaDiff);
-                                    $("#sommePerduQuotaSpan").text(precisionRound(salaryPerMin*quotaDiff,0));
+                                    $("#sommePerduQuotaSpan").text(precisionRound(data.sommePerduQuota,0));
                                 }
                                 $("#quotaTotalSpan").text(precisionRound(data.quota_fait/60,1)+"/"+data.quota_total/60);
                                 var stp = 0;

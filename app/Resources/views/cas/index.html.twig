@@ -19,6 +19,19 @@
             <!-- Petites sections carrées -->
 
             <div class="row">
+                <div class="col l12">
+                    <div class="card" style="padding: 20px;word-break: break-all;word-wrap: break-word">
+                        <div>
+                            {%  if app.session.get('companyLogo') is defined and app.session.get('companyLogo') is not null %}
+                                <img src="{{ asset("company_images/"~app.session.get('companyLogo')) }}" style="display:inline-block;vertical-align:middle;height: 100px;width: auto;border-radius: 0%">
+                            {% endif %}
+                            <h5 style="display: inline;vertical-align: middle;margin-left: 200px">TOGOCEL</h5>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non massa nec dolor iaculis dapibus vitae at erat. Maecenas pretium vehicula aliquet. Nam tempor erat arcu, ac fringilla ligula ornare nec. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce sit amet purus in enim consectetur finibus. Ut tempus orci a libero porttitor pellentesque ac sit amet quam. Ut porttitor orci sit amet risus interdum, ut viverra felis accumsan. Morbi at commodo sem, eu feugiat magna. Aliquam sem tellus, rhoncus faucibus odio ut, blandit congue est. In malesuada, enim vel vehicula pellentesque, sem purus dignissim nibh, ut venenatis risus nibh at ex. Nullam hendrerit ligula ante, cursus suscipit arcu commodo sed. Praesent ultrices neque metus, ut accumsan sem.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col l3 m6 s12">
                     <ul class="collapsible" data-collapsible="accordion">
                         <li>
@@ -77,11 +90,21 @@
                     </span>
                 </div>
             </div>
+            <div class="fixed-action-btn" style="margin-bottom: 30px">
+                <a class="btn-floating tooltipped pulse green btn-large" id="btnVerify" data-position="top" data-tooltip="Vérifier les mises à jours">
+                    <span class="fa fa-download"></span>
+                </a>
+            </div>
         </div>
     </div>
 {% endblock %}
 
 {% block javascripts %}
+    <script>
+        $('.slider').slider({
+            indicators:true
+        });
+    </script>
     <script>
         function convertInHour(minutes) {
             if(minutes>=60){

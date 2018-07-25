@@ -28,6 +28,16 @@ class tablepdf extends fpdf
         }
     }
 
+    function Footer()
+    {
+        // Positionnement à 1,5 cm du bas
+        $this->SetY(-15);
+        // Police Arial italique 8
+        $this->SetFont('Arial','I',8);
+        // Numéro de page
+        $this->Cell(0,10,'Rapport genere par le '.date('d').'/'.date('m').'/'.date('Y'),0,0,'C');
+    }
+
     public function convertInHour($value){
 
         $value = (int)$value;
