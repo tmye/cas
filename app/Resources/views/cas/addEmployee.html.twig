@@ -163,7 +163,7 @@
                                                 </div>
                                                 <div class="input-field col s4">
                                                     <span>Contact</span>
-                                                    {{ form_row(form.contact, {'attr': {'class':'input-customized','placeholder':'Le titre de la permission'}}) }}
+                                                    {{ form_row(form.contact, {'attr': {'min':'1','class':'input-customized contact_field','placeholder':'Le titre de la permission'}}) }}
                                                 </div>
                                                 <div class="input-field col s4">
                                                     <span>Fonction</span>
@@ -173,7 +173,7 @@
                                             <div class="row">
                                                 <div class="input-field col s4">
                                                     <span>Salaire</span>
-                                                    {{ form_row(form.salary, {'attr': {'class':'input-customized','placeholder':'Le titre de la permission'}}) }}
+                                                    {{ form_row(form.salary, {'attr': {'min':'1','class':'input-customized','placeholder':'Le titre de la permission'}}) }}
                                                 </div>
                                                 <div class="input-field col s4">
                                                     <span>Date d'embauche</span>
@@ -223,9 +223,7 @@
 {% block javascripts %}
     <script>
         $(function(){
-
             $('.hideTable').hide();
-
             function readURL(input) {
                 if (input.files && input.files[0]) {
                     var reader = new FileReader();
@@ -250,6 +248,11 @@
                 $('.detailSpan').show();
                 $('#'+c).show();
             });
+        });
+    </script>
+    <script>
+        $(function () {
+            $(".contact_field").attr("type","number");
         });
     </script>
     <script>

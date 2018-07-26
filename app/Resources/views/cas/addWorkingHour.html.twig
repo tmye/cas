@@ -377,6 +377,11 @@
                 </div>
             </div>
         </div>
+        <div class="fixed-action-btn" style="margin-bottom: 30px">
+            <a class="btn-floating tooltipped pulse blue btn-large" id="btnDuplicate" data-position="top" data-tooltip="Dupliquer">
+                <span class="fa fa-copy"></span>
+            </a>
+        </div>
     </div>
 {% endblock %}
 
@@ -650,13 +655,53 @@
         });
     </script>
     <script>
+        $(function () {
+            $("#btnDuplicate").click(function () {
+                $("#mardiBH").val($("#lundiBH").val());
+                $("#mardiEH").val($("#lundiEH").val());
+                $("#mardiPBH").val($("#lundiPBH").val());
+                $("#mardiPEH").val($("#lundiPEH").val());
+                $("#mardiQuota").val($("#lundiQuota").val());
+
+                $("#mercrediBH").val($("#lundiBH").val());
+                $("#mercrediEH").val($("#lundiEH").val());
+                $("#mercrediPBH").val($("#lundiPBH").val());
+                $("#mercrediPEH").val($("#lundiPEH").val());
+                $("#mercrediQuota").val($("#lundiQuota").val());
+
+                $("#jeudiBH").val($("#lundiBH").val());
+                $("#jeudiEH").val($("#lundiEH").val());
+                $("#jeudiPBH").val($("#lundiPBH").val());
+                $("#jeudiPEH").val($("#lundiPEH").val());
+                $("#jeudiQuota").val($("#lundiQuota").val());
+
+                $("#vendrediBH").val($("#lundiBH").val());
+                $("#vendrediEH").val($("#lundiEH").val());
+                $("#vendrediPBH").val($("#lundiPBH").val());
+                $("#vendrediPEH").val($("#lundiPEH").val());
+                $("#vendrediQuota").val($("#lundiQuota").val());
+
+                $("#samediBH").val($("#lundiBH").val());
+                $("#samediEH").val($("#lundiEH").val());
+                $("#samediPBH").val($("#lundiPBH").val());
+                $("#samediPEH").val($("#lundiPEH").val());
+                $("#samediQuota").val($("#lundiQuota").val());
+
+                $("#dimancheBH").val($("#lundiBH").val());
+                $("#dimancheEH").val($("#lundiEH").val());
+                $("#dimanchePBH").val($("#lundiPBH").val());
+                $("#dimanchePEH").val($("#lundiPEH").val());
+                $("#dimancheQuota").val($("#lundiQuota").val());
+            });
+        });
+    </script>
+    <script>
         // On s'attaque aux collapsibles
         $(function () {
             $(".cl_WH").addClass("collapsible_element_active");
             $(".navigation_collapsible").collapsible('open',6);
         });
     </script>
-
 {% endblock %}
 
 {% block stylesheets %}

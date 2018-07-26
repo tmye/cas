@@ -10,14 +10,9 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Permission;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -26,6 +21,8 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Constraints\DateTime;
+use Symfony\Component\HttpFoundation\Session\Session;
+
 
 
 class PermissionController extends Controller {
@@ -35,6 +32,8 @@ class PermissionController extends Controller {
      */
     public function addPermissionAction(Request $request)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
@@ -65,7 +64,7 @@ class PermissionController extends Controller {
                     },
                     'multiple' => false,
                 ))
-                ->add('Cr&eacute;er', SubmitType::class);
+                ->add('Créer', SubmitType::class);
             // À partir du formBuilder, on génère le formulaire
 
             $form = $formBuilder->getForm();
@@ -161,6 +160,8 @@ class PermissionController extends Controller {
      */
     public function editPermissionAction(Request $request,$id)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
@@ -228,15 +229,25 @@ class PermissionController extends Controller {
      */
     public function viewPermissionAction(Request $request)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
             }
             $permRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission");
+
+            $numberOfStack = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(0);
+            $numberOfGranted = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(1);
+            $numberOfRefused = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(2);
+
             $listPerm = $permRep->findByOrder();
             return $this->render('cas/viewPermission.html.twig', array(
                 'listPerm' => $listPerm,
+                'stack'=>$numberOfStack,
+                'granted'=>$numberOfGranted,
+                'refused'=>$numberOfRefused
             ));
         }else{
             return $this->redirectToRoute("login");
@@ -248,6 +259,8 @@ class PermissionController extends Controller {
      */
     public function deleteEmployeeAction(Request $request, $id)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
@@ -275,6 +288,8 @@ class PermissionController extends Controller {
      */
     public function grantPermissionAction(Request $request, $id)
     {
+        $session = new Session();
+
         $perm = $this->getDoctrine()->getManager()->getRepository('AppBundle:Permission')->find($id);
         if ($perm != null) {
             $perm->setState(1);
@@ -296,6 +311,8 @@ class PermissionController extends Controller {
      */
     public function rejectPermissionAction(Request $request, $id)
     {
+        $session = new Session();
+
         $perm = $this->getDoctrine()->getManager()->getRepository('AppBundle:Permission')->find($id);
         if ($perm != null) {
             $perm->setState(2);

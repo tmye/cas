@@ -31,7 +31,7 @@
                             <div class="collapsible-header active">Choisissez les paramètres</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
-                                    <form method="post" action="{{ path('generatePDF') }}" id="form" class="col l12">
+                                    <form method="post" action="{{ path('generatePDF') }}" target="_blank" id="form" class="col l12">
                                         <div class="row row-no-margin">
                                             <div class="input-field col s12">
                                                 <div class="row" id="errorContainer">
@@ -162,7 +162,7 @@
                 <div class="row">
                     <div class="col l12">
                         <h5 class="table-title">Historique des présences</h5>
-                        <br>
+                        <br><br>
                         <table class="bordered striped">
                             <thead>
                             <tr>
@@ -183,8 +183,15 @@
                             </tr>
                             </tbody>
                         </table>
+                        <br>
+                        <span class="fa fa-circle" style="color: red"></span>
+                        <span style="color: red">Retards ou départs prématurés</span>
+                        <br>
+                        <span class="fa fa-circle" style="color: black"></span>
+                        <span style="color: black">Heures conformes</span>
                     </div>
                 </div>
+
                 <div class="row">
                     <h5 class="table-title">Permissions</h5>
                     <table class="center">
@@ -197,6 +204,9 @@
                             </tr>
                         </thead>
                         <tbody id="tabPermissions">
+                            <tr>
+                                <td colspan="4" style="text-align: center">Aucune permission</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -235,6 +245,25 @@
                         </table>
                     </div>
                     <div class="col l6">
+                        <span>Retards de 8H00</span>
+                        <table class="card table bordered centered striped highlight responsive-table">
+                            <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Heure de départ</th>
+                                <th>Lapse</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tabRetards14">
+                            <tr>
+                                <td colspan="3">Aucune donnée à afficher</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col l6">
                         <span>Départs prématurés de 18H00</span>
                         <table class="card table bordered centered striped highlight responsive-table">
                             <thead>
@@ -245,14 +274,12 @@
                             </tr>
                             </thead>
                             <tbody id="tabDepartsPrematures17">
-                                <tr>
-                                    <td colspan="3">Aucune donnée à afficher</td>
-                                </tr>
+                            <tr>
+                                <td colspan="3">Aucune donnée à afficher</td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
-                </div>
-                <div class="row">
                     <div class="col l6">
                         <span>Retards de 14H00</span>
                         <table class="card table bordered centered striped highlight responsive-table">
@@ -264,23 +291,6 @@
                             </tr>
                             </thead>
                             <tbody id="tabRetards8">
-                            <tr>
-                                <td colspan="3">Aucune donnée à afficher</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col l6">
-                        <span>Retards de 8H00</span>
-                        <table class="card table bordered centered striped highlight responsive-table">
-                            <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Heure de départ</th>
-                                <th>Lapse</th>
-                            </tr>
-                            </thead>
-                            <tbody id="tabRetards14">
                             <tr>
                                 <td colspan="3">Aucune donnée à afficher</td>
                             </tr>
@@ -551,7 +561,7 @@
                                 }else if(data.quota_fait < data.quota_total){
                                     var quotaDiff = (data.quota_total - data.quota_fait);
                                     $("#tempsPerduQuotaSpan").text(quotaDiff);
-                                    $("#sommePerduQuotaSpan").text(precisionRound(salaryPerMin*quotaDiff,0));
+                                    $("#sommePerduQuotaSpan").text(precisionRound(data.sommePerduQuota,0));
                                 }
                                 $("#quotaTotalSpan").text(precisionRound(data.quota_fait/60,1)+"/"+data.quota_total/60);
                                 var stp = 0;
@@ -1092,7 +1102,7 @@
                                         labels: [],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#36a2eb',
                                             borderColor: '#36a2eb',
                                             data: lundiPauseTabDatas,
                                         }],
@@ -1118,7 +1128,7 @@
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#ff6384',
                                             borderColor: '#ff6384',
                                             data: lundiFinTabDatas,
                                         }],
@@ -1144,7 +1154,7 @@
                                         labels: [],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#36a2eb',
                                             borderColor: '#36a2eb',
                                             data: lundiRetardTabDatas,
                                         }],
@@ -1170,7 +1180,7 @@
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#ff6384',
                                             borderColor: '#ff6384',
                                             data: lundiRetardPauseTabDatas,
                                         }],
@@ -1200,7 +1210,7 @@
                                         labels: [],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#36a2eb',
                                             borderColor: '#36a2eb',
                                             data: mardiPauseTabDatas,
                                         }],
@@ -1226,7 +1236,7 @@
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#ff6384',
                                             borderColor: '#ff6384',
                                             data: mardiFinTabDatas,
                                         }],
@@ -1252,7 +1262,7 @@
                                         labels: [],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#36a2eb',
                                             borderColor: '#36a2eb',
                                             data: mardiRetardTabDatas,
                                         }],
@@ -1278,7 +1288,7 @@
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#ff6384',
                                             borderColor: '#ff6384',
                                             data: mardiRetardPauseTabDatas,
                                         }],
@@ -1308,7 +1318,7 @@
                                         labels: [],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#36a2eb',
                                             borderColor: '#36a2eb',
                                             data: mercrediPauseTabDatas,
                                         }],
@@ -1334,7 +1344,7 @@
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#ff6384',
                                             borderColor: '#ff6384',
                                             data: mercrediFinTabDatas,
                                         }],
@@ -1360,7 +1370,7 @@
                                         labels: [],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#36a2eb',
                                             borderColor: '#36a2eb',
                                             data: mercrediRetardTabDatas,
                                         }],
@@ -1386,7 +1396,7 @@
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#ff6384',
                                             borderColor: '#ff6384',
                                             data: mercrediRetardPauseTabDatas,
                                         }],
@@ -1416,7 +1426,7 @@
                                         labels: [],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#36a2eb',
                                             borderColor: '#36a2eb',
                                             data: jeudiPauseTabDatas,
                                         }],
@@ -1442,7 +1452,7 @@
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#ff6384',
                                             borderColor: '#ff6384',
                                             data: jeudiFinTabDatas,
                                         }],
@@ -1468,7 +1478,7 @@
                                         labels: [],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#36a2eb',
                                             borderColor: '#36a2eb',
                                             data: jeudiRetardTabDatas,
                                         }],
@@ -1494,7 +1504,7 @@
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#ff6384',
                                             borderColor: '#ff6384',
                                             data: jeudiRetardPauseTabDatas,
                                         }],
@@ -1524,7 +1534,7 @@
                                         labels: [],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#36a2eb',
                                             borderColor: '#36a2eb',
                                             data: vendrediPauseTabDatas,
                                         }],
@@ -1550,7 +1560,7 @@
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#ff6384',
                                             borderColor: '#ff6384',
                                             data: vendrediFinTabDatas,
                                         }],
@@ -1576,7 +1586,7 @@
                                         labels: [],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#36a2eb',
                                             borderColor: '#36a2eb',
                                             data: vendrediRetardTabDatas,
                                         }],
@@ -1602,7 +1612,7 @@
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#ff6384',
                                             borderColor: '#ff6384',
                                             data: vendrediRetardPauseTabDatas,
                                         }],
@@ -1632,7 +1642,7 @@
                                         labels: [],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#36a2eb',
                                             borderColor: '#36a2eb',
                                             data: samediPauseTabDatas,
                                         }],
@@ -1658,7 +1668,7 @@
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#ff6384',
                                             borderColor: '#ff6384',
                                             data: samediFinTabDatas,
                                         }],
@@ -1684,7 +1694,7 @@
                                         labels: [],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#36a2eb',
                                             borderColor: '#36a2eb',
                                             data: samediRetardTabDatas,
                                         }],
@@ -1710,7 +1720,7 @@
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#ff6384',
                                             borderColor: '#ff6384',
                                             data: samediRetardPauseTabDatas,
                                         }],
@@ -1740,7 +1750,7 @@
                                         labels: [],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#36a2eb',
                                             borderColor: '#36a2eb',
                                             data: dimanchePauseTabDatas,
                                         }],
@@ -1766,7 +1776,7 @@
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#ff6384',
                                             borderColor: '#ff6384',
                                             data: dimancheFinTabDatas,
                                         }],
@@ -1792,7 +1802,7 @@
                                         labels: [],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#36a2eb',
                                             borderColor: '#36a2eb',
                                             data: dimancheRetardTabDatas,
                                         }],
@@ -1818,7 +1828,7 @@
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
                                             label: "Minuite",
-                                            backgroundColor: 'rgba(0,0,0,0)',
+                                            backgroundColor: '#ff6384',
                                             borderColor: '#ff6384',
                                             data: dimancheRetardPauseTabDatas,
                                         }],
@@ -2053,9 +2063,10 @@
 
                                 // For departures chart
                                 if(data.nbreAbsences == 0){
-                                    $(".departuresChart").hide();
+                                    $(".myChartContainer").append("<h5>Aucune absence enregistrée</h5>");
+                                    $("#myChart").hide();
                                 }else{
-                                    $(".departuresChart").show();
+                                    $("#myChart").show();
                                 }
 
                                 // Closing the loading box

@@ -157,6 +157,9 @@ class StatsController extends ClockinReccordController
         $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($emp);
         $interval = ($employe->getWorkingHour()->getTolerance())*60;
         $empWH = json_decode($employe->getWorkingHour()->getWorkingHour(),true);
+        $salaire = $employe->getSalary();
+        $salaire_en_minuite = (($salaire/30)/24)/60;
+        $salaire_quota_en_minuite = (($salaire/30)/8)/60;
         $cr = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord");
 
         $absences=0;
@@ -178,6 +181,8 @@ class StatsController extends ClockinReccordController
         $tempsPerdusAbsences=0;
         $tempsPerdusRetards=0;
         $tempsPerdusDeparts=0;
+
+        $sommePerduQuota = 0;
 
         $timePP = 0;
         $tempPP = 0;
@@ -300,6 +305,7 @@ class StatsController extends ClockinReccordController
                             $tempPerdu = $timePerdusAbsences/60;
                             $tempsPerdusAbsences += $tempPerdu;
                             $sommeAbsences +=$tempsPerdusAbsences;
+                            $sommePerduQuota += $salaire/30;
                             $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$empWH[$theDay][0]["endHour"],$empWH[$theDay][0]["beginHour"]);
                             if($p){
                                 /*
@@ -324,6 +330,7 @@ class StatsController extends ClockinReccordController
                             $tempsPerdusRetards += $retardDiff[0]/(60);
                             $perte_temps = (int)($retardDiff[0]/(60));
                             $ct = date('H:i',$retardDiff[1]);
+                            $sommePerduQuota += $salaire_quota_en_minuite*$perte_temps;
                             $tabRetards[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$perte_temps);
 
                             // Now we deal with the permissions calculations
@@ -351,6 +358,7 @@ class StatsController extends ClockinReccordController
                             $tempsPerdusRetardsPause = $retardPauseDiff[0]/(60);
                             $tempsPerdusRetards+= $retardPauseDiff[0]/(60);
                             $ct = date('H:i',$retardPauseDiff[1]);
+                            $sommePerduQuota += $salaire_quota_en_minuite*$tempsPerdusRetardsPause;
                             $tabRetardsPause[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$tempsPerdusRetardsPause);
 
                             // Now we deal with the permissions calculations
@@ -378,6 +386,7 @@ class StatsController extends ClockinReccordController
                             // Pour prendre en compte les departs de 17h
                             $tempsPerdusDeparts+=$tempsPerdusDepartsFin;
                             $ct = date('H:i',$departDiff[1]);
+                            $sommePerduQuota += $salaire_quota_en_minuite*$tempsPerdusDepartsFin;
                             $tabDeparts[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsFin);
 
                             // Now we deal with the permissions calculations
@@ -408,6 +417,7 @@ class StatsController extends ClockinReccordController
                             // Pour prendre en compte les departs de 12h aussi
                             $tempsPerdusDeparts +=$tempsPerdusDepartsPause;
                             $ct = date('H:i',$departPauseDiff[1]);
+                            $sommePerduQuota += $salaire_quota_en_minuite*$tempsPerdusDepartsPause;
                             $tabDepartsPause[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsPause);
 
                             // Now we deal with the permissions calculations
@@ -507,7 +517,7 @@ class StatsController extends ClockinReccordController
 
             $historiques[] = $his;
             $donneesPermission = array("retardStats"=>$tabRetardsPermission,"retardPauseStats"=>$tabRetardsPausePermission,"pauseStats"=>$tabDepartsPausePermission,"finStats"=> $tabDepartsPermission,"absenceStats"=>$tabAbsencesPermission);
-            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType,"permissionData"=>$donneesPermission,"lost_time"=>$lost_time,"historique"=>$historiques);
+            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType,"permissionData"=>$donneesPermission,"lost_time"=>$lost_time,"historique"=>$historiques,"sommePerduQuota"=>$sommePerduQuota);
             $nowTime = $nowTime+86400;
         }
 

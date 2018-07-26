@@ -68,4 +68,14 @@ class PermissionRepository extends EntityRepository
             return false;
         }
     }
+
+    public function countPermission($state){
+        $queryBuilder = $this->createQueryBuilder("p");
+        $queryBuilder->select($queryBuilder->expr()->count("p"));
+        $queryBuilder->where("p.state =:state")->setParameter("state", $state);
+
+        $query = $queryBuilder->getQuery();
+        $singleScalar = $query->getSingleScalarResult();
+        return $singleScalar;
+    }
 }

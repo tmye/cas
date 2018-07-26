@@ -30,6 +30,7 @@ class MachinesController extends Controller
      */
     public function addMachineAction(Request $request)
     {
+        $session = new Session();
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
@@ -37,6 +38,7 @@ class MachinesController extends Controller
             }
             $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
             $machine = new Machine();
+            //$machine->setCompany($session->get("connection"));
 
             // On crée le FormBuilder grâce au service form factory
             $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $machine);
@@ -64,10 +66,9 @@ class MachinesController extends Controller
                     $em = $this->getDoctrine()->getManager();
                     $em->persist($machine);
                     $em->flush();
-
                     $request->getSession()->getFlashBag()->add('notice', 'Machine bien enregistrée.');
 
-                    return new Response("OK machine enregistrée");
+                    return $this->redirectToRoute("addMachine");
                 }
             }
 
@@ -89,6 +90,7 @@ class MachinesController extends Controller
      */
     public function editMachineAction(Request $request, $id)
     {
+        $session = new Session();
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
@@ -125,9 +127,9 @@ class MachinesController extends Controller
                         $em->persist($machine);
                         $em->flush();
 
-                        $request->getSession()->getFlashBag()->add('notice', 'Machine bien enregistrée.');
+                        $request->getSession()->getFlashBag()->add('notice', 'Cette machine a bien été modifiée.');
 
-                        return new Response("OK machine modifiée");
+                        //return $this->redirectToRoute("addMachine");
                     }
                 }
 
@@ -139,7 +141,7 @@ class MachinesController extends Controller
                     'machines' => $machines
                 ));
             }else{
-                throw new NotFoundHttpException("Le département d'id " . $id . " n'existe pas.");
+                throw new NotFoundHttpException("La machine d'id " . $id . " n'existe pas.");
             }
         }else{
             return $this->redirectToRoute("login");
@@ -151,6 +153,7 @@ class MachinesController extends Controller
      */
     public function deleteMachineAction(Request $request, $id)
     {
+        $session = new Session();
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
@@ -162,7 +165,8 @@ class MachinesController extends Controller
                 $em = $this->getDoctrine()->getManager();
                 $em->remove($machine);
                 $em->flush();
-                return new Response("Cette machine a été supprimée de la base de données");
+                $request->getSession()->getFlashBag()->add('notice', 'Cette machine bien été supprimée.');
+                return $this->redirectToRoute("addMachine");
             } else{
                 throw new NotFoundHttpException("La machine d'id " . $id . " n'existe pas.");
             }
@@ -176,6 +180,8 @@ class MachinesController extends Controller
      */
     public function pubCoversAction(Request $request)
     {
+        $session = new Session();
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
@@ -196,6 +202,8 @@ class MachinesController extends Controller
     // Les fonctions relatives à la gestion globale du système
 
     private function returnMachinesForSelectedDeps($tab){
+        $session = new Session();
+
         $emMac = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine");
         $tabMac = array();
         foreach ($tab as $depId){
@@ -210,6 +218,7 @@ class MachinesController extends Controller
      */
     public function syncEmpAction(Request $request)
     {
+        $session = new Session();
 
         $em = $this->getDoctrine()->getManager();
 
@@ -321,6 +330,7 @@ class MachinesController extends Controller
      */
     public function syncEmpPPAction(Request $request)
     {
+        $session = new Session();
 
         $em = $this->getDoctrine()->getManager();
 
@@ -435,6 +445,7 @@ class MachinesController extends Controller
      */
     public function syncEmpFAction(Request $request)
     {
+        $session = new Session();
 
         $em = $this->getDoctrine()->getManager();
 
@@ -546,6 +557,7 @@ class MachinesController extends Controller
      */
     public function syncRebootAction(Request $request)
     {
+        $session = new Session();
 
         $em = $this->getDoctrine()->getManager();
 
@@ -658,6 +670,7 @@ class MachinesController extends Controller
      */
     public function syncRebootByMacAction(Request $request)
     {
+        $session = new Session();
 
         $em = $this->getDoctrine()->getManager();
 
@@ -705,6 +718,7 @@ class MachinesController extends Controller
      */
     public function syncDeleteForAllAction(Request $request)
     {
+        $session = new Session();
 
         $em = $this->getDoctrine()->getManager();
 
@@ -820,6 +834,7 @@ class MachinesController extends Controller
      */
     public function syncDeleteByMacAction(Request $request)
     {
+        $session = new Session();
 
         $em = $this->getDoctrine()->getManager();
 
@@ -868,6 +883,7 @@ class MachinesController extends Controller
      */
     public function syncDepartementAction(Request $request)
     {
+        $session = new Session();
 
         $em = $this->getDoctrine()->getManager();
 
@@ -980,6 +996,7 @@ class MachinesController extends Controller
      */
     public function syncPubCoverAllAction(Request $request)
     {
+        $session = new Session();
 
         $em = $this->getDoctrine()->getManager();
 
@@ -1092,6 +1109,7 @@ class MachinesController extends Controller
      */
     public function syncPubCoverByDepAction(Request $request)
     {
+        $session = new Session();
 
         $em = $this->getDoctrine()->getManager();
 
@@ -1193,6 +1211,7 @@ class MachinesController extends Controller
      */
     public function syncPubCoverByMacAction(Request $request)
     {
+        $session = new Session();
 
         $em = $this->getDoctrine()->getManager();
 
@@ -1240,7 +1259,7 @@ class MachinesController extends Controller
      */
     public function syncAllAction(Request $request)
     {
-        //$a = $this->syncDeleteForAllAction($request);
+        $a = $this->syncDeleteForAllAction($request);
         $b = $this->syncDepartementAction($request);
         $c = $this->syncEmpAction($request);
         $d = $this->syncEmpFAction($request);
