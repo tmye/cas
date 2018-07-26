@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Admin;
+use AppBundle\Entity\CompanyInfos;
 use AppBundle\fpdf181\fpdf;
 use AppBundle\Entity\CompanyConfig;
 use AppBundle\Entity\Departement;
@@ -13,6 +14,10 @@ use AppBundle\fpdf181\tablepdf;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -823,5 +828,69 @@ class DefaultController extends StatsController
         $pdf->Output();
 
         //return new Response("OK");
+    }
+
+    /**
+     * @Route("/customizeCompanyInfos",name="customizeCompanyInfos")
+     */
+    public function customizeCompanyInfosAction(Request $request){
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+
+            $ci = $this->getDoctrine()->getManager()->getRepository("AppBundle:CompanyInfos")->findAll();
+            if(($ci != null) && (!empty($ci))){
+                $ci = $ci[0];
+            }else{
+                $ci = new CompanyInfos();
+            }
+
+            // On crée le FormBuilder grâce au service form factory
+            $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $ci);
+
+            // On ajoute les champs de l'entité que l'on veut à notre formulaire
+            $formBuilder
+                ->add('vision', TextType::class,array('label'=>' '))
+                ->add('mission', TextType::class,array('label'=>' '))
+                ->add('foundation', TextType::class,array('label'=>' '))
+                ->add('headoffice', TextType::class,array('label'=>' '))
+                ->add('employees', IntegerType::class,array('required'=>false, 'label'=>' ',))
+                ->add('director', TextType::class,array('label'=>' '))
+                ->add("creer", SubmitType::class);
+            // À partir du formBuilder, on génère le formulaire
+
+            $form = $formBuilder->getForm();
+
+            if ($request->isMethod('POST')) {
+                $form->handleRequest($request);
+                if ($form->isValid()) {
+
+                    $em = $this->getDoctrine()->getManager();
+
+                    $em->persist($ci);
+                    $em->flush();
+
+                    $this->get('session')->getFlashBag()->set('notice', 'Cet employé a été ajouté avec succès');
+                    return $this->redirectToRoute("addEmployee");
+                }
+
+            }
+
+            // À ce stade, le formulaire n'est pas valide car :
+            // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
+            // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
+
+            return $this->render('cas/companyInfos.html.twig',array(
+                'form' => $form->createView()
+            ));
+        }else{
+            return $this->redirectToRoute("login");
+        }
+
+        return $this->render("cas/companyInfos.html.twig",array(
+            "ci"=>$ci
+        ));
     }
 }

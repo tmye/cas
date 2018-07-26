@@ -103,7 +103,7 @@
                             </li>
                             <li>
                                 <div class="collapsible-header valign-wrapper">
-                                    <span class="fa fa-wrench icons"></span>
+                                    <span class="fa fa-cog icons"></span>
                                     <span style="margin-left: 4px;">Réglages</span>
                                 </div>
                                 <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
@@ -111,9 +111,19 @@
                                     <br>
                                     <a href="{{ path("addMachine") }}" class="collapsible-links cl_Mac">Machines enrégistrées</a>
                                     <br>
-                                    <a href="{{ path("addNullDate") }}" class="collapsible-links cl_Mac">Jour null</a>
+                                    <a href="{{ path("addNullDate") }}" class="collapsible-links cl_Null">Jour null</a>
                                     <br>
                                     <a href="{{ path("manage") }}" class="collapsible-links cl_Manage">Gestion du système</a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="collapsible-header valign-wrapper">
+                                    <span class="fa fa-wrench icons"></span>
+                                    <span style="margin-left: 4px;">Personnalisation</span>
+                                </div>
+                                <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
+                                    <a href="{{ path("customizeCompanyInfos") }}" class="collapsible-links cl_WH">Informations de la société</a>
+                                    <br>
                                 </div>
                             </li>
                             <li>
