@@ -22,11 +22,14 @@
                 <div class="col l12">
                     <div class="card" style="padding: 20px;word-break: break-all;word-wrap: break-word">
                         <div>
-                            {%  if app.session.get('companyLogo') is defined and app.session.get('companyLogo') is not null %}
-                                <img src="{{ asset("company_images/"~app.session.get('companyLogo')) }}" style="display:inline-block;vertical-align:middle;height: 100px;width: auto;border-radius: 0%">
-                            {% endif %}
-                            <h5 style="display: inline;vertical-align: middle;margin-left: 200px">TOGOCEL</h5>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non massa nec dolor iaculis dapibus vitae at erat. Maecenas pretium vehicula aliquet. Nam tempor erat arcu, ac fringilla ligula ornare nec. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce sit amet purus in enim consectetur finibus. Ut tempus orci a libero porttitor pellentesque ac sit amet quam. Ut porttitor orci sit amet risus interdum, ut viverra felis accumsan. Morbi at commodo sem, eu feugiat magna. Aliquam sem tellus, rhoncus faucibus odio ut, blandit congue est. In malesuada, enim vel vehicula pellentesque, sem purus dignissim nibh, ut venenatis risus nibh at ex. Nullam hendrerit ligula ante, cursus suscipit arcu commodo sed. Praesent ultrices neque metus, ut accumsan sem.</p>
+                            {#   {%  if app.session.get('companyLogo') is defined and app.session.get('companyLogo') is not null %}
+                                   <img src="{{ asset("company_images/"~app.session.get('companyLogo')) }}" style="display:inline-block;vertical-align:middle;height: 100px;width: auto;border-radius: 0%">
+                               {% endif %}#}
+                            {#<h5 style="display: inline;vertical-align: middle;margin-left: 200px">TOGOCEL</h5>#}
+                            {#<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non massa nec dolor iaculis dapibus vitae at erat. Maecenas pretium vehicula aliquet. Nam tempor erat arcu, ac fringilla ligula ornare nec. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce sit amet purus in enim consectetur finibus. Ut tempus orci a libero porttitor pellentesque ac sit amet quam. Ut porttitor orci sit amet risus interdum, ut viverra felis accumsan. Morbi at commodo sem, eu feugiat magna. Aliquam sem tellus, rhoncus faucibus odio ut, blandit congue est. In malesuada, enim vel vehicula pellentesque, sem purus dignissim nibh, ut venenatis risus nibh at ex. Nullam hendrerit ligula ante, cursus suscipit arcu commodo sed. Praesent ultrices neque metus, ut accumsan sem.</p>#}
+
+                            {% include 'cas/home_presentation.html.twig' %}
+
                         </div>
                     </div>
                 </div>
