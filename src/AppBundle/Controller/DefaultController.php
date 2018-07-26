@@ -733,7 +733,7 @@ class DefaultController extends StatsController
             $pdf->AddPage();
             $pdf->SetFont('Arial','B',16);
             $pdf->Image($this->getParameter("web_dir")."/company_images/".$session->get("companyLogo"),10,10,20,20);
-            $pdf->Image($this->getParameter("web_dir")."/img/fingerprint.jpg",180,10,12,12);
+            $pdf->Image($this->getParameter("web_dir")."/img/logo.png",180,10,12,12);
             $pdf->Ln('25');
             $pdf->Cell(500,10,$session->get("companyName"));
             $pdf->Cell(500,10,$session->get("companyName"));
@@ -807,7 +807,7 @@ class DefaultController extends StatsController
                     $pdf->AddPage();
                     $pdf->SetFont('Arial','B',16);
                     $pdf->Image($this->getParameter("web_dir")."/company_images/".$session->get("companyLogo"),10,10,20,20);
-                    $pdf->Image($this->getParameter("web_dir")."/img/fingerprint.jpg",180,10,12,12);
+                    $pdf->Image($this->getParameter("web_dir")."/img/logo.png",180,10,12,12);
                     $pdf->Ln('25');
                     $pdf->Cell(500,10,$session->get("companyName"));
                     $pdf->Ln('17');
