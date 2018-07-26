@@ -1,0 +1,88 @@
+
+
+<div>
+
+    <div style="position: absolute;right: 30px;">
+        {%  if app.session.get('companyLogo') is defined and app.session.get('companyLogo') is not null %}
+            <img src="{{ asset("company_images/"~app.session.get('companyLogo')) }}" style="display:inline-block;vertical-align:middle;height: 60px;width: auto;border-radius: 0%">
+        {% endif %}
+    </div>
+
+    <table  style="border: none;">
+
+        <tr>
+            <td><span style="color: black;font-weight: bold;">Nom de la societé</span></td>
+            <td><span style="color: #111111;font-size: 1.5em;">TOGOCEL</span></td>
+        </tr>
+
+        <tr>
+            <td><span style="color: black;font-weight: bold">Notre Vision </span></td>
+            <td><span style="color: #111111;font-size: 1em;">Developper le secteur de la Telecommnunication togolaise
+            en gardant notre statut d'entreprise Leader.</span></td>
+        </tr>
+
+
+        <tr>
+            <td><span style="color: black;font-weight: bold">Notre Mission</span></td>
+            <td><span style="color: #111111;font-size: 1em;">Proposer les meilleurs services en termes d'innvation à nos clients.</span></td>
+        </tr>
+
+
+        <tr>
+            <td><span style="color: black;font-weight: bold">Date de Fondation</span></td>
+            <td><span style="color: #111111;font-size: 1em;">09 Juillet 2002</span></td>
+        </tr>
+
+        <tr>
+            <td><span style="color: black;font-weight: bold">Siège Social</span></td>
+            <td><span style="color: #111111;font-size: 1em;">GTA, Lomé, TOGO.</span></td>
+        </tr>
+
+        <tr>
+            <td><span style="color: black;font-weight: bold">Nombre d'employés </span></td>
+            <td><span style="color: #111111;font-size: 1em;">472 employés.</span></td>
+        </tr>
+
+        <tr>
+            <td><span style="color: black;font-weight: bold">Directeur General</span></td>
+            <td><span style="color: #111111;font-size: 1em;">Atchadam Kossi</span></td>
+        </tr>
+
+    </table>
+
+
+
+    {#   <p>
+           <span style="color: black;font-weight: bold">Nom de l'entreprise: <span style="color: #111111;font-size: 1em;">TOGOCEL</span></span>
+       </p>
+
+
+       <p>
+           <span style="color: black;font-weight: bold">Notre Vision: </span><span style="color: #111111">Developper le secteur de la Telecommnunication togolaise
+               en gardant notre statut d'entreprise Leader.</span>
+       </p>
+
+       <p>
+           <span style="color: black;font-weight: bold">Notre Mission:</span> <span style="color: #111111">Proposer les meilleurs services en termes d'innvation à nos clients.</span>
+       </p>
+
+       <p>
+           <span style="color: black;font-weight: bold">Date de Fondation:</span> <span style="color: #111111">09 Juillet 2002</span>
+       </p>
+
+       <p>
+           <span style="color: black;font-weight: bold">Nombre d'employés: </span><span style="color: #111111">472 employés.</span>
+       </p>
+
+       <p>
+           <span style="color: black;font-weight: bold">Corps Administratif: </span> <span style="color: #111111">
+
+       <p>Directeur General: Atchadam Kossi</p>
+       <p>Directeur General Adjoint: Mabafeï Tcha</p>
+
+       </span>
+       </p>
+   #}
+
+
+</div>
