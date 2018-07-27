@@ -28,19 +28,31 @@
                                             <li class="tab col s3">
                                                 <a href="#pending" class="active">
                                                     En attentes
-                                                    <span class="badge blue white-text" style="position: relative;top: 12px">{{ stack }}</span>
+                                                    <span class="badge blue white-text" style="position: relative;top: 12px">
+                                                        {% if stack is defined and stack is not null %}
+                                                            {{ stack }}
+                                                        {% endif %}
+                                                    </span>
                                                 </a>
                                             </li>
                                             <li class="tab col s3">
                                                 <a href="#not_granted">
                                                     Refusées
-                                                    <span class="badge red darken-3 white-text" style="position: relative;top: 12px">{{ refused }}</span>
+                                                    <span class="badge red darken-3 white-text" style="position: relative;top: 12px">
+                                                        {% if refused is defined and stack is not null %}
+                                                            {{ refused }}
+                                                        {% endif %}
+                                                    </span>
                                                 </a>
                                             </li>
                                             <li class="tab col s3">
                                                 <a href="#granted">
                                                     Accordées
-                                                    <span class="badge teal white-text" style="position: relative;top: 12px">{{ granted }}</span>
+                                                    <span class="badge teal white-text" style="position: relative;top: 12px">
+                                                        {% if granted is defined and stack is not null %}
+                                                            {{ granted }}
+                                                        {% endif %}
+                                                    </span>
                                                 </a>
                                             </li>
                                         </ul>

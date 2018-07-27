@@ -253,62 +253,8 @@
 {% block javascripts %}
     <script>
         $(function(){
-            function desactive(jour){
-                $('#'+jour+'PBH').val('');
-                $('#'+jour+'PEH').val('');
-                $('#'+jour+'PBH').attr('disabled','disabled');
-                $('#'+jour+'PBH').css('background-color','#ccc');
-                $('#'+jour+'PEH').attr('disabled','disabled');
-                $('#'+jour+'PEH').css('background-color','#ccc');
-            }
-            function desactiveTout(jour){
-                $('#'+jour+'BH').val('');
-                $('#'+jour+'EH').val('');
-                $('#'+jour+'BH').attr('disabled','disabled');
-                $('#'+jour+'BH').css('background-color','#ccc');
-                $('#'+jour+'EH').attr('disabled','disabled');
-                $('#'+jour+'EH').css('background-color','#ccc');
-                desactive(jour);
-
-            }
-            function reactive(jour){
-                $('#'+jour+'PBH').removeAttr('disabled');
-                $('#'+jour+'PBH').css('background-color','#fff');
-                $('#'+jour+'PEH').removeAttr('disabled');
-                $('#'+jour+'PEH').css('background-color','#fff');
-            }
-            function reactiveHeure(jour){
-                $('#'+jour+'BH').removeAttr('disabled');
-                $('#'+jour+'BH').css('background-color','#fff');
-                $('#'+jour+'EH').removeAttr('disabled');
-                $('#'+jour+'EH').css('background-color','#fff');
-            }
-
-            // Lundi
-            $('.quotaSectionLundi input').val('');
-            $('.quotaSectionLundi input').attr('disabled','disabled');
-            $('.quotaSectionLundi input').css('background-color','#ccc');
-            $('.quotaSectionMardi input').val('');
-            $('.quotaSectionMardi input').attr('disabled','disabled');
-            $('.quotaSectionMardi input').css('background-color','#ccc');
-            $('.quotaSectionMercredi input').val('');
-            $('.quotaSectionMercredi input').attr('disabled','disabled');
-            $('.quotaSectionMercredi input').css('background-color','#ccc');
-            $('.quotaSectionJeudi input').val('');
-            $('.quotaSectionJeudi input').attr('disabled','disabled');
-            $('.quotaSectionJeudi input').css('background-color','#ccc');
-            $('.quotaSectionVendredi input').val('');
-            $('.quotaSectionVendredi input').attr('disabled','disabled');
-            $('.quotaSectionVendredi input').css('background-color','#ccc');
-            $('.quotaSectionSamedi input').val('');
-            $('.quotaSectionSamedi input').attr('disabled','disabled');
-            $('.quotaSectionSamedi input').css('background-color','#ccc');
-            $('.quotaSectionDimanche input').val('');
-            $('.quotaSectionDimanche input').attr('disabled','disabled');
-            $('.quotaSectionDimanche input').css('background-color','#ccc');
-
-            $("#form_type_all").change(function(){
-                switch($('#form_type_all').val()){
+            function changeInputStates(theType){
+                switch(theType){
                     case "1":
                         $('.quotaSectionLundi input').val('');
                         $('.quotaSectionLundi input').attr('disabled','disabled');
@@ -448,6 +394,58 @@
                         reactiveHeure("dimanche");
                         break;
                 }
+            }
+
+            function desactive(jour){
+                $('#'+jour+'PBH').val('');
+                $('#'+jour+'PEH').val('');
+                $('#'+jour+'PBH').attr('disabled','disabled');
+                $('#'+jour+'PBH').css('background-color','#ccc');
+                $('#'+jour+'PEH').attr('disabled','disabled');
+                $('#'+jour+'PEH').css('background-color','#ccc');
+            }
+            function desactiveTout(jour){
+                $('#'+jour+'BH').val('');
+                $('#'+jour+'EH').val('');
+                $('#'+jour+'BH').attr('disabled','disabled');
+                $('#'+jour+'BH').css('background-color','#ccc');
+                $('#'+jour+'EH').attr('disabled','disabled');
+                $('#'+jour+'EH').css('background-color','#ccc');
+                desactive(jour);
+
+            }
+            function reactive(jour){
+                $('#'+jour+'PBH').removeAttr('disabled');
+                $('#'+jour+'PBH').css('background-color','#fff');
+                $('#'+jour+'PEH').removeAttr('disabled');
+                $('#'+jour+'PEH').css('background-color','#fff');
+            }
+            function reactiveHeure(jour){
+                $('#'+jour+'BH').removeAttr('disabled');
+                $('#'+jour+'BH').css('background-color','#fff');
+                $('#'+jour+'EH').removeAttr('disabled');
+                $('#'+jour+'EH').css('background-color','#fff');
+            }
+
+            // Lundi seul suffit pour déterminer le type de l'employé
+            var theType = '{{ whJson["lundi"][0]["type"] }}';
+            switch (theType){
+                case "1":
+                    $(".select-dropdown").val("Heures figées");
+                    break;
+                case "2":
+                    $(".select-dropdown").val("Quota horraire");
+                    break;
+                case "3":
+                    $(".select-dropdown").val("Présence");
+                    break;
+                case "4":
+                    $(".select-dropdown").val("Heures figées sans pause");
+                    break;
+            }
+            changeInputStates(theType);
+            $("#form_type_all").change(function(){
+                changeInputStates($('#form_type_all').val());
             });
         });
     </script>

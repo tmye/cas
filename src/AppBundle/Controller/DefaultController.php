@@ -511,7 +511,14 @@ class DefaultController extends StatsController
             if($session->get('companyName') == null || $session->get('companyLogo') == null){
                 return $this->redirectToRoute("manageSocietyName",array('badConfig'=>1));
             }
+            $ci = $this->getDoctrine()->getManager()->getRepository("AppBundle:CompanyInfos")->findAll();
+            if(($ci != null) && (!empty($ci))){
+                $ci = $ci[0];
+            }else{
+                $ci = null;
+            }
             return $this->render('cas/index.html.twig', array(
+                'ci'=>$ci,
                 'base_dir' => realpath($this->container->getParameter('kernel.root_dir').'/..').DIRECTORY_SEPARATOR,
             ));
         }else{
@@ -738,7 +745,7 @@ class DefaultController extends StatsController
             $pdf->AddPage();
             $pdf->SetFont('Arial','B',16);
             $pdf->Image($this->getParameter("web_dir")."/company_images/".$session->get("companyLogo"),10,10,20,20);
-            $pdf->Image($this->getParameter("web_dir")."/img/logo.png",180,10,12,12);
+            $pdf->Image($this->getParameter("web_dir")."/img/logo.png",180,10,12.62,19.4);
             $pdf->Ln('25');
             $pdf->Cell(500,10,$session->get("companyName"));
             $pdf->Cell(500,10,$session->get("companyName"));

@@ -257,7 +257,7 @@ class PermissionController extends Controller {
     /**
      * @Route("/deletePermission/{id}" ,name="deletePermision")
      */
-    public function deleteEmployeeAction(Request $request, $id)
+    public function deletePermissionAction(Request $request, $id)
     {
         $session = new Session();
 
@@ -296,10 +296,18 @@ class PermissionController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $permRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission");
+
+            $numberOfStack = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(0);
+            $numberOfGranted = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(1);
+            $numberOfRefused = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(2);
+
             $listPerm = $permRep->findByOrder();
             return $this->render("cas/viewPermission.html.twig",array(
                 'message'=>"Cette permission a été accordée",
-                'listPerm'=>$listPerm
+                'listPerm'=>$listPerm,
+                'stack'=>$numberOfStack,
+                'granted'=>$numberOfGranted,
+                'refused'=>$numberOfRefused
             ));
         } else{
             throw new NotFoundHttpException("La permission d'id " . $id . " n'existe pas.");
@@ -319,10 +327,18 @@ class PermissionController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
             $permRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission");
+
+            $numberOfStack = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(0);
+            $numberOfGranted = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(1);
+            $numberOfRefused = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(2);
+
             $listPerm = $permRep->findByOrder();
             return $this->render("cas/viewPermission.html.twig",array(
                 'message'=>"Cette permission a été rejetée",
-                'listPerm'=>$listPerm
+                'listPerm'=>$listPerm,
+                'stack'=>$numberOfStack,
+                'granted'=>$numberOfGranted,
+                'refused'=>$numberOfRefused
             ));
         } else{
             throw new NotFoundHttpException("La permission d'id " . $id . " n'existe pas.");

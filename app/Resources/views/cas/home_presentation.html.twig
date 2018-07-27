@@ -12,40 +12,79 @@
 
         <tr>
             <td><span style="color: black;font-weight: bold;">Nom de la societé</span></td>
-            <td><span style="color: #111111;font-size: 1.5em;">TOGOCEL</span></td>
+            <td><span style="color: #111111;font-size: 1.5em;">{{ app.session.get('companyName') }}</span></td>
         </tr>
 
         <tr>
-            <td><span style="color: black;font-weight: bold">Notre Vision </span></td>
-            <td><span style="color: #111111;font-size: 1em;">Developper le secteur de la Telecommnunication togolaise
-            en gardant notre statut d'entreprise Leader.</span></td>
+            <td style="min-width: 200px"><span style="color: black;font-weight: bold">Notre Vision </span></td>
+            <td>
+                <span style="color: #111111;font-size: 1em;">
+                    {% if ci is defined and ci is not null %}
+                        {{ ci.vision }}
+                        {% else %}
+                    {% endif %}
+                </span>
+            </td>
         </tr>
 
 
         <tr>
             <td><span style="color: black;font-weight: bold">Notre Mission</span></td>
-            <td><span style="color: #111111;font-size: 1em;">Proposer les meilleurs services en termes d'innvation à nos clients.</span></td>
+            <td><span style="color: #111111;font-size: 1em;">
+                    {% if ci is defined and ci is not null %}
+                        {{ ci.mission }}
+                    {% else %}
+                    {% endif %}
+                </span>
+            </td>
         </tr>
 
 
         <tr>
             <td><span style="color: black;font-weight: bold">Date de Fondation</span></td>
-            <td><span style="color: #111111;font-size: 1em;">09 Juillet 2002</span></td>
+            <td><span style="color: #111111;font-size: 1em;">
+                    {% if ci is defined and ci is not null %}
+                        {{ ci.foundation }}
+                    {% else %}
+                    {% endif %}
+                </span>
+            </td>
         </tr>
 
         <tr>
             <td><span style="color: black;font-weight: bold">Siège Social</span></td>
-            <td><span style="color: #111111;font-size: 1em;">GTA, Lomé, TOGO.</span></td>
+            <td>
+                <span style="color: #111111;font-size: 1em;">
+                    {% if ci is defined and ci is not null %}
+                        {{ ci.headoffice }}
+                    {% else %}
+                    {% endif %}
+                </span>
+            </td>
         </tr>
 
         <tr>
             <td><span style="color: black;font-weight: bold">Nombre d'employés </span></td>
-            <td><span style="color: #111111;font-size: 1em;">472 employés.</span></td>
+            <td>
+                <span style="color: #111111;font-size: 1em;">
+                    {% if ci is defined and ci is not null %}
+                        {{ ci.employees }} Employés
+                    {% else %}
+                    {% endif %}
+                </span>
+            </td>
         </tr>
 
         <tr>
             <td><span style="color: black;font-weight: bold">Directeur General</span></td>
-            <td><span style="color: #111111;font-size: 1em;">Atchadam Kossi</span></td>
+            <td>
+                <span style="color: #111111;font-size: 1em;">
+                    {% if ci is defined and ci is not null %}
+                        {{ ci.director }}
+                    {% else %}
+                    {% endif %}
+                </span>
+            </td>
         </tr>
 
     </table>

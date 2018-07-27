@@ -25,124 +25,7 @@
                                 {% endfor %}
                                 <div class="row">
                                     <div class="col l12">
-                                            <span class="detailSpan" style="display: none">Détails de l'heure de travail sélectionnée</span>
-
-                                        <!-- Past here -->
-
-                                        {% for wh in whList %}
-                                            <table class="bordered striped centered hideTable" id="{{ wh.workingHour.code }}" style="display: none">
-                                                <thead>
-                                                <tr>
-                                                    <th>Code</th>
-                                                    <th>Lundi</th>
-                                                    <th>Mardi</th>
-                                                    <th>Mercredi</th>
-                                                    <th>Jeudi</th>
-                                                    <th>Vendredi</th>
-                                                    <th>Samedi</th>
-                                                    <th>Dimanche</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                <tr>
-                                                    <td>{{ wh.workingHour.code }}</td>
-                                                    <td>
-                                                        {% if wh.workingHour.lundi[0].type == 1 %}
-                                                            {{ "Heures définies" }}
-                                                        {% elseif wh.workingHour.lundi[0].type == 2 %}
-                                                            {{ "Quota horraire" }}
-                                                            <br>
-                                                            {{ "Quota : "~wh.workingHour.lundi[0].quota }}
-                                                        {% elseif wh.workingHour.lundi[0].type == 3 %}
-                                                            {{ "Présence" }}
-                                                        {% else %}
-                                                            {{ "<span class='fa fa-times red white-text'></span>Présence non requise" }}
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        {% if wh.workingHour.mardi[0].type == 1 %}
-                                                            {{ "Heures définies" }}
-                                                        {% elseif wh.workingHour.mardi[0].type == 2 %}
-                                                            {{ "Quota horraire" }}
-                                                            <br>
-                                                            {{ "Quota : "~wh.workingHour.mardi[0].quota }}
-                                                        {% elseif wh.workingHour.mardi[0].type == 3 %}
-                                                            {{ "Présence" }}
-                                                        {% else %}
-                                                            {{ "<span class='fa fa-times red white-text'></span>Présence non requise" }}
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        {% if wh.workingHour.mercredi[0].type == 1 %}
-                                                            {{ "Heures définies" }}
-                                                        {% elseif wh.workingHour.mercredi[0].type == 2 %}
-                                                            {{ "Quota horraire" }}
-                                                            <br>
-                                                            {{ "Quota : "~wh.workingHour.mercredi[0].quota }}
-                                                        {% elseif wh.workingHour.mercredi[0].type == 3 %}
-                                                            {{ "Présence" }}
-                                                        {% else %}
-                                                            {{ "<span class='fa fa-times red white-text'></span>Présence non requise" }}
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        {% if wh.workingHour.jeudi[0].type == 1 %}
-                                                            {{ "Heures définies" }}
-                                                        {% elseif wh.workingHour.jeudi[0].type == 2 %}
-                                                            {{ "Quota horraire" }}
-                                                            <br>
-                                                            {{ "Quota : "~wh.workingHour.jeudi[0].quota }}
-                                                        {% elseif wh.workingHour.jeudi[0].type == 3 %}
-                                                            {{ "Présence" }}
-                                                        {% else %}
-                                                            {{ "<span class='fa fa-times red white-text'></span>Présence non requise" }}
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        {% if wh.workingHour.vendredi[0].type == 1 %}
-                                                            {{ "Heures définies" }}
-                                                        {% elseif wh.workingHour.vendredi[0].type == 2 %}
-                                                            {{ "Quota horraire" }}
-                                                            <br>
-                                                            {{ "Quota : "~wh.workingHour.vendredi[0].quota }}
-                                                        {% elseif wh.workingHour.vendredi[0].type == 3 %}
-                                                            {{ "Présence" }}
-                                                        {% else %}
-                                                            {{ "<span class='fa fa-times red white-text'></span>Présence non requise" }}
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        {% if wh.workingHour.samedi[0].type == 1 %}
-                                                            {{ "Heures définies" }}
-                                                        {% elseif wh.workingHour.samedi[0].type == 2 %}
-                                                            {{ "Quota horraire" }}
-                                                            <br>
-                                                            {{ "Quota : "~wh.workingHour.samedi[0].quota }}
-                                                        {% elseif wh.workingHour.samedi[0].type == 3 %}
-                                                            {{ "Présence" }}
-                                                        {% else %}
-                                                            {{ "<span class='fa fa-times red white-text'></span>Présence non requise" }}
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        {% if wh.workingHour.dimanche[0].type == 1 %}
-                                                            {{ "Heures définies" }}
-                                                        {% elseif wh.workingHour.dimanche[0].type == 2 %}
-                                                            {{ "Quota horraire" }}
-                                                            <br>
-                                                            {{ "Quota : "~wh.workingHour.dimanche[0].quota }}
-                                                        {% elseif wh.workingHour.dimanche[0].type == 3 %}
-                                                            {{ "Présence" }}
-                                                        {% else %}
-                                                            {{ "<span class='fa fa-times red white-text'></span>Présence non requise" }}
-                                                        {% endif %}
-                                                    </td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        {% endfor %}
-
-
+                                        <span class="detailSpan" style="display: none">Détails de l'heure de travail sélectionnée</span>
 
                                         {% if form is defined and form is not null %}
                                             {{ form_start(form) }}
@@ -203,8 +86,134 @@
                                                 </div>
                                             </div>
                                             {{ form_row(form.picture, {'attr': {'accept': '.gif,.jpg,.jpeg,.png'}}) }}
-                                            <br>
-
+                                            <br/>
+                                            {% for wh in whList %}
+                                                <table class="bordered striped centered hideTable" id="{{ wh.workingHour.code }}" style="display: none">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Code</th>
+                                                        <th>Lundi</th>
+                                                        <th>Mardi</th>
+                                                        <th>Mercredi</th>
+                                                        <th>Jeudi</th>
+                                                        <th>Vendredi</th>
+                                                        <th>Samedi</th>
+                                                        <th>Dimanche</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>{{ wh.workingHour.code }}</td>
+                                                        <td>
+                                                            {% if wh.workingHour.lundi[0].type == 1 %}
+                                                                {{ "Heures définies" }}
+                                                            {% elseif wh.workingHour.lundi[0].type == 2 %}
+                                                                {{ "Quota horraire" }}
+                                                                <br>
+                                                                {{ "Quota : "~wh.workingHour.lundi[0].quota }}
+                                                            {% elseif wh.workingHour.lundi[0].type == 3 %}
+                                                                {{ "Présence" }}
+                                                            {% elseif wh.workingHour.lundi[0].type == 4 %}
+                                                                {{ "Heures définies" }}
+                                                            {% else %}
+                                                                {{ "<span class='fa fa-times red white-text'></span>Présence non requise" }}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if wh.workingHour.mardi[0].type == 1 %}
+                                                                {{ "Heures définies" }}
+                                                            {% elseif wh.workingHour.mardi[0].type == 2 %}
+                                                                {{ "Quota horraire" }}
+                                                                <br>
+                                                                {{ "Quota : "~wh.workingHour.mardi[0].quota }}
+                                                            {% elseif wh.workingHour.mardi[0].type == 3 %}
+                                                                {{ "Présence" }}
+                                                            {% elseif wh.workingHour.mardi[0].type == 4 %}
+                                                                {{ "Heures définies" }}
+                                                            {% else %}
+                                                                {{ "<span class='fa fa-times red white-text'></span>Présence non requise" }}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if wh.workingHour.mercredi[0].type == 1 %}
+                                                                {{ "Heures définies" }}
+                                                            {% elseif wh.workingHour.mercredi[0].type == 2 %}
+                                                                {{ "Quota horraire" }}
+                                                                <br>
+                                                                {{ "Quota : "~wh.workingHour.mercredi[0].quota }}
+                                                            {% elseif wh.workingHour.mercredi[0].type == 3 %}
+                                                                {{ "Présence" }}
+                                                            {% elseif wh.workingHour.mercredi[0].type == 4 %}
+                                                                {{ "Heures définies" }}
+                                                            {% else %}
+                                                                {{ "<span class='fa fa-times red white-text'></span>Présence non requise" }}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if wh.workingHour.jeudi[0].type == 1 %}
+                                                                {{ "Heures définies" }}
+                                                            {% elseif wh.workingHour.jeudi[0].type == 2 %}
+                                                                {{ "Quota horraire" }}
+                                                                <br>
+                                                                {{ "Quota : "~wh.workingHour.jeudi[0].quota }}
+                                                            {% elseif wh.workingHour.jeudi[0].type == 3 %}
+                                                                {{ "Présence" }}
+                                                            {% elseif wh.workingHour.jeudi[0].type == 4 %}
+                                                                {{ "Heures définies" }}
+                                                            {% else %}
+                                                                {{ "<span class='fa fa-times red white-text'></span>Présence non requise" }}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if wh.workingHour.vendredi[0].type == 1 %}
+                                                                {{ "Heures définies" }}
+                                                            {% elseif wh.workingHour.vendredi[0].type == 2 %}
+                                                                {{ "Quota horraire" }}
+                                                                <br>
+                                                                {{ "Quota : "~wh.workingHour.vendredi[0].quota }}
+                                                            {% elseif wh.workingHour.vendredi[0].type == 3 %}
+                                                                {{ "Présence" }}
+                                                            {% elseif wh.workingHour.vendredi[0].type == 4 %}
+                                                                {{ "Heures définies" }}
+                                                            {% else %}
+                                                                {{ "<span class='fa fa-times red white-text'></span>Présence non requise" }}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if wh.workingHour.samedi[0].type == 1 %}
+                                                                {{ "Heures définies" }}
+                                                            {% elseif wh.workingHour.samedi[0].type == 2 %}
+                                                                {{ "Quota horraire" }}
+                                                                <br>
+                                                                {{ "Quota : "~wh.workingHour.samedi[0].quota }}
+                                                            {% elseif wh.workingHour.samedi[0].type == 3 %}
+                                                                {{ "Présence" }}
+                                                            {% elseif wh.workingHour.samedi[0].type == 4 %}
+                                                                {{ "Heures définies" }}
+                                                            {% else %}
+                                                                {{ "<span class='fa fa-times red white-text'></span>Présence non requise" }}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if wh.workingHour.dimanche[0].type == 1 %}
+                                                                {{ "Heures définies" }}
+                                                            {% elseif wh.workingHour.dimanche[0].type == 2 %}
+                                                                {{ "Quota horraire" }}
+                                                                <br>
+                                                                {{ "Quota : "~wh.workingHour.dimanche[0].quota }}
+                                                            {% elseif wh.workingHour.dimanche[0].type == 3 %}
+                                                                {{ "Présence" }}
+                                                            {% elseif wh.workingHour.dimanche[0].type == 4 %}
+                                                                {{ "Heures définies" }}
+                                                            {% else %}
+                                                                {{ "<span class='fa fa-times red white-text'></span>Présence non requise" }}
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            {% endfor %}
+                                            <br/>
                                             {{ form_widget(form.creer, { 'label': 'Créer','attr': {'class':'btn'} }) }}
 
                                             {{ form_end(form) }}
