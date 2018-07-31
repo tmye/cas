@@ -11,12 +11,12 @@
     <table  style="border: none;">
 
         <tr>
-            <td><span style="color: black;font-weight: bold;">Nom de la societé</span></td>
+            <td style="min-width:180px"><span style="color: black;font-weight: bold;">Nom de la societé</span></td>
             <td><span style="color: #111111;font-size: 1.5em;">{{ app.session.get('companyName') }}</span></td>
         </tr>
 
         <tr>
-            <td style="min-width: 200px"><span style="color: black;font-weight: bold">Notre Vision </span></td>
+            <td><span style="color: black;font-weight: bold">Notre Vision </span></td>
             <td>
                 <span style="color: #111111;font-size: 1em;">
                     {% if ci is defined and ci is not null %}

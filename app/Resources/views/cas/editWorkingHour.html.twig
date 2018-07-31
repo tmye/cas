@@ -453,6 +453,11 @@
     <script>
         var saturdayType = '{{ whJson["samedi"][0]["type"] }}';
         var sundayType = '{{ whJson["dimanche"][0]["type"] }}';
+        if(saturdayType == null || saturdayType == "null"){
+            $(".checkItSamedi").click();
+        }if(sundayType == null || sundayType == "null"){
+            $(".checkItDimanche").click();
+        }
         $(function(){
             $(".checkItSamedi").change(function() {
                 if(this.checked) {
@@ -460,7 +465,8 @@
                     $('.maybeHiddenSamedi').hide();
                     $('.quotaSectionSamedi input').val("");
                 }else{
-                    saturdayType = $('#form_type_all').val("");
+                    alert("state unchecked");
+                    saturdayType = $('#form_type_all').val();
                     $('.maybeHiddenSamedi').show();
                 }
             });
@@ -471,7 +477,7 @@
                     $('.maybeHiddenDimanche').hide();
                     $('.quotaSectionDianche input').val("");
                 }else{
-                    sundayType = $('#form_type_all').val("");
+                    sundayType = $('#form_type_all').val();
                     $('.maybeHiddenDimanche').show();
                 }
             });
