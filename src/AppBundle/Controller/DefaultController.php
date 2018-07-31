@@ -758,7 +758,7 @@ class DefaultController extends StatsController
         $i=0;
         foreach ($empId as $emp){
             $i++;
-            if($i>=7){
+            if($i>=6){
                 $pdf->AddPage();
                 $i=0;
             }

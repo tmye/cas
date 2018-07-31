@@ -221,6 +221,7 @@
                     <div class="col l6 departuresChart">
                         <span>Diagramme des absences</span>
                         <div class="myChartContainer">
+                            <h5 style="padding:20px" class="data_placeholder">Aucune absence enregistrée</h5>
                             <canvas id="myChart" class="card">
                             </canvas>
                         </div>
@@ -503,10 +504,13 @@
             function loadSelectedEmpData(id) {
 
                 var abs = 0;
-                var fromDate = $("#fromDate").val();
-                var fFromDate = new Date($("#fromDate").val());
-                var toDate = $("#toDate").val();
-                var fToDate = new Date($("#toDate").val());
+                // Formatting the date into yyyy-mm-dd format
+                var fromDate = $("#fromDate").val().split("-").reverse().join("-");
+                var fFromDate = new Date(fromDate);
+                // Formatting the date into yyyy-mm-dd format
+                var toDate = $("#toDate").val().split("-").reverse().join("-");
+                console.log("fromdat --- : "+toDate);
+                var fToDate = new Date(toDate);
 
                 // fonction d'ajout de date
                 Date.prototype.addDays = function(days) {
@@ -539,6 +543,9 @@
                         $("#fromDateSpan").text(fromDate);
                         $("#toDateSpan").text(toDate);
                         $("#totalSalarySpan").text(precisionRound(totalSalary,0));
+                        console.log("Salary : "+salary);
+                        console.log("Total salary : "+totalSalary);
+                        console.log("Diff days : "+diffDays);
 
                         // Recuperation des autres informations
                         $.ajax({
@@ -1052,6 +1059,7 @@
 
                                 // Diagramme à bandes des absences
                                 $("#myChart").remove();
+                                $(".data_placeholder").remove();
                                 var element = "<canvas id='myChart' class='card' style='cursor: pointer'></canvas>";
                                 $(".myChartContainer").append(element);
                                 var ctx = document.getElementById('myChart').getContext('2d');
@@ -2119,7 +2127,8 @@
 
                                 // For departures chart
                                 if(data.nbreAbsences == 0){
-                                    $(".myChartContainer").append("<h5>Aucune absence enregistrée</h5>");
+                                    $(".data_placeholder").remove();
+                                    $(".myChartContainer").append("<h5 style='padding:20px' class='data_placeholder'>Aucune absence enregistrée</h5>");
                                     $("#myChart").hide();
                                 }else{
                                     $("#myChart").show();
@@ -2177,15 +2186,15 @@
                     if($("#empSelect").val()!=""){
                         if($("#fromDate").val()!=""){
                             if($("#toDate").val()!=""){
-                                if(dateFrom < dateTo || dateFrom == dateTo){
+                                //if(dateFrom < dateTo || dateFrom == dateTo){
                                     $('#modal_loading').modal('open');
                                     $("#errorContainer").hide();
                                     loadSelectedEmpData($("#empSelect").val());
-                                }else {
+                                /*}else {
                                     $("#errorContainer").show();
                                     $("#errorContainer div span").text("Erreur : La date de début ne peut pas etre superieur à la date de fin");
                                     $("#containerMustBeHidden").attr("style","display:none");
-                                }
+                                }*/
                             }else {
                                 $("#errorContainer").show();
                                 $("#errorContainer div span").text("Erreur : veuillez choisir une date de fin valide");

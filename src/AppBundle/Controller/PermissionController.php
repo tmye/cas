@@ -64,7 +64,7 @@ class PermissionController extends Controller {
                     },
                     'multiple' => false,
                 ))
-                ->add('Créer', SubmitType::class);
+                ->add('creer', SubmitType::class);
             // À partir du formBuilder, on génère le formulaire
 
             $form = $formBuilder->getForm();
@@ -135,10 +135,7 @@ class PermissionController extends Controller {
 
                     $request->getSession()->getFlashBag()->add('notice', 'Employé bien enregistrée.');
 
-                    return $this->render("cas/addPermission.html.twig",array(
-                        'form' => $form->createView(),
-                        'message'=>"Cette permission a été ajoutée avec succès"
-                    ));
+                    return $this->redirectToRoute("addPermission");
 
                 }
 
