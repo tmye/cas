@@ -790,10 +790,10 @@ class DefaultController extends StatsController
                     array($name,$lastName,$donnees["absences"],$donnees["quota_fait"],$donnees["quota_total"],$qr,"-"),
                 );
                 $data2 = array(
-                    array("Pertes en temps","",$donnees["absences"]*24,$donnees["quota_fait"],"-",$qr,$donnees["lost_time"]),
+                    array("Pertes en temps","",$donnees["quota_total"]/60,$donnees["quota_fait"],"-",$qr,$donnees["lost_time"]),
                 );
                 $data3 = array(
-                    array("Pertes en argent (FCFA)","",$donnees["absences"]*$finalSalary,$donnees["quota_fait"]*$finalSalaryPerMin,"-",$qr*$finalSalaryPerMin,$donnees["lost_time"]*$finalSalaryPerMin),
+                    array("Pertes en argent (FCFA)","",($donnees["quota_total"]/60)*$finalSalaryPerHour,$donnees["quota_fait"]*$finalSalaryPerMin,"-",$qr*$finalSalaryPerMin,$donnees["lost_time"]*$finalSalaryPerMin),
                 );
                 $data4 = array(
                     //array("Total","",($donnees["absences"]*$finalSalary)+($qr*$finalSalaryPerMin)),
