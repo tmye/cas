@@ -465,7 +465,6 @@
                     $('.maybeHiddenSamedi').hide();
                     $('.quotaSectionSamedi input').val("");
                 }else{
-                    alert("state unchecked");
                     saturdayType = $('#form_type_all').val();
                     $('.maybeHiddenSamedi').show();
                 }
@@ -487,8 +486,6 @@
             var obj = {"code":$("#code").val(),"lundi":[{"type":$("#form_type_all").val(),"quota":$("#lundiQuota").val(),"beginHour":$("#lundiBH").val(),"pauseBeginHour":$("#lundiPBH").val(),"pauseEndHour":$("#lundiPEH").val(),"endHour":$("#lundiEH").val()}],"mardi":[{"type":$("#form_type_all").val(),"quota":$("#mardiQuota").val(),"beginHour":$("#mardiBH").val(),"pauseBeginHour":$("#mardiPBH").val(),"pauseEndHour":$("#mardiPEH").val(),"endHour":$("#mardiEH").val()}],"mercredi":[{"type":$("#form_type_all").val(),"quota":$("#mercrediQuota").val(),"beginHour":$("#mercrediBH").val(),"pauseBeginHour":$("#mercrediPBH").val(),"pauseEndHour":$("#mercrediPEH").val(),"endHour":$("#mercrediEH").val()}],"jeudi":[{"type":$("#form_type_all").val(),"quota":$("#jeudiQuota").val(),"beginHour":$("#jeudiBH").val(),"pauseBeginHour":$("#jeudiPBH").val(),"pauseEndHour":$("#jeudiPEH").val(),"endHour":$("#jeudiEH").val()}],"vendredi":[{"type":$("#form_type_all").val(),"quota":$("#vendrediQuota").val(),"beginHour":$("#vendrediBH").val(),"pauseBeginHour":$("#vendrediPBH").val(),"pauseEndHour":$("#vendrediPEH").val(),"endHour":$("#vendrediEH").val()}],"samedi":[{"type":saturdayType,"quota":$("#samediQuota").val(),"beginHour":$("#samediBH").val(),"pauseBeginHour":$("#samediPBH").val(),"pauseEndHour":$("#samediPEH").val(),"endHour":$("#samediEH").val()}],"dimanche":[{"type":sundayType,"quota":$("#dimancheQuota").val(),"beginHour":$("#dimancheBH").val(),"pauseBeginHour":$("#dimanchePBH").val(),"pauseEndHour":$("#dimanchePEH").val(),"endHour":$("#dimancheEH").val()}]};
             var id = {{ id }};
             console.log("Identity : "+id);
-            alert(obj);
-            alert("apres");
             console.log(obj);
             var json_string = JSON.stringify(obj);
             $.ajax({
@@ -500,6 +497,7 @@
                     function (data) {
                         if(data==1){
                             alert("Modification effectué avec succès");
+                            window.location.href = "{{ path('addWorkingHour') }}";
                         }else{
                             alert("Erreur inconnue");
                         }
@@ -509,7 +507,6 @@
                         alert('La requête n\'a pas abouti');
                     }
             });
-            alert(json_string);
         });
     </script>
 
