@@ -321,6 +321,7 @@ class StatsController extends ClockinReccordController
                         $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Absence","tempsPerdu"=>$tempPP);
                     }
                 }
+
                 $retardDiff = $cr->retard($employe,$nowTime,$interval,$heureNormaleArrive,$empWH[$theDay][0]["beginHour"]);
                 if($retardDiff != null){
                     $nowDate = date('d/m/Y',$nowTime);
@@ -710,7 +711,7 @@ class StatsController extends ClockinReccordController
                     $ct = date('H:i', $departPauseDiff[1]);
                     $tabDepartsPause[] = array("date" => $nowDate, "heureDepart" => $ct, "temps" => $tempsPerdusDepartsPause);
                 }
-            }else if($type == 3){
+            }else if($type == 3 || $type == "3"){
                 // Si son workingHour est de type 3
                 if(!$cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
                     $absences++;
