@@ -45,8 +45,8 @@ class ClockinReccordController extends EmployeController
      */
     public function randomClockinRecordAction(Request $request)
     {
-        $dateFrom = "2018-07-01";
-        $dateTo = "2018-07-26";
+        $dateFrom = "2018-07-31";
+        $dateTo = "2018-07-31";
         $employees = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
         $timeFrom = strtotime($dateFrom." 00:00:00");
         $timeTo = strtotime($dateTo." 00:00:00");

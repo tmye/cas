@@ -171,13 +171,13 @@
                                 <th>Pause</th>
                                 <th>Fin pause</th>
                                 <th>Départ</th>
-                                <th>Quota</th>
+                                <!-- <th>Quota</th> -->
                             </tr>
                             </thead>
 
                             <tbody id="rowsContainer">
                             <tr>
-                                <td colspan="10">
+                                <td colspan="9">
                                     <h5 class="center">Aucun résultat</h5>
                                 </td>
                             </tr>
@@ -626,7 +626,7 @@
                                                     "<td><span class='redSpanPauseBegin_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
                                                     "<td><span class='redSpanPauseEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
                                                     "<td><span class='redSpanEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
-                                                    "<td>" + data.historique[arrayID]["quota"] + "Min</td>" +
+                                                    //"<td>" + data.historique[arrayID]["quota"] + "Min</td>" +
                                                     "</tr>"
                                                 );
                                                 if(data.historique[arrayID]["arrive"] > data.historique[arrayID]["bH"]){
@@ -671,7 +671,7 @@
                                                 $("#rowsContainer").append("" +
                                                     "<tr>" +
                                                     "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
-                                                    "<td colspan='5' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:green'> Présence non requise </span></td>" +
+                                                    "<td colspan='4' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:green'> Présence non requise </span></td>" +
                                                     "</tr>"
                                                 );
                                                 break;
@@ -680,14 +680,14 @@
                                         $("#rowsContainer").append("" +
                                             "<tr>" +
                                             "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
-                                            "<td colspan='5' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:green'> Présence non requise </span></td>" +
+                                            "<td colspan='4' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:green'> Présence non requise </span></td>" +
                                             "</tr>"
                                         );
                                     }else{
                                         $("#rowsContainer").append("" +
                                             "<tr>" +
                                             "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
-                                            "<td colspan='5' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence</span></td>" +
+                                            "<td colspan='4' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence</span></td>" +
                                             "</tr>"
                                         );
                                     }

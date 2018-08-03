@@ -797,7 +797,13 @@ class DefaultController extends StatsController
                 );
                 $data4 = array(
                     //array("Total","",($donnees["absences"]*$finalSalary)+($qr*$finalSalaryPerMin)),
-                    array("Total","",($donnees["absences"]*$finalSalary)),
+                    array("Total des pertes","",($donnees["absences"]*$finalSalary)),
+                );
+                $data5 = array(
+                    array("Salaire","",$employe->getSalary()),
+                );
+                $data6 = array(
+                    array("Net a payer","",$employe->getSalary()-(($donnees["absences"]*$finalSalary)+($donnees["tpr"]*$finalSalaryPerMin)+($donnees["tpd"]*$finalSalaryPerMin)+($donnees["lost_time"]*$finalSalaryPerMin))),
                 );
             }else{
                 $header = array('Nom', 'Prenom(s)', 'Absences', 'Permissions','Retards','Departs','Auth incomp');
@@ -811,7 +817,13 @@ class DefaultController extends StatsController
                     array("Pertes en argent (FCFA)","",$donnees["absences"]*$finalSalary,0,$donnees["tpr"]*$finalSalaryPerMin,$donnees["tpd"]*$finalSalaryPerMin,$donnees["lost_time"]*$finalSalaryPerMin),
                 );
                 $data4 = array(
-                    array("Total","",($donnees["absences"]*$finalSalary)+($donnees["tpr"]*$finalSalaryPerMin)+($donnees["tpd"]*$finalSalaryPerMin)+($donnees["lost_time"]*$finalSalaryPerMin)),
+                    array("Total des pertes","",($donnees["absences"]*$finalSalary)+($donnees["tpr"]*$finalSalaryPerMin)+($donnees["tpd"]*$finalSalaryPerMin)+($donnees["lost_time"]*$finalSalaryPerMin)),
+                );
+                $data5 = array(
+                    array("Salaire","",$employe->getSalary()),
+                );
+                $data6 = array(
+                    array("Net a payer","",$employe->getSalary()-(($donnees["absences"]*$finalSalary)+($donnees["tpr"]*$finalSalaryPerMin)+($donnees["tpd"]*$finalSalaryPerMin)+($donnees["lost_time"]*$finalSalaryPerMin))),
                 );
             }
             switch ($t){
@@ -829,7 +841,7 @@ class DefaultController extends StatsController
                     $pdf->Ln('15');
                     break;
             }
-            $pdf->FancyTable($header,$data,$data2,$data3,$data4);
+            $pdf->FancyTable($header,$data,$data2,$data3,$data4,$data5,$data6);
             $pdf->Ln('5');
         }
         $pdf->Output();
