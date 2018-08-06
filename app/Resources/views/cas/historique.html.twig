@@ -301,6 +301,13 @@
                                                     $(".redSpanEnd_3_"+i).css("color","red");
                                                 }
                                                 break;
+                                            case "null":
+                                                $("#rowsContainer").append("" +
+                                                    "<tr>" +
+                                                    "<td colspan='10' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:green'> Présence non requise </span></td>" +
+                                                    "</tr>"
+                                                );
+                                                break;
 
                                         }
                                     }else if(data.allRecords[arrayID][2] == "null" || data.empType[arrayID][1] == null){
