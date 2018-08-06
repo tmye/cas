@@ -808,7 +808,7 @@ class DefaultController extends StatsController
             }else{
                 $header = array('Nom', 'Prenom(s)', 'Absences', 'Permissions','Retards','Departs','Auth incomp');
                 $data = array(
-                    array($name,$lastName,$donnees["absences"],$permissions,$donnees["retards"],$donnees["departs"],"-"),
+                    array($name,$lastName,$donnees["absences"],$permissions,$donnees["retards"],$donnees["departs"],$donnees["inc_auth"]),
                 );
                 $data2 = array(
                     array("Pertes en temps","",$donnees["absences"]*24,0,$donnees["tpr"],$donnees["tpd"],$donnees["lost_time"]),
