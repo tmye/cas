@@ -492,7 +492,6 @@ class DefaultController extends StatsController
         }else{
             return new Response("0");
         }
-
         //return new Response(json_encode($t));
     }
 
