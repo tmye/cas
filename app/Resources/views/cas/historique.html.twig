@@ -272,7 +272,7 @@
                                                     "<td>" + res.clockinRecord[arrayID][empId].nom + " " + res.clockinRecord[arrayID][empId].prenom + "</td>" +
                                                     "<td>" + res.clockinRecord[arrayID][empId].function + "</td>" +
                                                     "<td>" + convertType(res.clockinRecord[arrayID][empId].type) + "</td>" +
-                                                    "<td colspan='6' class='green lighten-2 white-text center'> Présent </td>" +
+                                                    "<td colspan='5' class='green lighten-2 white-text center'> Présent </td>" +
                                                     "</tr>"
                                                 );
                                                 break;
@@ -306,7 +306,7 @@
                                     }else if(data.allRecords[arrayID][2] == "null" || data.empType[arrayID][1] == null){
                                         $("#rowsContainer").append("" +
                                             "<tr>" +
-                                            "<td colspan='10' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:green'> Présence non requise </span></td>" +
+                                            "<td colspan='9' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:green'> Présence non requise </span></td>" +
                                             "</tr>"
                                         );
                                     }else{
@@ -314,7 +314,7 @@
                                         //alert("nexiste pas");
                                         $("#rowsContainer").append("" +
                                             "<tr>" +
-                                            "<td colspan='10' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence : </span><span style='font-weight: bold;color:black;'>" + data.empNames[arrayID] + " ("+ data.empCcid[arrayID] +")</span></td>" +
+                                            "<td colspan='9' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence : </span><span style='font-weight: bold;color:black;'>" + data.empNames[arrayID] + " ("+ data.empCcid[arrayID] +")</span></td>" +
                                             "</tr>"
                                         );
                                     }
@@ -332,12 +332,12 @@
                     }else {
                         $("#errorContainer").show();
                         $("#errorContainer div span").text("Erreur : veuillez choisir un département");
-                        $("#rowsContainer").html("<tr><td colspan='10'><h5 class='center'>Aucun résultat</h5></td></tr>");
+                        $("#rowsContainer").html("<tr><td colspan='9'><h5 class='center'>Aucun résultat</h5></td></tr>");
                     }
                 }else {
                     $("#errorContainer").show();
                     $("#errorContainer div span").text("Erreur : veuillez choisir une date valide");
-                    $("#rowsContainer").html("<tr><td colspan='10'><h5 class='center'>Aucun résultat</h5></td></tr>");
+                    $("#rowsContainer").html("<tr><td colspan='9'><h5 class='center'>Aucun résultat</h5></td></tr>");
                 }
             });
 
