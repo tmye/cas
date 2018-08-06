@@ -589,8 +589,16 @@
     </script>
 
     <script>
-        var saturdayType = null;
-        var sundayType = null;
+        function hoursDiff(begin_hour,end_hour){
+            var splited_first_hour = begin_hour.split(":");
+            var splited_second_hour = end_hour.split(":");
+            var first_hour = Number(splited_first_hour[0])+(Number(splited_first_hour[1])/60);
+            var second_hour = Number(splited_second_hour[0])+(Number(splited_second_hour[1])/60);
+            return second_hour-first_hour;
+        }
+
+        var saturdayType = $("#form_type_all").val();
+        var sundayType = $("#form_type_all").val();
         $(function(){
             $(".checkItSamedi").change(function() {
                 if(this.checked) {
@@ -598,7 +606,7 @@
                     $('.maybeHiddenSamedi').hide();
                     $('.quotaSectionSamedi input').val("");
                 }else{
-                    saturdayType = $('#form_type_all').val("");
+                    saturdayType = $('#form_type_all').val();
                     $('.maybeHiddenSamedi').show();
                 }
             });
@@ -615,15 +623,72 @@
             });
         });
 
-
+        var taux = 0;
+        var jour_travail = 5;
         $("#btnSave").click(function(){
             if($("#code").val() != "" && $("#code").val() != null){
+                switch($("#form_type_all").val()){
+                    case "1":
+                        jour_travail = 0;
+                        taux = hoursDiff($("#lundiBH").val(),$("#lundiPBH").val())+hoursDiff($("#lundiPEH").val(),$("#lundiEH").val())
+                                    +hoursDiff($("#mardiBH").val(),$("#mardiPBH").val())+hoursDiff($("#mardiPEH").val(),$("#mardiEH").val())
+                                    +hoursDiff($("#mercrediBH").val(),$("#mercrediPBH").val())+hoursDiff($("#mercrediPEH").val(),$("#mercrediEH").val())
+                                    +hoursDiff($("#jeudiBH").val(),$("#jeudiPBH").val())+hoursDiff($("#jeudiPEH").val(),$("#jeudiEH").val())
+                                    +hoursDiff($("#vendrediBH").val(),$("#vendrediPBH").val())+hoursDiff($("#vendrediPEH").val(),$("#vendrediEH").val());
+                        if(saturdayType != "null" && saturdayType != null){
+                            jour_travail++;
+                            taux+=hoursDiff($("#samediBH").val(),$("#samediPBH").val())+hoursDiff($("#samediPEH").val(),$("#samediEH").val());
+                        }
+                        if(sundayType != "null" && sundayType != null){
+                            jour_travail++;
+                            taux+=hoursDiff($("#dimancheBH").val(),$("#dimanchePBH").val())+hoursDiff($("#dimanchePEH").val(),$("#dimancheEH").val());
+                        }
+                        console.log(taux);
+                        break;
+                    case "2":
+                        taux = Number($("#lundiQuota").val())+Number($("#mardiQuota").val())+Number($("#mercrediQuota").val())+Number($("#jeudiQuota").val())+Number($("#vendrediQuota").val());
+                        if(saturdayType != "null" && saturdayType != null){
+                            jour_travail++;
+                            taux+=Number($("#samediQuota").val());
+                        }
+                        if(sundayType != "null" && sundayType != null){
+                            jour_travail++;
+                            taux+=Number($("#dimancheQuota").val());
+                        }
+                        console.log(taux);
+                        break;
+                    case "3":
+                        taux = 0;
+                        if(saturdayType != "null" && saturdayType != null){
+                            jour_travail++;
+                        }
+                        if(sundayType != "null" && sundayType != null){
+                            jour_travail++;
+                        }
+                        break;
+                    case "4":
+                        taux = hoursDiff($("#lundiBH").val(),$("#lundiEH").val())
+                                    +hoursDiff($("#mardiBH").val(),$("#mardiEH").val())
+                                    +hoursDiff($("#mercrediBH").val(),$("#mercrediEH").val())
+                                    +hoursDiff($("#jeudiBH").val(),$("#jeudiEH").val())
+                                    +hoursDiff($("#vendrediBH").val(),$("#vendrediEH").val());
+                        if(saturdayType != "null" && saturdayType != null){
+                            jour_travail++;
+                            taux+=hoursDiff($("#samediBH").val(),$("#samediEH").val());
+                        }
+                        if(sundayType != "null" && sundayType != null){
+                            jour_travail++;
+                            taux+=hoursDiff($("#dimancheBH").val(),$("#dimancheEH").val());
+                        }
+                        console.log(taux);
+                        break;
+                }
                 var obj = {"code":$("#code").val(),"lundi":[{"type":$("#form_type_all").val(),"quota":$("#lundiQuota").val(),"beginHour":$("#lundiBH").val(),"pauseBeginHour":$("#lundiPBH").val(),"pauseEndHour":$("#lundiPEH").val(),"endHour":$("#lundiEH").val()}],"mardi":[{"type":$("#form_type_all").val(),"quota":$("#mardiQuota").val(),"beginHour":$("#mardiBH").val(),"pauseBeginHour":$("#mardiPBH").val(),"pauseEndHour":$("#mardiPEH").val(),"endHour":$("#mardiEH").val()}],"mercredi":[{"type":$("#form_type_all").val(),"quota":$("#mercrediQuota").val(),"beginHour":$("#mercrediBH").val(),"pauseBeginHour":$("#mercrediPBH").val(),"pauseEndHour":$("#mercrediPEH").val(),"endHour":$("#mercrediEH").val()}],"jeudi":[{"type":$("#form_type_all").val(),"quota":$("#jeudiQuota").val(),"beginHour":$("#jeudiBH").val(),"pauseBeginHour":$("#jeudiPBH").val(),"pauseEndHour":$("#jeudiPEH").val(),"endHour":$("#jeudiEH").val()}],"vendredi":[{"type":$("#form_type_all").val(),"quota":$("#vendrediQuota").val(),"beginHour":$("#vendrediBH").val(),"pauseBeginHour":$("#vendrediPBH").val(),"pauseEndHour":$("#vendrediPEH").val(),"endHour":$("#vendrediEH").val()}],"samedi":[{"type":saturdayType,"quota":$("#samediQuota").val(),"beginHour":$("#samediBH").val(),"pauseBeginHour":$("#samediPBH").val(),"pauseEndHour":$("#samediPEH").val(),"endHour":$("#samediEH").val()}],"dimanche":[{"type":sundayType,"quota":$("#dimancheQuota").val(),"beginHour":$("#dimancheBH").val(),"pauseBeginHour":$("#dimanchePBH").val(),"pauseEndHour":$("#dimanchePEH").val(),"endHour":$("#dimancheEH").val()}]};
                 var json_string = JSON.stringify(obj);
                 $.ajax({
                     type: 'POST',
                     url: 'persistWorkingHour',
-                    data: { json_s:json_string,code:$("#code").val() },
+                    data: { json_s:json_string,code:$("#code").val(),taux:taux,jour_travail:jour_travail },
                     timeout: 0,
                     success:
                         function (data) {

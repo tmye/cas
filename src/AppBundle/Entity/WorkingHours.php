@@ -43,6 +43,20 @@ class WorkingHours
     private $isFor;
 
     /**
+     * @var float
+     *
+     * @ORM\Column(name="taux", type="float", nullable=true)
+     */
+    private $taux;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="jour_travail", type="float", nullable=true)
+     */
+    private $jour_travail;
+
+    /**
      * @var int
      *
      * @ORM\Column(name="tolerance", type="integer")
@@ -157,5 +171,53 @@ class WorkingHours
     public function getTolerance()
     {
         return $this->tolerance;
+    }
+
+    /**
+     * Set taux
+     *
+     * @param integer $taux
+     *
+     * @return WorkingHours
+     */
+    public function setTaux($taux)
+    {
+        $this->taux = $taux;
+
+        return $this;
+    }
+
+    /**
+     * Get taux
+     *
+     * @return integer
+     */
+    public function getTaux()
+    {
+        return $this->taux;
+    }
+
+    /**
+     * Set jourTravail
+     *
+     * @param float $jourTravail
+     *
+     * @return WorkingHours
+     */
+    public function setJourTravail($jourTravail)
+    {
+        $this->jour_travail = $jourTravail;
+
+        return $this;
+    }
+
+    /**
+     * Get jourTravail
+     *
+     * @return float
+     */
+    public function getJourTravail()
+    {
+        return $this->jour_travail;
     }
 }

@@ -55,9 +55,13 @@ class WorkingHoursController extends Controller
 
         $don = $request->request->get('json_s');
         $code = $request->request->get('code');
+        $taux = $request->request->get('taux');
+        $jour_travail = $request->request->get('jour_travail');
 
         $wh->setCode($code);
         $wh->setWorkingHour($don);
+        $wh->setTaux($taux);
+        $wh->setJourTravail($jour_travail);
         $em->persist($wh);
         $em->flush();
 

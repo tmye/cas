@@ -502,7 +502,13 @@
 
             /* Création de la fonction de chargement des données de l'employé sélectionné */
             function loadSelectedEmpData(id) {
-
+                function hoursDiff(begin_hour,end_hour){
+                    var splited_first_hour = begin_hour.split(":");
+                    var splited_second_hour = end_hour.split(":");
+                    var first_hour = Number(splited_first_hour[0])+(Number(splited_first_hour[1])/60);
+                    var second_hour = Number(splited_second_hour[0])+(Number(splited_second_hour[1])/60);
+                    return second_hour-first_hour;
+                }
                 var abs = 0;
                 // Formatting the date into yyyy-mm-dd format
                 var fromDate = $("#fromDate").val().split("-").reverse().join("-");
@@ -534,6 +540,8 @@
                         diffDays +=1;
                         var totalSalary = (salary/30)*diffDays;
                         var salaryPerDay = (salary/30);
+                        var salaryPerHour = res.emp["workingHour"]["taux"];
+                        var jour_travail = Number(res.emp["workingHour"]["jour_travail"]);
                         var salaryPerMin = (((salary/30)/24)/60);
 
                         tempsPerduRetards = data.tpr;
@@ -557,7 +565,23 @@
                                 $("#tempsPerduQuotaSpan").text("-");
 
                                 console.log(data);
-                                var type = data.tabType["lundi"];
+                                var type = JSON.parse(res.emp["workingHour"]["workingHour"])["lundi"][0]["type"];
+                                //
+                                var ss = 0;
+                                if(type == "3" || type == 3){
+                                    ss += ((Number(salary)*12)/52)/jour_travail;
+                                }else if(type == "2" || type == 2){
+                                    console.log(res.emp["workingHour"]["taux"]);
+                                    ss += (Number(res.emp["workingHour"]["taux"]))*Number(data["quota_total"]/60);
+                                    console.log(ss);
+                                }else if(type == "1" || type == 1){
+                                    ss += Number(data.tpa)*Number(res.emp["workingHour"]["taux"]);
+                                }else{
+                                    ss += 0;
+                                }
+                                console.log("-------");
+                                console.log(ss);
+                                console.log(res.emp["workingHour"]);
                                 $("#containerMustBeHidden").attr("style","display:block");
                                 $("#absenceSpan").text(data.absences);
                                 $("#retardSpan").text(data.retards);
@@ -587,7 +611,7 @@
                                 }
                                 $("#tpAuthSpan").text(precisionRound(data.lost_time,0));
                                 $("#spAuthSpan").text(precisionRound(data.lost_time*salaryPerMin,0));
-                                $("#spaSpan").text(precisionRound(salaryPerDay*data.nbreAbsences,0));
+                                $("#spaSpan").text(precisionRound(ss*data.nbreAbsences,0));
                                 $("#tapSpan").text(precisionRound(stp,0));
                                 $("#papSpan").text(precisionRound(((stp/salary)*100),0));
                                 //var res = JSON.parse(data.test);

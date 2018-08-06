@@ -278,20 +278,6 @@ class StatsController extends ClockinReccordController
                 $heureNormaleDepartPause = 0;
             }
 
-            /*
-             * NOTE :
-             * --------------------------------------------------------------------------
-             *
-             * Je dois modifier la fonction retard.Pour le moment il ne se base pas sur
-             * le clockinHour de l'employé.C'est à dire son heure d'arrivée
-             * définie pour lui dans son clockinHour.
-             *
-             * Ceci est aussi valable pour la fonction departPremature
-             *
-             * Pour un employé ayant pour type de clockinHour de ce jour = 2
-             * S'il valide son quota horraire,on ne doit pas considérer son retard
-             * dans la totalisation des heures perdus
-            */
             if ($type == "1" || $type == "2" || $type == "4"){
                 // Si son workingHour est de type 1 ou 2
                 //print_r("//// Heure normale d'arrive ".$nowTime." //////\n");
@@ -302,12 +288,18 @@ class StatsController extends ClockinReccordController
                         if(!$nD->dayIsNull($permDate)){
                             $absences++;
                             $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                            $timePauseBegin = strtotime($empWH[$theDay][0]["pauseBeginHour"]);
                             $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
-                            $timePerdusAbsences = ($timeFin - $timeDebut);
-                            $tempPerdu = $timePerdusAbsences/60;
+                            $timePauseEnd = strtotime($empWH[$theDay][0]["pauseEndHour"]);
+                            if($type == "1"){
+                                $timePerdusAbsences = ($timePauseBegin - $timeDebut)+($timeFin - $timePauseEnd);
+                            }else if($type == "2"){
+                                $timePerdusAbsences = $timeFin - $timeDebut;
+                            }
+                            $tempPerdu = ($timePerdusAbsences/60)/60;
                             $tempsPerdusAbsences += $tempPerdu;
                             $sommeAbsences +=$tempsPerdusAbsences;
-                            $sommePerduQuota += $salaire/30;
+                            $sommePerduQuota += ($employe->getWorkingHour()->getTaux())*((int)$empWH[$theDay][0]["quota"]);
                         }
                     }
                     $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$empWH[$theDay][0]["endHour"],$empWH[$theDay][0]["beginHour"]);
@@ -318,7 +310,7 @@ class StatsController extends ClockinReccordController
                         $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
                         $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
                         $timePP = ($timeFin - $timeDebut);
-                        $tempPP = $timePP/60;
+                        $tempPP = $timePP/60/60; // Hour
                         $tempsTPP += $tempPP;
                         $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Absence","tempsPerdu"=>$tempPP);
                     }
@@ -523,7 +515,7 @@ class StatsController extends ClockinReccordController
 
             $historiques[] = $his;
             $donneesPermission = array("retardStats"=>$tabRetardsPermission,"retardPauseStats"=>$tabRetardsPausePermission,"pauseStats"=>$tabDepartsPausePermission,"finStats"=> $tabDepartsPermission,"absenceStats"=>$tabAbsencesPermission);
-            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType,"permissionData"=>$donneesPermission,"lost_time"=>$lost_time,"inc_auth"=>$inc_auth,"historique"=>$historiques,"sommePerduQuota"=>$sommePerduQuota);
+            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpa"=>$tempsPerdusAbsences,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType,"permissionData"=>$donneesPermission,"lost_time"=>$lost_time,"inc_auth"=>$inc_auth,"historique"=>$historiques,"sommePerduQuota"=>$sommePerduQuota);
             $nowTime = $nowTime+86400;
         }
 
@@ -646,20 +638,6 @@ class StatsController extends ClockinReccordController
                 $heureNormaleDepartPause = 0;
             }
 
-            /*
-             * NOTE :
-             * --------------------------------------------------------------------------
-             *
-             * Je dois modifier la fonction retard.Pour le moment il ne se base pas sur
-             * le clockinHour de l'employé.C'est à dire son heure d'arrivée
-             * définie pour lui dans son clockinHour.
-             *
-             * Ceci est aussi valable pour la fonction departPremature
-             *
-             * Pour un employé ayant pour type de clockinHour de ce jour = 2
-             * S'il valide son quota horraire,on ne doit pas considérer son retard
-             * dans la totalisation des heures perdus
-            */
             if ($type == "1" || $type == "2" || $type == "4") {
                 // Si son workingHour est de type 1
                 if (!$cr->present($employe, $nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)) {
