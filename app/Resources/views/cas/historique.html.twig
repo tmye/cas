@@ -325,7 +325,7 @@
                                     }else if(data.allRecords[arrayID][2] == "null" || data.empType[arrayID][1] == null){
                                         $("#rowsContainer").append("" +
                                             "<tr>" +
-                                            "<td colspan='9' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:green'> Présence non requise </span></td>" +
+                                            "<td colspan='10' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:green'> Présence non requise </span></td>" +
                                             "</tr>"
                                         );
                                     }else{
@@ -333,7 +333,7 @@
                                         //alert("nexiste pas");
                                         $("#rowsContainer").append("" +
                                             "<tr>" +
-                                            "<td colspan='9' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence : </span><span style='font-weight: bold;color:black;'>" + data.empNames[arrayID] + " ("+ data.empCcid[arrayID] +")</span></td>" +
+                                            "<td colspan='10' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence : </span><span style='font-weight: bold;color:black;'>" + data.empNames[arrayID] + " ("+ data.empCcid[arrayID] +")</span></td>" +
                                             "</tr>"
                                         );
                                     }
