@@ -24,7 +24,7 @@
                 <div class="col s12">
                     <table class="table table-striped table-condensed">
                         <tbody>
-                            <tr id="modal_element"></tr>
+                        <tr id="modal_element"></tr>
                         </tbody>
                     </table>
                 </div>
@@ -121,11 +121,11 @@
                         </thead>
 
                         <tbody id="rowsContainer">
-                            <tr>
-                                <td colspan="10">
-                                    <h5 class="center">Aucun résultat</h5>
-                                </td>
-                            </tr>
+                        <tr>
+                            <td colspan="10">
+                                <h5 class="center">Aucun résultat</h5>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -214,6 +214,25 @@
                                     var empId = returnEmployeeId(arrayID,data.emp);
                                     if(typeof (res.clockinRecord[arrayID][empId]) != "undefined"){
                                         //alert(data.empType[arrayID][1]);
+
+                                        if ((res.clockinRecord[arrayID][empId]).arrive == 0) {
+                                            (res.clockinRecord[arrayID][empId]).arrive = "<span style='color:red'>X</span>";
+                                        }
+                                        if ((res.clockinRecord[arrayID][empId]).pause == 0) {
+                                            (res.clockinRecord[arrayID][empId]).pause = "<span style='color:red'>X</span>";
+                                        }
+                                        if ((res.clockinRecord[arrayID][empId]).finPause == 0) {
+                                            (res.clockinRecord[arrayID][empId]).finPause = "<span style='color:red'>X</span>";
+                                        }
+                                        if ((res.clockinRecord[arrayID][empId]).arrive == 0) {
+                                            (res.clockinRecord[arrayID][empId]).arrive = "<span style='color:red'>X</span>";
+                                        }
+                                        if ((res.clockinRecord[arrayID][empId]).depart == 0) {
+                                            (res.clockinRecord[arrayID][empId]).depart = "<span style='color:red'>X</span>";
+                                        }
+
+
+
                                         switch (res.clockinRecord[arrayID][empId].type){
                                             case "1":
                                                 $("#rowsContainer").append("" +
@@ -233,12 +252,12 @@
                                                 if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
                                                     $(".redSpan_1_"+i).css("color","red");
                                                 }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
-                                                    $(".redSpanPauseBegin_1_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
-                                                    $(".redSpanPauseEnd_1_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
-                                                    $(".redSpanEnd_1_"+i).css("color","red");
-                                                }
+                                                $(".redSpanPauseBegin_1_"+i).css("color","red");
+                                            }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
+                                                $(".redSpanPauseEnd_1_"+i).css("color","red");
+                                            }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
+                                                $(".redSpanEnd_1_"+i).css("color","red");
+                                            }
                                                 break;
                                             case "2":
                                                 $("#rowsContainer").append("" +
@@ -258,12 +277,12 @@
                                                 if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
                                                     $(".redSpan_2_"+i).css("color","red");
                                                 }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
-                                                    $(".redSpanPauseBegin_2_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
-                                                    $(".redSpanPauseEnd_2_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
-                                                    $(".redSpanEnd_2_"+i).css("color","red");
-                                                }
+                                                $(".redSpanPauseBegin_2_"+i).css("color","red");
+                                            }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
+                                                $(".redSpanPauseEnd_2_"+i).css("color","red");
+                                            }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
+                                                $(".redSpanEnd_2_"+i).css("color","red");
+                                            }
                                                 break;
                                             case "3":
                                                 $("#rowsContainer").append("" +
@@ -294,12 +313,12 @@
                                                 if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
                                                     $(".redSpan_3_"+i).css("color","red");
                                                 }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
-                                                    $(".redSpanPauseBegin_3_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
-                                                    $(".redSpanPauseEnd_3_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
-                                                    $(".redSpanEnd_3_"+i).css("color","red");
-                                                }
+                                                $(".redSpanPauseBegin_3_"+i).css("color","red");
+                                            }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
+                                                $(".redSpanPauseEnd_3_"+i).css("color","red");
+                                            }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
+                                                $(".redSpanEnd_3_"+i).css("color","red");
+                                            }
                                                 break;
                                             case "null":
                                                 $("#rowsContainer").append("" +
@@ -347,7 +366,6 @@
                     $("#rowsContainer").html("<tr><td colspan='9'><h5 class='center'>Aucun résultat</h5></td></tr>");
                 }
             });
-
         });
     </script>
     <script>

@@ -492,7 +492,6 @@ class DefaultController extends StatsController
         }else{
             return new Response("0");
         }
-
         //return new Response(json_encode($t));
     }
 
@@ -758,7 +757,7 @@ class DefaultController extends StatsController
         $i=0;
         foreach ($empId as $emp){
             $i++;
-            if($i>=6){
+            if($i>=5){ // set up how many table on a page
                 $pdf->AddPage();
                 $i=0;
             }
@@ -811,7 +810,7 @@ class DefaultController extends StatsController
                     array($name,$lastName,$donnees["absences"],$permissions,$donnees["retards"],$donnees["departs"],$donnees["inc_auth"]),
                 );
                 $data2 = array(
-                    array("Pertes en temps","",$donnees["absences"]*24,0,$donnees["tpr"],$donnees["tpd"],$donnees["lost_time"]),
+                    array("Pertes en temps","",$donnees["absences"]*24,0,$donnees["tpr"]/*temp perdu retard*/,$donnees["tpd"],$donnees["lost_time"]),
                 );
                 $data3 = array(
                     array("Pertes en argent (FCFA)","",$donnees["absences"]*$finalSalary,0,$donnees["tpr"]*$finalSalaryPerMin,$donnees["tpd"]*$finalSalaryPerMin,$donnees["lost_time"]*$finalSalaryPerMin),
