@@ -71,6 +71,7 @@ class ClockinRecordRepository extends EntityRepository
         $queryBuilder->andWhere('c.employe = :empId')->setParameter('empId',$empId);
         $queryBuilder->andWhere('c.departement = :depId')->setParameter('depId',$depId);
         $queryBuilder->addOrderBy('c.clockinTime','ASC');
+
         return $queryBuilder->getQuery()->getResult();
     }
 
