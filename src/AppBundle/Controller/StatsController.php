@@ -210,6 +210,8 @@ class StatsController extends ClockinReccordController
         $quota_fait = 0;
         $quota_total = 0;
 
+        $inc_auth=0;
+
         // On boucle sur les jours sélectionnés
         $i=0;
         $lost_time = 0;
@@ -451,19 +453,23 @@ class StatsController extends ClockinReccordController
                     if($type == "1" || $type == 1){
                         // Un double test a faire
                         if(($_arr == 0 && $_pau != 0) || ($_pau == 0 && $_arr != 0)){
+                            $inc_auth++;
                             $lost_time += (int)($this->convertHourInMinutes($heureDebutNormalPause)) - (int)($this->convertHourInMinutes($heureDebutNormal));
                         }
                         if(($_fpa == 0 && $_dep != 0) || ($_dep == 0 && $_fpa !=0)){
+                            $inc_auth++;
                             $lost_time+= (int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureFinNormalPause));
                         }
                     }if($type == "4" || $type == 4){
                         if($_arr == 0 || $_dep == 0){
+                            $inc_auth++;
                             $lost_time += (int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal));
                         }
                     }elseif ($type == "2" || $type == 2){
                         // in this case the lost time is his quota because of his terminals
                         //$lost_time += (int)($his["quota"]);
                         if($_arr == 0 || $_dep == 0){
+                            $inc_auth++;
                             $lost_time += (int)($his["quota"]);
                         }
                     }
@@ -517,7 +523,7 @@ class StatsController extends ClockinReccordController
 
             $historiques[] = $his;
             $donneesPermission = array("retardStats"=>$tabRetardsPermission,"retardPauseStats"=>$tabRetardsPausePermission,"pauseStats"=>$tabDepartsPausePermission,"finStats"=> $tabDepartsPermission,"absenceStats"=>$tabAbsencesPermission);
-            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType,"permissionData"=>$donneesPermission,"lost_time"=>$lost_time,"historique"=>$historiques,"sommePerduQuota"=>$sommePerduQuota);
+            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType,"permissionData"=>$donneesPermission,"lost_time"=>$lost_time,"inc_auth"=>$inc_auth,"historique"=>$historiques,"sommePerduQuota"=>$sommePerduQuota);
             $nowTime = $nowTime+86400;
         }
 

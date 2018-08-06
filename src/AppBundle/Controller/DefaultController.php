@@ -786,7 +786,7 @@ class DefaultController extends StatsController
                 }
                 $header = array('Nom', 'Prenom(s)', 'Absences', 'Quota Fait','Quota normal', 'Quota restant','Auth incomp');
                 $data = array(
-                    array($name,$lastName,$donnees["absences"],$donnees["quota_fait"],$donnees["quota_total"],$qr,"-"),
+                    array($name,$lastName,$donnees["absences"],$donnees["quota_fait"],$donnees["quota_total"],$qr,$donnees["inc_auth"]),
                 );
                 $data2 = array(
                     array("Pertes en temps","",$donnees["quota_total"]/60,$donnees["quota_fait"],"-",$qr,$donnees["lost_time"]),
@@ -807,7 +807,7 @@ class DefaultController extends StatsController
             }else{
                 $header = array('Nom', 'Prenom(s)', 'Absences', 'Permissions','Retards','Departs','Auth incomp');
                 $data = array(
-                    array($name,$lastName,$donnees["absences"],$permissions,$donnees["retards"],$donnees["departs"],"-"),
+                    array($name,$lastName,$donnees["absences"],$permissions,$donnees["retards"],$donnees["departs"],$donnees["inc_auth"]),
                 );
                 $data2 = array(
                     array("Pertes en temps","",$donnees["absences"]*24,0,$donnees["tpr"]/*temp perdu retard*/,$donnees["tpd"],$donnees["lost_time"]),

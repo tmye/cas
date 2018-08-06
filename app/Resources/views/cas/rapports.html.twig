@@ -261,7 +261,7 @@
                 if($("#destination").val()!=""){
                     if($("#fromDate").val()!=""){
                         if($("#toDate").val()!=""){
-                            if(dateFrom < dateTo || dateFrom == dateTo){
+                            //if(dateFrom < dateTo || dateFrom == dateTo){
                                 $('#modal_loading').modal('open');
                                 console.log($("#destination").val());
                                 $("#errorContainer").hide();
@@ -269,11 +269,11 @@
                                 $("#type").val("1");
                                 $("#form").submit();
                                 $('#modal_loading').modal('close');
-                            }else {
+                            /*}else {
                                 $("#errorContainer").show();
                                 $("#errorContainer div span").text("Erreur : La date de début ne peut pas etre superieur à la date de fin");
                                 $("#containerMustBeHidden").attr("style","display:none");
-                            }
+                            }*/
                         }else {
                             $("#errorContainer").show();
                             $("#errorContainer div span").text("Erreur : veuillez choisir une date de fin valide");
