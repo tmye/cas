@@ -157,12 +157,15 @@ class StatsController extends ClockinReccordController
         $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($emp);
         $interval = ($employe->getWorkingHour()->getTolerance())*60;
         $empWH = json_decode($employe->getWorkingHour()->getWorkingHour(),true);
+        $taux = (float)$employe->getWorkingHour()->getTaux();
         $salaire = $employe->getSalary();
+        $jour_travail = (int)$employe->getWorkingHour()->getJourTravail();
         $salaire_en_minuite = (($salaire/30)/24)/60;
         $salaire_quota_en_minuite = (($salaire/30)/8)/60;
         $cr = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord");
 
         $absences=0;
+        $sommePerduAbsence_3;
         $retards = 0;
 
         $totalTempsabsences=0;
@@ -183,6 +186,9 @@ class StatsController extends ClockinReccordController
         $tempsPerdusDeparts=0;
 
         $sommePerduQuota = 0;
+        $sommePerduAbsence = 0;
+        $sommePerduDepart = 0;
+        $sommePerduRetard = 0;
 
         $timePP = 0;
         $tempPP = 0;
@@ -209,12 +215,13 @@ class StatsController extends ClockinReccordController
 
         $quota_fait = 0;
         $quota_total = 0;
-
+        $quota_emp_1_4 = 0;
         $inc_auth=0;
 
         // On boucle sur les jours sélectionnés
-        $i=0;
+        $i=0;$j=0;
         $lost_time = 0;
+        $sommePerduAuth = 0;
         $tabType = array();
         for ($cpt=0;$cpt<=$days;$cpt++){
             $theDay = date('N',$nowTime);
@@ -227,11 +234,13 @@ class StatsController extends ClockinReccordController
             $quotaUtilisateur = $empWH[$theDay][0]["quota"];
 
             $hAN = $empWH[$theDay][0]["beginHour"];
+            $hDN = $empWH[$theDay][0]["endHour"];
+            $hDPN = $empWH[$theDay][0]["pauseBeginHour"];
+            $hFPN = $empWH[$theDay][0]["pauseEndHour"];
             $_heure_debut = null;
             $_minuites_debut = null;
             $_time_heure_debut = null;
             $_time_minuites_debut = null;
-
 
             // Pour éviter les erreurs de "offset"
             if(($hAN != null) && ($hAN !="")){
@@ -278,7 +287,12 @@ class StatsController extends ClockinReccordController
                 $heureNormaleDepartPause = 0;
             }
 
+            if($type != "null" && $type != null){
+                $quota_emp_1_4 += ((($heureNormaleDepartPause - $heureNormaleArrive)+($heureNormaleDepart - $heureNormaleArrivePause))/60)/60;
+            }
+
             if ($type == "1" || $type == "2" || $type == "4"){
+                $j++;
                 // Si son workingHour est de type 1 ou 2
                 //print_r("//// Heure normale d'arrive ".$nowTime." //////\n");
                 if(!$cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
@@ -291,15 +305,21 @@ class StatsController extends ClockinReccordController
                             $timePauseBegin = strtotime($empWH[$theDay][0]["pauseBeginHour"]);
                             $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
                             $timePauseEnd = strtotime($empWH[$theDay][0]["pauseEndHour"]);
+                            
                             if($type == "1"){
                                 $timePerdusAbsences = ($timePauseBegin - $timeDebut)+($timeFin - $timePauseEnd);
-                            }else if($type == "2"){
+                                $timePerdusAbsences /= 3600;
+                            }else if($type == "4"){
                                 $timePerdusAbsences = $timeFin - $timeDebut;
+                                $timePerdusAbsences /= 3600;
+                            }else if($type == "2"){
+                                $qu = (float)$empWH[$theDay][0]["quota"];
+                                $timePerdusAbsences = $qu;
                             }
-                            $tempPerdu = ($timePerdusAbsences/60)/60;
-                            $tempsPerdusAbsences += $tempPerdu;
-                            $sommeAbsences +=$tempsPerdusAbsences;
-                            $sommePerduQuota += ($employe->getWorkingHour()->getTaux())*((int)$empWH[$theDay][0]["quota"]);
+                            //$tempsPerdusAbsences += $tempPerdu;
+                            //$sommeAbsences +=$tempsPerdusAbsences;
+                            $sommeAbsences +=$timePerdusAbsences;
+                            $sommePerduAbsence = ((($salaire*12)/52)/$taux)*$sommeAbsences;
                         }
                     }
                     $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$empWH[$theDay][0]["endHour"],$empWH[$theDay][0]["beginHour"]);
@@ -323,11 +343,11 @@ class StatsController extends ClockinReccordController
                         if(!$nD->dayIsNull($permDate)){
                             $retards++;
                             $sommeRetards +=$retardDiff[0];
-                            $tempsPerdusRetards += $retardDiff[0]/(60);
-                            $perte_temps = (int)($retardDiff[0]/(60));
+                            $tempsPerdusRetards += (float)($retardDiff[0]/(60))/60;
+                            $perte_temps = (float)($retardDiff[0]/(60))/60;
                             $ct = date('H:i',$retardDiff[1]);
-                            $sommePerduQuota += $salaire_quota_en_minuite*$perte_temps;
-                            $tabRetards[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$perte_temps);
+                            $sommePerduRetard += ((($salaire*12)/52)/$taux)*$perte_temps; // May be removed : not correct
+                            $tabRetards[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$perte_temps,"temps_min"=>$perte_temps*60);
 
                         }
                     }
@@ -351,11 +371,11 @@ class StatsController extends ClockinReccordController
                         if(!$nD->dayIsNull($permDate)) {
                             $retards++;
                             $sommeRetards +=$retardPauseDiff[0];
-                            $tempsPerdusRetardsPause = $retardPauseDiff[0]/(60);
-                            $tempsPerdusRetards+= $retardPauseDiff[0]/(60);
+                            $tempsPerdusRetardsPause = ($retardPauseDiff[0]/(60))/60;
+                            $tempsPerdusRetards+= ($retardPauseDiff[0]/(60))/60;
                             $ct = date('H:i',$retardPauseDiff[1]);
-                            $sommePerduQuota += $salaire_quota_en_minuite*$tempsPerdusRetardsPause;
-                            $tabRetardsPause[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$tempsPerdusRetardsPause);
+                            $sommePerduRetard += ((($salaire*12)/52)/$taux)*$tempsPerdusRetardsPause;
+                            $tabRetardsPause[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$tempsPerdusRetardsPause,"temps_min"=>$tempsPerdusRetardsPause*60);
                         }
                     }
                     // Now we deal with the permissions calculations
@@ -378,11 +398,12 @@ class StatsController extends ClockinReccordController
                             $departs++;
                             $sommeDeparts +=$departDiff[0];
                             $tempsPerdusDepartsFin = ($departDiff[0])/(60);
-                            // Pour prendre en compte les departs de 17h
+                            $tempsPerdusDepartsFin /=60;
+                            
                             $tempsPerdusDeparts+=$tempsPerdusDepartsFin;
                             $ct = date('H:i',$departDiff[1]);
-                            $sommePerduQuota += $salaire_quota_en_minuite*$tempsPerdusDepartsFin;
-                            $tabDeparts[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsFin);
+                            $sommePerduDepart += ((($salaire*12)/52)/$taux)*$tempsPerdusDepartsFin;
+                            $tabDeparts[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsFin,"temps_min"=>$tempsPerdusDepartsFin*60);
                         }
                     }
                     // Now we deal with the permissions calculations
@@ -408,11 +429,12 @@ class StatsController extends ClockinReccordController
                             $departs++;
                             $sommeDepartsPause +=$departPauseDiff[0];
                             $tempsPerdusDepartsPause = ($departPauseDiff[0])/(60);
+                            $tempsPerdusDepartsPause /= 60;
                             // Pour prendre en compte les departs de 12h aussi
                             $tempsPerdusDeparts +=$tempsPerdusDepartsPause;
                             $ct = date('H:i',$departPauseDiff[1]);
-                            $sommePerduQuota += $salaire_quota_en_minuite*$tempsPerdusDepartsPause;
-                            $tabDepartsPause[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsPause);
+                            $sommePerduDepart += ((($salaire*12)/52)/$taux)*$tempsPerdusDepartsPause;
+                            $tabDepartsPause[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsPause,"temps_min"=>$tempsPerdusDepartsPause*60);
                         }
                     }
 
@@ -444,25 +466,34 @@ class StatsController extends ClockinReccordController
                     // Now that we have terminals, we must check the type of workingHour
                     if($type == "1" || $type == 1){
                         // Un double test a faire
-                        if(($_arr == 0 && $_pau != 0) || ($_pau == 0 && $_arr != 0)){
+                        if(($_arr == 0 && $_pau != 0) || ($_pau == 0 && $_arr != 0) || ($_pau == 0 && $_arr == 0)){
                             $inc_auth++;
-                            $lost_time += (int)($this->convertHourInMinutes($heureDebutNormalPause)) - (int)($this->convertHourInMinutes($heureDebutNormal));
+                            $lost_time_jour = ((int)($this->convertHourInMinutes($heureDebutNormalPause)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
+                            $lost_time += $lost_time_jour;
+                            $sommePerduAuth += ((($salaire*12)/52)/$taux)*$lost_time_jour;
                         }
-                        if(($_fpa == 0 && $_dep != 0) || ($_dep == 0 && $_fpa !=0)){
+                        if(($_fpa == 0 && $_dep != 0) || ($_dep == 0 && $_fpa !=0) || ($_dep == 0 && $_fpa ==0)){
                             $inc_auth++;
-                            $lost_time+= (int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureFinNormalPause));
+                            $lost_time_jour= ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureFinNormalPause)))/60;
+                            $lost_time += $lost_time_jour;
+                            $sommePerduAuth += ((($salaire*12)/52)/$taux)*$lost_time_jour;
                         }
                     }if($type == "4" || $type == 4){
                         if($_arr == 0 || $_dep == 0){
                             $inc_auth++;
-                            $lost_time += (int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal));
+                            $lost_time_jour += ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
+                            $lost_time += $lost_time_jour;
+                            $sommePerduAuth += ((($salaire*12)/52)/$taux)*$lost_time_jour;
                         }
                     }elseif ($type == "2" || $type == 2){
                         // in this case the lost time is his quota because of his terminals
                         //$lost_time += (int)($his["quota"]);
                         if($_arr == 0 || $_dep == 0){
                             $inc_auth++;
-                            $lost_time += (int)($his["quota"]);
+                            $lost_time_jour += ((int)($his["quota"]))/60;
+                            $lost_time += $lost_time_jour;
+                            $sommePerduAuth += ((($salaire*12)/52)/$taux)*$lost_time_jour;
+
                         }
                     }
                 }
@@ -479,6 +510,7 @@ class StatsController extends ClockinReccordController
                     }
                 }
             }else if($type == "3"){
+                $j++;
                 // Si son workingHour est de type 3
                 $his = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('d-m-Y',$nowTime),$employe->getId(),$request);
                 $his = json_decode($his->getContent(),true);
@@ -488,12 +520,14 @@ class StatsController extends ClockinReccordController
                         if (!$nD->dayIsNull($permDate)) {
                             $nowDate = date('d/m/Y',$nowTime);
                             $absences++;
-                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                            $sommePerduAbsence += (($salaire*12)/52)/$jour_travail;
+                            /*$timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
                             $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
                             $timePerdusAbsences = ($timeFin - $timeDebut);
                             $tempPerdu = $timePerdusAbsences/60;
-                            //$tempsPerdusAbsences = $tempPerdu;
+                            //$tempsPerdusAbsences = $tempPerdu;*/
                             //$sommeAbsences +=$tempsPerdusAbsences;
+
 
                             $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$empWH[$theDay][0]["endHour"],$empWH[$theDay][0]["beginHour"]);
                             if($p){
@@ -506,6 +540,7 @@ class StatsController extends ClockinReccordController
                                 $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Absence","tempsPerdu"=>$tempPP);
                             }
                         }
+
                     }
                 }
             }else if($type == null || $type == "null"){
@@ -515,7 +550,8 @@ class StatsController extends ClockinReccordController
 
             $historiques[] = $his;
             $donneesPermission = array("retardStats"=>$tabRetardsPermission,"retardPauseStats"=>$tabRetardsPausePermission,"pauseStats"=>$tabDepartsPausePermission,"finStats"=> $tabDepartsPermission,"absenceStats"=>$tabAbsencesPermission);
-            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpa"=>$tempsPerdusAbsences,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType,"permissionData"=>$donneesPermission,"lost_time"=>$lost_time,"inc_auth"=>$inc_auth,"historique"=>$historiques,"sommePerduQuota"=>$sommePerduQuota);
+            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpa"=>$sommeAbsences,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType,"permissionData"=>$donneesPermission,"lost_time"=>$lost_time,"inc_auth"=>$inc_auth,"historique"=>$historiques,"sommePerduQuota"=>$sommePerduQuota
+            ,"quota_1_4"=>$quota_emp_1_4,"spd"=>$sommePerduDepart,"spr"=>$sommePerduRetard,"spa"=>$sommePerduAbsence,"nbreJourTravail"=>$j,"spAuth"=>$sommePerduAuth);
             $nowTime = $nowTime+86400;
         }
 
@@ -678,7 +714,7 @@ class StatsController extends ClockinReccordController
                     // Pour prendre en compte les departs de 17h
                     $tempsPerdusDeparts += $tempsPerdusDepartsFin;
                     $ct = date('H:i', $departDiff[1]);
-                    $tabDeparts[] = array("date" => $nowDate, "heureDepart" => $ct, "temps" => $tempsPerdusDepartsFin);
+                    $tabDeparts[] = array("date" => $nowDate, "heureDepart" => $ct, "temps" => $tempsPerdusDepartsFin,"temps_min"=>$tempsPerduDepartsFin*60);
                 }
                 $departPauseDiff = $cr->departPausePremature($employe, $nowTime, $interval_pause, $heureNormaleDepartPause);
                 if ($departPauseDiff[0] != null) {

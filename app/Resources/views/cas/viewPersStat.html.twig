@@ -93,9 +93,15 @@
                 <div class="row">
                     <div class="col l12">
                         <table class="card table bordered striped condensed centered">
-                            <tr>
-                                <td colspan="3">Nom : <span id="nameSpan"></span></td>
+                            <tr class="blue blue-lighten-2 white-text">
+                                <td colspan="2">Nom : <span id="nameSpan"></span></td>
+                                <td>Fonction : <span id="nameSpan"></span></td>
                                 <td colspan="2">Salaire : <span id="salarySpan"></span></td>
+                            </tr>
+                            <tr class="">
+                                <th colspan="2" class="center">Date : <span id="nameSpan"></span></th>
+                                <th class="center">Jours travaillés : <span id="nameSpan"></span></th>
+                                <th colspan="2" class="center">Salaire équivalant : <span id="salarySpan"></span></th>
                             </tr>
                             <tr>
                                 <td colspan="2">
@@ -106,6 +112,9 @@
                                     <span id="toDateSpan"></span>
                                 </td>
                                 <td>
+                                    -
+                                </td>
+                                <td colspan="2">
                                     =
                                     <br>
                                     <span id="totalSalarySpan"></span>
@@ -115,22 +124,22 @@
                                 <th class="center">Absences</th>
                                 <th class="center">Retards</th>
                                 <th class="center">Départs prématurés</th>
-                                <th class="center" colspan="2">Quota de l'employé</th>
+                                <th class="center" colspan="2">Authentifications incomplètes</th>
                             </tr>
                             <tr>
                                 <td><span id="absenceSpan"></span></td>
                                 <td><span id="retardSpan"></span></td>
                                 <td><span id="departSpan"></span></td>
-                                <td colspan="2"><span id="quotaTotalSpan"></span></td>
+                                <td colspan="2"><span id="nbreAuthInc"></span></td>
                             </tr>
                             <tr>
-                                <th colspan="5" class="center">Total Temps Perdu (En Minutes)</th>
+                                <th colspan="5" class="center">Total Temps Perdu (En Heures)</th>
                             </tr>
                             <tr>
-                                <td>-</td>
+                                <td><span id="tpaSpan">-</span></td>
                                 <td><span id="tprSpan"></span></td>
                                 <td><span id="tpdSpan"></span></td>
-                                <td colspan="2"><span id="tempsPerduQuotaSpan">-</span></td>
+                                <td colspan="2"><span id="tpAuthSpan">-</span></td>
                             </tr>
                             <tr>
                                 <th colspan="5" class="center">Total d'argent Perdu</th>
@@ -139,19 +148,7 @@
                                 <td><span id="spaSpan"></span> FCFA</td>
                                 <td><span id="sprSpan"></span> FCFA</td>
                                 <td><span id="spdSpan"></span> FCFA</td>
-                                <td colspan="2"><span id="sommePerduQuotaSpan">-</span></td>
-                            </tr>
-                            <tr>
-                                <th colspan="5" class="center">Temps perdu d&ucirc; à des authentifications incomplètes</th>
-                            </tr>
-                            <tr>
-                                <td colspan="5"><span id="tpAuthSpan"></span> min</td>
-                            </tr>
-                            <tr>
-                                <th colspan="5" class="center">Argent perdu d&ucirc; à des authentifications incomplètes</th>
-                            </tr>
-                            <tr>
-                                <td colspan="5"><span id="spAuthSpan"></span> FCFA</td>
+                                <td colspan="2"><span id="spAuthSpan">-</span></td>
                             </tr>
                             <tr>
                                 <td colspan="5">=<span id="tapSpan"></span> FCFA (<span id="papSpan"></span>%)</td>
@@ -229,7 +226,7 @@
                 </div>
                 <div class="row">
                     <div class="col l6">
-                        <span>Départs prématurés de 12H00</span>
+                        <span>Départs prématurés de midi</span>
                         <table class="card table bordered centered striped highlight responsive-table">
                             <thead>
                                 <tr>
@@ -246,7 +243,7 @@
                         </table>
                     </div>
                     <div class="col l6">
-                        <span>Retards de 8H00</span>
+                        <span>Retards début de journée</span>
                         <table class="card table bordered centered striped highlight responsive-table">
                             <thead>
                             <tr>
@@ -265,7 +262,7 @@
                 </div>
                 <div class="row">
                     <div class="col l6">
-                        <span>Départs prématurés de 18H00</span>
+                        <span>Départs prématurés de fin d'après-midi</span>
                         <table class="card table bordered centered striped highlight responsive-table">
                             <thead>
                             <tr>
@@ -282,7 +279,7 @@
                         </table>
                     </div>
                     <div class="col l6">
-                        <span>Retards de 14H00</span>
+                        <span>Retards début d'après-midi</span>
                         <table class="card table bordered centered striped highlight responsive-table">
                             <thead>
                             <tr>
@@ -541,7 +538,7 @@
                         var totalSalary = (salary/30)*diffDays;
                         var salaryPerDay = (salary/30);
                         var salaryPerHour = res.emp["workingHour"]["taux"];
-                        var jour_travail = Number(res.emp["workingHour"]["jour_travail"]);
+                        var jour_travail = Number(res.emp["workingHour"]["jourTravail"]);
                         var salaryPerMin = (((salary/30)/24)/60);
 
                         tempsPerduRetards = data.tpr;
@@ -550,7 +547,6 @@
                         $("#salarySpan").text(salary);
                         $("#fromDateSpan").text(fromDate);
                         $("#toDateSpan").text(toDate);
-                        $("#totalSalarySpan").text(precisionRound(totalSalary,0));
                         console.log("Salary : "+salary);
                         console.log("Total salary : "+totalSalary);
                         console.log("Diff days : "+diffDays);
@@ -569,20 +565,18 @@
                                 //
                                 var ss = 0;
                                 if(type == "3" || type == 3){
-                                    ss += ((Number(salary)*12)/52)/jour_travail;
+                                    ss = ((Number(salary)*12)/52)/(Number(jour_travail))*(Number(data["nbreJourTravail"]));
                                 }else if(type == "2" || type == 2){
                                     console.log(res.emp["workingHour"]["taux"]);
-                                    ss += (Number(res.emp["workingHour"]["taux"]))*Number(data["quota_total"]/60);
+                                    ss = (((Number(salary)*12)/52)/Number(res.emp["workingHour"]["taux"]))*Number(data["quota_total"]/60);
                                     console.log(ss);
-                                }else if(type == "1" || type == 1){
-                                    ss += Number(data.tpa)*Number(res.emp["workingHour"]["taux"]);
+                                }else if(type == "1" || type == 1 || type == "4" || type == 4){
+                                    ss = (((Number(salary)*12)/52)/Number(res.emp["workingHour"]["taux"]))*Number(data["quota_1_4"]);
                                 }else{
                                     ss += 0;
                                 }
-                                console.log("-------");
-                                console.log(ss);
-                                console.log(res.emp["workingHour"]);
                                 $("#containerMustBeHidden").attr("style","display:block");
+                                $("#totalSalarySpan").text(precisionRound(ss,2));
                                 $("#absenceSpan").text(data.absences);
                                 $("#retardSpan").text(data.retards);
                                 $("#departSpan").text(data.departs);
@@ -597,23 +591,39 @@
                                 $("#quotaTotalSpan").text(precisionRound(data.quota_fait/60,1)+"/"+data.quota_total/60);
                                 var stp = 0;
                                 if(type == 2 || type == "2"){
-                                    $("#tprSpan").text("-");
-                                    $("#tpdSpan").text("-");
-                                    $("#sprSpan").text(0);
-                                    $("#spdSpan").text(0);
+                                    $("#nbreAuthInc").text(data.inc_auth);
+                                    $("#tpaSpan").text(precisionRound(data.tpa,2)+" H");
+                                    $("#tprSpan").text(precisionRound(data.tpr,2)+" H");
+                                    $("#tpdSpan").text(precisionRound(data.tpd,2));
+                                    $("#sprSpan").text(precisionRound(data.spr,2));
+                                    $("#spdSpan").text(precisionRound(data.spd,2));
+                                    $("#spaSpan").text(precisionRound(data.spa,2));
                                     stp = (salaryPerDay*data.nbreAbsences)+(data.lost_time*salaryPerMin);
+                                }else if(type == 3 || type == "3"){
+                                    $("#nbreAuthInc").text(data.inc_auth);
+                                    $("#tpaSpan").text("-");
+                                    $("#tprSpan").text(precisionRound(data.tpr,2)+" H");
+                                    $("#tpdSpan").text(precisionRound(data.tpd,2)+" H");
+                                    $("#sprSpan").text(precisionRound(data.spr,2));
+                                    $("#spdSpan").text(precisionRound(data.spd,2));
+                                    $("#spaSpan").text(precisionRound(data.spa,2));
+                                    stp = data.spa+data.spr+data.spd+data.spAuth;
                                 }else{
-                                    $("#tprSpan").text(precisionRound(data.tpr,0)+" min");
-                                    $("#tpdSpan").text(precisionRound(data.tpd,0)+" min");
-                                    $("#sprSpan").text(precisionRound(salaryPerMin*data.tpr,0));
-                                    $("#spdSpan").text(precisionRound(salaryPerMin*data.tpd,0));
-                                    stp = (salaryPerMin*data.tpr)+(salaryPerMin*data.tpd)+(salaryPerDay*data.nbreAbsences)+(data.lost_time*salaryPerMin);
+                                    $("#nbreAuthInc").text(data.inc_auth);
+                                    $("#tpaSpan").text(precisionRound(data.tpa,2)+" H");
+                                    $("#tprSpan").text(precisionRound(data.tpr,2)+" H");
+                                    $("#tpdSpan").text(precisionRound(data.tpd,2)+" H");
+                                    $("#sprSpan").text(precisionRound(data.spr,2));
+                                    $("#spdSpan").text(precisionRound(data.spd,2));
+                                    $("#spaSpan").text(precisionRound(data.spa,2));
+                                    stp = data.spa+data.spr+data.spd+data.spAuth;
                                 }
-                                $("#tpAuthSpan").text(precisionRound(data.lost_time,0));
-                                $("#spAuthSpan").text(precisionRound(data.lost_time*salaryPerMin,0));
-                                $("#spaSpan").text(precisionRound(ss*data.nbreAbsences,0));
-                                $("#tapSpan").text(precisionRound(stp,0));
-                                $("#papSpan").text(precisionRound(((stp/salary)*100),0));
+                                $("#nbreAuthInc").text(data.inc_auth);
+                                $("#tpAuthSpan").text(precisionRound(data.lost_time,2)+" H");
+                                $("#spAuthSpan").text(precisionRound(data.spAuth,2));
+                                $("#spaSpan").text(precisionRound(data.spa,2));
+                                $("#tapSpan").text(precisionRound(stp,2));
+                                $("#papSpan").text(precisionRound(((stp/salary)*100),2));
                                 //var res = JSON.parse(data.test);
                                 var i=0;
                                 $("#rowsContainer").html("");
@@ -815,31 +825,31 @@
                                         var leJour = dateObject.getDay();
                                         switch (leJour){
                                             case 1:
-                                                lundiPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,0));
+                                                lundiPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,2));
                                                 lundiPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 2:
-                                                mardiPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,0));
+                                                mardiPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,2));
                                                 mardiPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 3:
-                                                mercrediPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,0));
+                                                mercrediPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,2));
                                                 mercrediPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 4:
-                                                jeudiPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,0));
+                                                jeudiPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,2));
                                                 jeudiPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 5:
-                                                vendrediPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,0));
+                                                vendrediPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,2));
                                                 vendrediPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 6:
-                                                samediPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,0));
+                                                samediPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,2));
                                                 samediPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 0:
-                                                dimanchePauseTabDatas.push(precisionRound(data.pauseStats[j].temps,0));
+                                                dimanchePauseTabDatas.push(precisionRound(data.pauseStats[j].temps,2));
                                                 dimanchePauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                         }
@@ -850,7 +860,7 @@
                                             "<tr>"+
                                                 "<td>"+data.pauseStats[j].date+"</td>"+
                                                 "<td>"+data.pauseStats[j].heureDepart+"</td>"+
-                                                "<td>"+precisionRound(data.pauseStats[j].temps,0)+" Min</td>"+
+                                                "<td>"+(Math.trunc(data.pauseStats[j].temps_min)+1)+" Min</td>"+
                                             "</tr>"
                                         );
                                     }
@@ -903,7 +913,7 @@
                                             "<tr>"+
                                             "<td>"+data.finStats[k].date+"</td>"+
                                             "<td>"+data.finStats[k].heureDepart+"</td>"+
-                                            "<td>"+precisionRound(data.finStats[k].temps,0)+" Min</td>"+
+                                            "<td>"+(Math.trunc(data.finStats[k].temps_min)+1)+" Min</td>"+
                                             "</tr>"
                                         );
                                     }
@@ -956,7 +966,7 @@
                                             "<tr>"+
                                             "<td>"+data.retardPauseStats[l].date+"</td>"+
                                             "<td>"+data.retardPauseStats[l].heureRetard+"</td>"+
-                                            "<td>"+precisionRound(data.retardPauseStats[l].temps,0)+" Min</td>"+
+                                            "<td>"+Math.trunc(data.retardPauseStats[l].temps_min)+" Min</td>"+
                                             "</tr>"
                                         );
                                     }
@@ -1009,7 +1019,7 @@
                                             "<tr>"+
                                             "<td>"+data.retardStats[m].date+"</td>"+
                                             "<td>"+data.retardStats[m].heureRetard+"</td>"+
-                                            "<td>"+precisionRound(data.retardStats[m].temps,0)+" Min</td>"+
+                                            "<td>"+Math.trunc(data.retardStats[m].temps_min)+" Min</td>"+
                                             "</tr>"
                                         );
                                     }

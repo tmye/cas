@@ -137,7 +137,7 @@ class ClockinRecordRepository extends EntityRepository
         $queryBuilder->setParameter('maxDate',$maxDate);
         $donn = $queryBuilder->getQuery()->getResult();
         if($donn != null){
-            $ct = $donn[0]->getClockinTime();
+            $ct = $donn[sizeof($donn)-1]->getClockinTime();
             $diff = ($ct-($heureNormaleArrive)); // Timestamp
             return array($diff,$ct);
         }else{
@@ -203,7 +203,7 @@ class ClockinRecordRepository extends EntityRepository
         $queryBuilder->setParameter('maxDate',$date+$heureNormaleDepart-$interval);
         $donn = $queryBuilder->getQuery()->getResult();
         if($donn != null){
-            $ct = $donn[0]->getClockinTime();
+            $ct = $donn[sizeof($donn)-1]->getClockinTime();
             $diff = ($date+$heureNormaleDepart)-$ct; // Timestamp
             return array($diff,$ct);
         }else{
@@ -221,7 +221,7 @@ class ClockinRecordRepository extends EntityRepository
         $queryBuilder->setParameter('minDate',$date+$heureNormaleDepartPause-$interval);
         $donn = $queryBuilder->getQuery()->getResult();
         if($donn != null){
-            $ct = $donn[0]->getClockinTime();
+            $ct = $donn[sizeof($donn)-1]->getClockinTime();
             $diff = ($date+$heureNormaleDepartPause)-$ct; // Timestamp
             return array($diff,$ct);
         }else{

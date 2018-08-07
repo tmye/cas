@@ -34,7 +34,7 @@ class ClockinReccordController extends EmployeController
         $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find(26);
         $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
         */
-        echo strtotime("13 April 2018 14:17:00")."<br>";
+        echo strtotime("07 August 2018 07:30:00")."<br>";
         //$don = $this->findHistoriqueAction($request,$departem = 4,$dat = "2018-03-29",$emplo = 26);
         //print_r($don);
         return new Response("OK");
