@@ -122,24 +122,63 @@ class ClockinRecordRepository extends EntityRepository
         }
     }
 
+    function ma_fonction($a, $b) {
+        if($a == $b){ return 0 ; }
+        return ($a < $b) ? -1 : 1;
+    }
+
     public function retard($emp,$date,$interval,$heureNormaleArrive,$bH=null){
 
         $heureNormaleArrive = $heureNormaleArrive+$date;
 
         $bHTab = explode(":",$bH);
         $maxDate = $heureNormaleArrive+$interval;
+        $minDate = $heureNormaleArrive-$interval;
+        /*print_r("****".date('Y-m-d H:i',$minDate)."\n");
+        print_r("****".date('Y-m-d H:i',$maxDate)."\n");
+        print_r("****".date('Y-m-d H:i',$heureNormaleArrive)."\n");*/
 
         $queryBuilder = $this->createQueryBuilder('c');
         $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
-        $queryBuilder->andWhere('c.clockinTime > :date');
+
+        $queryBuilder->andWhere('c.clockinTime >= :minDate');
+        $queryBuilder->setParameter('minDate',$minDate);
+        $queryBuilder->andWhere('c.clockinTime <= (:maxDate)');
+        $queryBuilder->setParameter('maxDate',$maxDate);
+
+        /*$queryBuilder->andWhere('c.clockinTime > :date');
         $queryBuilder->setParameter('date',$heureNormaleArrive);
         $queryBuilder->andWhere('c.clockinTime <= (:maxDate)');
         $queryBuilder->setParameter('maxDate',$maxDate);
+
+        $queryBuilder->orWhere('c.clockinTime > :date');
+        $queryBuilder->setParameter('date',$heureNormaleArrive);
+        $queryBuilder->andWhere('c.clockinTime >= (:minDate)');
+        $queryBuilder->setParameter('minDate',$minDate);*/
+
         $donn = $queryBuilder->getQuery()->getResult();
+        /*foreach($donn as $d){
+            print_r("Element ::::: ".$d->getClockinTime());
+        }*/
         if($donn != null){
-            $ct = $donn[sizeof($donn)-1]->getClockinTime();
+            $new_tab = array();
+            foreach($donn as $element){
+                $new_tab[] = $element->getClockinTime();
+            }
+
+            usort($new_tab, array($this, 'ma_fonction'));
+
+
+
+            $ct = $new_tab[0];
+  
             $diff = ($ct-($heureNormaleArrive)); // Timestamp
-            return array($diff,$ct);
+
+            if($ct<=$heureNormaleArrive ){
+                return null;
+            }else{
+                return array($diff,$ct);
+            }
         }else{
             return 0;
         }

@@ -93,14 +93,14 @@
                 <div class="row">
                     <div class="col l12">
                         <table class="card table bordered striped condensed centered">
-                            <tr class="blue blue-lighten-2 white-text">
+                            <tr class="blue lighten-2 white-text">
                                 <td colspan="2">Nom : <span id="nameSpan"></span></td>
-                                <td>Fonction : <span id="nameSpan"></span></td>
+                                <td>Fonction : <span id="fonctionSpan"></span></td>
                                 <td colspan="2">Salaire : <span id="salarySpan"></span></td>
                             </tr>
                             <tr class="">
-                                <th colspan="2" class="center">Date : <span id="nameSpan"></span></th>
-                                <th class="center">Jours travaillés : <span id="nameSpan"></span></th>
+                                <th colspan="2" class="center">Date :</th>
+                                <th class="center">Jours travaillés :</th>
                                 <th colspan="2" class="center">Salaire équivalant : <span id="salarySpan"></span></th>
                             </tr>
                             <tr>
@@ -112,7 +112,7 @@
                                     <span id="toDateSpan"></span>
                                 </td>
                                 <td>
-                                    -
+                                    <span id="jourTravailleSpan">-</span>
                                 </td>
                                 <td colspan="2">
                                     =
@@ -150,8 +150,9 @@
                                 <td><span id="spdSpan"></span> FCFA</td>
                                 <td colspan="2"><span id="spAuthSpan">-</span></td>
                             </tr>
-                            <tr>
-                                <td colspan="5">=<span id="tapSpan"></span> FCFA (<span id="papSpan"></span>%)</td>
+                            <tr class="red lighten-2 white-text">
+                                <td colspan="2">Total temps perdu : <span id="ttpSpan"></span> H</td>
+                                <td colspan="3">Total d'argent perdu : <span id="tapSpan"></span> FCFA (<span id="papSpan"></span>%)</td>
                             </tr>
                         </table>
                     </div>
@@ -527,10 +528,14 @@
                     data: {'dateFrom':fromDate,'dateTo':toDate},
                     success: function(data) {
                         var res = JSON.parse(data);
+                        console.log("debug");
+                        console.log(res);
+                        console.log("end debug");
                         //alert("Le résultat : "+res.emp["id"]);
                         var employeeId = res.emp["id"];
                         var fullName = res.emp["surname"]+" "+res.emp["lastName"];
                         var salary = res.emp["salary"];
+                        var fonction = res.emp["function"];
 
                         var timeDiff = Math.abs(fToDate.getTime() - fFromDate.getTime());
                         var diffDays = timeDiff / (1000 * 3600 * 24);
@@ -545,6 +550,7 @@
 
                         $("#nameSpan").text(fullName);
                         $("#salarySpan").text(salary);
+                        $("#fonctionSpan").text(fonction);
                         $("#fromDateSpan").text(fromDate);
                         $("#toDateSpan").text(toDate);
                         console.log("Salary : "+salary);
@@ -577,6 +583,7 @@
                                 }
                                 $("#containerMustBeHidden").attr("style","display:block");
                                 $("#totalSalarySpan").text(precisionRound(ss,2));
+                                $("#jourTravailleSpan").text(data.nbreJourTravail);
                                 $("#absenceSpan").text(data.absences);
                                 $("#retardSpan").text(data.retards);
                                 $("#departSpan").text(data.departs);
@@ -590,6 +597,7 @@
                                 }
                                 $("#quotaTotalSpan").text(precisionRound(data.quota_fait/60,1)+"/"+data.quota_total/60);
                                 var stp = 0;
+                                var ttp = 0;
                                 if(type == 2 || type == "2"){
                                     $("#nbreAuthInc").text(data.inc_auth);
                                     $("#tpaSpan").text(precisionRound(data.tpa,2)+" H");
@@ -598,7 +606,8 @@
                                     $("#sprSpan").text(precisionRound(data.spr,2));
                                     $("#spdSpan").text(precisionRound(data.spd,2));
                                     $("#spaSpan").text(precisionRound(data.spa,2));
-                                    stp = (salaryPerDay*data.nbreAbsences)+(data.lost_time*salaryPerMin);
+                                    stp = data.spa+data.spr+data.spd+data.spAuth;
+                                    ttp = data.tpa+data.tpr+data.tpd+data.lost_time;
                                 }else if(type == 3 || type == "3"){
                                     $("#nbreAuthInc").text(data.inc_auth);
                                     $("#tpaSpan").text("-");
@@ -608,6 +617,7 @@
                                     $("#spdSpan").text(precisionRound(data.spd,2));
                                     $("#spaSpan").text(precisionRound(data.spa,2));
                                     stp = data.spa+data.spr+data.spd+data.spAuth;
+                                    ttp = data.tpa+data.tpr+data.tpd+data.lost_time;
                                 }else{
                                     $("#nbreAuthInc").text(data.inc_auth);
                                     $("#tpaSpan").text(precisionRound(data.tpa,2)+" H");
@@ -617,12 +627,14 @@
                                     $("#spdSpan").text(precisionRound(data.spd,2));
                                     $("#spaSpan").text(precisionRound(data.spa,2));
                                     stp = data.spa+data.spr+data.spd+data.spAuth;
+                                    ttp = data.tpa+data.tpr+data.tpd+data.lost_time;
                                 }
                                 $("#nbreAuthInc").text(data.inc_auth);
                                 $("#tpAuthSpan").text(precisionRound(data.lost_time,2)+" H");
                                 $("#spAuthSpan").text(precisionRound(data.spAuth,2));
                                 $("#spaSpan").text(precisionRound(data.spa,2));
                                 $("#tapSpan").text(precisionRound(stp,2));
+                                $("#ttpSpan").text(precisionRound(ttp,2));
                                 $("#papSpan").text(precisionRound(((stp/salary)*100),2));
                                 //var res = JSON.parse(data.test);
                                 var i=0;
@@ -639,7 +651,6 @@
                                                     "<td><span class='redSpanPauseBegin_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["pause"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["pBH"]+"</span></td>" +
                                                     "<td><span class='redSpanPauseEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["finPause"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["pEH"]+"</span></td>" +
                                                     "<td><span class='redSpanEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
-                                                    "<td>0</td>" +
                                                     "</tr>"
                                                 );
                                                 if(data.historique[arrayID]["arrive"] > data.historique[arrayID]["bH"]){
@@ -660,7 +671,6 @@
                                                     "<td><span class='redSpanPauseBegin_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
                                                     "<td><span class='redSpanPauseEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
                                                     "<td><span class='redSpanEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
-                                                    //"<td>" + data.historique[arrayID]["quota"] + "Min</td>" +
                                                     "</tr>"
                                                 );
                                                 if(data.historique[arrayID]["arrive"] > data.historique[arrayID]["bH"]){
@@ -688,7 +698,6 @@
                                                     "<td><span class='redSpanPauseBegin_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
                                                     "<td><span class='redSpanPauseEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
                                                     "<td><span class='redSpanEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
-                                                    "<td>0</td>" +
                                                     "</tr>"
                                                 );
                                                 if(data.historique[arrayID]["arrive"] > data.historique[arrayID]["bH"]){
@@ -932,7 +941,7 @@
                                         switch (leJour){
                                             case 1:
                                                 lundiRetardPauseTabDatas.push(precisionRound(data.retardPauseStats[l].temps,0));
-                                                lundiRetardPauseTabLabels.push(data.retardStats[l].date);
+                                                lundiRetardPauseTabLabels.push(data.retardPauseStats[l].date);
                                                 break;
                                             case 2:
                                                 mardiRetardPauseTabDatas.push(precisionRound(data.retardPauseStats[l].temps,0));
@@ -1032,9 +1041,9 @@
                                     $.each(data.permissionData[id],function (el) {
                                         var losedTime = data.permissionData[id][el].tempsPerdu;
                                         if (losedTime >= 60){
-                                            losedTime = Math.trunc((losedTime/60))+" H "+Math.round(losedTime%60)+" Min";
+                                            losedTime = Math.trunc((losedTime/60))+" H "+Math.round(losedTime%60)+" H";
                                         }else{
-                                            losedTime = losedTime+" Min";
+                                            losedTime = losedTime+" H";
                                         }
                                         $("#tabPermissions").append("" +
                                             "<tr>" +
@@ -1062,8 +1071,8 @@
                                             data: [data.tpr,data.tpd],
                                         }],
                                         labels : [
-                                            'Cumul des retards en minute',
-                                            'Cumul des départs avnt l\'heure en minute'
+                                            'Cumul des retards (en heure)',
+                                            'Cumul des départs avant l\'heure (en heure)'
                                         ]
                                     },
                                     options: {
@@ -1154,7 +1163,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: lundiPauseTabDatas,
                                         }],
@@ -1182,7 +1191,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: lundiFinTabDatas,
                                         }],
@@ -1210,7 +1219,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: lundiRetardTabDatas,
                                         }],
@@ -1238,7 +1247,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: lundiRetardPauseTabDatas,
                                         }],
@@ -1270,7 +1279,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: mardiPauseTabDatas,
                                         }],
@@ -1298,7 +1307,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: mardiFinTabDatas,
                                         }],
@@ -1326,7 +1335,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: mardiRetardTabDatas,
                                         }],
@@ -1354,7 +1363,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: mardiRetardPauseTabDatas,
                                         }],
@@ -1386,7 +1395,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: mercrediPauseTabDatas,
                                         }],
@@ -1414,7 +1423,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: mercrediFinTabDatas,
                                         }],
@@ -1442,7 +1451,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: mercrediRetardTabDatas,
                                         }],
@@ -1470,7 +1479,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: mercrediRetardPauseTabDatas,
                                         }],
@@ -1502,7 +1511,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: jeudiPauseTabDatas,
                                         }],
@@ -1530,7 +1539,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: jeudiFinTabDatas,
                                         }],
@@ -1558,7 +1567,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: jeudiRetardTabDatas,
                                         }],
@@ -1586,7 +1595,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: jeudiRetardPauseTabDatas,
                                         }],
@@ -1618,7 +1627,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: vendrediPauseTabDatas,
                                         }],
@@ -1646,7 +1655,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: vendrediFinTabDatas,
                                         }],
@@ -1674,7 +1683,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: vendrediRetardTabDatas,
                                         }],
@@ -1702,7 +1711,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: vendrediRetardPauseTabDatas,
                                         }],
@@ -1734,7 +1743,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: samediPauseTabDatas,
                                         }],
@@ -1762,7 +1771,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: samediFinTabDatas,
                                         }],
@@ -1790,7 +1799,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: samediRetardTabDatas,
                                         }],
@@ -1818,7 +1827,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: samediRetardPauseTabDatas,
                                         }],
@@ -1850,7 +1859,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: dimanchePauseTabDatas,
                                         }],
@@ -1878,7 +1887,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: dimancheFinTabDatas,
                                         }],
@@ -1906,7 +1915,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: dimancheRetardTabDatas,
                                         }],
@@ -1934,7 +1943,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minute",
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: dimancheRetardPauseTabDatas,
                                         }],

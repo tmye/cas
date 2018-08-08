@@ -770,12 +770,31 @@ class DefaultController extends StatsController
 
             $donnees = $this->userStatsAction($request,$emp,$fromDate,$toDate);
             $donnees = json_decode($donnees->getContent(),true);
+            $permission_lost_time = 0;
+            // Permission datas
+            foreach($donnees["permissionData"]["absenceStats"] as $row){
+                $permission_lost_time += $row["tempsPerdu"];
+            }foreach($donnees["permissionData"]["finStats"] as $row){
+                $permission_lost_time += $row["tempsPerdu"];
+            }foreach($donnees["permissionData"]["pauseStats"] as $row){
+                $permission_lost_time += $row["tempsPerdu"];
+            }foreach($donnees["permissionData"]["retardPauseStats"] as $row){
+                $permission_lost_time += $row["tempsPerdu"];
+            }foreach($donnees["permissionData"]["retardStats"] as $row){
+                $permission_lost_time += $row["tempsPerdu"];
+            }
+            //print_r($donnees);
             $finalSalary = ((int)$employe->getSalary())/30;
             $finalSalaryPerHour = $finalSalary/24;
             $finalSalaryPerMin = $finalSalaryPerHour/60;
             $name = $employe->getSurname();
             $lastName = $employe->getLastName();
             $permissions = sizeof($donnees["permissionData"]["retardStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["absenceStats"]);
+
+            $user_info_header = array('Nom', 'Prenom(s)', 'Fonction', 'Departement','Salaire', 'Salaire X','Duree hebdo');
+            $user_info_data = array(
+                array($employe->getSurname(), $employe->getLastname(), $employe->getFunction(), $employe->getDepartement()->getName(),$employe->getSalary(), $employe->getSalary(),$employe->getWorkingHour()->getTaux())
+            );
 
             if($type == "2" or $type == 2){
                 $quota_restant = $donnees["quota_total"]-$donnees["quota_fait"];
@@ -784,12 +803,12 @@ class DefaultController extends StatsController
                 }else{
                     $qr = 0;
                 }
-                $header = array('Nom', 'Prenom(s)', 'Absences', 'Quota Fait','Quota normal', 'Quota restant','Auth incomp');
+                $header = array('','Absences', 'Retards', 'Departs', 'Auth','Permissions', 'Bonus');
                 $data = array(
-                    array($name,$lastName,$donnees["absences"],$donnees["quota_fait"],$donnees["quota_total"],$qr,$donnees["inc_auth"]),
+                    array("Nombre",$donnees["absences"],$donnees["retards"],$donnees["departs"],$donnees["inc_auth"],"permissions","bonus"),
                 );
                 $data2 = array(
-                    array("Pertes en temps","",$donnees["quota_total"]/60,$donnees["quota_fait"],"-",$qr,$donnees["lost_time"]),
+                    array("Temps",$donnees["tpa"],"",$donnees["quota_total"]/60,$donnees["quota_fait"],"-",$qr,$donnees["lost_time"]),
                 );
                 $data3 = array(
                     array("Pertes en argent (FCFA)","",($donnees["quota_total"]/60)*$finalSalaryPerHour,$donnees["quota_fait"]*$finalSalaryPerMin,"-",$qr*$finalSalaryPerMin,$donnees["lost_time"]*$finalSalaryPerMin),
@@ -801,28 +820,22 @@ class DefaultController extends StatsController
                 $data5 = array(
                     array("Salaire","",$employe->getSalary()),
                 );
-                $data6 = array(
-                    array("Net a payer","",$employe->getSalary()-(($donnees["absences"]*$finalSalary)+($donnees["tpr"]*$finalSalaryPerMin)+($donnees["tpd"]*$finalSalaryPerMin)+($donnees["lost_time"]*$finalSalaryPerMin))),
-                );
             }else{
-                $header = array('Nom', 'Prenom(s)', 'Absences', 'Permissions','Retards','Departs','Auth incomp');
+                $header = array('','Absences', 'Retards', 'Departs', 'Auth','Total','Permissions', 'Bonus');
                 $data = array(
-                    array($name,$lastName,$donnees["absences"],$permissions,$donnees["retards"],$donnees["departs"],$donnees["inc_auth"]),
+                    array("Nombre",$donnees["absences"],$donnees["retards"],$donnees["departs"],$donnees["inc_auth"],$donnees["absences"]+$donnees["retards"]+$donnees["departs"]+$donnees["inc_auth"],sizeof($donnees["permissionData"]["absenceStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["retardStats"]),"bonus"),
                 );
                 $data2 = array(
-                    array("Pertes en temps","",$donnees["absences"]*24,0,$donnees["tpr"]/*temp perdu retard*/,$donnees["tpd"],$donnees["lost_time"]),
+                    array("Temps",$donnees["tpa"],$donnees["tpr"],$donnees["tpd"],$donnees["lost_time"],$donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"],$permission_lost_time,"Bonus"),
                 );
                 $data3 = array(
-                    array("Pertes en argent (FCFA)","",$donnees["absences"]*$finalSalary,0,$donnees["tpr"]*$finalSalaryPerMin,$donnees["tpd"]*$finalSalaryPerMin,$donnees["lost_time"]*$finalSalaryPerMin),
+                    array("Somme",floor($donnees["spa"]),floor($donnees["spr"]),floor($donnees["spd"]),floor($donnees["spAuth"]),floor($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"]),floor((($employe->getSalary()*12)/52)/($employe->getWorkingHour()->getTaux())*$permission_lost_time),floor($donnees["lost_time"]*$finalSalaryPerMin)),
                 );
                 $data4 = array(
-                    array("Total des pertes","",($donnees["absences"]*$finalSalary)+($donnees["tpr"]*$finalSalaryPerMin)+($donnees["tpd"]*$finalSalaryPerMin)+($donnees["lost_time"]*$finalSalaryPerMin)),
+                    array("Net a payer sans bonus",$employe->getSalary()-floor($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"])),
                 );
                 $data5 = array(
-                    array("Salaire","",$employe->getSalary()),
-                );
-                $data6 = array(
-                    array("Net a payer","",$employe->getSalary()-(($donnees["absences"]*$finalSalary)+($donnees["tpr"]*$finalSalaryPerMin)+($donnees["tpd"]*$finalSalaryPerMin)+($donnees["lost_time"]*$finalSalaryPerMin))),
+                    array("Net a payer avec bonus","Valeur"),
                 );
             }
             switch ($t){
@@ -840,7 +853,7 @@ class DefaultController extends StatsController
                     $pdf->Ln('15');
                     break;
             }
-            $pdf->FancyTable($header,$data,$data2,$data3,$data4,$data5,$data6);
+            $pdf->FancyTable($user_info_header,$user_info_data,$header,$data,$data2,$data3,$data4,$data5);
             $pdf->Ln('5');
         }
         $pdf->Output();

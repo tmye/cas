@@ -328,8 +328,16 @@ class StatsController extends ClockinReccordController
                          * We need some other variables to avoid conflicts with userStats variables
                          */
                         $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                        $timeDebutPause = strtotime($empWH[$theDay][0]["pauseBeginHour"]);
                         $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
-                        $timePP = ($timeFin - $timeDebut);
+                        $timeFinPause = strtotime($empWH[$theDay][0]["pauseEndHour"]);
+                        if($type == "1" || $type == 1){
+                            $timePP = ($timeDebutPause-$timeDebut)+($timeFin-$timeFinPause);
+                        }else if($type == "4" || $type == 4){
+                            $timePP = ($timeFin - $timeDebut);
+                        }else if($type == "2" || $type == 2){
+                            $timePP = (float)$empWH[$theDay][0]["quota"];
+                        }
                         $tempPP = $timePP/60/60; // Hour
                         $tempsTPP += $tempPP;
                         $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Absence","tempsPerdu"=>$tempPP);
@@ -707,14 +715,19 @@ class StatsController extends ClockinReccordController
                 }
                 $departDiff = $cr->departPremature($employe, $nowTime, $interval, $heureNormaleDepart);
                 if ($departDiff != null) {
+                    print_r("\n heure : ".date('H:i',$heureNormaleDepart));
+                    print_r("\n Last value of temps perdu depart = $tempsPerdusDeparts \n");
+                    print_r("\n Employe = ".$employe->getId());
                     $nowDate = date('d/m/Y', $nowTime);
                     $departs++;
                     $sommeDeparts += $departDiff[0];
                     $tempsPerdusDepartsFin = ($departDiff[0]) / (60);
+                    print_r("\n Temps perdu depart fin : ".$tempsPerdusDepartsFin);
                     // Pour prendre en compte les departs de 17h
                     $tempsPerdusDeparts += $tempsPerdusDepartsFin;
                     $ct = date('H:i', $departDiff[1]);
-                    $tabDeparts[] = array("date" => $nowDate, "heureDepart" => $ct, "temps" => $tempsPerdusDepartsFin,"temps_min"=>$tempsPerduDepartsFin*60);
+                    $tabDeparts[] = array("date" => $nowDate, "heureDepart" => $ct, "temps" => $tempsPerdusDepartsFin,"temps_min"=>$tempsPerdusDepartsFin*60);
+                    print_r("\n Temps perdu depart = $tempsPerdusDeparts \n");
                 }
                 $departPauseDiff = $cr->departPausePremature($employe, $nowTime, $interval_pause, $heureNormaleDepartPause);
                 if ($departPauseDiff[0] != null) {
