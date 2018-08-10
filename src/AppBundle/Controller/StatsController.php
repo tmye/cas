@@ -102,6 +102,29 @@ class StatsController extends ClockinReccordController
         }
     }
 
+    /**
+     * @Route("/rapports_excel",name="rapports_excel")
+     */
+    public function rapportsExcelAction(Request $request)
+    {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+            $em = $this->getDoctrine()->getManager();
+            $listEmployee = $em->getRepository("AppBundle:Employe")->findAll();
+
+            $dep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAllSafe();
+            return $this->render('cas/rapports_excel.html.twig',array(
+                'listDep'=>$dep,
+                'listEmployee'=>$listEmployee
+            ));
+        }else{
+            return $this->redirectToRoute("login");
+        }
+    }
+
     private function dateDayNameFrench($day){
         switch ($day){
             case 1:
@@ -715,19 +738,14 @@ class StatsController extends ClockinReccordController
                 }
                 $departDiff = $cr->departPremature($employe, $nowTime, $interval, $heureNormaleDepart);
                 if ($departDiff != null) {
-                    print_r("\n heure : ".date('H:i',$heureNormaleDepart));
-                    print_r("\n Last value of temps perdu depart = $tempsPerdusDeparts \n");
-                    print_r("\n Employe = ".$employe->getId());
                     $nowDate = date('d/m/Y', $nowTime);
                     $departs++;
                     $sommeDeparts += $departDiff[0];
                     $tempsPerdusDepartsFin = ($departDiff[0]) / (60);
-                    print_r("\n Temps perdu depart fin : ".$tempsPerdusDepartsFin);
                     // Pour prendre en compte les departs de 17h
                     $tempsPerdusDeparts += $tempsPerdusDepartsFin;
                     $ct = date('H:i', $departDiff[1]);
                     $tabDeparts[] = array("date" => $nowDate, "heureDepart" => $ct, "temps" => $tempsPerdusDepartsFin,"temps_min"=>$tempsPerdusDepartsFin*60);
-                    print_r("\n Temps perdu depart = $tempsPerdusDeparts \n");
                 }
                 $departPauseDiff = $cr->departPausePremature($employe, $nowTime, $interval_pause, $heureNormaleDepartPause);
                 if ($departPauseDiff[0] != null) {
@@ -808,26 +826,16 @@ class StatsController extends ClockinReccordController
 
                 // Cette variable doit contenir les stats de l'employé courant
                 $stats = $this->_userStatsAction($e, $dateFrom, $dateTo, $interval);
-                // Somme perdue pour cet employé
+
                 $sommePerdueRetard = ($salaireEnMinuite*$stats["tpr"]);
                 $sommePerdueDepart = ($salaireEnMinuite*$stats["tpd"]);
-                // On incrémente le total d'argent perdu
+
                 $sommeTotaleRetard += $sommePerdueRetard;
                 $sommeTotaleDepart += $sommePerdueDepart;
-                /*
-                 * Pour chaque département on veut connaitre :
-                 * - Pertes retards en temps
-                 * - Pertes retards en argent
-                 * - Pertes departs en temps
-                 * - Pertes departs en argent*/
-
-                // Pour ce département, voici les pertes en temps
                 $perteRetardTemps += $stats ["tpr"];
                 $perteDepartTemps += $stats ["tpd"];
             }
-            // Nom du département courant
             $depName = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->find("$dep")->getName();
-            // On met les informations de tous les départements dans un tableau
             $tabStats[]= array("departementId"=>$dep,"departement"=>$depName,"tpr"=>$perteRetardTemps,"tpd"=>$perteDepartTemps,"spr"=>ceil($sommeTotaleRetard),"spd"=>ceil($sommeTotaleDepart));
         }
         return new JsonResponse($tabStats);

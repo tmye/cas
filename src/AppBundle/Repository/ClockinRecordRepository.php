@@ -134,9 +134,6 @@ class ClockinRecordRepository extends EntityRepository
         $bHTab = explode(":",$bH);
         $maxDate = $heureNormaleArrive+$interval;
         $minDate = $heureNormaleArrive-$interval;
-        /*print_r("****".date('Y-m-d H:i',$minDate)."\n");
-        print_r("****".date('Y-m-d H:i',$maxDate)."\n");
-        print_r("****".date('Y-m-d H:i',$heureNormaleArrive)."\n");*/
 
         $queryBuilder = $this->createQueryBuilder('c');
         $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
@@ -146,34 +143,15 @@ class ClockinRecordRepository extends EntityRepository
         $queryBuilder->andWhere('c.clockinTime <= (:maxDate)');
         $queryBuilder->setParameter('maxDate',$maxDate);
 
-        /*$queryBuilder->andWhere('c.clockinTime > :date');
-        $queryBuilder->setParameter('date',$heureNormaleArrive);
-        $queryBuilder->andWhere('c.clockinTime <= (:maxDate)');
-        $queryBuilder->setParameter('maxDate',$maxDate);
-
-        $queryBuilder->orWhere('c.clockinTime > :date');
-        $queryBuilder->setParameter('date',$heureNormaleArrive);
-        $queryBuilder->andWhere('c.clockinTime >= (:minDate)');
-        $queryBuilder->setParameter('minDate',$minDate);*/
-
         $donn = $queryBuilder->getQuery()->getResult();
-        /*foreach($donn as $d){
-            print_r("Element ::::: ".$d->getClockinTime());
-        }*/
         if($donn != null){
             $new_tab = array();
             foreach($donn as $element){
                 $new_tab[] = $element->getClockinTime();
             }
-
             usort($new_tab, array($this, 'ma_fonction'));
-
-
-
             $ct = $new_tab[0];
-  
             $diff = ($ct-($heureNormaleArrive)); // Timestamp
-
             if($ct<=$heureNormaleArrive ){
                 return null;
             }else{
@@ -195,20 +173,102 @@ class ClockinRecordRepository extends EntityRepository
             $minutes = 0;
         }
         $maxDate = $heureNormaleArrivePause+$interval_pause;
+        $minDate = $heureNormaleArrivePause-$interval_pause;
 
         $queryBuilder = $this->createQueryBuilder('c');
         $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
-        $queryBuilder->andWhere('c.clockinTime > :date');
-        $queryBuilder->setParameter('date',$heureNormaleArrivePause);
+
+        $queryBuilder->andWhere('c.clockinTime >= :minDate');
+        $queryBuilder->setParameter('minDate',$minDate);
         $queryBuilder->andWhere('c.clockinTime <= (:maxDate)');
         $queryBuilder->setParameter('maxDate',$maxDate);
+        
         $donn = $queryBuilder->getQuery()->getResult();
         if($donn != null){
-            $ct = $donn[0]->getClockinTime();
+            $new_tab = array();
+            foreach($donn as $element){
+                $new_tab[] = $element->getClockinTime();
+            }
+            usort($new_tab, array($this, 'ma_fonction'));
+            $ct = $new_tab[sizeof($new_tab)-1];
             $diff = $ct- ($heureNormaleArrivePause); // Timestamp
-            return array($diff,$ct);
+            if($ct<=$heureNormaleArrivePause ){
+                return null;
+            }else{
+                return array($diff,$ct);
+            }
         }else{
             return 0;
+        }
+    }
+
+    public function departPremature($emp,$date,$interval,$heureNormaleDepart){
+
+        $maxDate = $date+$heureNormaleDepart+$interval;
+        $minDate = $date+$heureNormaleDepart-$interval;
+
+        /*print_r("Max date : ".date('Y-m-d H:i',$maxDate));
+        print_r("Min date : ".date('Y-m-d H:i',$minDate));
+        print_r("Date : ".date('Y-m-d H:i',$date));*/
+
+        $queryBuilder = $this->createQueryBuilder('c');
+        $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
+
+        $queryBuilder->andWhere('c.clockinTime >= :minDate');
+        $queryBuilder->setParameter('minDate',$minDate);
+        $queryBuilder->andWhere('c.clockinTime <= (:maxDate)');
+        $queryBuilder->setParameter('maxDate',$maxDate);
+        
+        $donn = $queryBuilder->getQuery()->getResult();
+        if($donn != null){
+            $new_tab = array();
+            foreach($donn as $element){
+                $new_tab[] = $element->getClockinTime();
+            }
+            usort($new_tab, array($this, 'ma_fonction'));
+            $ct = $new_tab[sizeof($new_tab)-1];
+            //print_r("****".date('Y-m-d H:i',$new_tab[1]));
+            $diff = ($date+$heureNormaleDepart)-$ct; // Timestamp
+            if($ct>=($date+$heureNormaleDepart)){
+                return null;
+            }else{
+                return array($diff,$ct);
+            }
+        }else{
+            return false;
+        }
+    }
+
+    public function departPausePremature($emp,$date,$interval,$heureNormaleDepartPause){
+
+        $maxDate = $date+$heureNormaleDepartPause+$interval;
+        $minDate = $date+$heureNormaleDepartPause-$interval;
+
+        $queryBuilder = $this->createQueryBuilder('c');
+        $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
+
+        $queryBuilder->andWhere('c.clockinTime >= :minDate');
+        $queryBuilder->setParameter('minDate',$minDate);
+        $queryBuilder->andWhere('c.clockinTime <= (:maxDate)');
+        $queryBuilder->setParameter('maxDate',$maxDate);
+
+        $donn = $queryBuilder->getQuery()->getResult();
+        
+        if($donn != null){
+            $new_tab = array();
+            foreach($donn as $element){
+                $new_tab[] = $element->getClockinTime();
+            }
+            usort($new_tab, array($this, 'ma_fonction'));
+            $ct = $new_tab[sizeof($new_tab)-1];
+            $diff = ($date+$heureNormaleDepartPause)-$ct; // Timestamp
+            if($ct>=($date+$heureNormaleDepartPause)){
+                return null;
+            }else{
+                return array($diff,$ct);
+            }
+        }else{
+            return false;
         }
     }
 
@@ -231,40 +291,18 @@ class ClockinRecordRepository extends EntityRepository
             return 0;
         }
     }
-
-    public function departPremature($emp,$date,$interval,$heureNormaleDepart){
-
+    
+    public function todaysClockinTimes($date){
+        $min_time = strtotime($date." 00:00:00");
+        $max_time = strtotime($date." 23:59:59");
+        
         $queryBuilder = $this->createQueryBuilder('c');
-        $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
-        $queryBuilder->andWhere('c.clockinTime < :date');
-        $queryBuilder->setParameter('date',$date+$heureNormaleDepart);
-        $queryBuilder->andWhere('c.clockinTime >= (:maxDate)');
-        $queryBuilder->setParameter('maxDate',$date+$heureNormaleDepart-$interval);
+        $queryBuilder->where('c.clockinTime >= :min_time')->setParameter('min_time',$min_time);
+        $queryBuilder->andWhere('c.clockinTime <= :max_time')->setParameter('max_time',$max_time);
+        $queryBuilder->orderBy('c.clockinTime','DESC');
+
         $donn = $queryBuilder->getQuery()->getResult();
-        if($donn != null){
-            $ct = $donn[sizeof($donn)-1]->getClockinTime();
-            $diff = ($date+$heureNormaleDepart)-$ct; // Timestamp
-            return array($diff,$ct);
-        }else{
-            return false;
-        }
+        return $donn;
     }
 
-    public function departPausePremature($emp,$date,$interval,$heureNormaleDepartPause){
-
-        $queryBuilder = $this->createQueryBuilder('c');
-        $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
-        $queryBuilder->andWhere('c.clockinTime < :date');
-        $queryBuilder->setParameter('date',$date+$heureNormaleDepartPause);
-        $queryBuilder->andWhere('c.clockinTime >= (:minDate)');
-        $queryBuilder->setParameter('minDate',$date+$heureNormaleDepartPause-$interval);
-        $donn = $queryBuilder->getQuery()->getResult();
-        if($donn != null){
-            $ct = $donn[sizeof($donn)-1]->getClockinTime();
-            $diff = ($date+$heureNormaleDepartPause)-$ct; // Timestamp
-            return array($diff,$ct);
-        }else{
-            return false;
-        }
-    }
 }

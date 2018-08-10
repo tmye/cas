@@ -57,6 +57,9 @@
                                     <span style="margin-left: 4px;">Présences</span>
                                 </div>
                                 <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
+                                        <a href="{{ path("today") }}" class="collapsible-links cl_today">Ce jour</a>
+                                    </div>
+                                <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
                                     <a href="{{ path("historique") }}" class="collapsible-links cl_history">Historiques</a>
                                 </div>
                             </li>
@@ -70,7 +73,9 @@
                                     <br>
                                     <a href="{{ path("persStat") }}" class="collapsible-links cl_PersStats">Personnelles</a>
                                     <br>
-                                    <a href="{{ path("rapports") }}" class="collapsible-links cl_Rapports">Rapports</a>
+                                    <a href="{{ path("rapports") }}" class="collapsible-links cl_Rapports">Rapports (PDF)</a>
+                                    <br>
+                                    <a href="{{ path("rapports_excel") }}" class="collapsible-links cl_Rapports_excel">Rapports (Excel)</a>
                                 </div>
                             </li>
                             <li>

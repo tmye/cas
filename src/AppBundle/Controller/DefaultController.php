@@ -23,9 +23,40 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use TmyeDeviceBundle\Entity\DevicePubPic;
 use TmyeDeviceBundle\Entity\UpdateEntity;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class DefaultController extends StatsController
 {
+    private function dateDayNameFrench($day){
+        switch ($day){
+            case 1:
+                return "lundi";
+                break;
+            case 2:
+                return "mardi";
+                break;
+            case 3:
+                return "mercredi";
+                break;
+            case 4:
+                return "jeudi";
+                break;
+            case 5:
+                return "vendredi";
+                break;
+            case 6:
+                return "samedi";
+                break;
+            case 7:
+                return "dimanche";
+                break;
+        }
+    }
+
     public function formatInt($value){
         $value = (string)$value;
         $value_lenght = strlen($value);
@@ -542,6 +573,27 @@ class DefaultController extends StatsController
         }
     }
 
+    /**
+     * @Route("/today",name="today")
+     */
+    public function todayAction(Request $request)
+    {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+            $listDep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAllSafe();
+            $listCR = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->todaysClockinTimes(date('Y').'-'.date('m').'-'.date('d'));
+            return $this->render('cas/today.html.twig',array(
+                'listDep'=>$listDep,
+                'listCR'=>$listCR
+            ));
+        }else{
+            return $this->redirectToRoute("login");
+        }
+    }
+
 
     /*
      * Routes concernant les admins et le super admin
@@ -729,6 +781,70 @@ class DefaultController extends StatsController
     }
 
     /**
+     * @Route("/customizeCompanyInfos",name="customizeCompanyInfos")
+     */
+    public function customizeCompanyInfosAction(Request $request){
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+
+            $ci = $this->getDoctrine()->getManager()->getRepository("AppBundle:CompanyInfos")->findAll();
+            if(($ci != null) && (!empty($ci))){
+                $ci = $ci[0];
+            }else{
+                $ci = new CompanyInfos();
+            }
+
+            // On crée le FormBuilder grâce au service form factory
+            $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $ci);
+
+            // On ajoute les champs de l'entité que l'on veut à notre formulaire
+            $formBuilder
+                ->add('vision', TextType::class,array('label'=>' '))
+                ->add('mission', TextType::class,array('label'=>' '))
+                ->add('foundation', TextType::class,array('label'=>' '))
+                ->add('headoffice', TextType::class,array('label'=>' '))
+                ->add('employees', IntegerType::class,array('required'=>false, 'label'=>' ',))
+                ->add('director', TextType::class,array('label'=>' '))
+                ->add("creer", SubmitType::class);
+            // À partir du formBuilder, on génère le formulaire
+
+            $form = $formBuilder->getForm();
+
+            if ($request->isMethod('POST')) {
+                $form->handleRequest($request);
+                if ($form->isValid()) {
+
+                    $em = $this->getDoctrine()->getManager();
+
+                    $em->persist($ci);
+                    $em->flush();
+
+                    $this->get('session')->getFlashBag()->set('notice', 'Cet employé a été ajouté avec succès');
+                    return $this->redirectToRoute("addEmployee");
+                }
+
+            }
+
+            // À ce stade, le formulaire n'est pas valide car :
+            // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
+            // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
+
+            return $this->render('cas/companyInfos.html.twig',array(
+                'form' => $form->createView()
+            ));
+        }else{
+            return $this->redirectToRoute("login");
+        }
+
+        return $this->render("cas/companyInfos.html.twig",array(
+            "ci"=>$ci
+        ));
+    }
+
+    /**
      * @Route("/generatePDF",name="generatePDF")
      */
     public function generatePDFAction(Request $request)
@@ -761,7 +877,7 @@ class DefaultController extends StatsController
                 $pdf->AddPage();
                 $i=0;
             }
-            $employe = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->find($emp);
+            $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($emp);
             $empWH = json_decode($employe->getWorkingHour()->getWorkingHour(),true);
             $type = $empWH["lundi"][0]["type"];
 
@@ -861,67 +977,180 @@ class DefaultController extends StatsController
         //return new Response("OK");
     }
 
+    public function returnVerticalCells($numberOfDays){
+        $result_array = array();
+        $arrayOfAlphabet = array('C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','A','B');
+        $normalArrayOfAlphabet = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
+        //$restOfDivision = $numberOfDays%26;
+        $numberOfPossibleDivision = (int)($numberOfDays/26);
+        $tour=$numberOfPossibleDivision+1;
+        $currentTour = 1;
+        $j=0;
+        $i=0;
+        for($cpt=0;$cpt<$tour;$cpt++){
+            while($i<=$numberOfDays)
+            {
+                if($currentTour == 1)
+                {
+                    if($i < 23)
+                    {
+                        $result_array []=$arrayOfAlphabet[$i];
+                    }
+                    else if($i == 23)
+                    {
+                        $result_array []=$arrayOfAlphabet[$i];
+                        $numberOfDays -= 24;
+                        $currentTour++;
+                        $i=0;
+                    }
+                }
+                else
+                {
+                    if($i < 26){
+                        $result_array []=$normalArrayOfAlphabet[$j]."".$normalArrayOfAlphabet[$i-1];
+                    }else if($i == 26){
+                        $result_array []=$normalArrayOfAlphabet[$j]."".$normalArrayOfAlphabet[$i-1];
+                        $numberOfDays -= 26;
+                        $currentTour++;
+                        $i=0;
+                        $j++;
+                    }
+                }
+                $i++;
+            }
+            //$j++;
+        }
+        return $result_array;
+    }
+
     /**
-     * @Route("/customizeCompanyInfos",name="customizeCompanyInfos")
+     * @Route("/generateExcel",name="generateExcel")
      */
-    public function customizeCompanyInfosAction(Request $request){
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
-            $expiry_service = $this->container->get('app_bundle_expired');
-            if($expiry_service->hasExpired()){
-                return $this->redirectToRoute("expiryPage");
+    public function generateExcelAction(Request $request){
+        $this->returnVerticalCells(80);
+        $t = $request->request->get('type');
+        $empId = $request->request->get('destination');
+        $fromDate = $request->request->get('fromDate');
+        $toDate = $request->request->get('toDate');
+        $beginNameCellNumber = 5;
+        $nextNameCellNumber = 5;
+
+        $spreadsheet = new Spreadsheet;
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'HISTORIQUE DU '.$fromDate.' AU '.$toDate);
+
+        $explodedFromDate = explode("-",$fromDate);
+        $explodedToDate = explode("-",$toDate);
+        $reformatedFromDate = $explodedFromDate[2]."-".$explodedFromDate[1]."-".$explodedFromDate[0];
+        $reformatedToDate = $explodedToDate[2]."-".$explodedToDate[1]."-".$explodedToDate[0];
+        $timeFrom = strtotime($reformatedFromDate." 00:00:00");
+        $timeTo = strtotime($reformatedToDate." 00:00:00");
+        $timeDays = $timeTo-$timeFrom;
+        $days = $timeDays/(60*60*24);
+        $theDay = $theDayNumber = null;
+
+        $verticalCellsTab = $this->returnVerticalCells($days+1);
+        $newTab = $verticalCellsTab;
+        array_push($newTab,"A");
+        array_push($newTab,"B");
+
+        foreach ($empId as $emp){
+            $nowTime = $timeFrom;
+            $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($emp);
+            $empWH = json_decode($employe->getWorkingHour()->getWorkingHour(),true);
+            $type = $empWH["lundi"][0]["type"];
+
+            $empData = $this->returnOneEmployeeAction($request,$emp,$fromDate,$toDate);
+            $empDataFormated = json_decode($empData->getContent(),true);
+
+            $donnees = $this->userStatsAction($request,$emp,$fromDate,$toDate);
+            $donnees = json_decode($donnees->getContent(),true);
+            $permission_lost_time = 0;
+            // Permission datas
+            foreach($donnees["permissionData"]["absenceStats"] as $row){
+                $permission_lost_time += $row["tempsPerdu"];
+            }foreach($donnees["permissionData"]["finStats"] as $row){
+                $permission_lost_time += $row["tempsPerdu"];
+            }foreach($donnees["permissionData"]["pauseStats"] as $row){
+                $permission_lost_time += $row["tempsPerdu"];
+            }foreach($donnees["permissionData"]["retardPauseStats"] as $row){
+                $permission_lost_time += $row["tempsPerdu"];
+            }foreach($donnees["permissionData"]["retardStats"] as $row){
+                $permission_lost_time += $row["tempsPerdu"];
             }
 
-            $ci = $this->getDoctrine()->getManager()->getRepository("AppBundle:CompanyInfos")->findAll();
-            if(($ci != null) && (!empty($ci))){
-                $ci = $ci[0];
-            }else{
-                $ci = new CompanyInfos();
-            }
+            $sheet->setCellValue('A'.($nextNameCellNumber-1), "NOM");
+            $sheet->setCellValue('A'.($nextNameCellNumber+6), "NOMBRE D'ABSENCES : ".$donnees["absences"]);
+            $sheet->setCellValue('A'.($nextNameCellNumber+7), "NOMBRE DE RETARDS : ".$donnees["retards"]);
+            $sheet->setCellValue('A'.($nextNameCellNumber+8), "NOMBRE DE DEPARTS : ".$donnees["departs"]);
+            $sheet->setCellValue('A'.($nextNameCellNumber+9), "NOMBRE D'AUTH INC : ".$donnees["inc_auth"]);
+            $sheet->setCellValue('A'.($nextNameCellNumber+11), "TOTAL DES PERTES EN TEMPS : ".floor($donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"])." H");
+            $sheet->setCellValue('A'.($nextNameCellNumber+12), "TOTAL DES PERTES EN ARGENT : ".floor($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"])." FCFA");
 
-            // On crée le FormBuilder grâce au service form factory
-            $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $ci);
+            $sheet->setCellValue('B'.($nextNameCellNumber-1), "PRENOMS");
+            $sheet->setCellValue('A'.$nextNameCellNumber, $employe->getSurname());
+            $sheet->setCellValue('B'.$nextNameCellNumber, $employe->getLastName());
 
-            // On ajoute les champs de l'entité que l'on veut à notre formulaire
-            $formBuilder
-                ->add('vision', TextType::class,array('label'=>' '))
-                ->add('mission', TextType::class,array('label'=>' '))
-                ->add('foundation', TextType::class,array('label'=>' '))
-                ->add('headoffice', TextType::class,array('label'=>' '))
-                ->add('employees', IntegerType::class,array('required'=>false, 'label'=>' ',))
-                ->add('director', TextType::class,array('label'=>' '))
-                ->add("creer", SubmitType::class);
-            // À partir du formBuilder, on génère le formulaire
+            for ($cpt=0;$cpt<=$days;$cpt++){
+                $his = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('d-m-Y',$nowTime),$employe->getId(),$request);
+                $his = json_decode($his->getContent(),true);
 
-            $form = $formBuilder->getForm();
-
-            if ($request->isMethod('POST')) {
-                $form->handleRequest($request);
-                if ($form->isValid()) {
-
-                    $em = $this->getDoctrine()->getManager();
-
-                    $em->persist($ci);
-                    $em->flush();
-
-                    $this->get('session')->getFlashBag()->set('notice', 'Cet employé a été ajouté avec succès');
-                    return $this->redirectToRoute("addEmployee");
+                $theDayNumber = date('N',$nowTime);
+                $theDay = $this->dateDayNameFrench($theDayNumber);
+                $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber-1), date("d",$nowTime).'/'.date("m",$nowTime));
+                
+                $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber-1), date("d",$nowTime).'/'.date("m",$nowTime));
+                
+                foreach($newTab as $el){
+                    $spreadsheet->getActiveSheet()->getStyle($el."".($nextNameCellNumber+15))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+                    $spreadsheet->getActiveSheet()->getStyle($el."".($nextNameCellNumber+15))->getFill()->getStartColor()->setARGB('bdbdbd');
                 }
 
+                if($his["arrive"] != null && $his["arrive"] != ""){
+                    $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber+2), $his["arrive"]);
+                }else{
+                    $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber+2), "--");
+                }
+
+                if($his["pause"] != null && $his["pause"] != ""){
+                    $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber+3), $his["pause"]);
+                }else{
+                    $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber+3), "--");
+                }
+
+                if($his["finPause"] != null && $his["finPause"] != ""){
+                    $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber+4), $his["finPause"]);
+                }else{
+                    $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber+4), "--");
+                }
+
+                if($his["depart"] != null && $his["depart"] != ""){
+                    $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber+5), $his["depart"]);
+                }else{
+                    $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber+5), "--");
+                }
+
+                $nowTime = $nowTime+86400;
             }
-
-            // À ce stade, le formulaire n'est pas valide car :
-            // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
-            // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
-
-            return $this->render('cas/companyInfos.html.twig',array(
-                'form' => $form->createView()
-            ));
-        }else{
-            return $this->redirectToRoute("login");
+            
+            $nextNameCellNumber += 19;
         }
 
-        return $this->render("cas/companyInfos.html.twig",array(
-            "ci"=>$ci
-        ));
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('rapport.xlsx');
+
+        //sleep(10);
+
+        $filePath = $this->getParameter("web_dir")."/rapport.xlsx";
+
+        $response = new BinaryFileResponse($filePath);
+        $response->trustXSendfileTypeHeader();
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_INLINE,
+            "rapport.xlsx",
+            iconv('UTF-8', 'ASCII//TRANSLIT', "rapport.xlsx")
+        );
+        return $response;
     }
+
 }

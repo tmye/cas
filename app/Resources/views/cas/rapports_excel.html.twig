@@ -20,7 +20,7 @@
 
     <div class="row">
         <div class="col l12">
-            <h5 class="page-title"><span class="fa fa-file-pdf"></span> Rapports</h5>
+            <h5 class="page-title"><span class="fa fa-file-excel"></span> Rapports</h5>
 
             <div class="row">
                 <div class="col l12">
@@ -29,10 +29,10 @@
                             <div class="collapsible-header active">Choisissez les paramètres</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
-                                    <form method="post" action="{{ path('generatePDF') }}" target="_blank" id="form" class="col l12">
+                                    <form method="post" action="{{ path('generateExcel') }}" target="_blank" id="form" class="col l12">
                                         <div class="row row-no-margin">
                                             <div class="input-field col s12">
-                                                <div class="row" id="errorContainer">
+                                                <div class="row">
                                                     <div class="col l12">
                                                         <button type="button" id="selectDate">Sélectionner une durée</button>
                                                         <button type="button" id="chooseMonth">Choisir un mois</button>
@@ -76,7 +76,6 @@
                                                     </div>
                                                     <div class="col l6">
                                                         <span class="right" style="margin-top: 20px">
-                                                            <input type="button" id="submitIndividualButton" value="Individuel" class="btn-perso-historique">
                                                             <input type="button" id="submitButton" value="Valider" class="btn-perso-historique">
                                                         </span>
                                                     </div>
@@ -106,7 +105,7 @@
         });
     </script>
     <script>
-
+        var type = null;
         function precisionRound(number, precision) {
             var factor = Math.pow(10, precision);
             return Math.round(number * factor) / factor;
@@ -115,9 +114,11 @@
         var tempsPerduRetards = 0;
         $(function(){
             $("#selectDate").click(function(){
+                type = 1;
                 $("#selectDateSection").show();
             });
             $("#chooseMonth").click(function(){
+                type = 2;
                 $("#selectDateSection").hide();
             });
 
@@ -225,67 +226,36 @@
                 var dateFrom = new Date($("#fromDate").val()).getTime();
                 var dateTo = new Date($("#toDate").val()).getTime();
                 if($("#destination").val()!=""){
-                    if($("#fromDate").val()!=""){
-                        if($("#toDate").val()!=""){
-                            //if(dateFrom < dateTo || dateFrom == dateTo){
-                                $('#modal_loading').modal('open');
-                                console.log($("#destination").val());
-                                $("#errorContainer").hide();
-                                    //console.log($("#destination").val());
-                                $("#type").val("0");
-                                $("#form").submit();
-                                $('#modal_loading').modal('close');
-                            /*}else {
+                    switch(type){
+                        case 1:
+                            if($("#fromDate").val()!=""){
+                                if($("#toDate").val()!=""){
+                                    //if(dateFrom < dateTo || dateFrom == dateTo){
+                                        $('#modal_loading').modal('open');
+                                        console.log($("#destination").val());
+                                        $("#errorContainer").hide();
+                                            //console.log($("#destination").val());
+                                        $("#type").val("1");
+                                        $("#form").submit();
+                                        $('#modal_loading').modal('close');
+                                    /*}else {
+                                        $("#errorContainer").show();
+                                        $("#errorContainer div span").text("Erreur : La date de début ne peut pas etre superieur à la date de fin");
+                                        $("#containerMustBeHidden").attr("style","display:none");
+                                    }*/
+                                }else {
+                                    $("#errorContainer").show();
+                                    $("#errorContainer div span").text("Erreur : veuillez choisir une date de fin valide");
+                                    $("#containerMustBeHidden").attr("style","display:none");
+                                }
+                            }else{
                                 $("#errorContainer").show();
-                                $("#errorContainer div span").text("Erreur : La date de début ne peut pas etre superieur à la date de fin");
-                                $("#containerMustBeHidden").attr("style","display:none");
-                            }*/
-                        }else {
-                            $("#errorContainer").show();
-                            $("#errorContainer div span").text("Erreur : veuillez choisir une date de fin valide");
-                            $("#containerMustBeHidden").attr("style","display:none");
-                        }
-                    }else{
-                        $("#errorContainer").show();
-                        $("#errorContainer div span").text("Erreur : veuillez choisir une date de début valide");
-                        $("#containerMustBeHidden").attr("style","display:none");
-                    }
-                }else{
-                    $("#errorContainer").show();
-                    $("#errorContainer div span").text("Erreur : veuillez choisir un employé");
-                    $("#containerMustBeHidden").attr("style","display:none");
-                }
-            });
-
-            // The same thing but for the individual printing
-            $("#submitIndividualButton").click(function () {
-                var dateFrom = new Date($("#fromDate").val()).getTime();
-                var dateTo = new Date($("#toDate").val()).getTime();
-                if($("#destination").val()!=""){
-                    if($("#fromDate").val()!=""){
-                        if($("#toDate").val()!=""){
-                            if(dateFrom < dateTo || dateFrom == dateTo){
-                                $('#modal_loading').modal('open');
-                                console.log($("#destination").val());
-                                $("#errorContainer").hide();
-                                //console.log($("#destination").val());
-                                $("#type").val("1");
-                                $("#form").submit();
-                                $('#modal_loading').modal('close');
-                            }else {
-                                $("#errorContainer").show();
-                                $("#errorContainer div span").text("Erreur : La date de début ne peut pas etre superieur à la date de fin");
+                                $("#errorContainer div span").text("Erreur : veuillez choisir une date de début valide");
                                 $("#containerMustBeHidden").attr("style","display:none");
                             }
-                        }else {
-                            $("#errorContainer").show();
-                            $("#errorContainer div span").text("Erreur : veuillez choisir une date de fin valide");
-                            $("#containerMustBeHidden").attr("style","display:none");
-                        }
-                    }else{
-                        $("#errorContainer").show();
-                        $("#errorContainer div span").text("Erreur : veuillez choisir une date de début valide");
-                        $("#containerMustBeHidden").attr("style","display:none");
+                        break;
+                        case 2:
+                        break;
                     }
                 }else{
                     $("#errorContainer").show();
