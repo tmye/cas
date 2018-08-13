@@ -486,3 +486,13 @@ h5 {
     font-weight: bold;
 }
 
+.monthElement{
+    border: solid 1px rgba(0,0,0,0.3);
+    cursor: pointer;
+    padding: 10px 20px !important;
+}
+
+.monthElement:hover{
+    background-color: teal;
+    color: #fff;
+}

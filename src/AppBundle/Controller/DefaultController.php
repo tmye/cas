@@ -31,32 +31,6 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class DefaultController extends StatsController
 {
-    private function dateDayNameFrench($day){
-        switch ($day){
-            case 1:
-                return "lundi";
-                break;
-            case 2:
-                return "mardi";
-                break;
-            case 3:
-                return "mercredi";
-                break;
-            case 4:
-                return "jeudi";
-                break;
-            case 5:
-                return "vendredi";
-                break;
-            case 6:
-                return "samedi";
-                break;
-            case 7:
-                return "dimanche";
-                break;
-        }
-    }
-
     public function formatInt($value){
         $value = (string)$value;
         $value_lenght = strlen($value);
@@ -77,6 +51,11 @@ class DefaultController extends StatsController
         }
         return $str;
     }
+    
+    /*public function precisionRound($number, $precision) {
+        $factor = pow(10, $precision);
+        return round(number * factor) / factor;
+    }*/
 
     /**
      * @Route("/functionTest", name="functionTest")
@@ -573,28 +552,6 @@ class DefaultController extends StatsController
         }
     }
 
-    /**
-     * @Route("/today",name="today")
-     */
-    public function todayAction(Request $request)
-    {
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
-            $expiry_service = $this->container->get('app_bundle_expired');
-            if($expiry_service->hasExpired()){
-                return $this->redirectToRoute("expiryPage");
-            }
-            $listDep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAllSafe();
-            $listCR = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->todaysClockinTimes(date('Y').'-'.date('m').'-'.date('d'));
-            return $this->render('cas/today.html.twig',array(
-                'listDep'=>$listDep,
-                'listCR'=>$listCR
-            ));
-        }else{
-            return $this->redirectToRoute("login");
-        }
-    }
-
-
     /*
      * Routes concernant les admins et le super admin
      */
@@ -852,8 +809,14 @@ class DefaultController extends StatsController
         $session = new Session();
 
         $empId = $request->request->get('destination');
-        $fromDate = $request->request->get('fromDate');
-        $toDate = $request->request->get('toDate');
+        $dateType = $request->request->get('dateType');
+        if($dateType != "0" && $dateType != null){
+            $fromDate = "01-".$dateType."-".date('Y');
+            $toDate = date('t-m-Y',strtotime($fromDate));
+        }else{
+            $fromDate = $request->request->get('fromDate');
+            $toDate = $request->request->get('toDate');
+        }
         $t = $request->request->get('type');
         $pdf = new tablepdf();
         if($t != "1"){
@@ -877,6 +840,8 @@ class DefaultController extends StatsController
                 $pdf->AddPage();
                 $i=0;
             }
+
+
             $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($emp);
             $empWH = json_decode($employe->getWorkingHour()->getWorkingHour(),true);
             $type = $empWH["lundi"][0]["type"];
@@ -887,6 +852,17 @@ class DefaultController extends StatsController
             $donnees = $this->userStatsAction($request,$emp,$fromDate,$toDate);
             $donnees = json_decode($donnees->getContent(),true);
             $permission_lost_time = 0;
+            
+            if($type == "3" || $type == 3){
+                $ss = (($employe->getSalary*12)/52)/($employe->getWorkingHour()->getJourTravail())*($donnees["nbreJourTravail"]);
+            }else if($type == "2" || $type == 2){
+                $ss = ((($employe->getSalary()*12)/52)/$employe->getworkingHour()->getTaux())*$donnees["quota_total"]/60;
+            }else if($type == "1" || $type == 1 || $type == "4" || $type == 4){
+                $ss = ((($employe->getSalary()*12)/52)/$employe->getWorkingHour()->getTaux())*$donnees["quota_1_4"];
+            }else{
+                $ss += 0;
+            }
+
             // Permission datas
             foreach($donnees["permissionData"]["absenceStats"] as $row){
                 $permission_lost_time += $row["tempsPerdu"];
@@ -909,7 +885,7 @@ class DefaultController extends StatsController
 
             $user_info_header = array('Nom', 'Prenom(s)', 'Fonction', 'Departement','Salaire', 'Salaire X','Duree hebdo');
             $user_info_data = array(
-                array($employe->getSurname(), $employe->getLastname(), $employe->getFunction(), $employe->getDepartement()->getName(),$employe->getSalary(), $employe->getSalary(),$employe->getWorkingHour()->getTaux())
+                array($employe->getSurname(), $employe->getLastname(), $employe->getFunction(), $employe->getDepartement()->getName(),$employe->getSalary(), round($ss,2),$employe->getWorkingHour()->getTaux())
             );
 
             if($type == "2" or $type == 2){
@@ -919,39 +895,38 @@ class DefaultController extends StatsController
                 }else{
                     $qr = 0;
                 }
-                $header = array('','Absences', 'Retards', 'Departs', 'Auth','Permissions', 'Bonus');
+                $header = array('','Absences', 'Retards', 'Departs', 'Auth','Total','Permissions', 'Bonus');
                 $data = array(
-                    array("Nombre",$donnees["absences"],$donnees["retards"],$donnees["departs"],$donnees["inc_auth"],"permissions","bonus"),
+                    array("Nombre",$donnees["absences"],$donnees["retards"],$donnees["departs"],$donnees["inc_auth"],$donnees["absences"]+$donnees["retards"]+$donnees["departs"]+$donnees["inc_auth"],sizeof($donnees["permissionData"]["absenceStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["retardStats"]),$donnees["nbreBonus"]),
                 );
                 $data2 = array(
-                    array("Temps",$donnees["tpa"],"",$donnees["quota_total"]/60,$donnees["quota_fait"],"-",$qr,$donnees["lost_time"]),
+                    array("Temps",$donnees["tpa"],round($donnees["tpr"],2),round($donnees["tpd"],2),$donnees["lost_time"],round($donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"],2),$permission_lost_time,round($donnees["tempsBonus"]*(-1),2)),
                 );
                 $data3 = array(
-                    array("Pertes en argent (FCFA)","",($donnees["quota_total"]/60)*$finalSalaryPerHour,$donnees["quota_fait"]*$finalSalaryPerMin,"-",$qr*$finalSalaryPerMin,$donnees["lost_time"]*$finalSalaryPerMin),
+                    array("Somme",round($donnees["spa"],2),round($donnees["spr"],2),round($donnees["spd"],2),round($donnees["spAuth"],2),round($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"],2),round((($employe->getSalary()*12)/52)/($employe->getWorkingHour()->getTaux())*$permission_lost_time,2),round($donnees["sommeArgentBonus"]*(-1),0)),
                 );
                 $data4 = array(
-                    //array("Total","",($donnees["absences"]*$finalSalary)+($qr*$finalSalaryPerMin)),
-                    array("Total des pertes","",($donnees["absences"]*$finalSalary)),
+                    array("Net a payer sans bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"]),2)),
                 );
                 $data5 = array(
-                    array("Salaire","",$employe->getSalary()),
+                    array("Net a payer avec bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"])+($donnees["sommeArgentBonus"]*(-1)),2)),
                 );
             }else{
                 $header = array('','Absences', 'Retards', 'Departs', 'Auth','Total','Permissions', 'Bonus');
                 $data = array(
-                    array("Nombre",$donnees["absences"],$donnees["retards"],$donnees["departs"],$donnees["inc_auth"],$donnees["absences"]+$donnees["retards"]+$donnees["departs"]+$donnees["inc_auth"],sizeof($donnees["permissionData"]["absenceStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["retardStats"]),"bonus"),
+                    array("Nombre",$donnees["absences"],$donnees["retards"],$donnees["departs"],$donnees["inc_auth"],$donnees["absences"]+$donnees["retards"]+$donnees["departs"]+$donnees["inc_auth"],sizeof($donnees["permissionData"]["absenceStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["retardStats"]),$donnees["nbreBonus"]),
                 );
                 $data2 = array(
-                    array("Temps",$donnees["tpa"],$donnees["tpr"],$donnees["tpd"],$donnees["lost_time"],$donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"],$permission_lost_time,"Bonus"),
+                    array("Temps",$donnees["tpa"],round($donnees["tpr"],2),round($donnees["tpd"],2),$donnees["lost_time"],round($donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"],2),$permission_lost_time,round($donnees["tempsBonus"]*(-1),2)),
                 );
                 $data3 = array(
-                    array("Somme",floor($donnees["spa"]),floor($donnees["spr"]),floor($donnees["spd"]),floor($donnees["spAuth"]),floor($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"]),floor((($employe->getSalary()*12)/52)/($employe->getWorkingHour()->getTaux())*$permission_lost_time),floor($donnees["lost_time"]*$finalSalaryPerMin)),
+                    array("Somme",round($donnees["spa"],2),round($donnees["spr"],2),round($donnees["spd"],2),round($donnees["spAuth"],2),round($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"],2),round((($employe->getSalary()*12)/52)/($employe->getWorkingHour()->getTaux())*$permission_lost_time,2),round($donnees["sommeArgentBonus"]*(-1),0)),
                 );
                 $data4 = array(
-                    array("Net a payer sans bonus",$employe->getSalary()-floor($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"])),
+                    array("Net a payer sans bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"]),2)),
                 );
                 $data5 = array(
-                    array("Net a payer avec bonus","Valeur"),
+                    array("Net a payer avec bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"])+($donnees["sommeArgentBonus"]*(-1)),2)),
                 );
             }
             switch ($t){
@@ -1030,8 +1005,16 @@ class DefaultController extends StatsController
         $this->returnVerticalCells(80);
         $t = $request->request->get('type');
         $empId = $request->request->get('destination');
-        $fromDate = $request->request->get('fromDate');
-        $toDate = $request->request->get('toDate');
+        $dateType = $request->request->get('dateType');
+
+        if($dateType != "0" && $dateType != null){
+            $fromDate = "01-".$dateType."-".date('Y');
+            $toDate = date('t-m-Y',strtotime($fromDate));
+        }else{
+            $fromDate = $request->request->get('fromDate');
+            $toDate = $request->request->get('toDate');
+        }
+
         $beginNameCellNumber = 5;
         $nextNameCellNumber = 5;
 
@@ -1080,12 +1063,17 @@ class DefaultController extends StatsController
             }
 
             $sheet->setCellValue('A'.($nextNameCellNumber-1), "NOM");
-            $sheet->setCellValue('A'.($nextNameCellNumber+6), "NOMBRE D'ABSENCES : ".$donnees["absences"]);
-            $sheet->setCellValue('A'.($nextNameCellNumber+7), "NOMBRE DE RETARDS : ".$donnees["retards"]);
-            $sheet->setCellValue('A'.($nextNameCellNumber+8), "NOMBRE DE DEPARTS : ".$donnees["departs"]);
-            $sheet->setCellValue('A'.($nextNameCellNumber+9), "NOMBRE D'AUTH INC : ".$donnees["inc_auth"]);
-            $sheet->setCellValue('A'.($nextNameCellNumber+11), "TOTAL DES PERTES EN TEMPS : ".floor($donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"])." H");
-            $sheet->setCellValue('A'.($nextNameCellNumber+12), "TOTAL DES PERTES EN ARGENT : ".floor($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"])." FCFA");
+            $sheet->setCellValue('A'.($nextNameCellNumber+2), "Arrivée");
+            $sheet->setCellValue('A'.($nextNameCellNumber+3), "Pause");
+            $sheet->setCellValue('A'.($nextNameCellNumber+4), "Reprise");
+            $sheet->setCellValue('A'.($nextNameCellNumber+5), "Départ");
+
+            $sheet->setCellValue('A'.($nextNameCellNumber+7), "NOMBRE D'ABSENCES : ".$donnees["absences"]);
+            $sheet->setCellValue('A'.($nextNameCellNumber+8), "NOMBRE DE RETARDS : ".$donnees["retards"]);
+            $sheet->setCellValue('A'.($nextNameCellNumber+9), "NOMBRE DE DEPARTS : ".$donnees["departs"]);
+            $sheet->setCellValue('A'.($nextNameCellNumber+10), "NOMBRE D'AUTH INC : ".$donnees["inc_auth"]);
+            $sheet->setCellValue('A'.($nextNameCellNumber+12), "TOTAL DES PERTES EN TEMPS : ".floor($donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"])." H");
+            $sheet->setCellValue('A'.($nextNameCellNumber+13), "TOTAL DES PERTES EN ARGENT : ".floor($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"])." FCFA");
 
             $sheet->setCellValue('B'.($nextNameCellNumber-1), "PRENOMS");
             $sheet->setCellValue('A'.$nextNameCellNumber, $employe->getSurname());
@@ -1102,8 +1090,8 @@ class DefaultController extends StatsController
                 $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber-1), date("d",$nowTime).'/'.date("m",$nowTime));
                 
                 foreach($newTab as $el){
-                    $spreadsheet->getActiveSheet()->getStyle($el."".($nextNameCellNumber+15))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-                    $spreadsheet->getActiveSheet()->getStyle($el."".($nextNameCellNumber+15))->getFill()->getStartColor()->setARGB('bdbdbd');
+                    $spreadsheet->getActiveSheet()->getStyle($el."".($nextNameCellNumber+16))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+                    $spreadsheet->getActiveSheet()->getStyle($el."".($nextNameCellNumber+16))->getFill()->getStartColor()->setARGB('bdbdbd');
                 }
 
                 if($his["arrive"] != null && $his["arrive"] != ""){
@@ -1133,7 +1121,7 @@ class DefaultController extends StatsController
                 $nowTime = $nowTime+86400;
             }
             
-            $nextNameCellNumber += 19;
+            $nextNameCellNumber += 20;
         }
 
         $writer = new Xlsx($spreadsheet);

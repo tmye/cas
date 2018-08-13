@@ -99,12 +99,13 @@
                                 <td colspan="2">Salaire : <span id="salarySpan"></span></td>
                             </tr>
                             <tr class="">
-                                <th colspan="2" class="center">Date :</th>
-                                <th class="center">Jours travaillés :</th>
+                                <th class="center">Date :</th>
+                                <th class="center">Jours à travailler :</th>
+                                <th class="center">Nombre de permission :</th>
                                 <th colspan="2" class="center">Salaire équivalant : <span id="salarySpan"></span></th>
                             </tr>
                             <tr>
-                                <td colspan="2">
+                                <td>
                                     <span id="fromDateSpan"></span>
                                     <br>
                                     au
@@ -113,6 +114,9 @@
                                 </td>
                                 <td>
                                     <span id="jourTravailleSpan">-</span>
+                                </td>
+                                <td>
+                                    <span id="nbrePermissionSpan">-</span>
                                 </td>
                                 <td colspan="2">
                                     =
@@ -584,6 +588,7 @@
                                 $("#containerMustBeHidden").attr("style","display:block");
                                 $("#totalSalarySpan").text(precisionRound(ss,2));
                                 $("#jourTravailleSpan").text(data.nbreJourTravail);
+                                $("#nbrePermissionSpan").text(data.nbrePermission);
                                 $("#absenceSpan").text(data.absences);
                                 $("#retardSpan").text(data.retards);
                                 $("#departSpan").text(data.departs);
@@ -1036,14 +1041,14 @@
 
                                 // Script pour remplir le tableau de stats des permissions
 
-                                $("#tabPermisions").html("");
+                                $("#tabPermissions").html("");
                                 $.each(data.permissionData,function (id) {
                                     $.each(data.permissionData[id],function (el) {
                                         var losedTime = data.permissionData[id][el].tempsPerdu;
                                         if (losedTime >= 60){
-                                            losedTime = Math.trunc((losedTime/60))+" H "+Math.round(losedTime%60)+" H";
+                                            losedTime = precisionRound((losedTime/60),2)+" H ";
                                         }else{
-                                            losedTime = losedTime+" H";
+                                            losedTime = precisionRound(losedTime,2)+" H";
                                         }
                                         $("#tabPermissions").append("" +
                                             "<tr>" +

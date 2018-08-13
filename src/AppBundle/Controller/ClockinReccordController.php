@@ -47,8 +47,8 @@ class ClockinReccordController extends EmployeController
     {
         //date_default_timezone_set('Africa/Lome');
 
-        $dateFrom = "2018-08-01";
-        $dateTo = "2018-08-31";
+        $dateFrom = "2018-06-01";
+        $dateTo = "2018-06-30";
         $employees = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
         $timeFrom = strtotime($dateFrom." 00:00:00");
         $timeTo = strtotime($dateTo." 00:00:00");
@@ -191,7 +191,7 @@ class ClockinReccordController extends EmployeController
         return new Response("Ok");
     }
 
-    private function dateDayNameFrench($day){
+    public function dateDayNameFrench($day){
         switch ($day){
             case 1:
                 return "lundi";

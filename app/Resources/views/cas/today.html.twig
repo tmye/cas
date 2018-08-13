@@ -52,13 +52,16 @@
                             {% for cr in listCR %}
                                 <tr>
                                     <td>
-                                        {{ cr.ClockinTime | date('H:i') }}
+                                        {{ cr[0].ClockinTime | date('H:i') }}
                                     </td>
                                     <td>
-                                        {{ cr.employe.surname~" "~cr.employe.lastName }}
+                                        {{ cr[0].employe.surname~" "~cr[0].employe.lastName }}
                                     </td>
                                     <td>
-                                        {{ cr.employe.function }}
+                                        {{ cr[0].employe.function }}
+                                    </td>
+                                    <td>
+                                        {{ cr[1] }}
                                     </td>
                                 </tr>
                             {% endfor %}

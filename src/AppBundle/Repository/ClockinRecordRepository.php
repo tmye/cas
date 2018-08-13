@@ -152,11 +152,12 @@ class ClockinRecordRepository extends EntityRepository
             usort($new_tab, array($this, 'ma_fonction'));
             $ct = $new_tab[0];
             $diff = ($ct-($heureNormaleArrive)); // Timestamp
-            if($ct<=$heureNormaleArrive ){
+            /*if($ct<=$heureNormaleArrive ){
                 return null;
             }else{
                 return array($diff,$ct);
-            }
+            }*/
+            return array($diff,$ct);
         }else{
             return 0;
         }
@@ -192,11 +193,12 @@ class ClockinRecordRepository extends EntityRepository
             usort($new_tab, array($this, 'ma_fonction'));
             $ct = $new_tab[sizeof($new_tab)-1];
             $diff = $ct- ($heureNormaleArrivePause); // Timestamp
-            if($ct<=$heureNormaleArrivePause ){
+            /*if($ct<=$heureNormaleArrivePause ){
                 return null;
             }else{
                 return array($diff,$ct);
-            }
+            }*/
+            return array($diff,$ct);
         }else{
             return 0;
         }
@@ -229,11 +231,12 @@ class ClockinRecordRepository extends EntityRepository
             $ct = $new_tab[sizeof($new_tab)-1];
             //print_r("****".date('Y-m-d H:i',$new_tab[1]));
             $diff = ($date+$heureNormaleDepart)-$ct; // Timestamp
-            if($ct>=($date+$heureNormaleDepart)){
+            /*if($ct>=($date+$heureNormaleDepart)){
                 return null;
             }else{
                 return array($diff,$ct);
-            }
+            }*/
+            return array($diff,$ct);
         }else{
             return false;
         }
@@ -262,11 +265,12 @@ class ClockinRecordRepository extends EntityRepository
             usort($new_tab, array($this, 'ma_fonction'));
             $ct = $new_tab[sizeof($new_tab)-1];
             $diff = ($date+$heureNormaleDepartPause)-$ct; // Timestamp
-            if($ct>=($date+$heureNormaleDepartPause)){
+            /*if($ct>=($date+$heureNormaleDepartPause)){
                 return null;
             }else{
                 return array($diff,$ct);
-            }
+            }*/
+            return array($diff,$ct);
         }else{
             return false;
         }

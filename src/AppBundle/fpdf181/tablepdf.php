@@ -159,14 +159,14 @@ class tablepdf extends fpdf
         foreach($data4 as $row)
         {
             $this->Cell(142.8,6,$row[0],'LT',0,'L',$fill);
-            $this->Cell(47.6,6,$row[1],'TR',0,'L',$fill);
+            $this->Cell(47.6,6,$row[1],'TR',0,'R',$fill);
             $this->Ln();
             $fill = !$fill;
         }
         foreach($data5 as $row)
         {
             $this->Cell(142.8,6,$row[0],'LT',0,'L',$fill);
-            $this->Cell(47.6,6,$row[1],'TR',0,'L',$fill);
+            $this->Cell(47.6,6,$row[1],'TR',0,'R',$fill);
             $this->Ln();
             $fill = !$fill;
         }
