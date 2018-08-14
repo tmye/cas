@@ -32,9 +32,22 @@
         </div>
     </div>
 
+    <form method="POST" action="{{ path('generateTodayPDF') }}" target="_blank" id="form_pdf" style="display:none">
+    </form>
+    
+    <form method="POST" action="{{ path('generateTodayExcel') }}" target="_blank" id="form_excel" style="display:none">
+    </form>
+
     <div class="row">
         <div class="col l12">
-            <h5 class="page-title"><span class="fa fa-clock"></span> Activités de ce jour</h5>
+            <h5 class="page-title">
+                <span class="fa fa-clock"></span>
+                Activités de ce jour
+            </h5>
+            <span class="right" style="margin-top:-35px">
+                <button class="btn-perso-historique red darken-4" id="submitPDF"><span class="fa fa-file-pdf"></span> Exporter vers PDF</button>
+                <button class="btn-perso-historique" id="submitExcel"><span class="fa fa-file-excel"></span> Exporter vers Excel</button>
+            </span>
             <div class="row">
                 <div class="col l12">
                     <br><br>
@@ -74,6 +87,16 @@
 {% endblock %}
 
 {% block javascripts %}
+    <script>
+        $(function(){
+            $("#submitPDF").click(function(){
+                $("#form_pdf").submit();
+            });
+            $("#submitExcel").click(function(){
+                $("#form_excel").submit();
+            });
+        });
+    </script>
     <script>
         // On s'attaque aux collapsibles
         $(function () {
