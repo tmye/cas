@@ -124,6 +124,11 @@
                                                         <input id="dateType" type="hidden" name="dateType" value="0">
                                                     </div>
                                                 </div>
+                                                <div class="row row-no-margin" id="choosenMonthSection" style="display:none">
+                                                    <div class="col l6">
+                                                        <span>Mois choisi : <span id="choosenMonth"></span></span>
+                                                    </div>
+                                                </div>
                                                 <br>
                                                 <div class="row row-no-margin">
                                                     <div class="col l12">
@@ -185,7 +190,8 @@
             $(".monthElement").click(function(){
                 $("#dateType").val($(this).attr("tag"));
                 $('#modal_detail').modal('close');
-                $("#form").submit();
+                $('#choosenMonthSection').show();
+                $('#choosenMonth').text($(this).text());
             });
 
             $("#selectDate").click(function(){
@@ -302,36 +308,40 @@
                 var dateFrom = new Date($("#fromDate").val()).getTime();
                 var dateTo = new Date($("#toDate").val()).getTime();
                 if($("#destination").val()!=""){
-                    switch(type){
-                        case 1:
-                            if($("#fromDate").val()!=""){
-                                if($("#toDate").val()!=""){
-                                    //if(dateFrom < dateTo || dateFrom == dateTo){
-                                        $('#modal_loading').modal('open');
-                                        console.log($("#destination").val());
-                                        $("#errorContainer").hide();
-                                            //console.log($("#destination").val());
-                                        $("#type").val("1");
-                                        $("#form").submit();
-                                        $('#modal_loading').modal('close');
-                                    /*}else {
-                                        $("#errorContainer").show();
-                                        $("#errorContainer div span").text("Erreur : La date de début ne peut pas etre superieur à la date de fin");
-                                        $("#containerMustBeHidden").attr("style","display:none");
-                                    }*/
-                                }else {
+                    if($("#dateType").val() != "0"){
+                        $('#modal_loading').modal('open');
+                        console.log($("#destination").val());
+                        $("#errorContainer").hide();
+                        //console.log($("#destination").val());
+                        $("#type").val("0");
+                        $("#form").submit();
+                        $('#modal_loading').modal('close');
+                    }else{
+                        if($("#fromDate").val()!=""){
+                            if($("#toDate").val()!=""){
+                                //if(dateFrom < dateTo || dateFrom == dateTo){
+                                    $('#modal_loading').modal('open');
+                                    console.log($("#destination").val());
+                                    $("#errorContainer").hide();
+                                        //console.log($("#destination").val());
+                                    $("#type").val("1");
+                                    $("#form").submit();
+                                    $('#modal_loading').modal('close');
+                                /*}else {
                                     $("#errorContainer").show();
-                                    $("#errorContainer div span").text("Erreur : veuillez choisir une date de fin valide");
+                                    $("#errorContainer div span").text("Erreur : La date de début ne peut pas etre superieur à la date de fin");
                                     $("#containerMustBeHidden").attr("style","display:none");
-                                }
-                            }else{
+                                }*/
+                            }else {
                                 $("#errorContainer").show();
-                                $("#errorContainer div span").text("Erreur : veuillez choisir une date de début valide");
+                                $("#errorContainer div span").text("Erreur : veuillez choisir une date de fin valide");
                                 $("#containerMustBeHidden").attr("style","display:none");
                             }
-                        break;
-                        case 2:
-                        break;
+                        }else{
+                            $("#errorContainer").show();
+                            $("#errorContainer div span").text("Erreur : veuillez choisir une date de début valide");
+                            $("#containerMustBeHidden").attr("style","display:none");
+                        }
                     }
                 }else{
                     $("#errorContainer").show();
