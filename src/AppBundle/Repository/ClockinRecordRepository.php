@@ -159,7 +159,7 @@ class ClockinRecordRepository extends EntityRepository
             }*/
             return array($diff,$ct);
         }else{
-            return 0;
+            return false;
         }
     }
 
@@ -200,7 +200,7 @@ class ClockinRecordRepository extends EntityRepository
             }*/
             return array($diff,$ct);
         }else{
-            return 0;
+            return false;
         }
     }
 

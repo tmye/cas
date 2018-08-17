@@ -125,6 +125,11 @@
                                                         <input id="dateType" type="hidden" name="dateType" value="0">
                                                     </div>
                                                 </div>
+                                                <div class="row row-no-margin" id="choosenMonthSection" style="display:none">
+                                                    <div class="col l6">
+                                                        <span>Mois choisi : <span id="choosenMonth"></span></span>
+                                                    </div>
+                                                </div>
                                                 <br>
                                                 <div class="row row-no-margin">
                                                     <div class="col l12">
@@ -146,8 +151,10 @@
                                                     </div>
                                                     <div class="col l6">
                                                         <span class="right" style="margin-top: 20px">
+                                                            <input type="button" id="submitIndividualWithoutBonusButton" value="Individuel sans bonus" class="btn-perso-historique">
+
                                                             <input type="button" id="submitIndividualButton" value="Individuel" class="btn-perso-historique">
-                                                            <input type="button" id="submitButton" value="Valider" class="btn-perso-historique">
+                                                            <input type="button" id="submitButton" value="Collectif" class="btn-perso-historique">
                                                         </span>
                                                     </div>
                                                 </div>
@@ -187,7 +194,9 @@
             $(".monthElement").click(function(){
                 $("#dateType").val($(this).attr("tag"));
                 $('#modal_detail').modal('close');
-                $("#form").submit();
+                $('#choosenMonthSection').show();
+                $('#choosenMonth').text($(this).text());
+                //$("#form").submit();
             });
 
             $("#selectDate").click(function(){
@@ -303,30 +312,40 @@
                 var dateFrom = new Date($("#fromDate").val()).getTime();
                 var dateTo = new Date($("#toDate").val()).getTime();
                 if($("#destination").val()!=""){
-                    if($("#fromDate").val()!=""){
-                        if($("#toDate").val()!=""){
-                            //if(dateFrom < dateTo || dateFrom == dateTo){
-                                $('#modal_loading').modal('open');
-                                console.log($("#destination").val());
-                                $("#errorContainer").hide();
-                                    //console.log($("#destination").val());
-                                $("#type").val("0");
-                                $("#form").submit();
-                                $('#modal_loading').modal('close');
-                            /*}else {
+                    if($("#dateType").val() != "0"){
+                        $('#modal_loading').modal('open');
+                        console.log($("#destination").val());
+                        $("#errorContainer").hide();
+                        //console.log($("#destination").val());
+                        $("#type").val("0");
+                        $("#form").submit();
+                        $('#modal_loading').modal('close');
+                    }else{
+                        if($("#fromDate").val()!=""){
+                            if($("#toDate").val()!=""){
+                                //if(dateFrom < dateTo || dateFrom == dateTo){
+                                    $('#modal_loading').modal('open');
+                                    console.log($("#destination").val());
+                                    $("#errorContainer").hide();
+                                        //console.log($("#destination").val());
+                                    $("#type").val("0");
+                                    $("#form").submit();
+                                    $('#modal_loading').modal('close');
+                                /*}else {
+                                    $("#errorContainer").show();
+                                    $("#errorContainer div span").text("Erreur : La date de début ne peut pas etre superieur à la date de fin");
+                                    $("#containerMustBeHidden").attr("style","display:none");
+                                }*/
+                            }else {
                                 $("#errorContainer").show();
-                                $("#errorContainer div span").text("Erreur : La date de début ne peut pas etre superieur à la date de fin");
+                                $("#errorContainer div span").text("Erreur : veuillez choisir une date de fin valide");
                                 $("#containerMustBeHidden").attr("style","display:none");
-                            }*/
-                        }else {
+                            }
+                        }else{
                             $("#errorContainer").show();
-                            $("#errorContainer div span").text("Erreur : veuillez choisir une date de fin valide");
+                            $("#errorContainer div span").text("Erreur : veuillez choisir une date de début valide");
                             $("#containerMustBeHidden").attr("style","display:none");
                         }
-                    }else{
-                        $("#errorContainer").show();
-                        $("#errorContainer div span").text("Erreur : veuillez choisir une date de début valide");
-                        $("#containerMustBeHidden").attr("style","display:none");
                     }
                 }else{
                     $("#errorContainer").show();
@@ -340,30 +359,86 @@
                 var dateFrom = new Date($("#fromDate").val()).getTime();
                 var dateTo = new Date($("#toDate").val()).getTime();
                 if($("#destination").val()!=""){
-                    if($("#fromDate").val()!=""){
-                        if($("#toDate").val()!=""){
-                            if(dateFrom < dateTo || dateFrom == dateTo){
-                                $('#modal_loading').modal('open');
-                                console.log($("#destination").val());
-                                $("#errorContainer").hide();
-                                //console.log($("#destination").val());
-                                $("#type").val("1");
-                                $("#form").submit();
-                                $('#modal_loading').modal('close');
+                    if($("#dateType").val() != "0"){
+                        $('#modal_loading').modal('open');
+                                    console.log($("#destination").val());
+                                    $("#errorContainer").hide();
+                                    //console.log($("#destination").val());
+                                    $("#type").val("1");
+                                    $("#form").submit();
+                                    $('#modal_loading').modal('close');
+                    }else{
+                        if($("#fromDate").val()!=""){
+                            if($("#toDate").val()!=""){
+                                //if(dateFrom < dateTo || dateFrom == dateTo){
+                                    $('#modal_loading').modal('open');
+                                    console.log($("#destination").val());
+                                    $("#errorContainer").hide();
+                                    //console.log($("#destination").val());
+                                    $("#type").val("1");
+                                    $("#form").submit();
+                                    $('#modal_loading').modal('close');
+                                /*}else {
+                                    $("#errorContainer").show();
+                                    $("#errorContainer div span").text("Erreur : La date de début ne peut pas etre superieur à la date de fin");
+                                    $("#containerMustBeHidden").attr("style","display:none");
+                                }*/
                             }else {
                                 $("#errorContainer").show();
-                                $("#errorContainer div span").text("Erreur : La date de début ne peut pas etre superieur à la date de fin");
+                                $("#errorContainer div span").text("Erreur : veuillez choisir une date de fin valide");
                                 $("#containerMustBeHidden").attr("style","display:none");
                             }
-                        }else {
+                        }else{
                             $("#errorContainer").show();
-                            $("#errorContainer div span").text("Erreur : veuillez choisir une date de fin valide");
+                            $("#errorContainer div span").text("Erreur : veuillez choisir une date de début valide");
                             $("#containerMustBeHidden").attr("style","display:none");
                         }
+                    }
+                }else{
+                    $("#errorContainer").show();
+                    $("#errorContainer div span").text("Erreur : veuillez choisir un employé");
+                    $("#containerMustBeHidden").attr("style","display:none");
+                }
+            });
+
+            $("#submitIndividualWithoutBonusButton").click(function () {
+                var dateFrom = new Date($("#fromDate").val()).getTime();
+                var dateTo = new Date($("#toDate").val()).getTime();
+                if($("#destination").val()!=""){
+                    if($("#dateType").val() != "0"){
+                        $('#modal_loading').modal('open');
+                        console.log($("#destination").val());
+                        $("#errorContainer").hide();
+                        //console.log($("#destination").val());
+                        $("#type").val("2");
+                        $("#form").submit();
+                        $('#modal_loading').modal('close');
                     }else{
-                        $("#errorContainer").show();
-                        $("#errorContainer div span").text("Erreur : veuillez choisir une date de début valide");
-                        $("#containerMustBeHidden").attr("style","display:none");
+                        if($("#fromDate").val()!=""){
+                            if($("#toDate").val()!=""){
+                                //if(dateFrom < dateTo || dateFrom == dateTo){
+                                    $('#modal_loading').modal('open');
+                                    console.log($("#destination").val());
+                                    $("#errorContainer").hide();
+                                    //console.log($("#destination").val());
+                                    $("#type").val("2");
+                                    $("#form").submit();
+                                    $('#modal_loading').modal('close');
+                                /*}else {
+                                    $("#errorContainer").show();
+                                    $("#errorContainer div span").text("Erreur : La date de début ne peut pas etre superieur à la date de fin");
+                                    $("#containerMustBeHidden").attr("style","display:none");
+                                }*/
+                            }else {
+                                $("#errorContainer").show();
+                                $("#errorContainer div span").text("Erreur : veuillez choisir une date de fin valide");
+                                $("#containerMustBeHidden").attr("style","display:none");
+                            }
+                        }else{
+                            $("#errorContainer").show();
+                            $("#errorContainer div span").text("Erreur : veuillez choisir une date de début valide");
+                            $("#containerMustBeHidden").attr("style","display:none");
+                        }
                     }
                 }else{
                     $("#errorContainer").show();

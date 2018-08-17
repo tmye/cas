@@ -819,7 +819,7 @@ class DefaultController extends StatsController
         }
         $t = $request->request->get('type');
         $pdf = new tablepdf();
-        if($t != "1"){
+        if($t != "1" && $t != "2"){
             $pdf->AddPage();
             $pdf->SetFont('Arial','B',16);
             $pdf->Image($this->getParameter("web_dir")."/company_images/".$session->get("companyLogo"),10,10,20,20);
@@ -836,7 +836,7 @@ class DefaultController extends StatsController
         $i=0;
         foreach ($empId as $emp){
             $i++;
-            if($i>=5){ // set up how many table on a page
+            if($i>=4){ // set up how many table on a page
                 $pdf->AddPage();
                 $i=0;
             }
@@ -883,7 +883,7 @@ class DefaultController extends StatsController
             $lastName = $employe->getLastName();
             $permissions = sizeof($donnees["permissionData"]["retardStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["absenceStats"]);
 
-            $user_info_header = array('Nom', 'Prenom(s)', 'Fonction', 'Departement','Salaire', 'Salaire X','Duree hebdo');
+            $user_info_header = array('Nom', 'Prenom(s)', 'Fonction', 'Departement','Salaire', 'Revenu*','Duree hebdo');
             $user_info_data = array(
                 array($employe->getSurname(), $employe->getLastname(), $employe->getFunction(), $employe->getDepartement()->getName(),$employe->getSalary(), round($ss,2),$employe->getWorkingHour()->getTaux())
             );
@@ -895,56 +895,90 @@ class DefaultController extends StatsController
                 }else{
                     $qr = 0;
                 }
-                $header = array('','Absences', 'Retards', 'Departs', 'Auth','Total','Permissions', 'Bonus');
-                $data = array(
-                    array("Nombre",$donnees["absences"],$donnees["retards"],$donnees["departs"],$donnees["inc_auth"],$donnees["absences"]+$donnees["retards"]+$donnees["departs"]+$donnees["inc_auth"],sizeof($donnees["permissionData"]["absenceStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["retardStats"]),$donnees["nbreBonus"]),
-                );
-                $data2 = array(
-                    array("Temps",$donnees["tpa"],round($donnees["tpr"],2),round($donnees["tpd"],2),$donnees["lost_time"],round($donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"],2),$permission_lost_time,round($donnees["tempsBonus"]*(-1),2)),
-                );
-                $data3 = array(
-                    array("Somme",round($donnees["spa"],2),round($donnees["spr"],2),round($donnees["spd"],2),round($donnees["spAuth"],2),round($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"],2),round((($employe->getSalary()*12)/52)/($employe->getWorkingHour()->getTaux())*$permission_lost_time,2),round($donnees["sommeArgentBonus"]*(-1),0)),
-                );
-                $data4 = array(
-                    array("Net a payer sans bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"]),2)),
-                );
-                $data5 = array(
-                    array("Net a payer avec bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"])+($donnees["sommeArgentBonus"]*(-1)),2)),
-                );
+                if($t=="2"){
+                    $header = array('','Absences', 'Retards', 'Departs', 'Auth','Total','Permissions');
+                    $data = array(
+                        array("Nombre",$donnees["absences"],$donnees["retards"],$donnees["departs"],$donnees["inc_auth"],$donnees["absences"]+$donnees["retards"]+$donnees["departs"]+$donnees["inc_auth"],sizeof($donnees["permissionData"]["absenceStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["retardStats"])),
+                    );
+                    $data2 = array(
+                        array("Temps",$donnees["tpa"],round($donnees["tpr"],2),round($donnees["tpd"],2),$donnees["lost_time"],round($donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"],2),$permission_lost_time),
+                    );
+                    $data3 = array(
+                        array("Somme",round($donnees["spa"],2),round($donnees["spr"],2),round($donnees["spd"],2),round($donnees["spAuth"],2),round($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"],2),round((($employe->getSalary()*12)/52)/($employe->getWorkingHour()->getTaux())*$permission_lost_time,2)),
+                    );
+                    $data4 = array(
+                        array("Net a payer sans bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"]),2)),
+                    );
+                }else{
+                    $header = array('','Absences', 'Retards', 'Departs', 'Auth','Total','Permissions', 'Bonus');
+                    $data = array(
+                        array("Nombre",$donnees["absences"],$donnees["retards"],$donnees["departs"],$donnees["inc_auth"],$donnees["absences"]+$donnees["retards"]+$donnees["departs"]+$donnees["inc_auth"],sizeof($donnees["permissionData"]["absenceStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["retardStats"]),$donnees["nbreBonus"]),
+                    );
+                    $data2 = array(
+                        array("Temps",$donnees["tpa"],round($donnees["tpr"],2),round($donnees["tpd"],2),$donnees["lost_time"],round($donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"],2),$permission_lost_time,round($donnees["tempsBonus"]*(-1),2)),
+                    );
+                    $data3 = array(
+                        array("Somme",round($donnees["spa"],2),round($donnees["spr"],2),round($donnees["spd"],2),round($donnees["spAuth"],2),round($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"],2),round((($employe->getSalary()*12)/52)/($employe->getWorkingHour()->getTaux())*$permission_lost_time,2),round($donnees["sommeArgentBonus"]*(-1),0)),
+                    );
+                    $data4 = array(
+                        array("Net a payer sans bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"]),2)),
+                    );
+                    $data5 = array(
+                        array("Net a payer avec bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"])+($donnees["sommeArgentBonus"]*(-1)),2)),
+                    );
+                }
             }else{
-                $header = array('','Absences', 'Retards', 'Departs', 'Auth','Total','Permissions', 'Bonus');
-                $data = array(
-                    array("Nombre",$donnees["absences"],$donnees["retards"],$donnees["departs"],$donnees["inc_auth"],$donnees["absences"]+$donnees["retards"]+$donnees["departs"]+$donnees["inc_auth"],sizeof($donnees["permissionData"]["absenceStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["retardStats"]),$donnees["nbreBonus"]),
-                );
-                $data2 = array(
-                    array("Temps",$donnees["tpa"],round($donnees["tpr"],2),round($donnees["tpd"],2),$donnees["lost_time"],round($donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"],2),$permission_lost_time,round($donnees["tempsBonus"]*(-1),2)),
-                );
-                $data3 = array(
-                    array("Somme",round($donnees["spa"],2),round($donnees["spr"],2),round($donnees["spd"],2),round($donnees["spAuth"],2),round($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"],2),round((($employe->getSalary()*12)/52)/($employe->getWorkingHour()->getTaux())*$permission_lost_time,2),round($donnees["sommeArgentBonus"]*(-1),0)),
-                );
-                $data4 = array(
-                    array("Net a payer sans bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"]),2)),
-                );
-                $data5 = array(
-                    array("Net a payer avec bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"])+($donnees["sommeArgentBonus"]*(-1)),2)),
-                );
+                if($t == "2"){
+                    $header = array('','Absences', 'Retards', 'Departs', 'Auth','Total','Permissions');
+                    $data = array(
+                        array("Nombre",$donnees["absences"],$donnees["retards"],$donnees["departs"],$donnees["inc_auth"],$donnees["absences"]+$donnees["retards"]+$donnees["departs"]+$donnees["inc_auth"],sizeof($donnees["permissionData"]["absenceStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["retardStats"])),
+                    );
+                    $data2 = array(
+                        array("Temps",$donnees["tpa"],round($donnees["tpr"],2),round($donnees["tpd"],2),$donnees["lost_time"],round($donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"],2),$permission_lost_time),
+                    );
+                    $data3 = array(
+                        array("Somme",round($donnees["spa"],2),round($donnees["spr"],2),round($donnees["spd"],2),round($donnees["spAuth"],2),round($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"],2),round((($employe->getSalary()*12)/52)/($employe->getWorkingHour()->getTaux())*$permission_lost_time,2)),
+                    );
+                    $data4 = array(
+                        array("Net a payer sans bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"]),2)),
+                    );
+                }else{
+                    $header = array('','Absences', 'Retards', 'Departs', 'Auth','Total','Permissions', 'Bonus');
+                    $data = array(
+                        array("Nombre",$donnees["absences"],$donnees["retards"],$donnees["departs"],$donnees["inc_auth"],$donnees["absences"]+$donnees["retards"]+$donnees["departs"]+$donnees["inc_auth"],sizeof($donnees["permissionData"]["absenceStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["retardStats"]),$donnees["nbreBonus"]),
+                    );
+                    $data2 = array(
+                        array("Temps",$donnees["tpa"],round($donnees["tpr"],2),round($donnees["tpd"],2),$donnees["lost_time"],round($donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"],2),$permission_lost_time,round($donnees["tempsBonus"]*(-1),2)),
+                    );
+                    $data3 = array(
+                        array("Somme",round($donnees["spa"],2),round($donnees["spr"],2),round($donnees["spd"],2),round($donnees["spAuth"],2),round($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"],2),round((($employe->getSalary()*12)/52)/($employe->getWorkingHour()->getTaux())*$permission_lost_time,2),round($donnees["sommeArgentBonus"]*(-1),0)),
+                    );
+                    $data4 = array(
+                        array("Net a payer sans bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"]),2)),
+                    );
+                    $data5 = array(
+                        array("Net a payer avec bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"])+($donnees["sommeArgentBonus"]*(-1)),2)),
+                    );
+                }
             }
-            switch ($t){
-                case "1":
-                    $pdf->AddPage();
-                    $pdf->SetFont('Arial','B',16);
-                    $pdf->Image($this->getParameter("web_dir")."/company_images/".$session->get("companyLogo"),10,10,20,20);
-                    $pdf->Image($this->getParameter("web_dir")."/img/logo.png",180,10,12,12);
-                    $pdf->Ln('25');
-                    $pdf->Cell(500,10,$session->get("companyName"));
-                    $pdf->Ln('17');
-                    $pdf->Cell(25,10,"");
-                    $pdf->SetFont('Arial','BU',16);
-                    $pdf->Cell(40,10,'Rapport des employes du '.$fromDate.' au '.$toDate);
-                    $pdf->Ln('15');
-                    break;
+            if($t == "1" || $t == "2"){
+                $pdf->AddPage();
+                $pdf->SetFont('Arial','B',16);
+                $pdf->Image($this->getParameter("web_dir")."/company_images/".$session->get("companyLogo"),10,10,20,20);
+                $pdf->Image($this->getParameter("web_dir")."/img/logo.png",180,10,12,12);
+                $pdf->Ln('25');
+                $pdf->Cell(500,10,$session->get("companyName"));
+                $pdf->Ln('17');
+                $pdf->Cell(25,10,"");
+                $pdf->SetFont('Arial','BU',16);
+                $pdf->Cell(40,10,'Rapport des employes du '.$fromDate.' au '.$toDate);
+                $pdf->Ln('15');
             }
-            $pdf->FancyTable($user_info_header,$user_info_data,$header,$data,$data2,$data3,$data4,$data5);
+            if(isset($data5) && ($data5 != null)){
+                $pdf->FancyTable($user_info_header,$user_info_data,$header,$data,$data2,$data3,$data4,$data5);
+            }else{
+                $pdf->FancyTable($user_info_header,$user_info_data,$header,$data,$data2,$data3,$data4);
+            }
             $pdf->Ln('5');
         }
         $pdf->Output();

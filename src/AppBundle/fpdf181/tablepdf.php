@@ -31,10 +31,12 @@ class tablepdf extends fpdf
     function Footer()
     {
         // Positionnement à 1,5 cm du bas
-        $this->SetY(-15);
+        $this->SetY(-30);
         // Police Arial italique 8
         $this->SetFont('Arial','I',8);
         // Numéro de page
+        $this->Cell(0,10,'* Salaire de l\'employe sur la duree choisie',0,0,'L');
+        $this->Ln();
         $this->Cell(0,10,'Rapport genere par le '.date('d').'/'.date('m').'/'.date('Y'),0,0,'C');
     }
 
@@ -68,7 +70,7 @@ class tablepdf extends fpdf
         }
     }
 
-    public function FancyTable($user_info_header,$user_info_data,$header, $data, $data2,$data3,$data4,$data5){
+    public function FancyTable($user_info_header,$user_info_data,$header, $data, $data2,$data3,$data4,$data5=null){
         // Couleurs, épaisseur du trait et police grasse
         $this->SetFillColor(100,100,100);
         $this->SetTextColor(255);
@@ -78,7 +80,13 @@ class tablepdf extends fpdf
         $fill = false;
         // En-tête
         $w = array(30, 35, 25, 25,25,25,25);
-        $w2 = array(23.8, 23.8, 23.8, 23.8,23.8,23.8,23.8,23.8);
+        
+        if($data5 != null){
+            $w2 = array(23.8, 23.8, 23.8, 23.8,23.8,23.8,23.8,23.8);
+        }else{
+            $w2 = array(27.2, 27.2, 27.2, 27.2,27.2,27.2,27.2);
+        }
+
         for($i=0;$i<count($user_info_header);$i++){
             $this->Cell($w[$i],7,$user_info_header[$i],1,0,'C',true);
         }
@@ -126,7 +134,9 @@ class tablepdf extends fpdf
             $this->Cell($w2[3],6,$row[4],'LRB',0,'C',$fill);
             $this->Cell($w2[4],6,$row[5],'LRB',0,'C',$fill);
             $this->Cell($w2[5],6,$row[6],'LRB',0,'C',$fill);
-            $this->Cell($w2[5],6,$row[7],'LRB',0,'C',$fill);
+            if($data5 != null){
+                $this->Cell($w2[5],6,$row[7],'LRB',0,'C',$fill);
+            }
             $this->Ln();
             $fill = !$fill;
         }
@@ -139,7 +149,9 @@ class tablepdf extends fpdf
             $this->Cell($w2[3],6,$row[4],'LRB',0,'C',$fill);
             $this->Cell($w2[4],6,$row[5],'LRB',0,'C',$fill);
             $this->Cell($w2[5],6,$row[6],'LRB',0,'C',$fill);
-            $this->Cell($w2[5],6,$row[7],'LRB',0,'C',$fill);
+            if($data5 != null){
+                $this->Cell($w2[5],6,$row[7],'LRB',0,'C',$fill);
+            }
             $this->Ln();
             $fill = !$fill;
         }
@@ -152,26 +164,30 @@ class tablepdf extends fpdf
             $this->Cell($w2[3],6,$row[4],'LRB',0,'C',$fill);
             $this->Cell($w2[4],6,$row[5],'LRB',0,'C',$fill);
             $this->Cell($w2[5],6,$row[6],'LRB',0,'C',$fill);
-            $this->Cell($w2[5],6,$row[7],'LRB',0,'C',$fill);
+            if($data5 != null){
+                $this->Cell($w2[5],6,$row[7],'LRB',0,'C',$fill);
+            }
             $this->Ln();
             $fill = !$fill;
         }
         foreach($data4 as $row)
         {
-            $this->Cell(142.8,6,$row[0],'LT',0,'L',$fill);
-            $this->Cell(47.6,6,$row[1],'TR',0,'R',$fill);
+            $this->Cell(142.8,6,$row[0],'LTB',0,'L',$fill);
+            $this->Cell(47.6,6,$row[1],'TRB',0,'R',$fill);
             $this->Ln();
             $fill = !$fill;
         }
-        foreach($data5 as $row)
-        {
-            $this->Cell(142.8,6,$row[0],'LT',0,'L',$fill);
-            $this->Cell(47.6,6,$row[1],'TR',0,'R',$fill);
-            $this->Ln();
-            $fill = !$fill;
+        if($data5 != null){
+            foreach($data5 as $row){
+                $this->Cell(142.8,6,$row[0],'LTB',0,'L',$fill);
+                $this->Cell(47.6,6,$row[1],'TRB',0,'R',$fill);
+                $this->Ln();
+                $fill = !$fill;
+            }
         }
+        $this->Ln(8);
         // Trait de terminaison
-        $this->Cell(array_sum($w),0,'','T');
+        //$this->Cell(array_sum($w),0,'','T');
     }
 
 }

@@ -253,7 +253,7 @@
                             <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>Heure de départ</th>
+                                <th>Heure d'arrivée</th>
                                 <th>Lapse</th>
                             </tr>
                             </thead>
@@ -289,7 +289,7 @@
                             <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>Heure de départ</th>
+                                <th>Heure d'arrivée</th>
                                 <th>Lapse</th>
                             </tr>
                             </thead>
@@ -587,7 +587,7 @@
                                 }
                                 $("#containerMustBeHidden").attr("style","display:block");
                                 $("#totalSalarySpan").text(precisionRound(ss,2));
-                                $("#jourTravailleSpan").text(data.nbreJourTravail);
+                                $("#jourTravailleSpan").text(data.nbreJourTravail - data.jourFeries);
                                 $("#nbrePermissionSpan").text(data.nbrePermission);
                                 $("#absenceSpan").text(data.absences);
                                 $("#retardSpan").text(data.retards);

@@ -34,7 +34,7 @@ class PermissionController extends Controller {
     {
         $session = new Session();
 
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
@@ -82,61 +82,64 @@ class PermissionController extends Controller {
                     $timeFrom = strtotime($dateFrom." 00:00:00");
                     $timeTo = strtotime($dateTo." 00:00:00");
 
-                    $timeDays = $timeTo-$timeFrom;
-
-                    $days = $timeDays/(60*60*24);
-
-                    $nowTime = strtotime($dateFrom." 00:00:00");
-
-                     /*
-                      * If days > 0 it means that the permission is extended on many days
-                      * */
-                    if($days > 0){
-                        for ($i=0;$i<=$days;$i++) {
-                            //print_r("<br>$i - NowTime : " . $nowTime . "<br>");
-                            $permission = new Permission();
-
-                            $empId = (int)$request->request->get("form")["employee"];
-                            $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:employe")->find($empId);
-
-                            $permission->setTitle($request->request->get("form")["title"]);
-                            $permission->setDescription($request->request->get("form")["description"]);
-                            $permission->setEmployee($emp);
-
+                    if($timeFrom >= time()){
+                        $timeDays = $timeTo-$timeFrom;
+                        $days = $timeDays/(60*60*24);
+                        $nowTime = strtotime($dateFrom." 00:00:00");
+    
+                         /*
+                          * If days > 0 it means that the permission is extended on many days
+                          * */
+                        if($days > 0){
+                            for ($i=0;$i<=$days;$i++) {
+                                //print_r("<br>$i - NowTime : " . $nowTime . "<br>");
+                                $permission = new Permission();
+    
+                                $empId = (int)$request->request->get("form")["employee"];
+                                $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:employe")->find($empId);
+    
+                                $permission->setTitle($request->request->get("form")["title"]);
+                                $permission->setDescription($request->request->get("form")["description"]);
+                                $permission->setEmployee($emp);
+    
+                                $permission->setUpdateTime(new \DateTime());
+                                $permission->setState(0);
+                                $permission->setCreateTime(new \DateTime());
+                                $permission->setAskerId($this->getUser()->getId());
+                                $permission->setDateFrom(new \DateTime(date('Y-m-d',$nowTime)));
+                                if($i==0){
+                                    $permission->setTimeFrom($sentTimeFrom);
+                                }
+                                if($i==($days)){
+                                    $permission->setTimeTo($sentTimeTo);
+                                }else{
+                                    $permission->setTimeTo("23:59");
+                                }
+    
+                                $em->persist($permission);
+                                $em->flush();
+    
+                                $nowTime += 86400;
+                             }
+                        }else{
                             $permission->setUpdateTime(new \DateTime());
                             $permission->setState(0);
                             $permission->setCreateTime(new \DateTime());
                             $permission->setAskerId($this->getUser()->getId());
-                            $permission->setDateFrom(new \DateTime(date('Y-m-d',$nowTime)));
-                            if($i==0){
-                                $permission->setTimeFrom($sentTimeFrom);
-                            }
-                            if($i==($days)){
-                                $permission->setTimeTo($sentTimeTo);
-                            }else{
-                                $permission->setTimeTo("23:59");
-                            }
-
+    
+    
                             $em->persist($permission);
                             $em->flush();
-
-                            $nowTime += 86400;
-                         }
+                        }
+    
+                        $this->get('session')->getFlashBag()->set('notice', 'Cette permission a bien été enregistrée.');
+                        //$request->getSession()->getFlashBag()->add('notice', 'Cette permission a bien été enregistrée.');
+    
+                        return $this->redirectToRoute("addPermission");
                     }else{
-                        $permission->setUpdateTime(new \DateTime());
-                        $permission->setState(0);
-                        $permission->setCreateTime(new \DateTime());
-                        $permission->setAskerId($this->getUser()->getId());
-
-
-                        $em->persist($permission);
-                        $em->flush();
+                        $this->get('session')->getFlashBag()->set('error_notice', 'Enregistrement non effectué : vous ne pouvez pas demander une permission pour une date déjà passée!');
+                        return $this->redirectToRoute("addPermission");
                     }
-
-                    $request->getSession()->getFlashBag()->add('notice', 'Employé bien enregistrée.');
-
-                    return $this->redirectToRoute("addPermission");
-
                 }
 
             }
@@ -144,6 +147,7 @@ class PermissionController extends Controller {
             // À ce stade, le formulaire n'est pas valide car :
             // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
             // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
+
             return $this->render('cas/addPermission.html.twig', array(
                 'form' => $form->createView(),
             ));
@@ -159,7 +163,7 @@ class PermissionController extends Controller {
     {
         $session = new Session();
 
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
@@ -217,7 +221,8 @@ class PermissionController extends Controller {
                 'form' => $form->createView(),
             ));
         }else{
-            return $this->redirectToRoute("login");
+            $this->get('session')->getFlashBag()->set('error_notice', 'Vous n\'avez pas les droits nécessaires pour modifier une permission.');
+            return $this->redirectToRoute("viewPermission");
         }
     }
 
@@ -258,7 +263,7 @@ class PermissionController extends Controller {
     {
         $session = new Session();
 
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
@@ -276,7 +281,8 @@ class PermissionController extends Controller {
                 throw new NotFoundHttpException("La permission d'id " . $id . " n'existe pas.");
             }
         }else{
-            return $this->redirectToRoute("login");
+            $this->get('session')->getFlashBag()->set('error_notice', 'Vous n\'avez pas les droits nécessaires pour supprimer une permission.');
+            return $this->redirectToRoute("viewPermission");
         }
     }
 
@@ -287,27 +293,37 @@ class PermissionController extends Controller {
     {
         $session = new Session();
 
-        $perm = $this->getDoctrine()->getManager()->getRepository('AppBundle:Permission')->find($id);
-        if ($perm != null) {
-            $perm->setState(1);
-            $em = $this->getDoctrine()->getManager();
-            $em->flush();
-            $permRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission");
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if ($expiry_service->hasExpired()) {
+                return $this->redirectToRoute("expiryPage");
+            }
 
-            $numberOfStack = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(0);
-            $numberOfGranted = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(1);
-            $numberOfRefused = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(2);
+            $perm = $this->getDoctrine()->getManager()->getRepository('AppBundle:Permission')->find($id);
+            if ($perm != null) {
+                $perm->setState(1);
+                $em = $this->getDoctrine()->getManager();
+                $em->flush();
+                $permRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission");
 
-            $listPerm = $permRep->findByOrder();
-            return $this->render("cas/viewPermission.html.twig",array(
-                'message'=>"Cette permission a été accordée",
-                'listPerm'=>$listPerm,
-                'stack'=>$numberOfStack,
-                'granted'=>$numberOfGranted,
-                'refused'=>$numberOfRefused
-            ));
-        } else{
-            throw new NotFoundHttpException("La permission d'id " . $id . " n'existe pas.");
+                $numberOfStack = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(0);
+                $numberOfGranted = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(1);
+                $numberOfRefused = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(2);
+
+                $listPerm = $permRep->findByOrder();
+                return $this->render("cas/viewPermission.html.twig",array(
+                    'message'=>"Cette permission a été accordée",
+                    'listPerm'=>$listPerm,
+                    'stack'=>$numberOfStack,
+                    'granted'=>$numberOfGranted,
+                    'refused'=>$numberOfRefused
+                ));
+            } else{
+                throw new NotFoundHttpException("La permission d'id " . $id . " n'existe pas.");
+            }
+        }else{
+            $this->get('session')->getFlashBag()->set('error_notice', 'Vous n\'avez pas les droits nécessaires pour traiter une permission.');
+            return $this->redirectToRoute("viewPermission");
         }
     }
 
@@ -318,27 +334,37 @@ class PermissionController extends Controller {
     {
         $session = new Session();
 
-        $perm = $this->getDoctrine()->getManager()->getRepository('AppBundle:Permission')->find($id);
-        if ($perm != null) {
-            $perm->setState(2);
-            $em = $this->getDoctrine()->getManager();
-            $em->flush();
-            $permRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission");
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if ($expiry_service->hasExpired()) {
+                return $this->redirectToRoute("expiryPage");
+            }
 
-            $numberOfStack = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(0);
-            $numberOfGranted = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(1);
-            $numberOfRefused = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(2);
+            $perm = $this->getDoctrine()->getManager()->getRepository('AppBundle:Permission')->find($id);
+            if ($perm != null) {
+                $perm->setState(2);
+                $em = $this->getDoctrine()->getManager();
+                $em->flush();
+                $permRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission");
 
-            $listPerm = $permRep->findByOrder();
-            return $this->render("cas/viewPermission.html.twig",array(
-                'message'=>"Cette permission a été rejetée",
-                'listPerm'=>$listPerm,
-                'stack'=>$numberOfStack,
-                'granted'=>$numberOfGranted,
-                'refused'=>$numberOfRefused
-            ));
-        } else{
-            throw new NotFoundHttpException("La permission d'id " . $id . " n'existe pas.");
+                $numberOfStack = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(0);
+                $numberOfGranted = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(1);
+                $numberOfRefused = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(2);
+
+                $listPerm = $permRep->findByOrder();
+                return $this->render("cas/viewPermission.html.twig",array(
+                    'message'=>"Cette permission a été rejetée",
+                    'listPerm'=>$listPerm,
+                    'stack'=>$numberOfStack,
+                    'granted'=>$numberOfGranted,
+                    'refused'=>$numberOfRefused
+                ));
+            } else{
+                throw new NotFoundHttpException("La permission d'id " . $id . " n'existe pas.");
+            }
+        }else{
+            $this->get('session')->getFlashBag()->set('error_notice', 'Vous n\'avez pas les droits nécessaires pour traiter une permission.');
+            return $this->redirectToRoute("viewPermission");
         }
     }
 }

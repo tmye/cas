@@ -7,21 +7,21 @@
     <div class="row">
         <div class="col l12">
             <h5 class="page-title"><span class="fa fa-plus-circle"></span> Gestion des Permissions</h5>
+            {% for message in  app.session.flashbag.get('error_notice') %}
+                <div class="row">
+                    <div class="col l12">
+                        <div class="operation_error_message">
+                            {{ message }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
             <div class="row">
                 <div class="col l12">
                     <ul class="collapsible" data-collapsible="accordion">
                         <li>
                             <div class="collapsible-header active">Liste des permissions</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
-                                <div class="row">
-                                    <div class="col l12">
-                                        {%  if message is defined and message is not null %}
-                                            <div class="operation_message">
-                                                {{ message }}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
                                 <div class="row">
                                     <div class="col l12">
                                         <ul class="tabs">

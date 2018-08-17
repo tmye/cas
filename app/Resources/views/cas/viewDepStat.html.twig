@@ -215,10 +215,10 @@
                     var dataDepartArgent = [];
                     for (var i=0;i<elLength;i++){
                         labels.push(data[i]["departement"]);
-                        dataRetardTemps.push(precisionRound(data[i]["tpr"],0));
-                        dataRetardArgent.push(precisionRound(data[i]["spr"],0));
-                        dataDepartTemps.push(precisionRound(data[i]["tpd"],0));
-                        dataDepartArgent.push(precisionRound(data[i]["spd"],0));
+                        dataRetardTemps.push(precisionRound(data[i]["tpr"],3));
+                        dataRetardArgent.push(precisionRound(data[i]["spr"],3));
+                        dataDepartTemps.push(precisionRound(data[i]["tpd"],3));
+                        dataDepartArgent.push(precisionRound(data[i]["spd"],3));
                     }
                     console.log(data);
                     console.log("Length of elements : "+data.length);
