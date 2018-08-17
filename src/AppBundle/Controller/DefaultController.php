@@ -779,8 +779,8 @@ class DefaultController extends StatsController
                     $em->persist($ci);
                     $em->flush();
 
-                    $this->get('session')->getFlashBag()->set('notice', 'Cet employé a été ajouté avec succès');
-                    return $this->redirectToRoute("addEmployee");
+                    $this->get('session')->getFlashBag()->set('notice', 'Les informations de la société ont été mises à jour');
+                    return $this->redirectToRoute("customizeCompanyInfos");
                 }
 
             }

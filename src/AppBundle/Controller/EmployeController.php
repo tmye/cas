@@ -418,7 +418,7 @@ class EmployeController extends Controller {
 
                 $wh = $this->returnWorkingHoursAction();
                 $this->get('session')->getFlashBag()->set('notice', 'Cet employé a été supprimé de la base de données');
-                return $this->redirectToRoute("addEmployee");
+                return $this->redirectToRoute("viewEmployee");
             } else{
                 throw new NotFoundHttpException("L'employé d'id " . $id . " n'existe pas.");
             }
