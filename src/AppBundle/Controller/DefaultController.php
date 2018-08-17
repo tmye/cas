@@ -1054,6 +1054,16 @@ class DefaultController extends StatsController
 
         $spreadsheet = new Spreadsheet;
         $sheet = $spreadsheet->getActiveSheet();
+
+        $boldStyle = [
+            'font' => [
+                'name' => 'Arial',
+                'bold' => true,
+            ],
+            'quotePrefix'    => true
+        ];
+
+        $spreadsheet->getActiveSheet()->getStyle('A1')->applyFromArray($boldStyle);
         $sheet->setCellValue('A1', 'HISTORIQUE DU '.$fromDate.' AU '.$toDate);
 
         $explodedFromDate = explode("-",$fromDate);
@@ -1096,6 +1106,20 @@ class DefaultController extends StatsController
                 $permission_lost_time += $row["tempsPerdu"];
             }
 
+            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber-1))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+2))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+3))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+4))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+5))->applyFromArray($boldStyle);
+            
+            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+7))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+8))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+9))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+10))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+12))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+13))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('B'.($nextNameCellNumber-1))->applyFromArray($boldStyle);
+            
             $sheet->setCellValue('A'.($nextNameCellNumber-1), "NOM");
             $sheet->setCellValue('A'.($nextNameCellNumber+2), "Arrivée");
             $sheet->setCellValue('A'.($nextNameCellNumber+3), "Pause");
@@ -1119,9 +1143,10 @@ class DefaultController extends StatsController
 
                 $theDayNumber = date('N',$nowTime);
                 $theDay = $this->dateDayNameFrench($theDayNumber);
-                $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber-1), date("d",$nowTime).'/'.date("m",$nowTime));
                 
+                $spreadsheet->getActiveSheet()->getStyle($verticalCellsTab[$cpt].''.($nextNameCellNumber-1))->applyFromArray($boldStyle);
                 $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber-1), date("d",$nowTime).'/'.date("m",$nowTime));
+                //$sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber-1), date("d",$nowTime).'/'.date("m",$nowTime));
                 
                 foreach($newTab as $el){
                     $spreadsheet->getActiveSheet()->getStyle($el."".($nextNameCellNumber+16))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
