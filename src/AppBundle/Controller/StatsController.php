@@ -455,7 +455,7 @@ class StatsController extends ClockinReccordController
                                 $perte_temps = (float)($retardDiff[0]/(60))/60;
                                 $ct = date('H:i',$retardDiff[1]);
                                 if($taux > 0){
-                                    $sommePerduRetard += ((($salaire*12)/52)/$taux)*$perte_temp;
+                                    $sommePerduRetard += ((($salaire*12)/52)/$taux)*$perte_temps;
                                 }else{
                                     $sommePerduRetard = 0;
                                 }
@@ -645,8 +645,9 @@ class StatsController extends ClockinReccordController
                         	if( ($_arr == 0 || $_arr == null) || ($_dep == 0 || $_dep == null) || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
 
                         		if($controlNowTimeForOtheType != $nowTime){
-                        			$inc_auth++;
-		                            $lost_time_jour += ((int)($his["quota"]))/60;
+                                    $inc_auth++;
+		                            $lost_time_jour = ((int)($his["quota"]))/60;                                    
+		                            //$lost_time_jour += ((int)($his["quota"]))/60;
 		                            $lost_time += $lost_time_jour;
 		                            if($taux > 0){
 		                                $sommePerduAuth += ((($salaire*12)/52)/$taux)*$lost_time_jour;
@@ -660,8 +661,9 @@ class StatsController extends ClockinReccordController
 
                         		if($controlNowTimeForOtheType != $nowTime){
                         			$inc_auth++;
-		                            $lost_time_jour += ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
-		                            $lost_time += $lost_time_jour;
+		                            $lost_time_jour = ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
+		                            //$lost_time_jour += ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;                                    
+                                    $lost_time += $lost_time_jour;
 		                            if($taux > 0){
 		                                $sommePerduAuth += ((($salaire*12)/52)/$taux)*$lost_time_jour;
 		                            }else{
