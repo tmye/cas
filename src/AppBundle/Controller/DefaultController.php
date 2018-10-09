@@ -51,7 +51,7 @@ class DefaultController extends StatsController
         }
         return $str;
     }
-    
+
     /*public function precisionRound($number, $precision) {
         $factor = pow(10, $precision);
         return round(number * factor) / factor;
@@ -852,13 +852,25 @@ class DefaultController extends StatsController
             $donnees = $this->userStatsAction($request,$emp,$fromDate,$toDate);
             $donnees = json_decode($donnees->getContent(),true);
             $permission_lost_time = 0;
-            
+
+            /* recuperation du taux horaire */
+            if (($employe->getWorkingHour()->getTaux()) == 0)
+                $taux = 0;
+            else
+                $taux = ($employe->getWorkingHour()->getTaux());
+
             if($type == "3" || $type == 3){
                 $ss = (($employe->getSalary*12)/52)/($employe->getWorkingHour()->getJourTravail())*($donnees["nbreJourTravail"]);
             }else if($type == "2" || $type == 2){
-                $ss = ((($employe->getSalary()*12)/52)/$employe->getworkingHour()->getTaux())*$donnees["quota_total"]/60;
+                if ($taux == 0)
+                    $ss = 0;
+                else
+                    $ss = ((($employe->getSalary()*12)/52)/$taux)*$donnees["quota_total"]/60;
             }else if($type == "1" || $type == 1 || $type == "4" || $type == 4){
-                $ss = ((($employe->getSalary()*12)/52)/$employe->getWorkingHour()->getTaux())*$donnees["quota_1_4"];
+                if ($taux == 0)
+                    $ss = 0;
+                else
+                    $ss = ((($employe->getSalary()*12)/52)/$taux)*$donnees["quota_1_4"];
             }else{
                 $ss += 0;
             }
@@ -885,7 +897,7 @@ class DefaultController extends StatsController
 
             $user_info_header = array('Nom', 'Prenom(s)', 'Fonction', 'Departement','Salaire', 'Revenu*','Duree hebdo');
             $user_info_data = array(
-                array($employe->getSurname(), $employe->getLastname(), $employe->getFunction(), $employe->getDepartement()->getName(),$employe->getSalary(), round($ss,2),$employe->getWorkingHour()->getTaux())
+                array($employe->getSurname(), $employe->getLastname(), $employe->getFunction(), $employe->getDepartement()->getName(),$employe->getSalary(), round($ss,2),$taux)
             );
 
             if($type == "2" or $type == 2){
@@ -904,7 +916,7 @@ class DefaultController extends StatsController
                         array("Temps",$donnees["tpa"],round($donnees["tpr"],2),round($donnees["tpd"],2),$donnees["lost_time"],round($donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"],2),$permission_lost_time),
                     );
                     $data3 = array(
-                        array("Somme",round($donnees["spa"],2),round($donnees["spr"],2),round($donnees["spd"],2),round($donnees["spAuth"],2),round($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"],2),round((($employe->getSalary()*12)/52)/($employe->getWorkingHour()->getTaux())*$permission_lost_time,2)),
+                        array("Somme",round($donnees["spa"],2),round($donnees["spr"],2),round($donnees["spd"],2),round($donnees["spAuth"],2),round($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"],2),$taux == 0 ? 0 : round((($employe->getSalary()*12)/52)/$taux*$permission_lost_time,2)),
                     );
                     $data4 = array(
                         array("Net a payer sans bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"]),2)),
@@ -918,7 +930,7 @@ class DefaultController extends StatsController
                         array("Temps",$donnees["tpa"],round($donnees["tpr"],2),round($donnees["tpd"],2),$donnees["lost_time"],round($donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"],2),$permission_lost_time,round($donnees["tempsBonus"]*(-1),2)),
                     );
                     $data3 = array(
-                        array("Somme",round($donnees["spa"],2),round($donnees["spr"],2),round($donnees["spd"],2),round($donnees["spAuth"],2),round($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"],2),round((($employe->getSalary()*12)/52)/($employe->getWorkingHour()->getTaux())*$permission_lost_time,2),round($donnees["sommeArgentBonus"]*(-1),0)),
+                        array("Somme",round($donnees["spa"],2),round($donnees["spr"],2),round($donnees["spd"],2),round($donnees["spAuth"],2),round($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"],2),$taux == 0 ? 0 : round((($employe->getSalary()*12)/52)/$taux*$permission_lost_time,2),round($donnees["sommeArgentBonus"]*(-1),0)),
                     );
                     $data4 = array(
                         array("Net a payer sans bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"]),2)),
@@ -937,12 +949,13 @@ class DefaultController extends StatsController
                         array("Temps",$donnees["tpa"],round($donnees["tpr"],2),round($donnees["tpd"],2),$donnees["lost_time"],round($donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"],2),$permission_lost_time),
                     );
                     $data3 = array(
-                        array("Somme",round($donnees["spa"],2),round($donnees["spr"],2),round($donnees["spd"],2),round($donnees["spAuth"],2),round($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"],2),round((($employe->getSalary()*12)/52)/($employe->getWorkingHour()->getTaux())*$permission_lost_time,2)),
+                        array("Somme",round($donnees["spa"],2),round($donnees["spr"],2),round($donnees["spd"],2),round($donnees["spAuth"],2),round($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"],2),$taux == 0 ? 0 : round((($employe->getSalary()*12)/52)/$taux*$permission_lost_time,2)),
                     );
                     $data4 = array(
                         array("Net a payer sans bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"]),2)),
                     );
                 }else{
+
                     $header = array('','Absences', 'Retards', 'Departs', 'Auth','Total','Permissions', 'Bonus');
                     $data = array(
                         array("Nombre",$donnees["absences"],$donnees["retards"],$donnees["departs"],$donnees["inc_auth"],$donnees["absences"]+$donnees["retards"]+$donnees["departs"]+$donnees["inc_auth"],sizeof($donnees["permissionData"]["absenceStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["retardStats"]),$donnees["nbreBonus"]),
@@ -951,7 +964,7 @@ class DefaultController extends StatsController
                         array("Temps",$donnees["tpa"],round($donnees["tpr"],2),round($donnees["tpd"],2),$donnees["lost_time"],round($donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"],2),$permission_lost_time,round($donnees["tempsBonus"]*(-1),2)),
                     );
                     $data3 = array(
-                        array("Somme",round($donnees["spa"],2),round($donnees["spr"],2),round($donnees["spd"],2),round($donnees["spAuth"],2),round($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"],2),round((($employe->getSalary()*12)/52)/($employe->getWorkingHour()->getTaux())*$permission_lost_time,2),round($donnees["sommeArgentBonus"]*(-1),0)),
+                        array("Somme",round($donnees["spa"],2),round($donnees["spr"],2),round($donnees["spd"],2),round($donnees["spAuth"],2),round($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"],2),$taux == 0 ? 0 : round((($employe->getSalary()*12)/52)/$taux*$permission_lost_time,2),round($donnees["sommeArgentBonus"]*(-1),0)),
                     );
                     $data4 = array(
                         array("Net a payer sans bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"]),2)),
@@ -1111,7 +1124,7 @@ class DefaultController extends StatsController
             $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+3))->applyFromArray($boldStyle);
             $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+4))->applyFromArray($boldStyle);
             $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+5))->applyFromArray($boldStyle);
-            
+
             $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+7))->applyFromArray($boldStyle);
             $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+8))->applyFromArray($boldStyle);
             $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+9))->applyFromArray($boldStyle);
@@ -1119,7 +1132,7 @@ class DefaultController extends StatsController
             $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+12))->applyFromArray($boldStyle);
             $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+13))->applyFromArray($boldStyle);
             $spreadsheet->getActiveSheet()->getStyle('B'.($nextNameCellNumber-1))->applyFromArray($boldStyle);
-            
+
             $sheet->setCellValue('A'.($nextNameCellNumber-1), "NOM");
             $sheet->setCellValue('A'.($nextNameCellNumber+2), "Arrivée");
             $sheet->setCellValue('A'.($nextNameCellNumber+3), "Pause");
@@ -1143,11 +1156,11 @@ class DefaultController extends StatsController
 
                 $theDayNumber = date('N',$nowTime);
                 $theDay = $this->dateDayNameFrench($theDayNumber);
-                
+
                 $spreadsheet->getActiveSheet()->getStyle($verticalCellsTab[$cpt].''.($nextNameCellNumber-1))->applyFromArray($boldStyle);
                 $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber-1), date("d",$nowTime).'/'.date("m",$nowTime));
                 //$sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber-1), date("d",$nowTime).'/'.date("m",$nowTime));
-                
+
                 foreach($newTab as $el){
                     $spreadsheet->getActiveSheet()->getStyle($el."".($nextNameCellNumber+16))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
                     $spreadsheet->getActiveSheet()->getStyle($el."".($nextNameCellNumber+16))->getFill()->getStartColor()->setARGB('bdbdbd');
@@ -1179,7 +1192,7 @@ class DefaultController extends StatsController
 
                 $nowTime = $nowTime+86400;
             }
-            
+
             $nextNameCellNumber += 20;
         }
 
