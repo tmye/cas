@@ -476,4 +476,26 @@ class EmployeController extends Controller {
                 break;
         }
     }
+
+    /**
+     * @Route("/repairEmployee",name="repairEmployee")
+     */
+    public function repairEmployee(Request $request) {
+
+        $employees = $this->getDoctrine()->getRepository("AppBundle:Employe")->findAll();
+
+        foreach ($employees as $employee) {
+
+            $short_name = /*$employee->getSurname(). " ".*/ $employee->getLastname();
+
+//            echo $short_name.'<br/>';
+            $employee->setShortName($short_name);
+            $this->getDoctrine()->getManager()->flush();
+        }
+
+        echo "finish";exit;
+
+    }
+
+
 }

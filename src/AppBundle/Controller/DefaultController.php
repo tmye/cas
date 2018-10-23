@@ -164,7 +164,7 @@ class DefaultController extends StatsController
                 return new Response("Erreur avec la soumission du logo");
             }
         }else{
-            return $this->redirectToRoute("firstTimeInitialization");
+            return $this->redirectToRoute("login");
         }
     }
 
@@ -897,7 +897,7 @@ class DefaultController extends StatsController
 
             $user_info_header = array('Nom', 'Prenom(s)', 'Fonction', 'Departement','Salaire', 'Revenu*','Duree hebdo');
             $user_info_data = array(
-                array($employe->getSurname(), $employe->getLastname(), $employe->getFunction(), $employe->getDepartement()->getName(),$employe->getSalary(), round($ss,2),$taux)
+                array($employe->getSurname(), $employe->getShortName(), $employe->getFunction(), $employe->getDepartement()->getName(),$employe->getSalary(), round($ss,2),$taux)
             );
 
             if($type == "2" or $type == 2){
@@ -1048,7 +1048,7 @@ class DefaultController extends StatsController
     /**
      * @Route("/generateExcel",name="generateExcel")
      */
-    public function generateExcelAction(Request $request){
+    public function generateExcelAction(Request $request) {
         $this->returnVerticalCells(80);
         $t = $request->request->get('type');
         $empId = $request->request->get('destination');

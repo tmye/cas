@@ -102,6 +102,16 @@ class Employe implements UserInterface
      */
     private $lastName;
 
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="short_name", type="string", length=45)
+     * @Assert\NotBlank()
+     */
+    private $shortName;
+
+
     /**
      * @var string
      *
@@ -670,5 +680,29 @@ class Employe implements UserInterface
     public function getFingerprints()
     {
         return $this->fingerprints;
+    }
+
+    /**
+     * Set shortName
+     *
+     * @param string $shortName
+     *
+     * @return Employe
+     */
+    public function setShortName($shortName)
+    {
+        $this->shortName = $shortName;
+
+        return $this;
+    }
+
+    /**
+     * Get shortName
+     *
+     * @return string
+     */
+    public function getShortName()
+    {
+        return $this->shortName;
     }
 }
