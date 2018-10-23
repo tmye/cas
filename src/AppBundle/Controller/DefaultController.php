@@ -164,7 +164,7 @@ class DefaultController extends StatsController
                 return new Response("Erreur avec la soumission du logo");
             }
         }else{
-            return $this->redirectToRoute("login");
+            return $this->redirectToRoute("firstTimeInitialization");
         }
     }
 
