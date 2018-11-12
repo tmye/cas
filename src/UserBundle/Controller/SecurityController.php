@@ -16,12 +16,10 @@ class SecurityController extends Controller
 {
     public function loginAction(){
 
-        // Trying to read the file content
-
-        $file = fopen($this->getParameter("web_dir")."/first_time",'r+');
-        $valeur = fgets($file);
-        // Testing the value returned
-        if(sha1("initialized") == $valeur){
+        // Reading the first time parameter directly from the database
+        $ft = $this->getDoctrine()->getManager()->getRepository("AppBundle:Setting")->findAll();
+        $ft = $ft[0];
+        if(!$ft->getFirstTime()){
             // Is not the first time
             $session = new Session();
             $cc = $this->getDoctrine()->getManager()->getRepository("AppBundle:CompanyConfig")->findAll();
@@ -48,7 +46,6 @@ class SecurityController extends Controller
             // Execute some instructions before updating the file
             return $this->redirectToRoute("firstTimeInitialization");
         }
-        fclose($file);
 
         // Les éventuelles erreurs de soumission
         $authenticationUtils = $this->get('security.authentication_utils');

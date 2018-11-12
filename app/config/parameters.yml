@@ -17,3 +17,4 @@ parameters:
     default_password: 555
     web_dir: "%kernel.root_dir%/../web"
     conf_dir: "%kernel.root_dir%/../app/config"
+    first_time: true
