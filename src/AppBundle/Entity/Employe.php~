@@ -70,10 +70,9 @@ class Employe implements UserInterface
     private $password;
 
     /**
-     * @var string
      *
-     * @ORM\Column(name="salt", type="string", length=255)
-     * @Assert\NotBlank()
+     * @var string
+     * @ORM\Column(name="salt", type="string",  nullable=true, length=255)
      */
     private $salt;
 
@@ -98,17 +97,20 @@ class Employe implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="middle_name", type="string", length=45, nullable=true)
-     */
-    private $middleName;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="last_name", type="string", length=45)
      * @Assert\NotBlank()
      */
     private $lastName;
+
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="short_name", type="string", length=45)
+     * @Assert\NotBlank()
+     */
+    private $shortName;
+
 
     /**
      * @var string
@@ -128,9 +130,7 @@ class Employe implements UserInterface
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="pic_path", type="string", length=45)
-     * @Assert\NotBlank()
+     * @ORM\Column(name="picture", type="string", nullable=true)
      */
     private $picture;
 
@@ -138,17 +138,15 @@ class Employe implements UserInterface
      * @var string
      *
      * @ORM\Column(name="auth", type="string", length=45)
-     * @Assert\NotBlank()
      */
     private $auth;
 
     /**
-     * @var array
+     * @var string
      *
-     * @ORM\Column(name="fingerprints", type="array", length=255)
-     * @Assert\NotBlank()
+     * @ORM\Column(name="fingerprints", type="string", nullable=true)
      */
-    private $fingerprints = array();
+    private $fingerprints;
 
     /**
      * @var int
@@ -200,6 +198,7 @@ class Employe implements UserInterface
     {
         $this->setUsername("user");
         $this->setRoles(array("ROLE_USER"));
+        $this->setAuth(0);
     }
     // Getters and Setters
 
@@ -227,7 +226,6 @@ class Employe implements UserInterface
     public function setEmployeeCcid($employeeCcid)
     {
         $this->employeeCcid = $employeeCcid;
-
         return $this;
     }
 
@@ -262,29 +260,6 @@ class Employe implements UserInterface
     public function getSurname()
     {
         return $this->surname;
-    }
-
-    /**
-     * Set middleName
-     *
-     * @param string $middleName
-     * @return Employe
-     */
-    public function setMiddleName($middleName)
-    {
-        $this->middleName = $middleName;
-
-        return $this;
-    }
-
-    /**
-     * Get middleName
-     *
-     * @return string 
-     */
-    public function getMiddleName()
-    {
-        return $this->middleName;
     }
 
     /**
