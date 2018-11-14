@@ -35,7 +35,107 @@ use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+
 class EmployeController extends Controller {
+
+    /**
+     * @Route("/importEmployees",name="importEmployees")
+     */
+    public function importEmployeesAction(Request $request)
+    {
+
+        //print_r($this->get('session')->getFlashBag()->get('notice'));
+
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+            $employe = new Employe();
+            $employe->setLastUpdate(new \DateTime());
+            $employe->setCreateDate(new \DateTime());
+            $employe->setEmployeeCcid(10000);
+            $employe->setPassword(md5($this->getParameter("default_password")));
+            $employe->setPicture($this->getDefaultPicture());
+            //$employe->setGodfatherCcid($this->getUser()->getId());
+            $employe->setGodfatherCcid(0);
+
+            // On crée le FormBuilder grâce au service form factory
+
+
+            if ($request->isMethod('POST')) {
+
+                $em = $this->getDoctrine()->getManager();
+                $file_name_arr = explode(".",$_FILES["excelFile"]["name"]);
+                    $extension = end($file_name_arr);
+                    if(($extension == "xlsx") || ($extension == "xls")){
+                        // We are in the case of a valid excel file
+                        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+                        $spreadsheet = $reader->load($_FILES['excelFile']['tmp_name']);
+                        $sheetData = $spreadsheet->getActiveSheet()->toArray();
+                        $i=0;
+                        foreach ($sheetData as $empArr){
+                            if($i>0){
+                                $employe = new Employe();
+                                $departement = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->find($empArr[0]);
+                                $working_hour = $this->getDoctrine()->getManager()->getRepository("AppBundle:WorkingHours")->find($empArr[1]);
+                                $employe->setDepartement($departement);
+                                $employe->setWorkingHour($working_hour);
+                                $employe->setSurname($empArr[2]);
+                                $employe->setLastName($empArr[3]);
+                                $employe->setShortName($empArr[4]);
+                                $employe->setAdress($empArr[5]);
+                                $employe->setContact($empArr[6]);
+                                $employe->setSalary($empArr[7]);
+                                $employe->setFunction($empArr[8]);
+
+                                if((trim($empArr[9]) != null) && (trim($empArr[9]) != null)){
+                                    $hireTime = strtotime($empArr[9]." 00:00:00");
+                                    $hireDate = new \DateTime();
+                                    $hireDate->setTimestamp($hireTime);
+                                }else{
+                                    print_r("Erreur : la date n'est pas bien formatée");
+                                    $hireDate = null;
+                                }
+
+                                $employe->setHireDate($hireDate);
+                                $employe->setEmployeeCcid(10000);
+                                $employe->setGodfatherCcid($this->getUser()->getId());
+                                $employe->setPassword(md5(555));
+                                $employe->setCreateDate(new \DateTime());
+
+                                $em->persist($employe);
+                                // First flush to get the last ID
+                                $em->flush();
+                                $last_id = $employe->getId();
+                                $employe->setEmployeeCcid(10000 + $last_id);
+                                $employe->setUsername($employe->getEmployeeCcid());
+                                // Final flush
+                                $em->flush();
+                            }
+                            $i++;
+                        }
+                    }else{
+                        print_r("Erreur d'extension");
+                    }
+
+                    //$wh = $this->returnWorkingHoursAction();
+                    $this->get('session')->getFlashBag()->set('notice', 'Ces employés ont été importés avec succès');
+                    return $this->redirectToRoute("importEmployees");
+            }
+
+            // À ce stade, le formulaire n'est pas valide car :
+            // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
+            // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
+
+            $wh = $this->returnWorkingHoursAction();
+            return $this->render('cas/importEmployees.html.twig');
+        }else{
+            return $this->redirectToRoute("login");
+        }
+    }
 
     /**
      * @Route("/addEmployee",name="addEmployee")

@@ -181,7 +181,7 @@ class Employe implements UserInterface
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="last_update", type="datetime")
+     * @ORM\Column(name="last_update", type="datetime", nullable=true)
      */
     private $lastUpdate;
 

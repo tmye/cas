@@ -4,16 +4,14 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Admin;
 use AppBundle\Entity\CompanyInfos;
+use AppBundle\Entity\Setting;
 use AppBundle\fpdf181\fpdf;
 use AppBundle\Entity\CompanyConfig;
-use AppBundle\Entity\Departement;
-use AppBundle\Entity\Employe;
 use AppBundle\Entity\Expiration;
 use AppBundle\Entity\WorkingHours;
 use AppBundle\fpdf181\tablepdf;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -22,9 +20,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use TmyeDeviceBundle\Entity\DevicePubPic;
-use TmyeDeviceBundle\Entity\UpdateEntity;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -152,10 +150,26 @@ class DefaultController extends StatsController
 
                 // After persistance operation, we must edit initialization file
 
-                $file = fopen($this->getParameter("web_dir")."/first_time",'r+');
-                fseek($file,0);
-                fputs($file,sha1("initialized"));
-                fclose($file);
+                $em = $this->getDoctrine()->getManager();
+                $ft = $this->getDoctrine()->getManager()->getRepository("AppBundle:Setting")->findAll();
+
+                if(sizeof($ft) > 0){
+                    $ft = $ft[0]->getFirstTime();
+                }else{
+                    $ft = true;
+                }
+
+                // No data is inserted yet in the database
+                if($ft){
+                    $new_ft = new Setting();
+                    $new_ft->setFirstTime(false);
+                    $em->persist($new_ft);
+                    $em->flush();
+                }else{
+                    $ft->setFirstTime(false);
+                    $em->flush();
+                }
+
 
                 // Now that all operations are achieved, we can return a response
 
@@ -1197,18 +1211,19 @@ class DefaultController extends StatsController
         }
 
         $writer = new Xlsx($spreadsheet);
-        $writer->save('rapport.xlsx');
+        $now_date = date('d')."-".date('m').'-'.date('Y').'_'.date('H').':'.date('i').':'.date('s');
+        $writer->save('rapport_'.$now_date.'.xlsx');
 
         //sleep(10);
 
-        $filePath = $this->getParameter("web_dir")."/rapport.xlsx";
+        $filePath = $this->getParameter("web_dir")."/rapport_".$now_date.".xlsx";
 
         $response = new BinaryFileResponse($filePath);
         $response->trustXSendfileTypeHeader();
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_INLINE,
-            "rapport.xlsx",
-            iconv('UTF-8', 'ASCII//TRANSLIT', "rapport.xlsx")
+            "rapport_".$now_date.".xlsx",
+            iconv('UTF-8', 'ASCII//TRANSLIT', "rapport_".$now_date.".xlsx")
         );
         return $response;
     }

@@ -18,8 +18,13 @@ class SecurityController extends Controller
 
         // Reading the first time parameter directly from the database
         $ft = $this->getDoctrine()->getManager()->getRepository("AppBundle:Setting")->findAll();
-        $ft = $ft[0];
-        if(!$ft->getFirstTime()){
+        if(sizeof($ft) > 0){
+            $ft = $ft[0]->getFirstTime();
+        }else{
+            $ft = true;
+        }
+
+        if(!$ft){
             // Is not the first time
             $session = new Session();
             $cc = $this->getDoctrine()->getManager()->getRepository("AppBundle:CompanyConfig")->findAll();
