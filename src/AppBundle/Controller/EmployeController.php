@@ -37,6 +37,9 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx as xlswriter;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class EmployeController extends Controller {
 
@@ -45,8 +48,6 @@ class EmployeController extends Controller {
      */
     public function importEmployeesAction(Request $request)
     {
-
-        //print_r($this->get('session')->getFlashBag()->get('notice'));
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
@@ -132,6 +133,85 @@ class EmployeController extends Controller {
 
             $wh = $this->returnWorkingHoursAction();
             return $this->render('cas/importEmployees.html.twig');
+        }else{
+            return $this->redirectToRoute("login");
+        }
+    }
+
+    /**
+     * @Route("/exportEmployees",name="exportEmployees")
+     */
+    public function exportEmployeesAction(Request $request)
+    {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+
+            return $this->render('cas/exportEmployees.html.twig');
+        }else{
+            return $this->redirectToRoute("login");
+        }
+    }
+
+    /**
+     * @Route("/exportEmployeesExcel",name="exportEmployeesExcel")
+     */
+    public function exportEmployeesExcelAction(Request $request)
+    {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+
+            $spreadsheet = new Spreadsheet;
+            $sheet = $spreadsheet->getActiveSheet();
+            $sheet->setCellValue('A1', "departement_id");
+            $sheet->setCellValue('B1', "working_hour_id");
+            $sheet->setCellValue('C1', "surname");
+            $sheet->setCellValue('D1', "last_name");
+            $sheet->setCellValue('E1', "short_name");
+            $sheet->setCellValue('F1', "adress");
+            $sheet->setCellValue('G1', "contact");
+            $sheet->setCellValue('H1', "salary");
+            $sheet->setCellValue('I1', "function");
+            $sheet->setCellValue('J1', "hire_date");
+
+            $employees = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
+
+            $i = 1;
+            foreach ($employees as $employe){
+                $i++;
+                $sheet->setCellValue('A'.$i, $employe->getDepartement()->getId());
+                $sheet->setCellValue('B'.$i, $employe->getWorkingHour()->getId());
+                $sheet->setCellValue('C'.$i, $employe->getSurname());
+                $sheet->setCellValue('D'.$i, $employe->getLastName());
+                $sheet->setCellValue('E'.$i, $employe->getShortName());
+                $sheet->setCellValue('F'.$i, $employe->getAdress());
+                $sheet->setCellValue('G'.$i, $employe->getContact());
+                $sheet->setCellValue('H'.$i, $employe->getSalary());
+                $sheet->setCellValue('I'.$i, $employe->getFunction());
+                $sheet->setCellValue('J'.$i, $employe->getHireDate());
+            }
+
+            $writer = new xlswriter($spreadsheet);
+            $now_date = date('d')."-".date('m').'-'.date('Y').'_'.date('H').':'.date('i').':'.date('s');
+            $writer->save('employes_'.$now_date.'.xlsx');
+            $filePath = $this->getParameter("web_dir")."/employes_".$now_date.".xlsx";
+
+            $response = new BinaryFileResponse($filePath);
+            $response->trustXSendfileTypeHeader();
+            $response->setContentDisposition(
+                ResponseHeaderBag::DISPOSITION_INLINE,
+                "employes_".$now_date.".xlsx",
+                iconv('UTF-8', 'ASCII//TRANSLIT', "employes_".$now_date.".xlsx")
+            );
+            return $response;
+
         }else{
             return $this->redirectToRoute("login");
         }

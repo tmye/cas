@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}C.A.S - Employé{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col l12">
+            <h5 class="page-title"><span class="fa fa-download"></span> Sauvegarde des employés</h5>
+
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Exporter les employés</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                {% for message in  app.session.flashbag.get('notice') %}
+                                    <div class="row">
+                                        <div class="col l12">
+                                            <div class="operation_message">
+                                                {{ message }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                <div class="row">
+                                    <div class="col l12 clickZone" style="cursor: pointer;border: solid 1px rgba(0,0,0,0.2);border-radius:10px;background-color:rgba(0,0,0,0.1);text-align: center;padding: 40px 0px">
+                                        <p>Exporter les employés vers un fichier excel local</p>
+                                        <br/>
+                                        <span class="fa fa-download fa-4x" id="icon"></span>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col l12" style="text-align: center">
+                                            <br/>
+                                            <a href="{{ path('exportEmployeesExcel') }}">
+                                                <button class="btn-perso-historique validateButton">Exporter</button>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        // On s'attaque aux collapsibles
+        $(function () {
+            $(".cl_iEmp").addClass("collapsible_element_active");
+            $(".navigation_collapsible").collapsible('open',5);
+        });
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}

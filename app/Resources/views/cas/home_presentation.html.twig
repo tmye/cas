@@ -63,8 +63,8 @@
             <td><span style="color: black;font-weight: bold">Nombre d'employés </span></td>
             <td>
                 <span style="color: #111111;font-size: 1em;">
-                    {% if ci is defined and ci is not null %}
-                        {{ ci.employees }} Employés
+                    {% if nbreEmployes is defined and nbreEmployes is not null %}
+                        {{ nbreEmployes }} Employés
                     {% else %}
                     {% endif %}
                 </span>
