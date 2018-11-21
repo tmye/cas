@@ -143,6 +143,15 @@
 
 {% block javascripts %}
     <script>
+        $(function () {
+            $('#form_Ajouter').click(function () {
+                if($('.select_dropdown').val() == undefined){
+                    //alert("Aucun département n'a été sélectionné");
+                }
+            });
+        });
+    </script>
+    <script>
         $(function(){
             $(".deleteMachine").click(function(){
                 var rep = confirm("Etes-vous sur de vouloir supprimer cette machine?");
@@ -150,7 +159,7 @@
                 var path = "deleteMachine/";
                 path += id;
                 if(rep==true){
-                    alert("inside true block");
+                    //alert("inside true block");
                     window.location.href = path;
                 }
             });
