@@ -106,8 +106,7 @@ class Employe implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="short_name", type="string", length=45)
-     * @Assert\NotBlank()
+     * @ORM\Column(name="short_name", type="string", length=45, nullable=true)
      */
     private $shortName;
 

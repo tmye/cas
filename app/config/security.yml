@@ -14,7 +14,8 @@ security:
 
     role_hierarchy:
             ROLE_SECRET: ROLE_USER
-            ROLE_ADMIN: ROLE_SECRET
+            ROLE_ADMIN_CONTROL: ROLE_SECRET
+            ROLE_ADMIN: ROLE_ADMIN_CONTROL
             ROLE_SUPER_ADMIN: ROLE_ADMIN
 
     # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded

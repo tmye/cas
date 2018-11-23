@@ -113,19 +113,27 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col l6">
+                                                <div class="col l3">
                                                     <a href="{{ path("manageDeleteData") }}" style="color: inherit">
                                                         <p class="manageActions red">
                                                             <span class="fa fa-trash left" style="position: relative;top: 2px"></span>
-                                                            Suppression des éléments
+                                                            Suppression
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                                <div class="col l3">
+                                                    <a href="{{ path("switch") }}" style="color: inherit">
+                                                        <p class="manageActions red">
+                                                            <span class="fa fa-laptop left" style="position: relative;top: 2px"></span>
+                                                            Gestion machines
                                                         </p>
                                                     </a>
                                                 </div>
                                                 <div class="col l6">
-                                                    <a href="{{ path("switch") }}" style="color: inherit">
-                                                        <p class="manageActions red">
-                                                            <span class="fa fa-laptop left" style="position: relative;top: 2px"></span>
-                                                            Gestion relative aux machines
+                                                    <a href="{{ path("addNewAdmin") }}" style="color: inherit">
+                                                        <p class="manageActions">
+                                                            <span class="fa fa-user-circle left" style="position: relative;top: 2px"></span>
+                                                            Ajouter un admin
                                                         </p>
                                                     </a>
                                                 </div>

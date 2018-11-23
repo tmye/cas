@@ -26,7 +26,7 @@ class WorkingHoursController extends Controller
      */
     public function addWorkingHourAction(Request $request)
     {
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN_CONTROL')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
@@ -92,7 +92,7 @@ class WorkingHoursController extends Controller
      */
     public function editWorkingHourAction(Request $request, $id)
     {
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN_CONTROL')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
@@ -124,7 +124,7 @@ class WorkingHoursController extends Controller
      * @Route("/deleteWorkingHour/{id}", name="deleteWorkingHour")
     */
     public function deleteWorkingHourAction(Request $request, $id){
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN_CONTROL')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");

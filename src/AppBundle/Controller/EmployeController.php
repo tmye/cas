@@ -49,7 +49,7 @@ class EmployeController extends Controller {
     public function importEmployeesAction(Request $request)
     {
 
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_SECRET')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
@@ -143,7 +143,7 @@ class EmployeController extends Controller {
      */
     public function exportEmployeesAction(Request $request)
     {
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_SECRET')) {
             $expiry_service = $this->container->get('app_bundle_expired');
 
             if($expiry_service->hasExpired()){
@@ -225,7 +225,7 @@ class EmployeController extends Controller {
 
         //print_r($this->get('session')->getFlashBag()->get('notice'));
 
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_SECRET')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
@@ -342,7 +342,7 @@ class EmployeController extends Controller {
     public function editEmployeeAction(Request $request, $id)
     {
 
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_SECRET')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
@@ -454,7 +454,7 @@ class EmployeController extends Controller {
      */
     public function viewEmployeeAction(Request $request)
     {
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
@@ -551,7 +551,7 @@ class EmployeController extends Controller {
      */
     public function deleteEmployeeAction(Request $request, $id)
     {
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_SECRET')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");

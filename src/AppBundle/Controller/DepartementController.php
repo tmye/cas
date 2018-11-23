@@ -28,7 +28,7 @@ class DepartementController extends Controller
      */
     public function departementAction(Request $request)
     {
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_SECRET')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
@@ -87,7 +87,7 @@ class DepartementController extends Controller
      */
     public function deleteDepartementAction(Request $request, $id)
     {
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_SECRET')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
@@ -177,7 +177,7 @@ class DepartementController extends Controller
      */
     public function editDepartementAction(Request $request, $id)
     {
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_SECRET')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");

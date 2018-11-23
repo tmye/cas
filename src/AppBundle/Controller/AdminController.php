@@ -55,6 +55,35 @@ class AdminController extends Controller
     }
 
     /**
+     * @Route("/superAdmin/addNewAdmin",name="addNewAdmin")
+     */
+    public function addNewAdminAction(Request $request)
+    {
+        if($this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')){
+            if ($request->isMethod('POST')) {
+                $empId = $request->request->get("employe");
+                $em = $this->getDoctrine()->getManager();
+                $e = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($empId);
+                $e->setRoles(array("ROLE_ADMIN"));
+                $e->setAuth(14);
+                $em->flush();
+                $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
+                return $this->render("cas/superAdmin.html.twig",array(
+                    "status"=>200,
+                    "employe"=>$emp
+                ));
+            }
+
+            $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
+            return $this->render("cas/addNewAdmin.html.twig",array(
+                "employe" => $emp
+            ));
+        }else{
+            throw new AccessDeniedException("Accès limité aux super-administrateurs");
+        }
+    }
+
+    /**
      * @Route("/superAdmin/expiry",name="expiry")
      */
     public function expiryAction(Request $request)

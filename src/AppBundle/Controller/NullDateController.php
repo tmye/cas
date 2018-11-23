@@ -36,7 +36,7 @@ class NullDateController extends Controller {
      */
     public function nullDateAction(Request $request)
     {
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN_CONTROL')) {
             $nullDate = new NullDate();
             $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $nullDate);
             $formBuilder
@@ -57,7 +57,7 @@ class NullDateController extends Controller {
      */
     public function addNullDateAction(Request $request)
     {
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN_CONTROL')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("addNullDate");
@@ -108,7 +108,7 @@ class NullDateController extends Controller {
      */
     public function editNullDateAction(Request $request,$id)
     {
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN_CONTROL')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("addNullDate");
@@ -159,7 +159,7 @@ class NullDateController extends Controller {
      */
     public function deleteNullDateAction(Request $request,$id)
     {
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN_CONTROL')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("addNullDate");

@@ -61,7 +61,7 @@ class StatsController extends ClockinReccordController
      */
     public function persStatAction(Request $request)
     {
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
@@ -84,7 +84,7 @@ class StatsController extends ClockinReccordController
      */
     public function rapportsAction(Request $request)
     {
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
@@ -107,7 +107,7 @@ class StatsController extends ClockinReccordController
      */
     public function rapportsExcelAction(Request $request)
     {
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
@@ -1043,7 +1043,7 @@ class StatsController extends ClockinReccordController
      */
     public function depStatAction(Request $request)
     {
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
