@@ -139,7 +139,7 @@ class DefaultController extends StatsController
                 $e->setSurname($request->request->get("adminSurname"));
                 $e->setUsername($request->request->get("adminUsername"));
                 $e->setPassword(md5($request->request->get("adminPassword")));
-                $e->setRoles(array("ROLE_SUPER_ADMIN"));
+                $e->setRoles(array("ROLE_ADMIN"));
                 $e->setAddress($request->request->get("adminAdress"));
                 $e->setPhonenumber($request->request->get("adminPhoneNumber"));
 
@@ -177,6 +177,48 @@ class DefaultController extends StatsController
             }else{
                 return new Response("Erreur avec la soumission du logo");
             }
+        }else{
+            return $this->redirectToRoute("firstTimeInitialization");
+        }
+    }
+
+    /**
+     * @Route("/persistNewAdmin", name="persistNewAdmin")
+     */
+    public function persistNewAdminAction(Request $request)
+    {
+        $admins = $this->getDoctrine()->getManager()->getRepository("AppBundle:Admin");
+
+        // Searching for already used username
+        $i = 0;
+        $found = false;
+        if(sizeof($admins) > 1){
+            while($i < sizeof($admins) && $found == false){
+                if($admins[$i]->getUsername() == $request->request->get("adminUsername")){
+                    $found = true;
+                }
+                $i++;
+            }
+        }
+
+        if($found == false){
+            $em = $this->getDoctrine()->getManager();
+
+                $e = new Admin();
+                $e->setName($request->request->get("adminName"));
+                $e->setSurname($request->request->get("adminSurname"));
+                $e->setUsername($request->request->get("adminUsername"));
+                $e->setPassword(md5($request->request->get("adminPassword")));
+                $e->setRoles(array($request->request->get("role")));
+                $e->setAddress($request->request->get("adminAdress"));
+                $e->setPhonenumber($request->request->get("adminPhoneNumber"));
+
+                // We continue with the rest of the admin (Employee) properties
+
+                $em->persist($e);
+                $em->flush();
+                $this->get('session')->getFlashBag()->set('notice', 'Cet administrateur a été défini avec succès');
+            return new Response(1);
         }else{
             return $this->redirectToRoute("firstTimeInitialization");
         }
@@ -293,8 +335,8 @@ class DefaultController extends StatsController
                             unlink("pub_covers/".$lastImage);
                         }
                     }
-                    $dev->setImage1($_FILES["first_image_input_1"]["name"]);
-                    $resultat = move_uploaded_file($_FILES['first_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_1"]["name"]));
+                    $dev->setImage1(md5($_FILES["first_image_input_1"]["name"]));
+                    $resultat = move_uploaded_file($_FILES['first_image_input_1']['tmp_name'],"pub_covers/".md5(basename($_FILES["first_image_input_1"]["name"])));
                 }
                 if(isset($_FILES["second_image_input_1"]["name"]) && !empty($_FILES["second_image_input_1"]["name"])){
                     $lastImage = $dev->getImage2();
@@ -304,8 +346,8 @@ class DefaultController extends StatsController
                             unlink("pub_covers/".$lastImage);
                         }
                     }
-                    $dev->setImage2($_FILES["second_image_input_1"]["name"]);
-                    $resultat = move_uploaded_file($_FILES['second_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["second_image_input_1"]["name"]));
+                    $dev->setImage2(md5($_FILES["second_image_input_1"]["name"]));
+                    $resultat = move_uploaded_file($_FILES['second_image_input_1']['tmp_name'],"pub_covers/".md5(basename($_FILES["second_image_input_1"]["name"])));
                 }
                 if(isset($_FILES["third_image_input_1"]["name"]) && !empty($_FILES["third_image_input_1"]["name"])){
                     $lastImage = $dev->getImage3();
@@ -315,8 +357,8 @@ class DefaultController extends StatsController
                             unlink("pub_covers/".$lastImage);
                         }
                     }
-                    $dev->setImage3($_FILES["third_image_input_1"]["name"]);
-                    $resultat = move_uploaded_file($_FILES['third_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["third_image_input_1"]["name"]));
+                    $dev->setImage3(md5($_FILES["third_image_input_1"]["name"]));
+                    $resultat = move_uploaded_file($_FILES['third_image_input_1']['tmp_name'],"pub_covers/".md5(basename($_FILES["third_image_input_1"]["name"])));
                 }
                 $em->flush();
             }
@@ -325,16 +367,16 @@ class DefaultController extends StatsController
                 $dev = new DevicePubPic();
                 $dev->setDeviceid($mac->getMachineId());
                 if(isset($_FILES["first_image_input_1"]["name"]) && !empty($_FILES["first_image_input_1"]["name"])){
-                    $dev->setImage1($_FILES["first_image_input_1"]["name"]);
-                    $resultat = move_uploaded_file($_FILES['first_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_1"]["name"]));
+                    $dev->setImage1(md5($_FILES["first_image_input_1"]["name"]));
+                    $resultat = move_uploaded_file($_FILES['first_image_input_1']['tmp_name'],"pub_covers/".md5(basename($_FILES["first_image_input_1"]["name"])));
                 }
                 if(isset($_FILES["second_image_input_1"]["name"]) && !empty($_FILES["second_image_input_1"]["name"])){
-                    $dev->setImage2($_FILES["second_image_input_1"]["name"]);
-                    $resultat = move_uploaded_file($_FILES['second_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["second_image_input_1"]["name"]));
+                    $dev->setImage2(md5($_FILES["second_image_input_1"]["name"]));
+                    $resultat = move_uploaded_file($_FILES['second_image_input_1']['tmp_name'],"pub_covers/".md5(basename($_FILES["second_image_input_1"]["name"])));
                 }
                 if(isset($_FILES["third_image_input_1"]["name"]) && !empty($_FILES["third_image_input_1"]["name"])){
-                    $dev->setImage3($_FILES["third_image_input_1"]["name"]);
-                    $resultat = move_uploaded_file($_FILES['third_image_input_1']['tmp_name'],"pub_covers/".basename($_FILES["third_image_input_1"]["name"]));
+                    $dev->setImage3(md5($_FILES["third_image_input_1"]["name"]));
+                    $resultat = move_uploaded_file($_FILES['third_image_input_1']['tmp_name'],"pub_covers/".md5(basename($_FILES["third_image_input_1"]["name"])));
                 }
                 $em->persist($dev);
                 $em->flush();
@@ -375,8 +417,8 @@ class DefaultController extends StatsController
                             unlink("pub_covers/".$lastImage);
                         }
                     }
-                    $dev->setImage1($_FILES["first_image_input_2"]["name"]);
-                    $resultat = move_uploaded_file($_FILES['first_image_input_2']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_2"]["name"]));
+                    $dev->setImage1(md5($_FILES["first_image_input_2"]["name"]));
+                    $resultat = move_uploaded_file($_FILES['first_image_input_2']['tmp_name'],"pub_covers/".md5(basename($_FILES["first_image_input_2"]["name"])));
                 }
                 if(isset($_FILES["second_image_input_2"]["name"]) && !empty($_FILES["second_image_input_2"]["name"])){
                     $dev->setDeviceid($mac->getMachineId());
@@ -387,8 +429,8 @@ class DefaultController extends StatsController
                             unlink("pub_covers/".$lastImage);
                         }
                     }
-                    $dev->setImage2($_FILES["second_image_input_2"]["name"]);
-                    $resultat = move_uploaded_file($_FILES['second_image_input_2']['tmp_name'],"pub_covers/".basename($_FILES["second_image_input_2"]["name"]));
+                    $dev->setImage2(md5($_FILES["second_image_input_2"]["name"]));
+                    $resultat = move_uploaded_file($_FILES['second_image_input_2']['tmp_name'],"pub_covers/".md5(basename($_FILES["second_image_input_2"]["name"])));
                 }
                 if(isset($_FILES["third_image_input_2"]["name"]) && !empty($_FILES["third_image_input_2"]["name"])){
                     $dev->setDeviceid($mac->getMachineId());
@@ -399,8 +441,8 @@ class DefaultController extends StatsController
                             unlink("pub_covers/".$lastImage);
                         }
                     }
-                    $dev->setImage3($_FILES["third_image_input_2"]["name"]);
-                    $resultat = move_uploaded_file($_FILES['third_image_input_2']['tmp_name'],"pub_covers/".basename($_FILES["third_image_input_2"]["name"]));
+                    $dev->setImage3(md5($_FILES["third_image_input_2"]["name"]));
+                    $resultat = move_uploaded_file($_FILES['third_image_input_2']['tmp_name'],"pub_covers/".md5(basename($_FILES["third_image_input_2"]["name"])));
                 }
                 $em->flush();
             }
@@ -409,16 +451,16 @@ class DefaultController extends StatsController
                 $dev = new DevicePubPic();
                 $dev->setDeviceid($mac->getMachineId());
                 if(isset($_FILES["first_image_input_2"]["name"]) && !empty($_FILES["first_image_input_2"]["name"])){
-                    $dev->setImage1($_FILES["first_image_input_2"]["name"]);
-                    $resultat = move_uploaded_file($_FILES['first_image_input_2']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_2"]["name"]));
+                    $dev->setImage1(md5($_FILES["first_image_input_2"]["name"]));
+                    $resultat = move_uploaded_file($_FILES['first_image_input_2']['tmp_name'],"pub_covers/".md5(basename($_FILES["first_image_input_2"]["name"])));
                 }
                 if(isset($_FILES["second_image_input_2"]["name"]) && !empty($_FILES["second_image_input_2"]["name"])){
-                    $dev->setImage2($_FILES["second_image_input_2"]["name"]);
-                    $resultat = move_uploaded_file($_FILES['second_image_input_2']['tmp_name'],"pub_covers/".basename($_FILES["second_image_input_2"]["name"]));
+                    $dev->setImage2(md5($_FILES["second_image_input_2"]["name"]));
+                    $resultat = move_uploaded_file($_FILES['second_image_input_2']['tmp_name'],"pub_covers/".md5(basename($_FILES["second_image_input_2"]["name"])));
                 }
                 if(isset($_FILES["third_image_input_2"]["name"]) && !empty($_FILES["third_image_input_2"]["name"])){
-                    $dev->setImage3($_FILES["third_image_input_2"]["name"]);
-                    $resultat = move_uploaded_file($_FILES['third_image_input_2']['tmp_name'],"pub_covers/".basename($_FILES["third_image_input_2"]["name"]));
+                    $dev->setImage3(md5($_FILES["third_image_input_2"]["name"]));
+                    $resultat = move_uploaded_file($_FILES['third_image_input_2']['tmp_name'],"pub_covers/".md5(basename($_FILES["third_image_input_2"]["name"])));
                 }
                 $em->persist($dev);
                 $em->flush();
@@ -449,8 +491,8 @@ class DefaultController extends StatsController
                             unlink("pub_covers/".$lastImage);
                         }
                     }
-                    $dev->setImage1($_FILES["first_image_input_3"]["name"]);
-                    $resultat = move_uploaded_file($_FILES['first_image_input_3']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_3"]["name"]));
+                    $dev->setImage1(md5($_FILES["first_image_input_3"]["name"]));
+                    $resultat = move_uploaded_file($_FILES['first_image_input_3']['tmp_name'],"pub_covers/".md5(basename($_FILES["first_image_input_3"]["name"])));
                 }
                 if(isset($_FILES["second_image_input_3"]["name"]) && !empty($_FILES["second_image_input_3"]["name"])){
                     $lastImage = $dev->getImage2();
@@ -460,8 +502,8 @@ class DefaultController extends StatsController
                             unlink("pub_covers/".$lastImage);
                         }
                     }
-                    $dev->setImage2($_FILES["second_image_input_3"]["name"]);
-                    $resultat = move_uploaded_file($_FILES['second_image_input_3']['tmp_name'],"pub_covers/".basename($_FILES["second_image_input_3"]["name"]));
+                    $dev->setImage2(md5($_FILES["second_image_input_3"]["name"]));
+                    $resultat = move_uploaded_file($_FILES['second_image_input_3']['tmp_name'],"pub_covers/".md5(basename($_FILES["second_image_input_3"]["name"])));
                 }
                 if(isset($_FILES["third_image_input_3"]["name"]) && !empty($_FILES["third_image_input_3"]["name"])){
                     $lastImage = $dev->getImage3();
@@ -471,8 +513,8 @@ class DefaultController extends StatsController
                             unlink("pub_covers/".$lastImage);
                         }
                     }
-                    $dev->setImage3($_FILES["third_image_input_3"]["name"]);
-                    $resultat = move_uploaded_file($_FILES['third_image_input_3']['tmp_name'],"pub_covers/".basename($_FILES["third_image_input_3"]["name"]));
+                    $dev->setImage3(md5($_FILES["third_image_input_3"]["name"]));
+                    $resultat = move_uploaded_file($_FILES['third_image_input_3']['tmp_name'],"pub_covers/".md5(basename($_FILES["third_image_input_3"]["name"])));
                 }
                 $em->flush();
             }
@@ -480,16 +522,16 @@ class DefaultController extends StatsController
             $dev = new DevicePubPic();
             $dev->setDeviceid($mac);
             if(isset($_FILES["first_image_input_3"]["name"]) && !empty($_FILES["first_image_input_3"]["name"])){
-                $dev->setImage1($_FILES["first_image_input_3"]["name"]);
-                $resultat = move_uploaded_file($_FILES['first_image_input_3']['tmp_name'],"pub_covers/".basename($_FILES["first_image_input_3"]["name"]));
+                $dev->setImage1(md5($_FILES["first_image_input_3"]["name"]));
+                $resultat = move_uploaded_file($_FILES['first_image_input_3']['tmp_name'],"pub_covers/".md5(basename($_FILES["first_image_input_3"]["name"])));
             }
             if(isset($_FILES["second_image_input_3"]["name"]) && !empty($_FILES["second_image_input_3"]["name"])){
-                $dev->setImage2($_FILES["second_image_input_3"]["name"]);
-                $resultat = move_uploaded_file($_FILES['second_image_input_3']['tmp_name'],"pub_covers/".basename($_FILES["second_image_input_3"]["name"]));
+                $dev->setImage2(md5($_FILES["second_image_input_3"]["name"]));
+                $resultat = move_uploaded_file($_FILES['second_image_input_3']['tmp_name'],"pub_covers/".md5(basename($_FILES["second_image_input_3"]["name"])));
             }
             if(isset($_FILES["third_image_input_3"]["name"]) && !empty($_FILES["third_image_input_3"]["name"])){
-                $dev->setImage3($_FILES["third_image_input_3"]["name"]);
-                $resultat = move_uploaded_file($_FILES['third_image_input_3']['tmp_name'],"pub_covers/".basename($_FILES["third_image_input_3"]["name"]));
+                $dev->setImage3(md5($_FILES["third_image_input_3"]["name"]));
+                $resultat = move_uploaded_file($_FILES['third_image_input_3']['tmp_name'],"pub_covers/".md5(basename($_FILES["third_image_input_3"]["name"])));
             }
             $em->persist($dev);
             $em->flush();
@@ -560,7 +602,7 @@ class DefaultController extends StatsController
      */
     public function historiqueAction(Request $request)
     {
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN_CONTROL')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
@@ -626,7 +668,7 @@ class DefaultController extends StatsController
      */
     public function manageAction(Request $request)
     {
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN_CONTROL')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
@@ -761,7 +803,7 @@ class DefaultController extends StatsController
      * @Route("/customizeCompanyInfos",name="customizeCompanyInfos")
      */
     public function customizeCompanyInfosAction(Request $request){
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_SECRET')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
