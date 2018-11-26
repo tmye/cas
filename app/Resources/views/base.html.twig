@@ -101,37 +101,39 @@
                                         <a href="{{ path("departement") }}" style="margin-left: 4px;">Départements</a>
                                     </div>
                                 </li>
+                                <li>
+                                    <div class="collapsible-header valign-wrapper">
+                                        <span class="fa fa-user icons"></span>
+                                        <span style="margin-left: 4px;">Employés</span>
+                                    </div>
+                                    <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
+                                        <a href="{{ path("addEmployee") }}" class="collapsible-links cl_Emp">Ajouter</a>
+                                        <br>
+                                        <a href="{{ path("viewEmployee") }}" class="collapsible-links cl_vEmp">Informations</a>
+                                        <br>
+                                        <a href="{{ path("importEmployees") }}" class="collapsible-links cl_iEmp">Importation</a>
+                                        <br>
+                                        <a href="{{ path("exportEmployees") }}" class="collapsible-links cl_eEmp">Exportation</a>
+                                    </div>
+                                </li>
                             {% endif %}
-                            <li>
-                                <div class="collapsible-header valign-wrapper">
-                                    <span class="fa fa-user icons"></span>
-                                    <span style="margin-left: 4px;">Employés</span>
-                                </div>
-                                <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
-                                    <a href="{{ path("addEmployee") }}" class="collapsible-links cl_Emp">Ajouter</a>
-                                    <br>
-                                    <a href="{{ path("viewEmployee") }}" class="collapsible-links cl_vEmp">Informations</a>
-                                    <br>
-                                    <a href="{{ path("importEmployees") }}" class="collapsible-links cl_iEmp">Importation</a>
-                                    <br>
-                                    <a href="{{ path("exportEmployees") }}" class="collapsible-links cl_eEmp">Exportation</a>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="collapsible-header valign-wrapper">
-                                    <span class="fa fa-cog icons"></span>
-                                    <span style="margin-left: 4px;">Réglages</span>
-                                </div>
-                                <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
-                                    <a href="{{ path("addWorkingHour") }}" class="collapsible-links cl_WH">Ajouter heure de travail</a>
-                                    <br>
-                                    <a href="{{ path("addMachine") }}" class="collapsible-links cl_Mac">Machines enrégistrées</a>
-                                    <br>
-                                    <a href="{{ path("addNullDate") }}" class="collapsible-links cl_Null">Jour null</a>
-                                    <br>
-                                    <a href="{{ path("manage") }}" class="collapsible-links cl_Manage">Gestion du système</a>
-                                </div>
-                            </li>
+                            {% if is_granted('ROLE_ADMIN_CONTROL') %}
+                                <li>
+                                    <div class="collapsible-header valign-wrapper">
+                                        <span class="fa fa-cog icons"></span>
+                                        <span style="margin-left: 4px;">Réglages</span>
+                                    </div>
+                                    <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
+                                        <a href="{{ path("addWorkingHour") }}" class="collapsible-links cl_WH">Ajouter heure de travail</a>
+                                        <br>
+                                        <a href="{{ path("addMachine") }}" class="collapsible-links cl_Mac">Machines enrégistrées</a>
+                                        <br>
+                                        <a href="{{ path("addNullDate") }}" class="collapsible-links cl_Null">Jour null</a>
+                                        <br>
+                                        <a href="{{ path("manage") }}" class="collapsible-links cl_Manage">Gestion du système</a>
+                                    </div>
+                                </li>
+                            {% endif %}
                             <li>
                                 <div class="collapsible-header valign-wrapper">
                                     <span class="fa fa-wrench icons"></span>
