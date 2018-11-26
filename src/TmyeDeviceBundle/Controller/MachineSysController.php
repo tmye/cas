@@ -24,6 +24,8 @@ use Symfony\Component\HttpFoundation\Response;
 class MachineSysController extends BaseController
 {
 
+    const MAX_MEMORY_PER_CALL = 5000000;
+
     /**
      * @Route("/api/data/get",name="machine_data_in_get")
      * @Method("GET")
@@ -47,12 +49,12 @@ class MachineSysController extends BaseController
         $res['info'] = 'ok';
         $res['data'] = [];
 
-//        foreach ($all as &$item) {
+
+        $start_memory = memory_get_usage();
 
         for ($z = 0; $z < sizeof($all); $z++) {
 
             $item = $all[$z];
-
             /* 1doclean - delete everything */
             switch ($item->getType()) {
                 case "1doclean":
@@ -102,10 +104,6 @@ class MachineSysController extends BaseController
                     if ($item != null) {
                         $tmp = $this->getAllFingerprints($item);
                         array_push($res['data'], $tmp);
-
-                        /* get everything and exit */
-
-//                      $this->info("GGG till the end -"."fingerprints");
                     }
                     break;
                 case "pub":
@@ -121,6 +119,10 @@ class MachineSysController extends BaseController
 //                        $this->info("GGG till the end -"."pub");
                     }
                     break;
+            }
+
+            if ( (memory_get_usage() - $start_memory - PHP_INT_SIZE * 8 ) >= MachineSysController::MAX_MEMORY_PER_CALL){
+                break;
             }
         }
 
