@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use AppBundle\Entity\Departement;
 use AppBundle\Entity\Employe;
+use AppBundle\Entity\Journal;
 use AppBundle\Form\DepartementType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -113,6 +114,13 @@ class EmployeController extends Controller {
                                 $last_id = $employe->getId();
                                 $employe->setEmployeeCcid(10000 + $last_id);
                                 $employe->setUsername($employe->getEmployeeCcid());
+
+                                $journal = new Journal();
+                                $journal->setCrudType('C');
+                                $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+                                $journal->setDescription($journal->getAuthor()." a importé des employés depuis un fichier excel");
+                                $em->persist($journal);
+
                                 // Final flush
                                 $em->flush();
                             }
@@ -210,6 +218,15 @@ class EmployeController extends Controller {
                 "employes_".$now_date.".xlsx",
                 iconv('UTF-8', 'ASCII//TRANSLIT', "employes_".$now_date.".xlsx")
             );
+
+            $journal = new Journal();
+            $journal->setCrudType('R');
+            $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+            $journal->setDescription($journal->getAuthor()." a exporté des employés vers un fichier excel");
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($journal);
+            $em->flush();
+
             return $response;
 
         }else{
@@ -312,6 +329,13 @@ class EmployeController extends Controller {
                         $employe->setPicture($employe->getEmployeeCcid().'_'.$timest.'.'.$file_extension);
                     }
                     $em->persist($employe);
+
+                    $journal = new Journal();
+                    $journal->setCrudType('C');
+                    $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+                    $journal->setDescription($journal->getAuthor()." a ajouté un employé");
+                    $journal->setElementConcerned($employe->getSurname()." ".$employe->getLastName());
+                    $em->persist($journal);
                     $em->flush();
 
                     //$wh = $this->returnWorkingHoursAction();
@@ -420,6 +444,12 @@ class EmployeController extends Controller {
                     $em = $this->getDoctrine()->getManager();
 
                     $em->persist($employe);
+                    $journal = new Journal();
+                    $journal->setCrudType('U');
+                    $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+                    $journal->setDescription($journal->getAuthor()." a modifié un employé");
+                    $journal->setElementConcerned($employe->getSurname()." ".$employe->getLastName());
+                    $em->persist($journal);
                     $em->flush();
 
 
@@ -560,43 +590,15 @@ class EmployeController extends Controller {
             if ($emp != null) {
                 $em = $this->getDoctrine()->getManager();
                 $em->remove($emp);
+
+                $journal = new Journal();
+                $journal->setCrudType('D');
+                $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+                $journal->setDescription($journal->getAuthor()." a supprimé un employé");
+                $journal->setElementConcerned($emp->getSurname()." ".$emp->getLastName());
+                $em->persist($journal);
                 $em->flush();
 
-                $employe = new Employe();
-                $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $employe);
-
-                // On ajoute les champs de l'entité que l'on veut à notre formulaire
-                $formBuilder
-                    ->add('surname', TextType::class,array('label'=>' '))
-                    ->add('last_name', TextType::class,array('label'=>' '))
-                    ->add('adress', TextType::class,array('label'=>' '))
-                    ->add('contact', TextType::class,array('label'=>' '))
-                    ->add('picture', FileType::class,array(
-                        'required'=>false,
-                        'label'=>' ',
-                        'data_class' => null
-                    ))
-                    ->add('salary', IntegerType::class,array('label'=>' '))
-                    ->add('function', TextType::class,array('label'=>' '))
-                    ->add('hire_date', DateTimeType::class,array('widget'=>'single_text','label'=>' '))
-                    ->add('departement',EntityType::class,array(
-                        'label'=>' ',
-                        'class' => 'AppBundle:Departement',
-                        'choice_label' => 'name',
-                        'multiple' => false,
-                    ))
-                    ->add('workingHour',EntityType::class,array(
-                        'label'=>' ',
-                        'class' => 'AppBundle:WorkingHours',
-                        'choice_label' => 'code',
-                        'multiple' => false,
-                    ))
-                    ->add("creer", SubmitType::class);
-                // À partir du formBuilder, on génère le formulaire
-
-                $form = $formBuilder->getForm();
-
-                $wh = $this->returnWorkingHoursAction();
                 $this->get('session')->getFlashBag()->set('notice', 'Cet employé a été supprimé de la base de données');
                 return $this->redirectToRoute("viewEmployee");
             } else{

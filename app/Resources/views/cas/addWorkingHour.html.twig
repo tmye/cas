@@ -11,6 +11,16 @@
             <div class="row">
                 <div class="col l12">
                     <ul class="collapsible" data-collapsible="accordion">
+                        {% for message in  app.session.flashbag.get('notice') %}
+                            <div class="row">
+                                <div class="col l12">
+                                    <div class="operation_message">
+                                        {{ message }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <br/>
                         <li>
                             <div class="collapsible-header">Ajouter un nouvel heure</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">

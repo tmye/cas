@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\WorkingHours;
+use AppBundle\Entity\Journal;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -63,7 +64,16 @@ class WorkingHoursController extends Controller
         $wh->setTaux($taux);
         $wh->setJourTravail($jour_travail);
         $em->persist($wh);
+
+        $journal = new Journal();
+        $journal->setCrudType('C');
+        $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+        $journal->setDescription($journal->getAuthor()." a ajouté une heure de travail (Working hour)");
+        $journal->setElementConcerned($wh->getCode());
+        $em->persist($journal);
         $em->flush();
+
+        $this->get('session')->getFlashBag()->set('notice', 'Cette heure de travail a été enregistrée avec succès');
 
         return new Response(1);
     }
@@ -82,7 +92,16 @@ class WorkingHoursController extends Controller
 
         $wh->setCode($code);
         $wh->setWorkingHour($don);
+
+        $journal = new Journal();
+        $journal->setCrudType('U');
+        $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+        $journal->setDescription($journal->getAuthor()." a modifié une heure de travail (Working hour)");
+        $journal->setElementConcerned($wh->getCode());
+        $em->persist($journal);
         $em->flush();
+
+        $this->get('session')->getFlashBag()->set('notice', 'Cette heure de travail a été modifiée');
 
         return new Response(1);
     }
@@ -90,6 +109,8 @@ class WorkingHoursController extends Controller
     /**
      * @Route("/editWorkingHour/{id}", name="editWorkingHour")
      */
+
+     /* Ebenezer This route is no more used.The one used is updateWorkingHour */
     public function editWorkingHourAction(Request $request, $id)
     {
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN_CONTROL')) {
@@ -134,8 +155,16 @@ class WorkingHoursController extends Controller
             if($wh != null){
                 $em = $this->getDoctrine()->getManager();
                 $em->remove($wh);
+                $journal = new Journal();
+                $journal->setCrudType('D');
+                $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+                $journal->setDescription($journal->getAuthor()." a supprimé une heure de travail (Working hour)");
+                $journal->setElementConcerned($wh->getCode());
+                $em->persist($journal);
                 $em->flush();
-                return new Response("Ce working hour a été supprimé");
+                
+                $this->get('session')->getFlashBag()->set('notice', 'Cette heure de travail a été supprimée');
+                return $this->redirectToRoute("addWorkingHour");
             }else{
                 throw new NotFoundHttpException("Le working hour d'id ".$id." n'existe pas");
             }
