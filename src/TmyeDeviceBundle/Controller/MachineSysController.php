@@ -116,7 +116,6 @@ class MachineSysController extends BaseController
                         $tmp = $this->getPubSetupContent(intval($tmp['index']));
                         $tmp['id'] = $item->getId();
                         array_push($res['data'], $tmp);
-//                        $this->info("GGG till the end -"."pub");
                     }
                     break;
             }
