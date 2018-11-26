@@ -125,11 +125,11 @@ class AlertController extends ClockinReccordController
 
         $writer = new Xlsx($spreadsheet);
         $now_date = date('d')."-".date('m').'-'.date('Y').'_'.date('H').':'.date('i').':'.date('s');
-        $writer->save('presences_'.$now_date.'.xlsx');
+        $writer->save('cache/presences_'.$now_date.'.xlsx');
 
         //sleep(10);
 
-        $filePath = $this->getParameter("web_dir")."/presences_".$now_date.".xlsx";
+        $filePath = $this->getParameter("web_dir")."/cache/presences_".$now_date.".xlsx";
 
         $response = new BinaryFileResponse($filePath);
         $response->trustXSendfileTypeHeader();

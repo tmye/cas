@@ -31,7 +31,7 @@
 /web/uploads/*
 /web/user_profile_pictures/*
 /web/company_images/*
-
+/web/cache/*
 
 /web/first_time
 

@@ -209,11 +209,13 @@ class MachinesController extends Controller
                 return $this->redirectToRoute("expiryPage");
             }
             $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
+            $images = $this->getDoctrine()->getManager()->getRepository("TmyeDeviceBundle:DevicePubPic")->findAll();
             $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
             $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
             return $this->render('cas/pubCovers.html.twig',array(
                 'departements'=>$departements,
-                'machines'=>$machines
+                'machines'=>$machines,
+                'images'=>$images
             ));
         }else{
             return $this->redirectToRoute("login");
@@ -765,10 +767,10 @@ class MachinesController extends Controller
         //print_r($donnees);
         $found = 0;
         $i = 0;
-        echo "\nlength : ".$len;
+        //echo "\nlength : ".$len;
 
         if($len >= 2){
-            echo "\nJe suis dans le premier cas";
+            //echo "\nJe suis dans le premier cas";
             $finalTab = $tab[0];
             for($cpt=0;$cpt<$len;$cpt++){
                 foreach ($tab[$cpt] as $t){
@@ -834,11 +836,17 @@ class MachinesController extends Controller
                     $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
                     $updateE->setIsactive(true);
                     $updateE->setType("1doclean");
-
                     $em->persist($updateE);
                     $em->flush();
                 }
             }
+            $journal = new Journal();
+            $journal->setCrudType('D');
+            $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+            $journal->setDescription($journal->getAuthor()." a supprimé toutes les données d'une machine");
+            $journal->setElementConcerned($mac);
+            $em->persist($journal);
+            $em->flush();
 
             //return new Response(json_encode($tab));
             return new Response("OK pour le second cas");

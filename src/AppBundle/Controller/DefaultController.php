@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Admin;
+use AppBundle\Entity\Journal;
 use AppBundle\Entity\CompanyInfos;
 use AppBundle\Entity\Setting;
 use AppBundle\fpdf181\fpdf;
@@ -216,6 +217,14 @@ class DefaultController extends StatsController
                 // We continue with the rest of the admin (Employee) properties
 
                 $em->persist($e);
+
+                $journal = new Journal();
+                $journal->setCrudType('C');
+                $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+                $journal->setDescription($journal->getAuthor()." a ajouté un nouvel administrateur au système");
+                $journal->setElementConcerned($e->getName()." ".$e->getSurname());
+                $em->persist($journal);
+
                 $em->flush();
                 $this->get('session')->getFlashBag()->set('notice', 'Cet administrateur a été défini avec succès');
             return new Response(1);
@@ -248,6 +257,14 @@ class DefaultController extends StatsController
             $session = new Session();
             $session->set("companyName",$name);
         }
+        $journal = new Journal();
+            
+        $journal->setCrudType('U');
+        $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+        $journal->setDescription($journal->getAuthor()." a changé le nom de la société");
+        $em->persist($journal);
+        $em->flush();
+
         return new Response("OK");
     }
 
@@ -304,6 +321,13 @@ class DefaultController extends StatsController
                 $em->flush();
 
                 $resultat = move_uploaded_file($_FILES['image']['tmp_name'],"company_images/".basename($_FILES["image"]["name"]));
+                
+                $journal = new Journal();
+                $journal->setCrudType('U');
+                $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+                $journal->setDescription($journal->getAuthor()." a changé le logo de la société");
+                $em->persist($journal);
+
                 $em->flush();
                 $session = new Session();
                 $session->set("companyLogo",$_FILES['image']['name']);
@@ -1260,11 +1284,11 @@ class DefaultController extends StatsController
 
         $writer = new Xlsx($spreadsheet);
         $now_date = date('d')."-".date('m').'-'.date('Y').'_'.date('H').':'.date('i').':'.date('s');
-        $writer->save('rapport_'.$now_date.'.xlsx');
+        $writer->save('cache/rapport_'.$now_date.'.xlsx');
 
         //sleep(10);
 
-        $filePath = $this->getParameter("web_dir")."/rapport_".$now_date.".xlsx";
+        $filePath = $this->getParameter("web_dir")."/cache/rapport_".$now_date.".xlsx";
 
         $response = new BinaryFileResponse($filePath);
         $response->trustXSendfileTypeHeader();

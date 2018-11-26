@@ -8,6 +8,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Journal;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
@@ -37,6 +38,14 @@ class AdminController extends Controller
                 $e = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($empId);
                 $e->setRoles(array("ROLE_ADMIN"));
                 $e->setAuth(14);
+
+                $journal = new Journal();
+                $journal->setCrudType('U');
+                $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+                $journal->setDescription($journal->getAuthor()." a désigné un utilisateur comme admin");
+                $journal->setElementConcerned($e->getSurname()." ".$e->getLastName());
+                $em->persist($journal);
+
                 $em->flush();
                 $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
                 return $this->render("cas/superAdmin.html.twig",array(
@@ -61,6 +70,7 @@ class AdminController extends Controller
     {
         if($this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')){
             if ($request->isMethod('POST')) {
+                print_r("ebenezer");
                 $empId = $request->request->get("employe");
                 $em = $this->getDoctrine()->getManager();
                 $e = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($empId);
@@ -111,6 +121,15 @@ class AdminController extends Controller
                 $em = $this->getDoctrine()->getManager();
                 $e = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($empId);
                 $e->setRoles(array($role));
+
+                $journal = new Journal();
+                $journal->setCrudType('U');
+                $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+                $journal->setDescription($journal->getAuthor()." a changé le rôle d'un utilisateur");
+                $journal->setElementConcerned($e->getSurname()." ".$e->getLastName()." a maintenent le rôle ".$role);
+                $em->persist($journal);
+                $em->flush();
+
                 $em->flush();
                 $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeSafe();
                 return $this->render("cas/admin.html.twig",array(
