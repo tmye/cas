@@ -9,6 +9,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Departement;
+use AppBundle\Entity\Journal;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -62,9 +63,17 @@ class DepartementController extends Controller
                     $em = $this->getDoctrine()->getManager();
 
                     $em->persist($departement);
-                    $em->flush();
 
                     $this->get('session')->getFlashBag()->set('notice', 'Ce département a été ajouté avec succès');
+                    $journal = new Journal();
+                    $journal->setCrudType('C');
+                    $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+                    $journal->setDescription($journal->getAuthor()." a ajouté un département");
+                    $journal->setElementConcerned($departement->getName());
+                    
+                    $em->persist($journal);
+                    
+                    $em->flush();
                     return $this->redirectToRoute("departement");
                 }
 
@@ -105,35 +114,19 @@ class DepartementController extends Controller
                 if($listEmployee == null){
                     $em = $this->getDoctrine()->getManager();
                     $em->remove($dep);
+
+                    $journal = new Journal();
+                    $journal->setCrudType('D');
+                    $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+                    $journal->setDescription($journal->getAuthor()." a supprimé un département");
+                    $journal->setElementConcerned($dep->getName());
+                    
+                    $em->persist($journal);
+                    
                     $em->flush();
 
-                    $depRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement");
-                    $listDep = $depRep->findAll();
-
-                    $departement = new Departement();
-                    $departement->setLastUpdate(new \DateTime());
-                    $departement->setCreateDate(new \DateTime());
-                    $departement->setAuthor($this->getUser()->getUsername());
-
-                    // On crée le FormBuilder grâce au service form factory
-                    // On recréé le formulaire pour ne pas passer un formulaire vide au render()
-                    $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $departement);
-
-                    // On ajoute les champs de l'entité que l'on veut à notre formulaire
-                    $formBuilder
-                        ->add('name', TextType::class,array('label'=>' '))
-                        ->add('maxCount', IntegerType::class,array('label'=>' '))
-                        ->add('creer', SubmitType::class);
-
-                    // À partir du formBuilder, on génère le formulaire
-
-                    $form = $formBuilder->getForm();
-
-                    return $this->render("cas/departement.html.twig",array(
-                        'message'=>"Ce département a été supprimé avec succès",
-                        'form' => $form->createView(),
-                        'listDep' => $listDep
-                    ));
+                    $this->get('session')->getFlashBag()->set('notice', 'Ce département a été supprimé avec succès');
+                    return $this->redirectToRoute("departement");
                 }else{
                     $depRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement");
                     $listDep = $depRep->findAll();
@@ -215,14 +208,17 @@ class DepartementController extends Controller
                 if ($form->isValid()) {
                     $em = $this->getDoctrine()->getManager();
                     $em->persist($departement);
+
+                    $journal = new Journal();
+                    $journal->setCrudType('U');
+                    $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+                    $journal->setDescription($journal->getAuthor()." a modifié un département");
+                    $journal->setElementConcerned($departement->getName());
+                    $em->persist($journal);
                     $em->flush();
 
-                    return $this->render("cas/departement.html.twig",array(
-                        'message'=>"Ce département a été modifié",
-                        'form' => $form->createView(),
-                        'listDep' => $listDep
-                    ));
-
+                    $this->get('session')->getFlashBag()->set('notice', 'Ce département a été modifié');
+                    return $this->redirectToRoute("departement");
                 }
 
             }

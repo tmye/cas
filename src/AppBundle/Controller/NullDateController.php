@@ -9,6 +9,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\NullDate;
+use AppBundle\Entity\Journal;
 use AppBundle\Entity\Permission;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -76,6 +77,13 @@ class NullDateController extends Controller {
 
                     $em = $this->getDoctrine()->getManager();
                     $em->persist($nullDate);
+        
+                    $journal = new Journal();
+                    $journal->setCrudType('C');
+                    $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+                    $journal->setDescription($journal->getAuthor()." a ajouté un jour nul");
+                    $journal->setElementConcerned($nullDate->getJour());
+                    $em->persist($journal);
                     $em->flush();
 
                     $request->getSession()->getFlashBag()->add('notice', 'Cette date a bien été ajouté aux exceptions.');
@@ -127,6 +135,13 @@ class NullDateController extends Controller {
 
                     $em = $this->getDoctrine()->getManager();
                     $em->persist($nullDate);
+                    
+                    $journal = new Journal();
+                    $journal->setCrudType('U');
+                    $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+                    $journal->setDescription($journal->getAuthor()." a modifié un jour null");
+                    $journal->setElementConcerned("Id : ".$nullDate->getId()." date : ".$nullDate->getJour());
+                    $em->persist($journal);
                     $em->flush();
 
                     $request->getSession()->getFlashBag()->add('notice', 'Cette date a bien été modifée.');
@@ -168,6 +183,13 @@ class NullDateController extends Controller {
 
             $em = $this->getDoctrine()->getManager();
             $em->remove($nullDate);
+            
+            $journal = new Journal();
+            $journal->setCrudType('D');
+            $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+            $journal->setDescription($journal->getAuthor()." a supprimé un jour null");
+            $journal->setElementConcerned("Id : ".$nullDate->getId()." date : ".$nullDate->getJour());
+            $em->persist($journal);
             $em->flush();
 
             $request->getSession()->getFlashBag()->add('notice', 'Cette date a bien été supprimée.');

@@ -9,6 +9,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Departement;
+use AppBundle\Entity\Journal;
 use AppBundle\Entity\Machine;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -65,9 +66,16 @@ class MachinesController extends Controller
                 if ($form->isValid()) {
                     $em = $this->getDoctrine()->getManager();
                     $em->persist($machine);
-                    $em->flush();
-                    $request->getSession()->getFlashBag()->add('notice', 'Machine bien enregistrée.');
 
+                    $journal = new Journal();
+                    $journal->setCrudType('C');
+                    $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+                    $journal->setDescription($journal->getAuthor()." a ajouté une nouvelle machine");
+                    $journal->setElementConcerned($machine->getName());
+                    $em->persist($journal);
+                    $em->flush();
+
+                    $request->getSession()->getFlashBag()->add('notice', 'Machine bien enregistrée.');
                     return $this->redirectToRoute("addMachine");
                 }
             }
@@ -114,7 +122,7 @@ class MachinesController extends Controller
                         'choice_label' => 'name',
                         'multiple' => true,
                     ))
-                    ->add('Modifier', SubmitType::class);
+                    ->add('Ajouter', SubmitType::class);
 
                 // À partir du formBuilder, on génère le formulaire
 
@@ -125,6 +133,12 @@ class MachinesController extends Controller
                     if ($form->isValid()) {
                         $em = $this->getDoctrine()->getManager();
                         $em->persist($machine);
+                        $journal = new Journal();
+                        $journal->setCrudType('U');
+                        $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+                        $journal->setDescription($journal->getAuthor()." a modifié une machine");
+                        $journal->setElementConcerned($machine->getName());
+                        $em->persist($journal);
                         $em->flush();
 
                         $request->getSession()->getFlashBag()->add('notice', 'Cette machine a bien été modifiée.');
@@ -164,6 +178,13 @@ class MachinesController extends Controller
             if ($machine != null) {
                 $em = $this->getDoctrine()->getManager();
                 $em->remove($machine);
+                $journal = new Journal();
+        
+                $journal->setCrudType('D');
+                $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+                $journal->setDescription($journal->getAuthor()." a supprimé une machine");
+                $journal->setElementConcerned($machine->getName());
+                $em->persist($journal);
                 $em->flush();
                 $request->getSession()->getFlashBag()->add('notice', 'Cette machine bien été supprimée.');
                 return $this->redirectToRoute("addMachine");
