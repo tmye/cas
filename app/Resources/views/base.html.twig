@@ -134,16 +134,18 @@
                                     </div>
                                 </li>
                             {% endif %}
-                            <li>
-                                <div class="collapsible-header valign-wrapper">
-                                    <span class="fa fa-wrench icons"></span>
-                                    <span style="margin-left: 4px;">Personnalisation</span>
-                                </div>
-                                <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
-                                    <a href="{{ path("customizeCompanyInfos") }}" class="collapsible-links cl_WH">Informations</a>
-                                    <br>
-                                </div>
-                            </li>
+                            {% if is_granted('ROLE_SECRET') %}
+                                <li>
+                                    <div class="collapsible-header valign-wrapper">
+                                        <span class="fa fa-wrench icons"></span>
+                                        <span style="margin-left: 4px;">Personnalisation</span>
+                                    </div>
+                                    <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
+                                        <a href="{{ path("customizeCompanyInfos") }}" class="collapsible-links cl_WH">Informations</a>
+                                        <br>
+                                    </div>
+                                </li>
+                            {% endif %}
                             <li>
                                 <p class="white-text" style="margin-left: 20px">
                                     Votre level d'administration est :
