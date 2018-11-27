@@ -4,12 +4,12 @@
         <meta charset="UTF-8" />
         <title>{% block title %}C.A.S - {% endblock %}</title>
         <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+        <link rel="icon" type="image/x-icon" href="{{ asset('img/page_logo.png') }}" />
         <link rel="stylesheet" href="{{ asset('materialize/css/materialize.min.css') }}">
         <link rel="stylesheet" href="{{ asset('css/style.css') }}">
         <link rel="stylesheet" href="{{ asset('web-fonts-with-css/css/fontawesome-all.min.css') }}">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         {% block stylesheets %}{% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
     <div class="row">
