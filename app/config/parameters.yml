@@ -2,9 +2,9 @@
 parameters:
     database_host: 127.0.0.1
     database_port: 3306
-    database_name: symfony
+    database_name: sodigaz_db
     database_user: root
-    database_password: root
+    database_password: 123456
     mailer_transport: smtp
     mailer_host: 127.0.0.1
     mailer_user: null
@@ -17,4 +17,3 @@ parameters:
     default_password: 555
     web_dir: "%kernel.root_dir%/../web"
     conf_dir: "%kernel.root_dir%/../app/config"
-    first_time: true
