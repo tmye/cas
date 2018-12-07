@@ -63,6 +63,7 @@ class WorkingHoursController extends Controller
         $wh->setWorkingHour($don);
         $wh->setTaux($taux);
         $wh->setJourTravail($jour_travail);
+        $wh->setTolerance($request->request->get('tolerance'));
         $em->persist($wh);
 
         $journal = new Journal();
@@ -92,6 +93,7 @@ class WorkingHoursController extends Controller
 
         $wh->setCode($code);
         $wh->setWorkingHour($don);
+        $wh->setTolerance($request->request->get('tolerance'));
 
         $journal = new Journal();
         $journal->setCrudType('U');

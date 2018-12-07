@@ -607,13 +607,9 @@ class DefaultController extends StatsController
                 $ci = null;
             }
             $employes = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
-            $cpt = 0;
-            foreach ($employes as $emp){
-                $cpt++;
-            }
             return $this->render('cas/index.html.twig', array(
                 'ci'=>$ci,
-                'nbreEmployes'=>$cpt,
+                'employes'=>$employes,
                 'base_dir' => realpath($this->container->getParameter('kernel.root_dir').'/..').DIRECTORY_SEPARATOR,
             ));
         }else{

@@ -49,38 +49,43 @@
                 <button class="btn-perso-historique" id="submitExcel"><span class="fa fa-file-excel"></span> Exporter vers Excel</button>
             </span>
             <div class="row">
-                <div class="col l12">
-                    <br><br>
-                    <table class="bordered striped">
-                        <thead>
-                        <tr>
-                            <th>Heure</th>
-                            <th>Employé</th>
-                            <th>Fonction</th>
-                            <th>Type</th>
-                        </tr>
-                        </thead>
+                {% for dep in listDep %}
+                    <div class="col l6">
+                        <br><br>
+                        {{ "Département "~dep.name }}
+                        <table class="bordered striped">
+                            <thead>
+                            <tr>
+                                <th>Heure</th>
+                                <th>Employé</th>
+                                <th>Fonction</th>
+                                <th>Type</th>
+                            </tr>
+                            </thead>
 
-                        <tbody id="rowsContainer">
+                            <tbody id="rowsContainer">
                             {% for cr in listCR %}
-                                <tr>
-                                    <td>
-                                        {{ cr[0].ClockinTime | date('H:i') }}
-                                    </td>
-                                    <td>
-                                        {{ cr[0].employe.surname~" "~cr[0].employe.lastName }}
-                                    </td>
-                                    <td>
-                                        {{ cr[0].employe.function }}
-                                    </td>
-                                    <td>
-                                        {{ cr[1] }}
-                                    </td>
-                                </tr>
+                                {% if cr[0].employe.departement.id == dep.id %}
+                                    <tr>
+                                        <td>
+                                            {{ cr[0].ClockinTime | date('H:i') }}
+                                        </td>
+                                        <td>
+                                            {{ cr[0].employe.surname~" "~cr[0].employe.lastName }}
+                                        </td>
+                                        <td>
+                                            {{ cr[0].employe.function }}
+                                        </td>
+                                        <td>
+                                            {{ cr[1] }}
+                                        </td>
+                                    </tr>
+                                {% endif %}
                             {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                            </tbody>
+                        </table>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </div>

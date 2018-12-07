@@ -59,15 +59,9 @@ class WorkingHours
     /**
      * @var int
      *
-     * @ORM\Column(name="tolerance", type="integer")
+     * @ORM\Column(name="tolerance", type="integer", nullable=true)
      */
     private $tolerance;
-
-
-    public function __construct()
-    {
-        $this->tolerance = 60;
-    }
 
 
     /**
