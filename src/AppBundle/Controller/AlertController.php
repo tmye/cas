@@ -18,6 +18,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AlertController extends ClockinReccordController
 {
@@ -54,6 +55,39 @@ class AlertController extends ClockinReccordController
         }else{
             return $this->redirectToRoute("login");
         }
+    }
+
+    /**
+     * @Route("/returnTodayClockinRecords",name="returnTodayClockinRecords")
+     */
+    public function returnTodayClockinRecordsAction(Request $request)
+    {
+        $tab = array();
+        $day = $this->dateDayNameFrench(date('N'));
+        $em = $this->getDoctrine()->getManager();
+        $cr = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->todaysClockinTimes(date('Y').'-'.date('m').'-'.date('d'));
+        foreach ($cr as $c){
+            $tempTab = [];
+
+            if($this->arrive($c,$day,$request)){
+                $tempTab["type"] = "Arrive";
+            }elseif ($this->pause($c,$day,$request)){
+                $tempTab["type"] = "Pause";
+            }elseif($this->finPause($c,$day,$request)){
+                $tempTab["type"] = "Fin pause";
+            }elseif($this->depart($c,$day,$request)){
+                $tempTab["type"] = "Depart";
+            }
+
+            $tempTab["hour"] = date("H:i",$c->getClockinTime());
+            $tempTab["employe"] = $c->getEmploye()->getSurname()." ".$c->getEmploye()->getLastName();
+            $tempTab["function"] = $c->getEmploye()->getFunction();
+            $tempTab["departement"] = $c->getDepartement()->getName();
+            array_push($tab,$tempTab);
+
+        }
+
+        return new JsonResponse($tab);
     }
 
     /**

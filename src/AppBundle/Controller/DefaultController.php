@@ -107,17 +107,19 @@ class DefaultController extends StatsController
      */
     public function initializeApplicationAction(Request $request)
     {
-        $admins = $this->getDoctrine()->getManager()->getRepository("AppBundle:Admin");
+        $admins = $this->getDoctrine()->getManager()->getRepository("AppBundle:Admin")->findAll();
 
         // Searching for already used username
         $i = 0;
         $found = false;
-        if(sizeof($admins) > 1){
-            while($i < sizeof($admins) && $found == false){
-                if($admins[$i]->getUsername() == $request->request->get("adminUsername")){
-                    $found = true;
+        if($admins != null){
+            if(sizeof($admins) > 1){
+                while($i < sizeof($admins) && $found == false){
+                    if($admins[$i]->getUsername() == $request->request->get("adminUsername")){
+                        $found = true;
+                    }
+                    $i++;
                 }
-                $i++;
             }
         }
 
@@ -131,6 +133,7 @@ class DefaultController extends StatsController
                 $em->persist($cc);
                 $em->flush();
 
+                session_cache_limiter();
                 $session = new Session();
                 $session->set("companyLogo",$_FILES['image']['name']);
                 $session->set("companyName",$request->request->get("name"));
