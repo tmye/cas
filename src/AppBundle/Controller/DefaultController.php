@@ -637,6 +637,23 @@ class DefaultController extends StatsController
         }
     }
 
+    /**
+     * @Route("/historiqueBrute",name="historique_brute")
+     */
+    public function historiqueBruteAction(Request $request)
+    {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN_CONTROL')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+            $listDep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAllSafe();
+            return $this->render('cas/historiqueBrute.html.twig',array('listDep'=>$listDep));
+        }else{
+            return $this->redirectToRoute("login");
+        }
+    }
+
     /*
      * Routes concernant les admins et le super admin
      */

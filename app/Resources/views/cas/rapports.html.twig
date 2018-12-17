@@ -148,6 +148,7 @@
                                                 <br>
                                                 <div class="row row-no-margin">
                                                     <div class="col l6">
+                                                        <button id="allEmployeesSelectButton" type="button" style="margin-top: 20px">Tout selectionner</button>
                                                     </div>
                                                     <div class="col l6">
                                                         <span class="right" style="margin-top: 20px">
@@ -180,6 +181,23 @@
             'search_placeholder': 'Search...',
             'non_selected_header': 'All options',
             'selected_header': 'Selected options'
+        });
+    </script>
+    <script>
+        $(function () {
+            var state = 0;
+            $("#allEmployeesSelectButton").click(function () {
+                if (state === 0){
+                    state = 1;
+                    $(this).html("Tout ramener");
+                }else{
+                    state = 0;
+                    $(this).html("Tout selectionner");
+                }
+                $.each($(".non-selected-wrapper .item:not('.disabled')"),function (i,value) {
+                    value.click();
+                });
+            });
         });
     </script>
     <script>

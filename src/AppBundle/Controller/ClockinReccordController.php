@@ -632,6 +632,30 @@ class ClockinReccordController extends EmployeController
     }
 
     /**
+     * @Route("/findHistoriqueBrute", name="findHistoriqueBrute")
+     */
+    public function findHistoriqueBruteAction(Request $request)
+    {
+        $_date = $request->request->get('date');
+
+        $day = date('N', strtotime($_date));
+        //$day = $this->dateDayNameFrench(intval($day));
+        $min = strtotime($_date." 00:00:00");
+        $max = strtotime($_date." 23:59:59");
+        $finalDataTab = array();
+
+        $employees = $this->getDoctrine()->getRepository("AppBundle:Employe")->findAll();
+        $i=0;
+        foreach ($employees as $emp){
+            $empAllRecords = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->allEmployeesHistoryBrut($emp->getId(),$min,$max);
+            $finalDataTab[] = array($emp->getSurname()." ".$emp->getLastName(),$empAllRecords);
+            $i++;
+        }
+
+        return new JsonResponse($finalDataTab);
+    }
+
+    /**
      * @Route("/findHistorique", name="findHistorique")
      */
     public function findHistoriqueAction($departem = null,$dat = null,$emplo = null,Request $request = null)
