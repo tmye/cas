@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col l12">
             <h5>Gestion des heures de travail</h5>
-
+            <p class="description_message">Modifiez une heure de travail</p>
             <div class="row">
                 <div class="col l12">
                     <ul class="collapsible" data-collapsible="accordion">
@@ -20,11 +20,11 @@
 
                                         <h5 class="permissionsSeparator whH5">Lundi</h5>
                                         <div class="row">
-                                            <div class="input-field col s6">
+                                            <div class="input-field col s4">
                                                 <span>Nom de code</span>
                                                 <input type="text" value="{{ wh.code }}" id="code" class="input-customized">
                                             </div>
-                                            <div class="input-field col s6">
+                                            <div class="input-field col s4">
                                                 <span>Type</span>
                                                 <select id="form_type_all" name="form[type]">
                                                     <option value="1">Heures figées</option>
@@ -32,6 +32,10 @@
                                                     <option value="3">Présence</option>
                                                     <option value="4">Heures figées sans pause</option>
                                                 </select>
+                                            </div>
+                                            <div class="input-field col s4">
+                                                <span>Tolérance (en minutes)</span>
+                                                <input type="number" min="60" value="{{ wh.tolerance }}" id="tolerance" class="input-customized">
                                             </div>
                                         </div>
                                         <div class="row">
@@ -491,7 +495,7 @@
             $.ajax({
                 type: 'POST',
                 url: "{{ path('updateWorkingHour') }}",
-                data: { json_s:json_string,code:$("#code").val(),id:id },
+                data: { json_s:json_string,code:$("#code").val(),tolerance:$("#tolerance").val(),id:id },
                 timeout: 0,
                 success:
                     function (data) {

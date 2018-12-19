@@ -309,4 +309,21 @@ class ClockinRecordRepository extends EntityRepository
         return $donn;
     }
 
+    public function allEmployeesHistoryBrut($empId,$min,$max){
+        $queryBuilder = $this->createQueryBuilder('c');
+        $queryBuilder->where('c.clockinTime BETWEEN :min AND :max');
+        $queryBuilder->setParameter('min',$min);
+        $queryBuilder->setParameter('max',$max);
+
+        $queryBuilder->andWhere('c.employe = :empId')->setParameter('empId',$empId);
+        $queryBuilder->addOrderBy('c.clockinTime','ASC');
+
+        $tabToSend = [];
+        foreach ($queryBuilder->getQuery()->getResult() as $cr){
+            $tabToSend[]=date("H:i",$cr->getClockinTime());
+        }
+
+        return $tabToSend;
+    }
+
 }

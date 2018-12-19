@@ -7,6 +7,7 @@
     <div class="row">
         <div class="col l12">
             <h5 class="page-title"><span class="fa fa-user"></span> Informations sur un employé</h5>
+            <p class="description_message">Vous avez accès à la liste des employés.Vous pouvez aussi modifier les informations relatives à ces employés.Choisissez un département pour voir la liste des employés de ce département</p>
             <div class="row">
                 <div class="col l12">
                     <ul class="collapsible popout" data-collapsible="">
@@ -146,10 +147,10 @@
                                         var id = this.getAttribute("id");
                                         switch (this.getAttribute("tag")){
                                             case "1":
-                                                $("#"+id).html("<span class='material-icons'></span>");
+                                                $("#"+id).html("<span class='material-icons'>fingerprint</span>");
                                                 break;
                                             case "2":
-                                                $("#"+id).html("<span class='material-icons'></span><span class='material-icons'></span>");
+                                                $("#"+id).html("<span class='material-icons'>fingerprint</span><span class='material-icons'>fingerprint</span>");
                                                 break;
                                             default:
                                                 $("#"+id).html("<span class=''>No fingerprint</span>");

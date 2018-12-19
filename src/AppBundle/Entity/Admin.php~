@@ -38,6 +38,12 @@ class Admin implements UserInterface
 
     /**
      * @var string
+     * @ORM\Column(name="picture", type="string", nullable=true)
+     */
+    private $picture;
+
+    /**
+     * @var string
      *
      * @ORM\Column(name="phonenumber", type="string", length=255)
      */
@@ -53,7 +59,7 @@ class Admin implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="username", type="string", length=255)
+     * @ORM\Column(name="username", type="string", length=255, unique=true)
      */
     private $username;
 
@@ -191,5 +197,100 @@ class Admin implements UserInterface
     {
         return $this->roles;
     }
-}
 
+    /**
+     * Set surname
+     *
+     * @param string $surname
+     *
+     * @return Admin
+     */
+    public function setSurname($surname)
+    {
+        $this->surname = $surname;
+
+        return $this;
+    }
+
+    /**
+     * Get surname
+     *
+     * @return string
+     */
+    public function getSurname()
+    {
+        return $this->surname;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return Admin
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set phonenumber
+     *
+     * @param string $phonenumber
+     *
+     * @return Admin
+     */
+    public function setPhonenumber($phonenumber)
+    {
+        $this->phonenumber = $phonenumber;
+
+        return $this;
+    }
+
+    /**
+     * Get phonenumber
+     *
+     * @return string
+     */
+    public function getPhonenumber()
+    {
+        return $this->phonenumber;
+    }
+
+    /**
+     * Set address
+     *
+     * @param string $address
+     *
+     * @return Admin
+     */
+    public function setAddress($address)
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * Get address
+     *
+     * @return string
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+}

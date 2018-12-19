@@ -15,8 +15,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -107,17 +110,19 @@ class DefaultController extends StatsController
      */
     public function initializeApplicationAction(Request $request)
     {
-        $admins = $this->getDoctrine()->getManager()->getRepository("AppBundle:Admin");
+        $admins = $this->getDoctrine()->getManager()->getRepository("AppBundle:Admin")->findAll();
 
         // Searching for already used username
         $i = 0;
         $found = false;
-        if(sizeof($admins) > 1){
-            while($i < sizeof($admins) && $found == false){
-                if($admins[$i]->getUsername() == $request->request->get("adminUsername")){
-                    $found = true;
+        if($admins != null){
+            if(sizeof($admins) > 1){
+                while($i < sizeof($admins) && $found == false){
+                    if($admins[$i]->getUsername() == $request->request->get("adminUsername")){
+                        $found = true;
+                    }
+                    $i++;
                 }
-                $i++;
             }
         }
 
@@ -131,6 +136,7 @@ class DefaultController extends StatsController
                 $em->persist($cc);
                 $em->flush();
 
+                session_cache_limiter();
                 $session = new Session();
                 $session->set("companyLogo",$_FILES['image']['name']);
                 $session->set("companyName",$request->request->get("name"));
@@ -607,13 +613,9 @@ class DefaultController extends StatsController
                 $ci = null;
             }
             $employes = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
-            $cpt = 0;
-            foreach ($employes as $emp){
-                $cpt++;
-            }
             return $this->render('cas/index.html.twig', array(
                 'ci'=>$ci,
-                'nbreEmployes'=>$cpt,
+                'employes'=>$employes,
                 'base_dir' => realpath($this->container->getParameter('kernel.root_dir').'/..').DIRECTORY_SEPARATOR,
             ));
         }else{
@@ -633,6 +635,23 @@ class DefaultController extends StatsController
             }
             $listDep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAllSafe();
             return $this->render('cas/historique.html.twig',array('listDep'=>$listDep));
+        }else{
+            return $this->redirectToRoute("login");
+        }
+    }
+
+    /**
+     * @Route("/historiqueBrute",name="historique_brute")
+     */
+    public function historiqueBruteAction(Request $request)
+    {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN_CONTROL')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+            $listDep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAllSafe();
+            return $this->render('cas/historiqueBrute.html.twig',array('listDep'=>$listDep));
         }else{
             return $this->redirectToRoute("login");
         }
@@ -1298,6 +1317,99 @@ class DefaultController extends StatsController
             iconv('UTF-8', 'ASCII//TRANSLIT', "rapport_".$now_date.".xlsx")
         );
         return $response;
+    }
+
+    /**
+     * @Route("/editProfile",name="editProfile")
+     */
+    public function editProfileAction(Request $request){
+        dump($this->getUser());
+
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+            $admin = $this->getUser();
+
+            // On crée le FormBuilder grâce au service form factory
+            $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $admin);
+
+            // On ajoute les champs de l'entité que l'on veut à notre formulaire
+            $formBuilder
+                ->add('surname', TextType::class,array('label'=>' '))
+                ->add('name', TextType::class,array('label'=>' '))
+                ->add('address', TextType::class,array('label'=>' '))
+                ->add('phonenumber', TextType::class,array('label'=>' '))
+                ->add('password', RepeatedType::class,array(
+                    'label'=>' ',
+                    'type' => PasswordType::class,
+                    'invalid_message' => 'The password fields must match.',
+                    'required' => true,
+                    'first_options'  => array('label' => ' '),
+                    'second_options' => array('label' => ' ')
+                ))
+                ->add('picture', FileType::class,array(
+                    'required'=>false,
+                    'label'=>' ',
+                    'data_class' => null
+                ))
+                ->add('Modifier', SubmitType::class);
+            // À partir du formBuilder, on génère le formulaire
+
+            $form = $formBuilder->getForm();
+
+            if ($request->isMethod('POST')) {
+
+                $old_password = $admin->getPassword();
+
+                $last_picture = $admin->getPicture();
+                $form->handleRequest($request);
+                if ($form->isValid()) {
+
+                    /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
+
+                    $file = $admin->getPicture();
+
+                    $user_profile_pictures = $this->getParameter("user_profile_pictures");
+                    if(isset($file) && !empty($file)){
+                        $fileName = $admin->getUsername().'.'.$file->guessExtension();
+                        // Move the file to the directory where images are stored
+                        $file->move($user_profile_pictures, $fileName);
+                        // Before setting the new file name to the employee,we must delete the older picture
+                        if($last_picture != null && !empty($last_picture)){
+                            unlink($user_profile_pictures."/".$last_picture);
+                        }
+                        $admin->setPicture($fileName);
+                    }else{
+                        $admin->setPicture($last_picture);
+                    }
+
+                    $em = $this->getDoctrine()->getManager();
+
+                    $admin->setPassword(md5($admin->getPassword()));
+
+                    $em->persist($admin);
+                    $journal = new Journal();
+                    $journal->setCrudType('U');
+                    $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+                    $journal->setDescription($journal->getAuthor()." a modifié ses propres informations");
+                    $journal->setElementConcerned($admin->getSurname()." ".$admin->getName());
+                    $em->persist($journal);
+                    $em->flush();
+
+                    $this->get('session')->getFlashBag()->set('notice', 'Vos informations ont été modifié avec succès');
+                    return $this->redirectToRoute("editProfile");
+                }
+
+            }
+
+            return $this->render("cas/editProfile.html.twig",array(
+                "form"=>$form->createView()
+            ));
+        }else{
+            return $this->redirectToRoute("login");
+        }
     }
 
 }

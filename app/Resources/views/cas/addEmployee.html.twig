@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col l12">
             <h5 class="page-title"><span class="fa fa-user-plus"></span> Nouvel Employé</h5>
-
+            <p class="description_message">Enregistrez de nouveaux employés grâce à ce formulmaire</p>
             <div class="row">
                 <div class="col l12">
                     <ul class="collapsible" data-collapsible="accordion">
@@ -42,25 +42,29 @@
                                             <div class="row">
                                                 <div class="input-field col s4">
                                                     <span>Adresse</span>
-                                                    {{ form_row(form.adress, {'attr': {'class': 'input-customized','placeholder':'Une petite description'}}) }}
+                                                    {{ form_row(form.adress, {'attr': {'class': 'input-customized','placeholder':'Votre adresse'}}) }}
                                                 </div>
                                                 <div class="input-field col s4">
                                                     <span>Contact</span>
-                                                    {{ form_row(form.contact, {'attr': {'min':'1','class':'input-customized contact_field','placeholder':'Le titre de la permission'}}) }}
+                                                    {{ form_row(form.contact, {'attr': {'min':'1','class':'input-customized contact_field','placeholder':'Telephone'}}) }}
                                                 </div>
                                                 <div class="input-field col s4">
                                                     <span>Fonction</span>
-                                                    {{ form_row(form.function, {'attr': {'class': 'input-customized','placeholder':'Une petite description'}}) }}
+                                                    {{ form_row(form.function, {'attr': {'class': 'input-customized','placeholder':'Fonction occupee'}}) }}
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="input-field col s4">
                                                     <span>Salaire</span>
-                                                    {{ form_row(form.salary, {'attr': {'min':'1','class':'input-customized','placeholder':'Le titre de la permission'}}) }}
+                                                    {% if is_granted('ROLE_ADMIN') %}
+                                                        {{ form_row(form.salary, {'attr': {'min':'1','class':'input-customized','placeholder':'Salaire actuel'}}) }}
+                                                        {% else %}
+                                                        {{ form_row(form.salary, {'attr': {'min':'1','class':'input-customized','placeholder':'Salaire actuel','disabled':'disabled'}}) }}
+                                                    {% endif %}
                                                 </div>
                                                 <div class="input-field col s4">
                                                     <span>Date d'embauche</span>
-                                                    {{ form_row(form.hire_date, {'attr': {'class': 'input-customized datepicker','placeholder':'Une petite description'}}) }}
+                                                    {{ form_row(form.hire_date, {'attr': {'class': 'input-customized datepicker','placeholder':'Date d\'embauche'}}) }}
                                                 </div>
                                                 <div class="input-field col s4">
                                                     <span>Département</span>
@@ -79,9 +83,9 @@
                                                 </div>
                                                 <div class="input-field col s4 center">
                                                     {% if employe is defined and employe.picture is not null %}
-                                                        <img id="preview" src="{{ asset('/')~user_profile_pictures~'/'~employe.picture }}" alt="image_preview" class="employee_image_preview" width="100" height="100">
+                                                        <img id="preview" src="{{ asset('/')~user_profile_pictures~'/'~employe.picture }}" alt="image_preview" class="employee_image_preview" width="100">
                                                     {% else %}
-                                                        <img id="preview" src="{{ asset('img/guest.png') }}" alt="image_preview" class="employee_image_preview" width="100" height="100">
+                                                        <img id="preview" src="{{ asset('img/guest.png') }}" alt="image_preview" class="employee_image_preview" width="100">
                                                     {% endif %}
                                                 </div>
                                             </div>

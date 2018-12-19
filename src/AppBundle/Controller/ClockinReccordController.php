@@ -47,8 +47,8 @@ class ClockinReccordController extends EmployeController
     {
         //date_default_timezone_set('Africa/Lome');
 
-        $dateFrom = "2018-11-01";
-        $dateTo = "2018-11-30";
+        $dateFrom = "2018-12-01";
+        $dateTo = "2018-12-31";
         $employees = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
         $timeFrom = strtotime($dateFrom." 00:00:00");
         $timeTo = strtotime($dateTo." 00:00:00");
@@ -629,6 +629,30 @@ class ClockinReccordController extends EmployeController
             }
         }
         return $record;
+    }
+
+    /**
+     * @Route("/findHistoriqueBrute", name="findHistoriqueBrute")
+     */
+    public function findHistoriqueBruteAction(Request $request)
+    {
+        $_date = $request->request->get('date');
+
+        $day = date('N', strtotime($_date));
+        //$day = $this->dateDayNameFrench(intval($day));
+        $min = strtotime($_date." 00:00:00");
+        $max = strtotime($_date." 23:59:59");
+        $finalDataTab = array();
+
+        $employees = $this->getDoctrine()->getRepository("AppBundle:Employe")->findAll();
+        $i=0;
+        foreach ($employees as $emp){
+            $empAllRecords = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->allEmployeesHistoryBrut($emp->getId(),$min,$max);
+            $finalDataTab[] = array($emp->getSurname()." ".$emp->getLastName(),$empAllRecords);
+            $i++;
+        }
+
+        return new JsonResponse($finalDataTab);
     }
 
     /**

@@ -49,44 +49,93 @@
                 <button class="btn-perso-historique" id="submitExcel"><span class="fa fa-file-excel"></span> Exporter vers Excel</button>
             </span>
             <div class="row">
-                <div class="col l12">
-                    <br><br>
-                    <table class="bordered striped">
-                        <thead>
-                        <tr>
-                            <th>Heure</th>
-                            <th>Employé</th>
-                            <th>Fonction</th>
-                            <th>Type</th>
-                        </tr>
-                        </thead>
+                    <div class="col l12">
+                        <br><br>
+                        <div class="row">
+                            <div class="col l6">
+                                <span style="position: relative;top: 20px;">Filtrez les resultats en choisissant un departement</span>
+                            </div>
+                            <div class="col l6">
+                                <select id="depSelect">
+                                    <option value="">Departement</option>
+                                    {% for dep in listDep %}
+                                        <option value="{{ dep.name }}">{{ dep.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <table class="bordered striped">
+                            <thead>
+                            <tr>
+                                <th>Heure</th>
+                                <th>Employé</th>
+                                <th>Fonction</th>
+                                <th>Type</th>
+                            </tr>
+                            </thead>
 
-                        <tbody id="rowsContainer">
+                            <tbody id="rowsContainer">
                             {% for cr in listCR %}
-                                <tr>
-                                    <td>
-                                        {{ cr[0].ClockinTime | date('H:i') }}
-                                    </td>
-                                    <td>
-                                        {{ cr[0].employe.surname~" "~cr[0].employe.lastName }}
-                                    </td>
-                                    <td>
-                                        {{ cr[0].employe.function }}
-                                    </td>
-                                    <td>
-                                        {{ cr[1] }}
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td>
+                                            {{ cr[0].ClockinTime | date('H:i') }}
+                                        </td>
+                                        <td>
+                                            {{ cr[0].employe.surname~" "~cr[0].employe.lastName }}
+                                        </td>
+                                        <td>
+                                            {{ cr[0].employe.function }}
+                                        </td>
+                                        <td>
+                                            {{ cr[1] }}
+                                        </td>
+                                    </tr>
                             {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                            </tbody>
+                        </table>
+                    </div>
             </div>
         </div>
     </div>
 {% endblock %}
 
 {% block javascripts %}
+    <script>
+        $(function () {
+
+            // We load datas
+            var savedData = null;
+            var link = '{{ path("returnTodayClockinRecords") }}';
+            $.ajax({
+                type: 'GET',
+                url: link,
+                success: function(data) {
+                    console.log(data);
+                    savedData = data;
+                }
+            });
+
+            $("#depSelect").change(function(){
+                /* On vide le contenu de la table */
+                $("#rowsContainer").html("");
+                /* On récupère le département sélectionné */
+                var selectedDep = $("#depSelect").val();
+                for(var i=0;i<savedData.length;i++){
+                    if(savedData[i].departement == selectedDep){
+
+                        $("#rowsContainer").append("" +
+                            "<tr>" +
+                            "<td>"+savedData[i].hour+"</td>" +
+                            "<td>"+savedData[i].employe+"</td>" +
+                            "<td>"+savedData[i].function+"</td>" +
+                            "<td>"+savedData[i].type+"</td>" +
+                            "</tr>"
+                        );
+                    }
+                }
+            });
+        });
+    </script>
     <script>
         $(function(){
             $("#submitPDF").click(function(){

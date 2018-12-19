@@ -63,8 +63,16 @@
             <td><span style="color: black;font-weight: bold">Nombre d'employés </span></td>
             <td>
                 <span style="color: #111111;font-size: 1em;">
-                    {% if nbreEmployes is defined and nbreEmployes is not null %}
-                        {{ nbreEmployes }} Employés
+                    {% if employes is defined %}
+                        {% set nbreEmployes = 0 %}
+                        {% set employeesFingerprint = 0 %}
+                        {% for emp in employes %}
+                            {% set nbreEmployes = nbreEmployes+1 %}
+                            {% if emp.fingerprints is not null %}
+                                {% set employeesFingerprint = employeesFingerprint + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                        {{ nbreEmployes }} Employés ({{ employeesFingerprint }} ont des empreintes) <i class="material-icons" style="position: relative;top: 6px;">fingerprint</i>
                     {% else %}
                     {% endif %}
                 </span>
