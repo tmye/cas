@@ -144,7 +144,16 @@
             console.log(empData);
             $("#modal_element").html("");
             $.each(empData[1],function (arrayID) {
-                $("#modal_element").append("<td>"+empData[1][arrayID]+"<td>");
+                var pic = "{{ asset('') }}"+empData[3][arrayID];
+                console.log(pic);
+                switch (empData[3][arrayID]) {
+                    case 'pic':
+                        $("#modal_element").append("<td>"+empData[1][arrayID]+"<br/><img src='{{ asset('img/avatar.jpg') }}' width='100'> <td>");
+                        break;
+                    default:
+                        $("#modal_element").append("<td>"+empData[1][arrayID]+"<br/><img src='"+pic+"' width='100'> <td>");
+                        break;
+                }
             });
             $('#modal_detail').modal('open');
         }
@@ -193,7 +202,10 @@
                             data: {id:$("#selectedDep").val(),date:$("#selectedDate").val()},
                             timeout: 0,
                             success: function(data) {
+
+                                console.log("Begin data");
                                 console.log(data);
+                                console.log("End data");
                                 // S'il n'y a aucun employé
                                 if(data == "null"){
                                     $("#rowsContainer").append("" +

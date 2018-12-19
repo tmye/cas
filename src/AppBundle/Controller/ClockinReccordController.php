@@ -756,12 +756,14 @@ class ClockinReccordController extends EmployeController
 
                 $empAllRecord = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empAllHistory($emp->getId(),$min,$max);
                 $empAllRecordFinal = array();
+                $empAllRecordPictureFinal = array();
                 foreach ($empAllRecord as $clock){
                     $empAllRecordFinal[] = date("H:i:s",$clock->getClockinTime());
+                    $empAllRecordPictureFinal[] = $clock->getPic();
                 }
 
                 $empTab[]=$emp->getId();
-                $empAllHistoryTab[]=array($emp->getId(),$empAllRecordFinal,$dayType);
+                $empAllHistoryTab[]=array($emp->getId(),$empAllRecordFinal,$dayType,$empAllRecordPictureFinal);
                 $empNameTab[]=$emp->getSurname()." ".$emp->getLastName();
                 $empCcidTab[]=$emp->getEmployeeCcid();
                 $empTypeTab[]=array($emp->getId(),$type);
@@ -848,12 +850,14 @@ class ClockinReccordController extends EmployeController
 
                         $empAllRecord = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empAllHistory($e->getId(),$min,$max);
                         $empAllRecordFinal = array();
+                        $empAllRecordPictureFinal = array();
                         foreach ($empAllRecord as $clock){
                             $empAllRecordFinal[] = date("H:i:s",$clock->getClockinTime());
+                            $empAllRecordPictureFinal[] = $clock->getPic();
                         }
 
                         $empTab[]=$e->getId();
-                        $empAllHistoryTab[]= array($e->getId(),$empAllRecordFinal,$dayType);
+                        $empAllHistoryTab[]= array($e->getId(),$empAllRecordFinal,$dayType,$empAllRecordPictureFinal);
                         $empNameTab[]=$e->getSurname()." ".$e->getLastName();
                         $empCcidTab[]=$e->getEmployeeCcid();
                         $empTypeTab[]=array($e->getId(),$type);
