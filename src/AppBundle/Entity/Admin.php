@@ -38,6 +38,12 @@ class Admin implements UserInterface
 
     /**
      * @var string
+     * @ORM\Column(name="picture", type="string", nullable=true)
+     */
+    private $picture;
+
+    /**
+     * @var string
      *
      * @ORM\Column(name="phonenumber", type="string", length=255)
      */
@@ -286,5 +292,29 @@ class Admin implements UserInterface
     public function getAddress()
     {
         return $this->address;
+    }
+
+    /**
+     * Set picture.
+     *
+     * @param string|null $picture
+     *
+     * @return Admin
+     */
+    public function setPicture($picture = null)
+    {
+        $this->picture = $picture;
+
+        return $this;
+    }
+
+    /**
+     * Get picture.
+     *
+     * @return string|null
+     */
+    public function getPicture()
+    {
+        return $this->picture;
     }
 }
