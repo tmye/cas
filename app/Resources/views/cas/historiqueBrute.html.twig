@@ -78,8 +78,8 @@
                             <th style="width:60%;">Employe</th>
                             <th style="width:40%;" id="historyTh">Historique de badges</th>
                         </tr>
-                        <span id="tableContent">
-                        </span>
+                        <tbody id="tableContent">
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -112,7 +112,7 @@
                             max = k;
                         }
                         element+= "</tr>";
-                        $("#myTable").append(element);
+                        $("#tableContent").append(element);
                         $("#historyTh").attr("colspan",max);
                         console.log(element);
                         console.log("Max : "+max)
