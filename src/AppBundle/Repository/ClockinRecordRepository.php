@@ -318,12 +318,8 @@ class ClockinRecordRepository extends EntityRepository
         $queryBuilder->andWhere('c.employe = :empId')->setParameter('empId',$empId);
         $queryBuilder->addOrderBy('c.clockinTime','ASC');
 
-        $tabToSend = [];
-        foreach ($queryBuilder->getQuery()->getResult() as $cr){
-            $tabToSend[]=date("H:i",$cr->getClockinTime());
-        }
 
-        return $tabToSend;
+        return $queryBuilder->getQuery()->getResult();
     }
 
 }

@@ -643,12 +643,19 @@ class ClockinReccordController extends EmployeController
         $min = strtotime($_date." 00:00:00");
         $max = strtotime($_date." 23:59:59");
         $finalDataTab = array();
+        $empAllRecordPictureFinal = array();
 
         $employees = $this->getDoctrine()->getRepository("AppBundle:Employe")->findAll();
         $i=0;
         foreach ($employees as $emp){
-            $empAllRecords = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->allEmployeesHistoryBrut($emp->getId(),$min,$max);
-            $finalDataTab[] = array($emp->getSurname()." ".$emp->getLastName(),$empAllRecords);
+            $empAllRecords = [];
+            $empAllRecordsResult = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->allEmployeesHistoryBrut($emp->getId(),$min,$max);
+            foreach ($empAllRecordsResult as $clock){
+                $empAllRecords[] = date("H:i",$clock->getClockinTime());
+                $empAllRecordPictureFinal[] = $clock->getPic();
+            }
+
+            $finalDataTab[] = array($emp->getSurname()." ".$emp->getLastName(),$empAllRecords,$empAllRecordPictureFinal);
             $i++;
         }
 
