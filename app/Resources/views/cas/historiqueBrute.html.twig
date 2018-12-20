@@ -85,11 +85,20 @@
             </div>
         </div>
     </div>
+
+    <div class="preview-section" style="position: absolute;right: 70px;top: 250px">
+        <p>Proof picture</p>
+        <img src="{{ asset('img/avatar.jpg') }}" id="previewImage" width="100"/>
+    </div>
 {% endblock %}
 
 {% block javascripts %}
 
     <script>
+        function imageShowFunction(imgSrc){
+            $("#previewImage").attr("src","{{ asset('/') }}"+imgSrc);
+        };
+
         $("#searchButton").click(function () {
             $("#tableContent").html("");
             $.ajax({
@@ -105,7 +114,7 @@
                         k=0;
                         var element = "<tr><td>"+el[0]+"</td>";
                         $.each(el[1],function (j,subEl) {
-                            element+= "<td>"+subEl+"</td>";
+                            element+= "<td>"+subEl+"<i class='material-icons' style='opacity: 0.5;position:relative;top:5px;left: 3px' onmouseover='imageShowFunction(\""+String(el[2][j])+"\")'>remove_red_eye</i></td>";
                             k++;
                         });
                         if(k>max){
