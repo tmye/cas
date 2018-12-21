@@ -655,7 +655,7 @@ class ClockinReccordController extends EmployeController
                 $empAllRecordPictureFinal[] = $clock->getPic();
             }
 
-            $finalDataTab[] = array($emp->getSurname()." ".$emp->getLastName(),$empAllRecords,$empAllRecordPictureFinal);
+            $finalDataTab[] = array($emp->getSurname()." ".$emp->getLastName(),$empAllRecords,$empAllRecordPictureFinal,$emp->getAdress(),$emp->getContact(),$emp->getDepartement()->getName(),$emp->getFunction(),$emp->getHireDate()->format("d/m/Y"),$emp->getPicture());
             $i++;
         }
 

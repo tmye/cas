@@ -1303,18 +1303,18 @@ class DefaultController extends StatsController
 
         $writer = new Xlsx($spreadsheet);
         $now_date = date('d')."-".date('m').'-'.date('Y').'_'.date('H').':'.date('i').':'.date('s');
-        $writer->save('cache/rapport_'.$now_date.'.xlsx');
+        $writer->save('cache/'.$this->getUser()->getUsername().'_rapport_'.$now_date.'.xlsx');
 
         //sleep(10);
 
-        $filePath = $this->getParameter("web_dir")."/cache/rapport_".$now_date.".xlsx";
+        $filePath = $this->getParameter("web_dir")."/cache/".$this->getUser()->getUsername()."_rapport_".$now_date.".xlsx";
 
         $response = new BinaryFileResponse($filePath);
         $response->trustXSendfileTypeHeader();
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_INLINE,
-            "rapport_".$now_date.".xlsx",
-            iconv('UTF-8', 'ASCII//TRANSLIT', "rapport_".$now_date.".xlsx")
+            $this->getUser()->getUsername()."_rapport_".$now_date.".xlsx",
+            iconv('UTF-8', 'ASCII//TRANSLIT', $this->getUser()->getUsername()."_rapport_".$now_date.".xlsx")
         );
         return $response;
     }
