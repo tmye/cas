@@ -193,7 +193,7 @@
                         <li><a href="#!">Default</a></li>
                     </ul>
                     <ul id="nav-mobile" class="right hide-on-med-and-down">
-                        <li><a href="#" class="black-text">Expiration : {{ app.session.get('expiryDate')|date("d/m/Y") }}</a></li>
+                        <li><a href="#" class="black-text"><span class="fa fa-calendar-alt"></span> {{ 'now' | date("d/m/Y") }} <span class="fa fa-clock" style="padding-left: 20px"></span> <span id="currentTime"></span></a></li>
                         {#<li><a href="#" class="black-text dropdown-trigger" data-activates="theme_dropdown">Theme : Default</a></li>#}
                     </ul>
                 </div>
@@ -243,7 +243,15 @@
     <script src="{{ asset('materialize/js/materialize.min.js') }}"></script>
     <script>
         $(function () {
-            $(".dropdown-trigger").dropdown();
+            var dt = new Date();
+            var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+            $("#currentTime").text(time);
+
+            setInterval(function(){
+                dt = new Date();
+                time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+                $("#currentTime").text(time);
+                }, 5000);
         });
     </script>
 

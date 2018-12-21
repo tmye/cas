@@ -94,9 +94,11 @@
                 </div>
             </div>
             <div class="fixed-action-btn" style="margin-bottom: 30px">
-                <a class="btn-floating tooltipped pulse green btn-large" id="btnVerify" data-position="top" data-tooltip="Vérifier les mises à jours">
-                    <span class="fa fa-download"></span>
-                </a>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path("manage") }}" class="btn-floating tooltipped pulse green btn-large" id="btnVerify" data-position="top" data-tooltip="Vérifier les mises à jours">
+                        <span class="fa fa-download"></span>
+                    </a>
+                {% endif %}
             </div>
         </div>
     </div>

@@ -50,6 +50,48 @@
         </div>
     </div>
 
+    <!-- Modal for details -->
+    <div id="modal_detail" class="modal">
+        <div class="modal-content">
+            <h5>Informations de cet employé</h5>
+            <hr>
+            <br>
+            <div class="row">
+                <div class="col l3">
+                    <img src="{{ asset('img/avatar.jpg') }}" id="modalItemPicture" width="100%">
+                </div>
+                <div class="col l5">
+                    <div class="row">
+                        <div class="col l12" id="modalItemName">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col l12" id="modalItemAddress">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col l12" id="modalItemContact">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col l12" id="modalItemDep">
+                        </div>
+                    </div>
+                </div>
+                <div class="col l4">
+                    <div class="row">
+                        <div class="col l12" id="modalItemFunction">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col l12" id="modalItemHD">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col l12">
             <h5 class="page-title">
@@ -75,7 +117,8 @@
                 <div class="col l12">
                     <table id="myTable">
                         <tr class="header">
-                            <th style="width:60%;">Employe</th>
+                            <th style="width:40%;">Employe</th>
+                            <th style="width:20%;">Département</th>
                             <th style="width:40%;" id="historyTh">Historique de badges</th>
                         </tr>
                         <tbody id="tableContent">
@@ -99,6 +142,23 @@
             $("#previewImage").attr("src","{{ asset('/') }}"+imgSrc);
         };
 
+        function populateModal(obj){
+            console.log("Value : ");
+            console.log(obj);
+            $("#modalItemName").text(obj[0]);
+            $("#modalItemAddress").text(obj[3]);
+            $("#modalItemContact").text(obj[4]);
+            $("#modalItemDep").text("Département : "+obj[5]);
+            $("#modalItemFunction").text("Fonction : "+obj[6]);
+            $("#modalItemHD").text("Date d'embauche : "+obj[7]);
+
+            if((obj[8]!= null) && (obj[8]!= "null") && (obj[8]!= "")){
+                $("#modalItemPicture").attr("src","{{ asset('') }}/user_profile_pictures/"+obj[8]);
+            }
+
+            $("#modal_detail").modal('open');
+        };
+
         $("#searchButton").click(function () {
             $("#tableContent").html("");
             $.ajax({
@@ -112,7 +172,7 @@
                     var k = 0;
                     $.each(data,function (i,el) {
                         k=0;
-                        var element = "<tr><td>"+el[0]+"</td>";
+                        var element = "<tr><td style='cursor: pointer' onclick='populateModal([\""+el[0]+"\",\""+el[1]+"\",\""+el[2]+"\",\""+el[3]+"\",\""+el[4]+"\",\""+el[5]+"\",\""+el[6]+"\",\""+el[7]+"\",\""+el[8]+"\"])'>"+el[0]+"</td><td>"+el[5]+"</td>";
                         $.each(el[1],function (j,subEl) {
                             element+= "<td>"+subEl+"<i class='material-icons' style='opacity: 0.5;position:relative;top:5px;left: 3px' onmouseover='imageShowFunction(\""+String(el[2][j])+"\")'>remove_red_eye</i></td>";
                             k++;
