@@ -249,7 +249,7 @@
 
             setInterval(function(){
                 dt = new Date();
-                time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+                time = ("0" + dt.getHours()).slice(-2) + ":" + ("0" + dt.getMinutes()).slice(-2) + ":" + ("0" + dt.getSeconds()).slice(-2);
                 $("#currentTime").text(time);
                 }, 5000);
         });

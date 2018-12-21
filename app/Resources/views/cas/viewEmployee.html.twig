@@ -147,10 +147,10 @@
                                         var id = this.getAttribute("id");
                                         switch (this.getAttribute("tag")){
                                             case "1":
-                                                $("#"+id).html("<span class='material-icons'>fingerprint</span>");
+                                                $("#"+id).html("<img src='{{ asset('img/touch.png') }}'>");
                                                 break;
                                             case "2":
-                                                $("#"+id).html("<span class='material-icons'>fingerprint</span><span class='material-icons'>fingerprint</span>");
+                                                $("#"+id).html("<img src='{{ asset('img/touch.png') }}'><img src='{{ asset('img/touch.png') }}'>");
                                                 break;
                                             default:
                                                 $("#"+id).html("<span class=''>No fingerprint</span>");
