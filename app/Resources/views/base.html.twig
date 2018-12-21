@@ -26,14 +26,14 @@
                                             <div class="center-align">
                                                 <img src="{{ asset('/')~user_profile_pictures~'/'~app.user.picture }}" alt="user_image" class="circle user_extra_small_picture" style="margin-left: 16px">
                                                 <a href="{{ path('editProfile') }}">
-                                                    <i class="material-icons circle" style="color: white;background-color: teal;padding: 6px;position: relative;right: 20px">edit</i>
+                                                    <i class="fa fa-edit circle" style="color: white;background-color: teal;padding: 6px;position: relative;right: 20px"></i>
                                                 </a>
                                             </div>
                                         {% else %}
                                             <div class="center-align">
                                                 <img src="{{ asset('img/avatar.jpg') }}" alt="user_image" class="circle user_extra_small_picture" style="margin-left: 16px">
                                                 <a href="{{ path('editProfile') }}">
-                                                    <i class="material-icons circle" style="color: white;background-color: teal;padding: 6px;position: relative;right: 20px">edit</i>
+                                                    <i class="fa fa-edit circle" style="color: white;background-color: teal;padding: 6px;position: relative;right: 20px"></i>
                                                 </a>
                                             </div>
                                         {% endif %}
@@ -166,7 +166,7 @@
                                         {{ app.user.roles[0] }}
                                     {% else %}
                                         {{ "Nothing to show" }}
-                                    {% endif %}s
+                                    {% endif %}
                                 </p>
                             </li>
                         </ul>
