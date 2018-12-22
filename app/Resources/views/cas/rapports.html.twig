@@ -195,6 +195,7 @@
                     $(this).html("Tout selectionner");
                 }
                 $.each($(".non-selected-wrapper .item:not('.disabled')"),function (i,value) {
+                    $(".non-selected-wrapper .item:not('.disabled')")[i].click();
                     value.click();
                 });
             });
