@@ -72,7 +72,7 @@
                                 {% set employeesFingerprint = employeesFingerprint + 1 %}
                             {% endif %}
                         {% endfor %}
-                        {{ nbreEmployes }} Employés ({{ employeesFingerprint }} ont des empreintes) <i class="material-icons" style="position: relative;top: 6px;">fingerprint</i>
+                        {{ nbreEmployes }} Employés ({{ employeesFingerprint }} ont des empreintes) <img src="{{ asset('img/touch.png') }}" class="material-icons" style="position: relative;top: 6px;">
                     {% else %}
                     {% endif %}
                 </span>
