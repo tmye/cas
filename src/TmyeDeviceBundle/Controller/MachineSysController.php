@@ -531,7 +531,7 @@ class MachineSysController extends BaseController
         $filename = "employee_".$clockin->getEmploye()->getEmployeeCcid()."_".time().'_'.$this->get("fingerprints.utils")->getToken(7).'.jpg';
 
         // create a new file
-        $filename = $this->base64_to_jpeg($resp['pic'], $filename, $this->getParameter('onregisterpics').DIRECTORY_SEPARATOR);
+        $filename = $this->base64_to_jpeg($resp['pic'], $filename, $this->getParameter('onregisterpics').'/');
         $clockin->setPic($filename);
 
         $this->persist($clockin);

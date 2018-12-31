@@ -130,6 +130,9 @@ class StatsController extends ClockinReccordController
     */
     public function userStatsAction(Request $request,$empId=null,$fromeDate=null,$toDate=null){
 
+
+        $lost_time_jour = 0;
+
         // if/else condition because of calling this in the generatePDF function
         if($empId==null && $fromeDate==null && $toDate==null){
             $emp = $request->request->get("empId");

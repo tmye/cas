@@ -139,6 +139,7 @@
 
     <script>
         function imageShowFunction(imgSrc){
+           imgSrc = imgSrc.replace('employee', '/employee');
             $("#previewImage").attr("src","{{ asset('/') }}"+imgSrc);
         };
 
