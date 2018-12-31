@@ -126,7 +126,7 @@ class StatsController extends ClockinReccordController
     }
 
     /**
-     * @Route("/userStats",name="userStats")
+     * @Route("/userStats",name="userStats")ge
     */
     public function userStatsAction(Request $request,$empId=null,$fromeDate=null,$toDate=null){
 
