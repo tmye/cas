@@ -47,8 +47,6 @@ class ClockinReccordController extends EmployeController
     {
         //date_default_timezone_set('Africa/Lome');
 
-        set_time_limit(0);
-
         $dateFrom = "2019-01-01";
         $dateTo = "2019-06-30";
         $employees = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
@@ -58,6 +56,7 @@ class ClockinReccordController extends EmployeController
         $days = $timeDays/(60*60*24);
         $em = $this->getDoctrine()->getManager();
         foreach ($employees as $emp){
+            set_time_limit(0);
             $nowTime = $timeFrom;
             $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
             // Lundi because the are the same
