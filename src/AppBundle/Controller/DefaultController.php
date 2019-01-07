@@ -927,7 +927,22 @@ class DefaultController extends StatsController
         if($t != "1" && $t != "2"){
             $pdf->AddPage();
             $pdf->SetFont('Arial','B',16);
-            $pdf->Image($this->getParameter("web_dir")."/company_images/".$session->get("companyLogo"),10,10,20,20);
+
+            $imageData = getimagesize($this->getParameter("web_dir")."/company_images/".$session->get("companyLogo"));
+            $theWidth = $imageData[0];
+            $theHeight = $imageData[1];
+            $ratio = $theWidth/$theHeight;
+            $percent = $ratio*100;
+            // if the width is greater than 100px we must fix it at 100
+            if($theWidth > 20){
+                $theWidth = 20;
+            }
+            $theHeight = ($theWidth*$percent)/100;
+
+            //print_r($theWidth."<br/>");
+            //print_r($theHeight);
+
+            $pdf->Image($this->getParameter("web_dir")."/company_images/".$session->get("companyLogo"),10,10,$theWidth,$theHeight);
             $pdf->Image($this->getParameter("web_dir")."/img/logo.png",180,10,12.62,19.4);
             $pdf->Ln('25');
             $pdf->Cell(500,10,$session->get("companyName"));
@@ -1000,9 +1015,12 @@ class DefaultController extends StatsController
             $lastName = $employe->getLastName();
             $permissions = sizeof($donnees["permissionData"]["retardStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["absenceStats"]);
 
+            $functionAppend = strlen($employe->getFunction()) > 5 ? "..." : "";
+            $depAppend = strlen($employe->getDepartement()->getName()) > 5 ? "..." : "";
+
             $user_info_header = array('Nom', 'Prenom(s)', 'Fonction', 'Departement','Salaire', 'Revenu*','Duree hebdo');
             $user_info_data = array(
-                array($employe->getSurname(), $employe->getShortName(), $employe->getFunction(), $employe->getDepartement()->getName(),$employe->getSalary(), round($ss,2),$taux)
+                array($employe->getSurname(), $employe->getLastName(), substr($employe->getFunction(),0,5)."".$functionAppend, substr($employe->getDepartement()->getName(),0,5)."".$depAppend,$employe->getSalary(), round($ss,2),$taux)
             );
 
             if($type == "2" or $type == 2){

@@ -97,13 +97,13 @@ class tablepdf extends fpdf
         $this->SetFont('');
         foreach($user_info_data as $row)
         {
-            $this->Cell($w[0],6,$row[0],'LTB',0,'L',$fill);
-            $this->Cell($w[1],6,$row[1],'LTRB',0,'L',$fill);
-            $this->Cell($w[2],6,$row[2],'LRB',0,'R',$fill);
-            $this->Cell($w[3],6,$row[3],'LRB',0,'R',$fill);
-            $this->Cell($w[4],6,$row[4],'LRB',0,'L',$fill);
-            $this->Cell($w[5],6,$row[5],'LRB',0,'L',$fill);
-            $this->Cell($w[5],6,$row[6],'LRB',0,'L',$fill);
+            $this->Cell($w[0],6,$row[0],'LTB',0,'C',$fill);
+            $this->Cell($w[1],6,$row[1],'LTRB',0,'C',$fill);
+            $this->Cell($w[2],6,$row[2],'LRB',0,'C',$fill);
+            $this->Cell($w[3],6,$row[3],'LRB',0,'C',$fill);
+            $this->Cell($w[4],6,$row[4],'LRB',0,'C',$fill);
+            $this->Cell($w[5],6,$row[5],'LRB',0,'C',$fill);
+            $this->Cell($w[5],6,$row[6],'LRB',0,'C',$fill);
             $this->Ln();
             $fill = !$fill;
         }

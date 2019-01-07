@@ -144,16 +144,7 @@
             console.log(empData);
             $("#modal_element").html("");
             $.each(empData[1],function (arrayID) {
-                var pic = "{{ asset('') }}"+empData[3][arrayID];
-                console.log(pic);
-                switch (empData[3][arrayID]) {
-                    case 'pic':
-                        $("#modal_element").append("<td>"+empData[1][arrayID]+"<br/><img src='{{ asset('img/avatar.jpg') }}' width='100'> <td>");
-                        break;
-                    default:
-                        $("#modal_element").append("<td>"+empData[1][arrayID]+"<br/><img src='"+pic+"' width='100'> <td>");
-                        break;
-                }
+                $("#modal_element").append("<td>"+empData[1][arrayID]+"<td>");
             });
             $('#modal_detail').modal('open');
         }
