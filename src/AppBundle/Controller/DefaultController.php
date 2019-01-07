@@ -912,6 +912,7 @@ class DefaultController extends StatsController
     public function generatePDFAction(Request $request)
     {
         set_time_limit(0);
+
         $session = new Session();
 
         $empId = $request->request->get('destination');

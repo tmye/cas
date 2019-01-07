@@ -132,12 +132,13 @@ class StatsController extends ClockinReccordController
     }
 
     /**
-     * @Route("/userStats",name="userStats")
+     * @Route("/userStats",name="userStats")ge
     */
     public function userStatsAction(Request $request,$empId=null,$fromeDate=null,$toDate=null){
 
         set_time_limit(0);
 
+        $lost_time_jour = 0;
         // if/else condition because of calling this in the generatePDF function
         if($empId==null && $fromeDate==null && $toDate==null){
             $emp = $request->request->get("empId");
