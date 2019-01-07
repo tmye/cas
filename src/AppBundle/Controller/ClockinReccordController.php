@@ -47,8 +47,10 @@ class ClockinReccordController extends EmployeController
     {
         //date_default_timezone_set('Africa/Lome');
 
-        $dateFrom = "2018-12-01";
-        $dateTo = "2018-12-31";
+        set_time_limit(0);
+
+        $dateFrom = "2019-01-01";
+        $dateTo = "2019-06-30";
         $employees = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
         $timeFrom = strtotime($dateFrom." 00:00:00");
         $timeTo = strtotime($dateTo." 00:00:00");
@@ -636,6 +638,8 @@ class ClockinReccordController extends EmployeController
      */
     public function findHistoriqueBruteAction(Request $request)
     {
+        set_time_limit(0);
+
         $_date = $request->request->get('date');
 
         $day = date('N', strtotime($_date));
@@ -667,6 +671,7 @@ class ClockinReccordController extends EmployeController
      */
     public function findHistoriqueAction($departem = null,$dat = null,$emplo = null,Request $request = null)
     {
+        set_time_limit(0);
 
         if(($request->request->get('id') != null) && ($request->request->get('date') != null)){
             $dep = $request->request->get('id');

@@ -911,6 +911,7 @@ class DefaultController extends StatsController
      */
     public function generatePDFAction(Request $request)
     {
+        set_time_limit(0);
         $session = new Session();
 
         $empId = $request->request->get('destination');
@@ -1172,6 +1173,9 @@ class DefaultController extends StatsController
      * @Route("/generateExcel",name="generateExcel")
      */
     public function generateExcelAction(Request $request) {
+
+        set_time_limit(0);
+
         $this->returnVerticalCells(80);
         $t = $request->request->get('type');
         $empId = $request->request->get('destination');

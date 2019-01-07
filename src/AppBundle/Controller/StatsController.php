@@ -61,6 +61,8 @@ class StatsController extends ClockinReccordController
      */
     public function persStatAction(Request $request)
     {
+        set_time_limit(0);
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
@@ -84,6 +86,8 @@ class StatsController extends ClockinReccordController
      */
     public function rapportsAction(Request $request)
     {
+        set_time_limit(0);
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
@@ -107,6 +111,8 @@ class StatsController extends ClockinReccordController
      */
     public function rapportsExcelAction(Request $request)
     {
+        set_time_limit(0);
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
@@ -129,6 +135,8 @@ class StatsController extends ClockinReccordController
      * @Route("/userStats",name="userStats")
     */
     public function userStatsAction(Request $request,$empId=null,$fromeDate=null,$toDate=null){
+
+        set_time_limit(0);
 
         // if/else condition because of calling this in the generatePDF function
         if($empId==null && $fromeDate==null && $toDate==null){
@@ -1043,6 +1051,8 @@ class StatsController extends ClockinReccordController
      */
     public function depStatAction(Request $request)
     {
+        set_time_limit(0);
+
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if($expiry_service->hasExpired()){
@@ -1063,6 +1073,8 @@ class StatsController extends ClockinReccordController
      * Mais directement dans l'URL
      * Ceci permettrait de l'utiliser dans la fonction depStats*/
     private function _userStatsAction($emp,$dateFrom,$dateTo,$interval){
+
+        set_time_limit(0);
 
         $timeFrom = strtotime($dateFrom." 00:00:00");
         $timeTo = strtotime($dateTo." 00:00:00");
@@ -1226,6 +1238,8 @@ class StatsController extends ClockinReccordController
      */
     public function depStatsAction(Request $request)
     {
+        set_time_limit(0);
+
         // On récupère les départements envoyés
         $deps = $request->request->get("deps");
 
