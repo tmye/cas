@@ -957,6 +957,7 @@ class DefaultController extends StatsController
         }
         $i=0;
         foreach ($empId as $emp){
+            set_time_limit(0);
             $i++;
             if($i>=4){ // set up how many table on a page
                 $pdf->AddPage();
@@ -989,10 +990,11 @@ class DefaultController extends StatsController
                 else
                     $ss = ((($employe->getSalary()*12)/52)/$taux)*$donnees["quota_total"]/60;
             }else if($type == "1" || $type == 1 || $type == "4" || $type == 4){
-                if ($taux == 0)
+                if ($taux == 0) {
                     $ss = 0;
-                else
-                    $ss = ((($employe->getSalary()*12)/52)/$taux)*$donnees["quota_1_4"];
+                } else {
+                    $ss = ((($employe->getSalary() * 12) / 52) / $taux) * $donnees["quota_1_4"];
+                }
             }else{
                 $ss += 0;
             }
@@ -1223,6 +1225,7 @@ class DefaultController extends StatsController
         array_push($newTab,"B");
 
         foreach ($empId as $emp){
+            set_time_limit(0);
             $nowTime = $timeFrom;
             $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($emp);
             $empWH = json_decode($employe->getWorkingHour()->getWorkingHour(),true);
@@ -1279,6 +1282,7 @@ class DefaultController extends StatsController
             $sheet->setCellValue('B'.$nextNameCellNumber, $employe->getLastName());
 
             for ($cpt=0;$cpt<=$days;$cpt++){
+                set_time_limit(0);
                 $his = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('d-m-Y',$nowTime),$employe->getId(),$request);
                 $his = json_decode($his->getContent(),true);
 

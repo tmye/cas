@@ -172,7 +172,7 @@ class StatsController extends ClockinReccordController
 
         $absences=0;
         $nbrePermission=0;
-        $sommePerduAbsence_3;
+        $sommePerduAbsence_3 = 0;
         $retards = 0;
         $bonus_retards = 0;
 
@@ -241,7 +241,8 @@ class StatsController extends ClockinReccordController
         $sommePerduAuth = 0;
         $tabType = array();
         for ($cpt=0;$cpt<=$days;$cpt++){
-        	$his = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('d-m-Y',$nowTime),$employe->getId(),$request);
+            set_time_limit(0);
+            $his = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('d-m-Y',$nowTime),$employe->getId(),$request);
             $his = json_decode($his->getContent(),true);
             
             $_arr = $his["arrive"];
@@ -1113,6 +1114,7 @@ class StatsController extends ClockinReccordController
         // On boucle sur les jours sélectionnés
         $i=0;
         for ($cpt=0;$cpt<=$days;$cpt++){
+            set_time_limit(0);
 
             $theDay = date('N',$nowTime);
             $theDay = $this->dateDayNameFrench($theDay);
@@ -1264,6 +1266,7 @@ class StatsController extends ClockinReccordController
          * On doit cumuler toutes les statistiques de tous les employés
          * */
         foreach ($deps as $dep) {
+            set_time_limit(0);
             // A chaque fois qu'on change de département, on réinitialise la somme totale
             $sommeTotaleRetard = 0;
             $sommeTotaleDepart = 0;
@@ -1272,6 +1275,7 @@ class StatsController extends ClockinReccordController
             $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($dep);
             // On parcours aussi tous les employés pour additionner leur stats
             foreach ($emp as $e){
+                set_time_limit(0);
 
                 $empSalary = $e->getSalary();
                 $salaireEnMinuite = $empSalary/(30*24*60); // 30 Jours,24 heures, 60 minuites

@@ -651,6 +651,7 @@ class ClockinReccordController extends EmployeController
         $employees = $this->getDoctrine()->getRepository("AppBundle:Employe")->findAll();
         $i=0;
         foreach ($employees as $emp){
+            set_time_limit(0);
             $empAllRecords = [];
             $empAllRecordsResult = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->allEmployeesHistoryBrut($emp->getId(),$min,$max);
             foreach ($empAllRecordsResult as $clock){
@@ -769,6 +770,7 @@ class ClockinReccordController extends EmployeController
                 $empAllRecordFinal = array();
                 $empAllRecordPictureFinal = array();
                 foreach ($empAllRecord as $clock){
+                    set_time_limit(0);
                     $empAllRecordFinal[] = date("H:i:s",$clock->getClockinTime());
                     $empAllRecordPictureFinal[] = $clock->getPic();
                 }
@@ -796,6 +798,7 @@ class ClockinReccordController extends EmployeController
             }else{
                 if(sizeof($emp)>0){
                     foreach ($emp as $e){
+                        set_time_limit(0);
                         $empWH = json_decode($e->getWorkingHour()->getWorkingHour(),true);
                         $type = $empWH["lundi"][0]["type"];
                         $dayType = $empWH[$day][0]["type"];
@@ -863,6 +866,7 @@ class ClockinReccordController extends EmployeController
                         $empAllRecordFinal = array();
                         $empAllRecordPictureFinal = array();
                         foreach ($empAllRecord as $clock){
+                            set_time_limit(0);
                             $empAllRecordFinal[] = date("H:i:s",$clock->getClockinTime());
                             $empAllRecordPictureFinal[] = $clock->getPic();
                         }
@@ -1004,6 +1008,7 @@ class ClockinReccordController extends EmployeController
         $don = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->history($dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
         $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($dep);
         foreach ($emp as $e){
+            set_time_limit(0);
             //echo "\nEmployee id : ".$e->getId()."\n";
             $clockinRecordTab = 0;
             $empClockinRecordTab = array();
@@ -1012,6 +1017,7 @@ class ClockinReccordController extends EmployeController
             $clockinRecordTab = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empHistory($e->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
             //echo "\nLa taille du résultat est : ".sizeof($clockinRecordTab)."\n";
             foreach ($clockinRecordTab as $cr){
+                set_time_limit(0);
                 $empClockinRecordTab[] = $cr->getId();
             }
             // Si le tableau n'est pas vide,on peut incrémenter
