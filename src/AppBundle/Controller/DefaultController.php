@@ -996,7 +996,7 @@ class DefaultController extends StatsController
                     $ss = ((($employe->getSalary() * 12) / 52) / $taux) * $donnees["quota_1_4"];
                 }
             }else{
-                $ss += 0;
+                $ss = 0;
             }
 
             // Permission datas

@@ -150,14 +150,18 @@ class ClockinRecordRepository extends EntityRepository
                 $new_tab[] = $element->getClockinTime();
             }
             usort($new_tab, array($this, 'ma_fonction'));
+            //print_r($new_tab);
             $ct = $new_tab[0];
             $diff = ($ct-($heureNormaleArrive)); // Timestamp
-            /*if($ct<=$heureNormaleArrive ){
-                return null;
+
+            //print_r($ct."//".$heureNormaleArrive."-----".date("d-m-Y H:i:s",$ct)."//".date("d-m-Y H:i:s",$heureNormaleArrive)."\n");
+            $heureToleree = $heureNormaleArrive+60;
+            if($ct<=$heureToleree ){
+                return false;
             }else{
                 return array($diff,$ct);
-            }*/
-            return array($diff,$ct);
+            }
+
         }else{
             return false;
         }
@@ -193,12 +197,12 @@ class ClockinRecordRepository extends EntityRepository
             usort($new_tab, array($this, 'ma_fonction'));
             $ct = $new_tab[sizeof($new_tab)-1];
             $diff = $ct- ($heureNormaleArrivePause); // Timestamp
-            /*if($ct<=$heureNormaleArrivePause ){
-                return null;
+            $heureToleree = $heureNormaleArrivePause+60;
+            if($ct<=$heureToleree ){
+                return false;
             }else{
                 return array($diff,$ct);
-            }*/
-            return array($diff,$ct);
+            }
         }else{
             return false;
         }

@@ -33,10 +33,12 @@ class AlertController extends ClockinReccordController
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
             }
+
             $day = $this->dateDayNameFrench(date('N'));
             $finalTab = array();
             $listDep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAllSafe();
-            $listCR = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->todaysClockinTimes(date('Y').'-'.date('m').'-'.date('d'));
+            //$listCR = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->todaysClockinTimes(date('Y').'-'.date('m').'-'.date('d'));
+            $listCR = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->todaysClockinTimes($request->query->get("date"));
             foreach($listCR as $cr){
                 if($this->arrive($cr,$day,$request)){
                     $finalTab[] = array($cr,"Arrivée");
