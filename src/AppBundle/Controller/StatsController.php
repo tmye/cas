@@ -27,7 +27,7 @@ class StatsController extends ClockinReccordController
     /**
      * @Route("/t",name="t")
      */
-    
+
     public function tAction(Request $request){
         $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find(26);
         $cr = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord");
@@ -233,7 +233,7 @@ class StatsController extends ClockinReccordController
         $controlNowTime2 =0;
         $controlNowTimeForOtheType = 0;
 
-        $jourFeries =0; 
+        $jourFeries =0;
 
         // On boucle sur les jours sélectionnés
         $i=0;$j=0;
@@ -244,7 +244,7 @@ class StatsController extends ClockinReccordController
             set_time_limit(0);
             $his = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('d-m-Y',$nowTime),$employe->getId(),$request);
             $his = json_decode($his->getContent(),true);
-            
+
             $_arr = $his["arrive"];
             $_dep = $his["depart"];
             $_pau = $his["pause"];
@@ -325,14 +325,14 @@ class StatsController extends ClockinReccordController
                     //print_r("Passage ".($cpt+1)." date : ".date('d-m-Y',$nowTime)."\n");
                     $nowDate = date('d/m/Y',$nowTime);
                     $permDate = date('Y-m-d',$nowTime);
-                    if(!$pR->enPermission($employe,$permDate,"23:59","08:00")){
+                    if(!$pR->enPermission($employe,$permDate)){
                         if(!$nD->dayIsNull($permDate)){
                             $absences++;
                             $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
                             $timePauseBegin = strtotime($empWH[$theDay][0]["pauseBeginHour"]);
                             $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
                             $timePauseEnd = strtotime($empWH[$theDay][0]["pauseEndHour"]);
-                            
+
                             if($type == "1"){
                                 $timePerdusAbsences = ($timePauseBegin - $timeDebut)+($timeFin - $timePauseEnd);
                                 $timePerdusAbsences /= 3600;
@@ -352,10 +352,10 @@ class StatsController extends ClockinReccordController
                                 $sommePerduAbsence = 0;
                             }
                         }else{
-                            $jourFeries ++; 
+                            $jourFeries ++;
                         }
                     }
-                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$empWH[$theDay][0]["endHour"],$empWH[$theDay][0]["beginHour"]);
+                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime));
                     if($p){
                         /*
                          * We need some other variables to avoid conflicts with userStats variables
@@ -399,7 +399,7 @@ class StatsController extends ClockinReccordController
                         }elseif (($type == 2 || $type == "2")) {
                         	if( ($_arr == 0 || $_arr == null) || ($_dep == 0 || $_dep == null) || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
                         		$controlNowTimeForOtheType = $nowTime;
-                        		
+
                         		$inc_auth++;
 	                            $lost_time_jour += ((int)($his["quota"]))/60;
 	                            $lost_time += $lost_time_jour;
@@ -413,7 +413,7 @@ class StatsController extends ClockinReccordController
                         }elseif(($type == 4 || $type == "4")){
                         	if( ($_arr == 0 || $_arr == null) || ($_dep == 0 || $_dep == null) || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
                         		$controlNowTimeForOtheType = $nowTime;
-                        		
+
                         		$inc_auth++;
 	                            $lost_time_jour += ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
 	                            $lost_time += $lost_time_jour;
@@ -431,17 +431,17 @@ class StatsController extends ClockinReccordController
 
                     $nowDate = date('d/m/Y',$nowTime);
                     $permDate = date('Y-m-d',$nowTime);
-                    if(!$pR->enPermission($employe,$permDate,date("H:i",$retardDiff[1]),$heureDebutNormal)) {
+                    if(!$pR->enPermission($employe,$permDate)) {
                         if(!$nD->dayIsNull($permDate)){
 		                    $ct = date('H:i',$retardDiff[1]);
                         	if($type == 1 || $type == "1"){
-                        		
+
                         			$retards++;
 		                            $sommeRetards +=$retardDiff[0];
 		                            $tempsPerdusRetards += (float)($retardDiff[0]/(60))/60;
 		                            $perte_temps = (float)($retardDiff[0]/(60))/60;
 		                            if($taux > 0){
-		                                $sommePerduRetard += ((($salaire*12)/52)/$taux)*$perte_temps;                                
+		                                $sommePerduRetard += ((($salaire*12)/52)/$taux)*$perte_temps;
 		                            }else{
 		                                $sommePerduRetard = 0;
 		                            }
@@ -453,7 +453,7 @@ class StatsController extends ClockinReccordController
                                 $perte_temps = (float)($retardDiff[0]/(60))/60;
                                 $ct = date('H:i',$retardDiff[1]);
                                 if($taux > 0){
-                                    $sommePerduRetard += ((($salaire*12)/52)/$taux)*$perte_temps;                                
+                                    $sommePerduRetard += ((($salaire*12)/52)/$taux)*$perte_temps;
                                 }else{
                                     $sommePerduRetard = 0;
                                 }
@@ -474,7 +474,7 @@ class StatsController extends ClockinReccordController
                     }
 
                     // Now we deal with the permissions calculations
-                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$ct,$empWH[$theDay][0]["beginHour"]);
+                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime));
                     if($p){
                         /*
                          * We need some other variables to avoid conflicts with userStats variables
@@ -501,7 +501,7 @@ class StatsController extends ClockinReccordController
                             }else{
                                 $bonusSommeGagneRetard = 0;
                             }
-    
+
                             /*print_r("retard diff : ".$departDiff[0]."\n");
                             print_r("somme totale : ".$bonusSommeRetards."\n");
                             print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
@@ -555,7 +555,7 @@ class StatsController extends ClockinReccordController
 
                     $nowDate = date('d/m/Y',$nowTime);
                     $permDate = date('Y-m-d',$nowTime);
-                    if(!$pR->enPermission($employe,$permDate,date("H:i",$retardPauseDiff[1]),$heureFinNormalPause)){
+                    if(!$pR->enPermission($employe,$permDate)){
                         if(!$nD->dayIsNull($permDate)) {
 		                    $ct = date('H:i',$retardPauseDiff[1]);
                         	if($type == 1 || $type == "1"){
@@ -597,7 +597,7 @@ class StatsController extends ClockinReccordController
                         }
                     }
                     // Now we deal with the permissions calculations
-                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$ct,$empWH[$theDay][0]["pauseEndHour"]);
+                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime));
                     if($p){
                         /*
                          * We need some other variables to avoid conflicts with userStats variables
@@ -624,7 +624,7 @@ class StatsController extends ClockinReccordController
                             }else{
                                 $bonusSommeGagneRetard = 0;
                             }
-    
+
                             /*print_r("retard diff : ".$departDiff[0]."\n");
                             print_r("somme totale : ".$bonusSommeRetards."\n");
                             print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
@@ -656,7 +656,7 @@ class StatsController extends ClockinReccordController
 
                         		if($controlNowTimeForOtheType != $nowTime){
                                     $inc_auth++;
-		                            $lost_time_jour = ((int)($his["quota"]))/60;                                    
+		                            $lost_time_jour = ((int)($his["quota"]))/60;
 		                            //$lost_time_jour += ((int)($his["quota"]))/60;
 		                            $lost_time += $lost_time_jour;
 		                            if($taux > 0){
@@ -672,7 +672,7 @@ class StatsController extends ClockinReccordController
                         		if($controlNowTimeForOtheType != $nowTime){
                         			$inc_auth++;
 		                            $lost_time_jour = ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
-		                            //$lost_time_jour += ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;                                    
+		                            //$lost_time_jour += ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
                                     $lost_time += $lost_time_jour;
 		                            if($taux > 0){
 		                                $sommePerduAuth += ((($salaire*12)/52)/$taux)*$lost_time_jour;
@@ -680,7 +680,7 @@ class StatsController extends ClockinReccordController
 		                                $sommePerduAuth = 0;
 		                            }
                         		}
-                        		
+
                         	}
                         }
                 	}
@@ -689,7 +689,7 @@ class StatsController extends ClockinReccordController
 
                     $nowDate = date('d/m/Y',$nowTime);
                     $permDate = date('Y-m-d',$nowTime);
-                    if(!$pR->enPermission($employe,$permDate,date("H:i",$departDiff[1]),$heureFinNormal)){
+                    if(!$pR->enPermission($employe,$permDate)){
                         if(!$nD->dayIsNull($permDate)) {
 		                    $ct = date('H:i',$departDiff[1]);
                         	if($controlNowTime2 != $nowTime){
@@ -698,7 +698,7 @@ class StatsController extends ClockinReccordController
 		                            $sommeDeparts +=$departDiff[0];
 		                            $tempsPerdusDepartsFin = ($departDiff[0])/(60);
 		                            $tempsPerdusDepartsFin /=60;
-		                            
+
 		                            $tempsPerdusDeparts+=$tempsPerdusDepartsFin;
 		                            if($taux > 0){
 		                                $sommePerduDepart += ((($salaire*12)/52)/$taux)*$tempsPerdusDepartsFin;
@@ -711,7 +711,7 @@ class StatsController extends ClockinReccordController
                                     $sommeDeparts +=$departDiff[0];
                                     $tempsPerdusDepartsFin = ($departDiff[0])/(60);
                                     $tempsPerdusDepartsFin /=60;
-                                    
+
                                     $tempsPerdusDeparts+=$tempsPerdusDepartsFin;
                                     $ct = date('H:i',$departDiff[1]);
                                     if($taux > 0){
@@ -725,7 +725,7 @@ class StatsController extends ClockinReccordController
                                     $sommeDeparts +=$departDiff[0];
                                     $tempsPerdusDepartsFin = ($departDiff[0])/(60);
                                     $tempsPerdusDepartsFin /=60;
-                                    
+
                                     $tempsPerdusDeparts+=$tempsPerdusDepartsFin;
                                     $ct = date('H:i',$departDiff[1]);
                                     if($taux > 0){
@@ -739,7 +739,7 @@ class StatsController extends ClockinReccordController
                         }
                     }
                     // Now we deal with the permissions calculations
-                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$ct,$empWH[$theDay][0]["endHour"]);
+                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime));
                     if($p){
                         /*
                          * We need some other variables to avoid conflicts with userStats variables
@@ -765,7 +765,7 @@ class StatsController extends ClockinReccordController
                             }else{
                                 $bonusSommeGagneRetard = 0;
                             }
-    
+
                             /*print_r("retard diff : ".$departDiff[0]."\n");
                             print_r("somme totale : ".$bonusSommeRetards."\n");
                             print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
@@ -816,7 +816,7 @@ class StatsController extends ClockinReccordController
                 	//print_r("\n Passage 4 one condition departPause diff\n");
                     $nowDate = date('d/m/Y',$nowTime);
                     $permDate = date('Y-m-d',$nowTime);
-                    if(!$pR->enPermission($employe,$permDate,date("H:i",$departPauseDiff[1]),$heureDebutNormalPause)){
+                    if(!$pR->enPermission($employe,$permDate)){
                         if(!$nD->dayIsNull($permDate)) {
 		                    $ct = date('H:i',$departPauseDiff[1]);
                         	if($controlNowTime != $nowTime){
@@ -831,7 +831,7 @@ class StatsController extends ClockinReccordController
 		                            // Pour prendre en compte les departs de 12h aussi
 		                            $tempsPerdusDeparts +=$tempsPerdusDepartsPause;
 		                            if($taux > 0){
-		                                $sommePerduDepart += ((($salaire*12)/52)/$taux)*$tempsPerdusDepartsPause;                                
+		                                $sommePerduDepart += ((($salaire*12)/52)/$taux)*$tempsPerdusDepartsPause;
 		                            }else{
 		                                $sommePerduDepart = 0;
 		                            }
@@ -848,7 +848,7 @@ class StatsController extends ClockinReccordController
                                     $tempsPerdusDeparts +=$tempsPerdusDepartsPause;
                                     $ct = date('H:i',$departPauseDiff[1]);
                                     if($taux > 0){
-                                        $sommePerduDepart += ((($salaire*12)/52)/$taux)*$tempsPerdusDepartsPause;                                
+                                        $sommePerduDepart += ((($salaire*12)/52)/$taux)*$tempsPerdusDepartsPause;
                                     }else{
                                         $sommePerduDepart = 0;
                                     }
@@ -865,7 +865,7 @@ class StatsController extends ClockinReccordController
                                     $tempsPerdusDeparts +=$tempsPerdusDepartsPause;
                                     $ct = date('H:i',$departPauseDiff[1]);
                                     if($taux > 0){
-                                        $sommePerduDepart += ((($salaire*12)/52)/$taux)*$tempsPerdusDepartsPause;                                
+                                        $sommePerduDepart += ((($salaire*12)/52)/$taux)*$tempsPerdusDepartsPause;
                                     }else{
                                         $sommePerduDepart = 0;
                                     }
@@ -876,7 +876,7 @@ class StatsController extends ClockinReccordController
                     }
 
                     // Now we deal with the permissions calculations
-                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$ct,$empWH[$theDay][0]["pauseBeginHour"]);
+                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime));
                     if($p){
                         /*
                          * We need some other variables to avoid conflicts with userStats variables
@@ -902,7 +902,7 @@ class StatsController extends ClockinReccordController
                             }else{
                                 $bonusSommeGagneRetard = 0;
                             }
-    
+
                             /*print_r("retard diff : ".$departDiff[0]."\n");
                             print_r("somme totale : ".$bonusSommeRetards."\n");
                             print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
@@ -993,7 +993,7 @@ class StatsController extends ClockinReccordController
                 $his = json_decode($his->getContent(),true);
                 if(!$cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
                     $permDate = date('Y-m-d',$nowTime);
-                    if(!$pR->enPermission($employe,$permDate,"23:59","08:00")) {
+                    if(!$pR->enPermission($employe,$permDate)) {
                         if (!$nD->dayIsNull($permDate)) {
                             $nowDate = date('d/m/Y',$nowTime);
                             $absences++;
@@ -1006,7 +1006,7 @@ class StatsController extends ClockinReccordController
                             //$sommeAbsences +=$tempsPerdusAbsences;
 
 
-                            $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime),$empWH[$theDay][0]["endHour"],$empWH[$theDay][0]["beginHour"]);
+                            $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime));
                             if($p){
                                 /*
                                  * We need some other variables to avoid conflicts with userStats variables
@@ -1272,11 +1272,15 @@ class StatsController extends ClockinReccordController
             $sommeTotaleDepart = 0;
             $perteRetardTemps = 0;
             $perteDepartTemps = 0;
+
+            $nbreEmploye = 0;
+
             $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($dep);
             // On parcours aussi tous les employés pour additionner leur stats
             foreach ($emp as $e){
                 set_time_limit(0);
 
+                $nbreEmploye++;
                 $empSalary = $e->getSalary();
                 $salaireEnMinuite = $empSalary/(30*24*60); // 30 Jours,24 heures, 60 minuites
 
@@ -1297,7 +1301,7 @@ class StatsController extends ClockinReccordController
                 $sommeTotaleDepart += $sommePerdueDepart;
             }
             $depName = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->find("$dep")->getName();
-            $tabStats[]= array("departementId"=>$dep,"departement"=>$depName,"tpr"=>$perteRetardTemps,"tpd"=>$perteDepartTemps,"spr"=>$sommeTotaleRetard,"spd"=>$sommeTotaleDepart);
+            $tabStats[]= array("departementId"=>$dep,"departement"=>$depName,"tpr"=>$perteRetardTemps,"tpd"=>$perteDepartTemps,"spr"=>$sommeTotaleRetard,"spd"=>$sommeTotaleDepart,"nbre"=>$nbreEmploye);
         }
         return new JsonResponse($tabStats);
     }

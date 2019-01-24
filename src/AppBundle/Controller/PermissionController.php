@@ -79,19 +79,12 @@ class PermissionController extends Controller {
                     $dateTo = $request->request->get("form")["dateTo"];
                     $sentTimeFrom = $request->request->get("form")["timeFrom"];
                     $sentTimeTo = $request->request->get("form")["timeTo"];
-                    $timeFrom = strtotime($dateFrom." 00:00:00");
-                    $timeTo = strtotime($dateTo." 00:00:00");
+                    $timeFrom = strtotime($dateFrom." ".$sentTimeFrom);
+                    $timeTo = strtotime($dateTo." ".$sentTimeTo);
 
                     if($timeFrom >= time()){
-                        $timeDays = $timeTo-$timeFrom;
-                        $days = $timeDays/(60*60*24);
                         $nowTime = strtotime($dateFrom." 00:00:00");
-    
-                         /*
-                          * If days > 0 it means that the permission is extended on many days
-                          * */
-                        if($days > 0){
-                            for ($i=0;$i<=$days;$i++) {
+
                                 //print_r("<br>$i - NowTime : " . $nowTime . "<br>");
                                 $permission = new Permission();
     
@@ -106,32 +99,16 @@ class PermissionController extends Controller {
                                 $permission->setState(0);
                                 $permission->setCreateTime(new \DateTime());
                                 $permission->setAskerId($this->getUser()->getId());
-                                $permission->setDateFrom(new \DateTime(date('Y-m-d',$nowTime)));
-                                if($i==0){
-                                    $permission->setTimeFrom($sentTimeFrom);
-                                }
-                                if($i==($days)){
-                                    $permission->setTimeTo($sentTimeTo);
-                                }else{
-                                    $permission->setTimeTo("23:59");
-                                }
-    
+                                $permission->setDateFrom(new \DateTime(date('Y-m-d',$timeFrom)));
+                                $permission->setDateTo(new \DateTime(date('Y-m-d',$timeTo)));
+
+                                $permission->setTimeFrom($sentTimeFrom);
+
+                                $permission->setTimeTo($sentTimeTo);
+
                                 $em->persist($permission);
                                 $em->flush();
-    
-                                $nowTime += 86400;
-                             }
-                        }else{
-                            $permission->setUpdateTime(new \DateTime());
-                            $permission->setState(0);
-                            $permission->setCreateTime(new \DateTime());
-                            $permission->setAskerId($this->getUser()->getId());
-    
-    
-                            $em->persist($permission);
-                            $em->flush();
-                        }
-    
+
                         $this->get('session')->getFlashBag()->set('notice', 'Cette permission a bien été enregistrée.');
                         //$request->getSession()->getFlashBag()->add('notice', 'Cette permission a bien été enregistrée.');
     

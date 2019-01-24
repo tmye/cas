@@ -74,6 +74,11 @@
                     </ul>
                 </div>
             </div>
+
+            <br/>
+            <h5 style="display: none" class="center-align separationText"><u>Statistiques des pertes par département</u></h5>
+            <br/>
+
             <div class="row">
                 <div class="col l6 appendCanvas">
                     <canvas id="myChart"></canvas>
@@ -88,6 +93,27 @@
                 </div>
                 <div class="col l6 appendCanvas4">
                     <canvas id="myChart4"></canvas>
+                </div>
+            </div>
+
+            <br/>
+            <h5 style="display: none" class="center-align separationText"><u>Statistiques des pertes en moyenne par département</u></h5>
+            <br/>
+
+            <div class="row">
+                <div class="col l6 appendCanvasMoy">
+                    <canvas id="myChartMoy"></canvas>
+                </div>
+                <div class="col l6 appendCanvasMoy2">
+                    <canvas id="myChartMoy2"></canvas>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col l6 appendCanvasMoy3">
+                    <canvas id="myChartMoy3"></canvas>
+                </div>
+                <div class="col l6 appendCanvasMoy4">
+                    <canvas id="myChartMoy4"></canvas>
                 </div>
             </div>
 
@@ -208,17 +234,29 @@
                 data: {'deps':checkB,'dateFrom':dateFrom,'dateTo':dateTo,'interval':interval},
                 success: function (data) {
                     elLength = Object.keys(data).length;
+                    $(".separationText").attr("style","display:block");
                     var labels = [];
                     var dataRetardTemps = [];
                     var dataRetardArgent = [];
                     var dataDepartTemps = [];
                     var dataDepartArgent = [];
+
+                    var dataRetardTempsMoy = [];
+                    var dataRetardArgentMoy = [];
+                    var dataDepartTempsMoy = [];
+                    var dataDepartArgentMoy = [];
+
                     for (var i=0;i<elLength;i++){
                         labels.push(data[i]["departement"]);
                         dataRetardTemps.push(precisionRound(data[i]["tpr"],3));
                         dataRetardArgent.push(precisionRound(data[i]["spr"],3));
                         dataDepartTemps.push(precisionRound(data[i]["tpd"],3));
                         dataDepartArgent.push(precisionRound(data[i]["spd"],3));
+
+                        dataRetardTempsMoy.push(precisionRound(data[i]["tpr"]/data[i]["nbre"],3));
+                        dataRetardArgentMoy.push(precisionRound(data[i]["spr"]/data[i]["nbre"],3));
+                        dataDepartTempsMoy.push(precisionRound(data[i]["tpd"]/data[i]["nbre"],3));
+                        dataDepartArgentMoy.push(precisionRound(data[i]["spd"]/data[i]["nbre"],3));
                     }
                     console.log(data);
                     console.log("Length of elements : "+data.length);
@@ -280,6 +318,75 @@
                     var element = "<canvas id='myChart4'></canvas>";
                     $(".appendCanvas4").append(element);
                     var ctx = document.getElementById('myChart4').getContext('2d');
+                    var chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: "Pertes dûes aux départs estimées en argent",
+                                backgroundColor: 'skyblue',
+                                borderColor: 'skyblue',
+                                data: dataDepartArgent,
+                            }]
+                        },
+                    });
+
+                    // Les diagrammes de moyennes
+                    $("#myChartMoy").remove();
+                    var element = "<canvas id='myChartMoy'></canvas>";
+                    $(".appendCanvasMoy").append(element);
+                    var ctx = document.getElementById('myChartMoy').getContext('2d');
+                    var chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: "Pertes dûes aux retards estimées en temps",
+                                backgroundColor: 'rgb(255, 99, 132)',
+                                borderColor: 'rgb(255, 99, 132)',
+                                data: dataRetardTempsMoy,
+                            }]
+                        },
+                    });
+
+                    $("#myChartMoy2").remove();
+                    var element = "<canvas id='myChartMoy2'></canvas>";
+                    $(".appendCanvasMoy2").append(element);
+                    var ctx = document.getElementById('myChartMoy2').getContext('2d');
+                    var chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: "Pertes dûes aux retards estimées en argent",
+                                backgroundColor: 'rgb(255, 99, 132)',
+                                borderColor: 'rgb(255, 99, 132)',
+                                data: dataRetardArgentMoy,
+                            }]
+                        },
+                    });
+
+                    $("#myChartMoy3").remove();
+                    var element = "<canvas id='myChartMoy3'></canvas>";
+                    $(".appendCanvasMoy3").append(element);
+                    var ctx = document.getElementById('myChartMoy3').getContext('2d');
+                    var chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: "Pertes dûes aux départs estimées en temps",
+                                backgroundColor: 'skyblue',
+                                borderColor: 'skyblue',
+                                data: dataDepartTempsMoy,
+                            }]
+                        },
+                    });
+
+                    $("#myChartMoy4").remove();
+                    var element = "<canvas id='myChartMoy4'></canvas>";
+                    $(".appendCanvasMoy4").append(element);
+                    var ctx = document.getElementById('myChartMoy4').getContext('2d');
                     var chart = new Chart(ctx, {
                         type: 'bar',
                         data: {

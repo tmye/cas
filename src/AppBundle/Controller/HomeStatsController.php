@@ -162,70 +162,76 @@ class HomeStatsController extends Controller
                 $heureNormaleArrive = $beginHourInMinutes*60;
                 $heureNormaleDepart = $endHourInMinutes*60;
 
-                if(!$cr->present($emp,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
-                    $absences++;
-                }
+                //print_r(date("d-m-Y H:i:s",$nowTime+$heureNormaleArrive+$interval)."\n");
 
-                if ($type == "1" || $type == "2") {
-                    $retardDiff = $cr->retard($emp,$nowTime,$interval,$heureNormaleArrive);
-                    if ($retardDiff != null) {
-                        $retards++;
-                        $sommeRetards += $retardDiff[0];
-                        $tempsPerdusRetards += $retardDiff[0] / (60);
+                if ($type == "1" || $type == 1 || $type == "2" || $type == 2 || $type == "4" || $type == 4) {
 
-                        if ($this->exist($tabClassementRetard, $emp->getId())) {
-                            $lastNumber = $tabClassementRetard[$emp->getId()]["nombre"];
-                            $lastCumul = $tabClassementRetard[$emp->getId()]["cumul"];
-                            $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusRetards,"picture"=>$picture);
-                        } else {
-                            $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusRetards,"picture"=>$picture);
+                    if(!$cr->present($emp,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
+                        $absences++;
+                    }else{
+                        $retardDiff = $cr->retard($emp,$nowTime,$interval,$heureNormaleArrive);
+                        if ($retardDiff[0] != null) {
+                            $retards++;
+                            $sommeRetards += $retardDiff[0];
+                            $tempsPerdusRetards += $retardDiff[0] / (60);
+
+                            if ($this->exist($tabClassementRetard, $emp->getId())) {
+                                $lastNumber = $tabClassementRetard[$emp->getId()]["nombre"];
+                                $lastCumul = $tabClassementRetard[$emp->getId()]["cumul"];
+                                $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusRetards,"picture"=>$picture);
+                            } else {
+                                $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusRetards,"picture"=>$picture);
+                            }
+                        }
+                        $retardPauseDiff = $cr->retardPause($emp,$nowTime,$interval_pause,$heureNormaleArrivePause);
+                        if ($retardPauseDiff[0] != null) {
+                            $retards++;
+                            $sommeRetards += $retardPauseDiff[0];
+                            $tempsPerdusRetards += $retardPauseDiff[0] / (60);
+
+                            if ($this->exist($tabClassementRetard, $emp->getId())) {
+                                $lastNumber = $tabClassementRetard[$emp->getId()]["nombre"];
+                                $lastCumul = $tabClassementRetard[$emp->getId()]["cumul"];
+                                $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusRetards,"picture"=>$picture);
+                            } else {
+                                $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusRetards,"picture"=>$picture);
+                            }
+                        }
+                        $departDiff = $cr->departPremature($emp, $nowTime, $interval,$heureNormaleDepart);
+                        if ($departDiff[0] != null) {
+                            $departs++;
+                            $sommeDeparts += $departDiff[0];
+                            $tempsPerdusDeparts += ($departDiff[0]) / (60);
+
+                            if ($this->exist($tabClassementDepart, $emp->getId())) {
+                                $lastNumber = $tabClassementDepart[$emp->getId()]["nombre"];
+                                $lastCumul = $tabClassementDepart[$emp->getId()]["cumul"];
+                                $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusDeparts,"picture"=>$picture);
+                            } else {
+                                $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusDeparts,"picture"=>$picture);
+                            }
+                        }
+                        $departPauseDiff = $cr->departPausePremature($emp, $nowTime, $interval_pause,$heureNormaleDepartPause);
+                        if ($departPauseDiff[0] != null) {
+                            $i++;
+                            $nowDate = date('d/m/Y', $nowTime);
+                            $departsPause++;
+                            $departs++;
+                            $sommeDepartsPause += $departPauseDiff[0];
+                            $tempsPerdusDeparts += ($departPauseDiff[0]) / (60);
+
+                            if ($this->exist($tabClassementDepart, $emp->getId())) {
+                                $lastNumber = $tabClassementDepart[$emp->getId()]["nombre"];
+                                $lastCumul = $tabClassementDepart[$emp->getId()]["cumul"];
+                                $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusDeparts,"picture"=>$picture);
+                            } else {
+                                $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusDeparts,"picture"=>$picture);
+                            }
                         }
                     }
-                    $retardPauseDiff = $cr->retardPause($emp,$nowTime,$interval_pause,$heureNormaleArrivePause);
-                    if ($retardPauseDiff != null) {
-                        $retards++;
-                        $sommeRetards += $retardPauseDiff[0];
-                        $tempsPerdusRetards += $retardPauseDiff[0] / (60);
-
-                        if ($this->exist($tabClassementRetard, $emp->getId())) {
-                            $lastNumber = $tabClassementRetard[$emp->getId()]["nombre"];
-                            $lastCumul = $tabClassementRetard[$emp->getId()]["cumul"];
-                            $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusRetards,"picture"=>$picture);
-                        } else {
-                            $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusRetards,"picture"=>$picture);
-                        }
-                    }
-                    $departDiff = $cr->departPremature($emp, $nowTime, $interval,$heureNormaleDepart);
-                    if ($departDiff != null) {
-                        $nowDate = date('d/m/Y', $nowTime);
-                        $departs++;
-                        $sommeDeparts += $departDiff[0];
-                        $tempsPerdusDeparts += ($departDiff[0]) / (60);
-
-                        if ($this->exist($tabClassementDepart, $emp->getId())) {
-                            $lastNumber = $tabClassementDepart[$emp->getId()]["nombre"];
-                            $lastCumul = $tabClassementDepart[$emp->getId()]["cumul"];
-                            $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusDeparts,"picture"=>$picture);
-                        } else {
-                            $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusDeparts,"picture"=>$picture);
-                        }
-                    }
-                    $departPauseDiff = $cr->departPausePremature($emp, $nowTime, $interval_pause,$heureNormaleDepartPause);
-                    if ($departPauseDiff[0] != null) {
-                        $i++;
-                        $nowDate = date('d/m/Y', $nowTime);
-                        $departsPause++;
-                        $departs++;
-                        $sommeDepartsPause += $departPauseDiff[0];
-                        $tempsPerdusDeparts += ($departPauseDiff[0]) / (60);
-
-                        if ($this->exist($tabClassementDepart, $emp->getId())) {
-                            $lastNumber = $tabClassementDepart[$emp->getId()]["nombre"];
-                            $lastCumul = $tabClassementDepart[$emp->getId()]["cumul"];
-                            $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusDeparts,"picture"=>$picture);
-                        } else {
-                            $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusDeparts,"picture"=>$picture);
-                        }
+                }elseif ($type == 3 || $type == "3"){
+                    if(!$cr->present($emp,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
+                        $absences++;
                     }
                 }
             }
