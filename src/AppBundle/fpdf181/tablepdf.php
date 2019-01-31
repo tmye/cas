@@ -190,4 +190,49 @@ class tablepdf extends fpdf
         //$this->Cell(array_sum($w),0,'','T');
     }
 
+    public function PermissionFancyTable($user_info_header,$user_info_data){
+        // Couleurs, épaisseur du trait et police grasse
+        $this->SetFillColor(100,100,100);
+        $this->SetTextColor(255);
+        $this->SetDrawColor(60,60,60);
+        $this->SetLineWidth(.3);
+        $this->SetFont('helvetica','','11');
+        $fill = false;
+        // En-tête
+        $w = array(35, 35, 30, 30,30,30);
+
+        for($i=0;$i<count($user_info_header);$i++){
+            $this->Cell($w[$i],7,$user_info_header[$i],1,0,'C',true);
+        }
+        $this->Ln();
+        // Restauration des couleurs et de la police
+        $this->SetFillColor(224,235,255);
+        $this->SetTextColor(0);
+        $this->SetFont('');
+        foreach($user_info_data as $row)
+        {
+            $this->Cell($w[0],6,$row[0],'LTB',0,'C',$fill);
+            $this->Cell($w[1],6,$row[1],'LTRB',0,'C',$fill);
+            $this->Cell($w[2],6,$row[2],'LRB',0,'C',$fill);
+            $this->Cell($w[3],6,$row[3],'LRB',0,'C',$fill);
+            $this->Cell($w[4],6,$row[4],'LRB',0,'C',$fill);
+            $this->Cell($w[5],6,$row[5],'LRB',0,'C',$fill);
+            $this->Ln();
+            $fill = !$fill;
+        }
+
+        // Couleurs, épaisseur du trait et police grasse
+        $this->SetFillColor(100,100,100);
+        $this->SetTextColor(255);
+        $this->SetDrawColor(60,60,60);
+        $this->SetLineWidth(.3);
+        $this->SetFont('helvetica','','11');
+        $this->Ln(5);
+
+        $this->Ln(8);
+
+        // Trait de terminaison
+        //$this->Cell(array_sum($w),0,'','T');
+    }
+
 }

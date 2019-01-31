@@ -174,11 +174,15 @@
                     console.log(data);
                     var max = 0;
                     var k = 0;
-                    $.each(data, function (i, el) {
-                        k = 0;
-                        var element = "<tr><td style='cursor: pointer' onclick='populateModal([\"" + el[0] + "\",\"" + el[1] + "\",\"" + el[2] + "\",\"" + el[3] + "\",\"" + el[4] + "\",\"" + el[5] + "\",\"" + el[6] + "\",\"" + el[7] + "\",\"" + el[8] + "\"])'>" + el[0] + "</td><td>" + el[5] + "</td>";
-                        $.each(el[1], function (j, subEl) {
-                            element += "<td>" + subEl + "<i class='material-icons' style='opacity: 0.5;position:relative;top:5px;left: 3px' onmouseover='imageShowFunction(\"" + String(el[2][j]) + "\")'>remove_red_eye</i></td>";
+
+                    $.each(data,function (i,el) {
+                        k=0;
+                        console.log("debug-------")
+                        console.log(data)
+                        console.log("debug-------")
+                        var element = "<tr><td style='cursor: pointer' onclick='populateModal([\""+el[0]+"\",\""+el[1]+"\",\""+el[2]+"\",\""+el[3]+"\",\""+el[4]+"\",\""+el[5]+"\",\""+el[6]+"\",\""+el[7]+"\",\""+el[8]+"\"])'>"+el[0]+"</td><td>"+el[5]+"</td>";
+                        $.each(el[1],function (j,subEl) {
+                            element+= "<td>"+subEl+"<span class='fas fa-eye' style='opacity: 0.5;position:relative;left: 3px' onmouseover='imageShowFunction(\""+String(el[2][j])+"\")'></td>";
                             k++;
                         });
                         if (k > max) {

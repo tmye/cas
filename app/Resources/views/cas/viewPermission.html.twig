@@ -77,10 +77,13 @@
                                                             <p><span class="fa fa-calendar-alt"></span> {{ perm.CreateTime | date('d-m-Y H:i:s') }}</p>
                                                             <span><span class="fa fa-user"></span> <b>{{ perm.employee.surname ~" "~ perm.employee.lastName }}</b></span>
                                                             <p>Raison : {{ perm.title }}</p>
-                                                            <span>De :</span>
+                                                            <span>Débute :</span>
                                                             <br>
-                                                            <p class="blue-text">{{ perm.DateFrom | date('d-M-Y H:i:s') }}</p>
-                                                            <span>A :</span>
+                                                            <p class="blue-text">{{ perm.DateFrom | date('d-M-Y')~" "~perm.TimeFrom }}</p>
+                                                            <span>Finit :</span>
+                                                            <br>
+                                                            <p class="blue-text">{{ perm.DateTo | date('d-M-Y')~" "~perm.TimeTo }}</p>
+                                                            <span>Permission demandée le :</span>
                                                             <br>
                                                             <p class="blue-text">{{ perm.DateTo | date('d-M-Y H:i:s') }}</p>
                                                             <p>
@@ -93,6 +96,7 @@
                                                             </p>
                                                             <a href="{{ path('grantPermision',{'id':perm.id}) }}"><button class="simple-button-decoration green lighten-1 white-text"><span class="fa fa-check"></span> Accorder</button></a>
                                                             <a href="{{ path('rejectPermision',{'id':perm.id}) }}"><button class="deleteDep simple-button-decoration red lighten-1 white-text"><span class="fa fa-times"></span> Refuser</button></a>
+                                                            <a href="{{ path('generatePDFPermission',{'id':perm.id}) }}"><button class="simple-button-decoration green darken-3 white-text"><span class="fa fa-print"></span></button></a>
                                                         </div>
                                                     </div>
 
@@ -132,6 +136,7 @@
                                                             {{ nbreJours~" Jours "~nbreHeures~" Heures" }}
                                                             </b>
                                                         </p>
+                                                        <a href="{{ path('generatePDFPermission',{'id':perm.id}) }}"><button class="simple-button-decoration green darken-3 white-text"><span class="fa fa-print"></span></button></a>
                                                     </div>
                                                 </div>
 
@@ -170,6 +175,7 @@
                                                             {{ nbreJours~" Jours "~nbreHeures~" Heures" }}
                                                             </b>
                                                         </p>
+                                                        <a href="{{ path('generatePDFPermission',{'id':perm.id}) }}"><button class="simple-button-decoration green darken-3 white-text"><span class="fa fa-print"></span></button></a>
                                                     </div>
                                                 </div>
 

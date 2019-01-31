@@ -33,20 +33,21 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class DefaultController extends StatsController
 {
-    public function formatInt($value){
+    public function formatInt($value)
+    {
         $value = (string)$value;
         $value_lenght = strlen($value);
         if ($value_lenght >= 4) {
             $number_of_points = $value_lenght % 3;
             $value_tab = str_split($value);
             $str = "";
-            $cpt=0;
-            for ($i=$value_lenght-1;$i>=0;$i--){
-                if($cpt==3){
-                    $cpt=0;
-                    $str = $value_tab[$i].".".$str;
-                }else{
-                    $str = $value_tab[$i]."".$str;
+            $cpt = 0;
+            for ($i = $value_lenght - 1; $i >= 0; $i--) {
+                if ($cpt == 3) {
+                    $cpt = 0;
+                    $str = $value_tab[$i] . "." . $str;
+                } else {
+                    $str = $value_tab[$i] . "" . $str;
                 }
                 $cpt++;
             }
@@ -80,13 +81,13 @@ class DefaultController extends StatsController
 
         $pdf = new FPDF();
         $pdf->AddPage();
-        $pdf->SetFont('Arial','B',16);
-        $pdf->Cell(40,10,'Hello World !');
+        $pdf->SetFont('Arial', 'B', 16);
+        $pdf->Cell(40, 10, 'Hello World !');
 
         $pdf2 = new FPDF();
         $pdf2->AddPage();
-        $pdf2->SetFont('Arial','B',16);
-        $pdf2->Cell(40,10,'Bonjour le monde !');
+        $pdf2->SetFont('Arial', 'B', 16);
+        $pdf2->Cell(40, 10, 'Bonjour le monde !');
 
         $pdf->Output();
 
@@ -115,10 +116,10 @@ class DefaultController extends StatsController
         // Searching for already used username
         $i = 0;
         $found = false;
-        if($admins != null){
-            if(sizeof($admins) > 1){
-                while($i < sizeof($admins) && $found == false){
-                    if($admins[$i]->getUsername() == $request->request->get("adminUsername")){
+        if ($admins != null) {
+            if (sizeof($admins) > 1) {
+                while ($i < sizeof($admins) && $found == false) {
+                    if ($admins[$i]->getUsername() == $request->request->get("adminUsername")) {
                         $found = true;
                     }
                     $i++;
@@ -126,11 +127,11 @@ class DefaultController extends StatsController
             }
         }
 
-        if($found == false){
+        if ($found == false) {
             $cc = new CompanyConfig();
             $em = $this->getDoctrine()->getManager();
-            if(isset($_FILES["image"]["name"]) && !empty($_FILES["image"]["name"])){
-                $resultat = move_uploaded_file($_FILES['image']['tmp_name'],"company_images/".basename($_FILES["image"]["name"]));
+            if (isset($_FILES["image"]["name"]) && !empty($_FILES["image"]["name"])) {
+                $resultat = move_uploaded_file($_FILES['image']['tmp_name'], "company_images/" . basename($_FILES["image"]["name"]));
                 $cc->setCompanyName($request->request->get("compName"));
                 $cc->setCompanyLogo($_FILES["image"]["name"]);
                 $em->persist($cc);
@@ -138,8 +139,8 @@ class DefaultController extends StatsController
 
                 session_cache_limiter();
                 $session = new Session();
-                $session->set("companyLogo",$_FILES['image']['name']);
-                $session->set("companyName",$request->request->get("name"));
+                $session->set("companyLogo", $_FILES['image']['name']);
+                $session->set("companyName", $request->request->get("name"));
                 // We are done with the companyConfiguration.Now we must persist an Admin
                 $e = new Admin();
                 $e->setName($request->request->get("adminName"));
@@ -160,19 +161,19 @@ class DefaultController extends StatsController
                 $em = $this->getDoctrine()->getManager();
                 $ft = $this->getDoctrine()->getManager()->getRepository("AppBundle:Setting")->findAll();
 
-                if(sizeof($ft) > 0){
+                if (sizeof($ft) > 0) {
                     $ft = $ft[0]->getFirstTime();
-                }else{
+                } else {
                     $ft = true;
                 }
 
                 // No data is inserted yet in the database
-                if($ft){
+                if ($ft) {
                     $new_ft = new Setting();
                     $new_ft->setFirstTime(false);
                     $em->persist($new_ft);
                     $em->flush();
-                }else{
+                } else {
                     $ft->setFirstTime(false);
                     $em->flush();
                 }
@@ -181,10 +182,10 @@ class DefaultController extends StatsController
                 // Now that all operations are achieved, we can return a response
 
                 return new Response(1);
-            }else{
+            } else {
                 return new Response("Erreur avec la soumission du logo");
             }
-        }else{
+        } else {
             return $this->redirectToRoute("firstTimeInitialization");
         }
     }
@@ -199,42 +200,42 @@ class DefaultController extends StatsController
         // Searching for already used username
         $i = 0;
         $found = false;
-        if(sizeof($admins) > 1){
-            while($i < sizeof($admins) && $found == false){
-                if($admins[$i]->getUsername() == $request->request->get("adminUsername")){
+        if (sizeof($admins) > 1) {
+            while ($i < sizeof($admins) && $found == false) {
+                if ($admins[$i]->getUsername() == $request->request->get("adminUsername")) {
                     $found = true;
                 }
                 $i++;
             }
         }
 
-        if($found == false){
+        if ($found == false) {
             $em = $this->getDoctrine()->getManager();
 
-                $e = new Admin();
-                $e->setName($request->request->get("adminName"));
-                $e->setSurname($request->request->get("adminSurname"));
-                $e->setUsername($request->request->get("adminUsername"));
-                $e->setPassword(md5($request->request->get("adminPassword")));
-                $e->setRoles(array($request->request->get("role")));
-                $e->setAddress($request->request->get("adminAdress"));
-                $e->setPhonenumber($request->request->get("adminPhoneNumber"));
+            $e = new Admin();
+            $e->setName($request->request->get("adminName"));
+            $e->setSurname($request->request->get("adminSurname"));
+            $e->setUsername($request->request->get("adminUsername"));
+            $e->setPassword(md5($request->request->get("adminPassword")));
+            $e->setRoles(array($request->request->get("role")));
+            $e->setAddress($request->request->get("adminAdress"));
+            $e->setPhonenumber($request->request->get("adminPhoneNumber"));
 
-                // We continue with the rest of the admin (Employee) properties
+            // We continue with the rest of the admin (Employee) properties
 
-                $em->persist($e);
+            $em->persist($e);
 
-                $journal = new Journal();
-                $journal->setCrudType('C');
-                $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
-                $journal->setDescription($journal->getAuthor()." a ajouté un nouvel administrateur au système");
-                $journal->setElementConcerned($e->getName()." ".$e->getSurname());
-                $em->persist($journal);
+            $journal = new Journal();
+            $journal->setCrudType('C');
+            $journal->setAuthor($this->getUser()->getName() . ' ' . $this->getUser()->getSurname());
+            $journal->setDescription($journal->getAuthor() . " a ajouté un nouvel administrateur au système");
+            $journal->setElementConcerned($e->getName() . " " . $e->getSurname());
+            $em->persist($journal);
 
-                $em->flush();
-                $this->get('session')->getFlashBag()->set('notice', 'Cet administrateur a été défini avec succès');
+            $em->flush();
+            $this->get('session')->getFlashBag()->set('notice', 'Cet administrateur a été défini avec succès');
             return new Response(1);
-        }else{
+        } else {
             return $this->redirectToRoute("firstTimeInitialization");
         }
     }
@@ -242,32 +243,32 @@ class DefaultController extends StatsController
     /**
      * @Route("/changeSocietyName", name="changeSocietyName")
      */
-    public function changeSocietyNameAction(Request $request,$name = null)
+    public function changeSocietyNameAction(Request $request, $name = null)
     {
         $name = $request->request->get("name");
         $cc = $this->getDoctrine()->getManager()->getRepository("AppBundle:CompanyConfig")->findAll();
         $em = $this->getDoctrine()->getManager();
-        if($cc != null){
+        if ($cc != null) {
             $cc = $cc[0];
             $cc->setCompanyName($name);
             $em->flush();
 
             $session = new Session();
-            $session->set("companyName",$name);
-        }else{
+            $session->set("companyName", $name);
+        } else {
             $newCC = new CompanyConfig();
             $newCC->setCompanyName($name);
             $em->persist($newCC);
             $em->flush();
 
             $session = new Session();
-            $session->set("companyName",$name);
+            $session->set("companyName", $name);
         }
         $journal = new Journal();
-            
+
         $journal->setCrudType('U');
-        $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
-        $journal->setDescription($journal->getAuthor()." a changé le nom de la société");
+        $journal->setAuthor($this->getUser()->getName() . ' ' . $this->getUser()->getSurname());
+        $journal->setDescription($journal->getAuthor() . " a changé le nom de la société");
         $em->persist($journal);
         $em->flush();
 
@@ -290,21 +291,21 @@ class DefaultController extends StatsController
         $date = $request->request->get("date");
         $ex = $this->getDoctrine()->getManager()->getRepository("AppBundle:Expiration")->findAll();
         $em = $this->getDoctrine()->getManager();
-        if($ex != null){
+        if ($ex != null) {
             $ex = $ex[0];
             $ex->setExpiryDate($date);
             $em->flush();
 
             $session = new Session();
-            $session->set("expiryDate",$date);
-        }else{
+            $session->set("expiryDate", $date);
+        } else {
             $newEX = new Expiration;
             $newEX->setExpiryDate($date);
             $em->persist($newEX);
             $em->flush();
 
             $session = new Session();
-            $session->set("expiryDate",$date);
+            $session->set("expiryDate", $date);
         }
         return new Response("OK");
     }
@@ -312,35 +313,35 @@ class DefaultController extends StatsController
     /**
      * @Route("/changeSocietyLogo", name="changeSocietyLogo")
      */
-    public function changeSocietyLogoAction(Request $request,$name = null)
+    public function changeSocietyLogoAction(Request $request, $name = null)
     {
         $cc = $this->getDoctrine()->getManager()->getRepository("AppBundle:CompanyConfig")->findAll();
         $em = $this->getDoctrine()->getManager();
-        if($cc != null){
-            if(isset($_FILES["image"]["name"]) && !empty($_FILES["image"]["name"])){
+        if ($cc != null) {
+            if (isset($_FILES["image"]["name"]) && !empty($_FILES["image"]["name"])) {
                 $cc = $cc[0];
                 $lastCompanyLogo = $cc->getCompanyLogo();
-                if($lastCompanyLogo != null && !empty($lastCompanyLogo) && file_exists("company_images/".$lastCompanyLogo)){
-                    unlink("company_images/".$lastCompanyLogo);
+                if ($lastCompanyLogo != null && !empty($lastCompanyLogo) && file_exists("company_images/" . $lastCompanyLogo)) {
+                    unlink("company_images/" . $lastCompanyLogo);
                 }
                 $cc->setCompanyLogo($_FILES["image"]["name"]);
                 $em->flush();
 
-                $resultat = move_uploaded_file($_FILES['image']['tmp_name'],"company_images/".basename($_FILES["image"]["name"]));
-                
+                $resultat = move_uploaded_file($_FILES['image']['tmp_name'], "company_images/" . basename($_FILES["image"]["name"]));
+
                 $journal = new Journal();
                 $journal->setCrudType('U');
-                $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
-                $journal->setDescription($journal->getAuthor()." a changé le logo de la société");
+                $journal->setAuthor($this->getUser()->getName() . ' ' . $this->getUser()->getSurname());
+                $journal->setDescription($journal->getAuthor() . " a changé le logo de la société");
                 $em->persist($journal);
 
                 $em->flush();
                 $session = new Session();
-                $session->set("companyLogo",$_FILES['image']['name']);
-            }else{
+                $session->set("companyLogo", $_FILES['image']['name']);
+            } else {
                 return new Response("Erreur");
             }
-        }else{
+        } else {
             return new Response("Spécifiez d'abord un nom de société");
         }
         return new Response("OK");
@@ -355,58 +356,58 @@ class DefaultController extends StatsController
         $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
         $devices = $this->getDoctrine()->getManager()->getRepository("TmyeDeviceBundle:DevicePubPic")->findAll();
 
-        if ($devices != null){
-            foreach ($devices as $dev){
-                if(isset($_FILES["first_image_input_1"]["name"]) && !empty($_FILES["first_image_input_1"]["name"])){
+        if ($devices != null) {
+            foreach ($devices as $dev) {
+                if (isset($_FILES["first_image_input_1"]["name"]) && !empty($_FILES["first_image_input_1"]["name"])) {
                     $lastImage = $dev->getImage1();
-                    if($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg"){
+                    if ($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg") {
                         // Verify if the file exists because we are in a loop
-                        if(file_exists("pub_covers/".$lastImage)){
-                            unlink("pub_covers/".$lastImage);
+                        if (file_exists("pub_covers/" . $lastImage)) {
+                            unlink("pub_covers/" . $lastImage);
                         }
                     }
                     $dev->setImage1(md5($_FILES["first_image_input_1"]["name"]));
-                    $resultat = move_uploaded_file($_FILES['first_image_input_1']['tmp_name'],"pub_covers/".md5(basename($_FILES["first_image_input_1"]["name"])));
+                    $resultat = move_uploaded_file($_FILES['first_image_input_1']['tmp_name'], "pub_covers/" . md5(basename($_FILES["first_image_input_1"]["name"])));
                 }
-                if(isset($_FILES["second_image_input_1"]["name"]) && !empty($_FILES["second_image_input_1"]["name"])){
+                if (isset($_FILES["second_image_input_1"]["name"]) && !empty($_FILES["second_image_input_1"]["name"])) {
                     $lastImage = $dev->getImage2();
-                    if($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg"){
+                    if ($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg") {
                         // Verify if the file exists because we are in a loop
-                        if(file_exists("pub_covers/".$lastImage)){
-                            unlink("pub_covers/".$lastImage);
+                        if (file_exists("pub_covers/" . $lastImage)) {
+                            unlink("pub_covers/" . $lastImage);
                         }
                     }
                     $dev->setImage2(md5($_FILES["second_image_input_1"]["name"]));
-                    $resultat = move_uploaded_file($_FILES['second_image_input_1']['tmp_name'],"pub_covers/".md5(basename($_FILES["second_image_input_1"]["name"])));
+                    $resultat = move_uploaded_file($_FILES['second_image_input_1']['tmp_name'], "pub_covers/" . md5(basename($_FILES["second_image_input_1"]["name"])));
                 }
-                if(isset($_FILES["third_image_input_1"]["name"]) && !empty($_FILES["third_image_input_1"]["name"])){
+                if (isset($_FILES["third_image_input_1"]["name"]) && !empty($_FILES["third_image_input_1"]["name"])) {
                     $lastImage = $dev->getImage3();
-                    if($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg"){
+                    if ($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg") {
                         // Verify if the file exists because we are in a loop
-                        if(file_exists("pub_covers/".$lastImage)){
-                            unlink("pub_covers/".$lastImage);
+                        if (file_exists("pub_covers/" . $lastImage)) {
+                            unlink("pub_covers/" . $lastImage);
                         }
                     }
                     $dev->setImage3(md5($_FILES["third_image_input_1"]["name"]));
-                    $resultat = move_uploaded_file($_FILES['third_image_input_1']['tmp_name'],"pub_covers/".md5(basename($_FILES["third_image_input_1"]["name"])));
+                    $resultat = move_uploaded_file($_FILES['third_image_input_1']['tmp_name'], "pub_covers/" . md5(basename($_FILES["third_image_input_1"]["name"])));
                 }
                 $em->flush();
             }
-        }else{
-            foreach ($machines as $mac){
+        } else {
+            foreach ($machines as $mac) {
                 $dev = new DevicePubPic();
                 $dev->setDeviceid($mac->getMachineId());
-                if(isset($_FILES["first_image_input_1"]["name"]) && !empty($_FILES["first_image_input_1"]["name"])){
+                if (isset($_FILES["first_image_input_1"]["name"]) && !empty($_FILES["first_image_input_1"]["name"])) {
                     $dev->setImage1(md5($_FILES["first_image_input_1"]["name"]));
-                    $resultat = move_uploaded_file($_FILES['first_image_input_1']['tmp_name'],"pub_covers/".md5(basename($_FILES["first_image_input_1"]["name"])));
+                    $resultat = move_uploaded_file($_FILES['first_image_input_1']['tmp_name'], "pub_covers/" . md5(basename($_FILES["first_image_input_1"]["name"])));
                 }
-                if(isset($_FILES["second_image_input_1"]["name"]) && !empty($_FILES["second_image_input_1"]["name"])){
+                if (isset($_FILES["second_image_input_1"]["name"]) && !empty($_FILES["second_image_input_1"]["name"])) {
                     $dev->setImage2(md5($_FILES["second_image_input_1"]["name"]));
-                    $resultat = move_uploaded_file($_FILES['second_image_input_1']['tmp_name'],"pub_covers/".md5(basename($_FILES["second_image_input_1"]["name"])));
+                    $resultat = move_uploaded_file($_FILES['second_image_input_1']['tmp_name'], "pub_covers/" . md5(basename($_FILES["second_image_input_1"]["name"])));
                 }
-                if(isset($_FILES["third_image_input_1"]["name"]) && !empty($_FILES["third_image_input_1"]["name"])){
+                if (isset($_FILES["third_image_input_1"]["name"]) && !empty($_FILES["third_image_input_1"]["name"])) {
                     $dev->setImage3(md5($_FILES["third_image_input_1"]["name"]));
-                    $resultat = move_uploaded_file($_FILES['third_image_input_1']['tmp_name'],"pub_covers/".md5(basename($_FILES["third_image_input_1"]["name"])));
+                    $resultat = move_uploaded_file($_FILES['third_image_input_1']['tmp_name'], "pub_covers/" . md5(basename($_FILES["third_image_input_1"]["name"])));
                 }
                 $em->persist($dev);
                 $em->flush();
@@ -425,9 +426,9 @@ class DefaultController extends StatsController
 
         $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
         $tab = array();
-        foreach ($machines as $mac){
-            foreach ($mac->getDepartements() as $dep){
-                if(in_array($dep->getId(),array($_POST["depId"]))){
+        foreach ($machines as $mac) {
+            foreach ($mac->getDepartements() as $dep) {
+                if (in_array($dep->getId(), array($_POST["depId"]))) {
                     $tab[] = $mac->getMachineId();
                 }
             }
@@ -437,60 +438,60 @@ class DefaultController extends StatsController
 
         $devices = $this->getDoctrine()->getManager()->getRepository("TmyeDeviceBundle:DevicePubPic")->deviceByArray($tab);
         if ($devices != null) {
-            foreach ($devices as $dev){
-                if(isset($_FILES["first_image_input_2"]["name"]) && !empty($_FILES["first_image_input_2"]["name"])){
+            foreach ($devices as $dev) {
+                if (isset($_FILES["first_image_input_2"]["name"]) && !empty($_FILES["first_image_input_2"]["name"])) {
                     $dev->setDeviceid($mac->getMachineId());
                     $lastImage = $dev->getImage1();
-                    if($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg"){
+                    if ($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg") {
                         // Verify if the file exists because we are in a loop
-                        if(file_exists("pub_covers/".$lastImage)){
-                            unlink("pub_covers/".$lastImage);
+                        if (file_exists("pub_covers/" . $lastImage)) {
+                            unlink("pub_covers/" . $lastImage);
                         }
                     }
                     $dev->setImage1(md5($_FILES["first_image_input_2"]["name"]));
-                    $resultat = move_uploaded_file($_FILES['first_image_input_2']['tmp_name'],"pub_covers/".md5(basename($_FILES["first_image_input_2"]["name"])));
+                    $resultat = move_uploaded_file($_FILES['first_image_input_2']['tmp_name'], "pub_covers/" . md5(basename($_FILES["first_image_input_2"]["name"])));
                 }
-                if(isset($_FILES["second_image_input_2"]["name"]) && !empty($_FILES["second_image_input_2"]["name"])){
+                if (isset($_FILES["second_image_input_2"]["name"]) && !empty($_FILES["second_image_input_2"]["name"])) {
                     $dev->setDeviceid($mac->getMachineId());
                     $lastImage = $dev->getImage2();
-                    if($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg"){
+                    if ($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg") {
                         // Verify if the file exists because we are in a loop
-                        if(file_exists("pub_covers/".$lastImage)){
-                            unlink("pub_covers/".$lastImage);
+                        if (file_exists("pub_covers/" . $lastImage)) {
+                            unlink("pub_covers/" . $lastImage);
                         }
                     }
                     $dev->setImage2(md5($_FILES["second_image_input_2"]["name"]));
-                    $resultat = move_uploaded_file($_FILES['second_image_input_2']['tmp_name'],"pub_covers/".md5(basename($_FILES["second_image_input_2"]["name"])));
+                    $resultat = move_uploaded_file($_FILES['second_image_input_2']['tmp_name'], "pub_covers/" . md5(basename($_FILES["second_image_input_2"]["name"])));
                 }
-                if(isset($_FILES["third_image_input_2"]["name"]) && !empty($_FILES["third_image_input_2"]["name"])){
+                if (isset($_FILES["third_image_input_2"]["name"]) && !empty($_FILES["third_image_input_2"]["name"])) {
                     $dev->setDeviceid($mac->getMachineId());
                     $lastImage = $dev->getImage3();
-                    if($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg"){
+                    if ($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg") {
                         // Verify if the file exists because we are in a loop
-                        if(file_exists("pub_covers/".$lastImage)){
-                            unlink("pub_covers/".$lastImage);
+                        if (file_exists("pub_covers/" . $lastImage)) {
+                            unlink("pub_covers/" . $lastImage);
                         }
                     }
                     $dev->setImage3(md5($_FILES["third_image_input_2"]["name"]));
-                    $resultat = move_uploaded_file($_FILES['third_image_input_2']['tmp_name'],"pub_covers/".md5(basename($_FILES["third_image_input_2"]["name"])));
+                    $resultat = move_uploaded_file($_FILES['third_image_input_2']['tmp_name'], "pub_covers/" . md5(basename($_FILES["third_image_input_2"]["name"])));
                 }
                 $em->flush();
             }
-        }else{
-            foreach ($machines as $mac){
+        } else {
+            foreach ($machines as $mac) {
                 $dev = new DevicePubPic();
                 $dev->setDeviceid($mac->getMachineId());
-                if(isset($_FILES["first_image_input_2"]["name"]) && !empty($_FILES["first_image_input_2"]["name"])){
+                if (isset($_FILES["first_image_input_2"]["name"]) && !empty($_FILES["first_image_input_2"]["name"])) {
                     $dev->setImage1(md5($_FILES["first_image_input_2"]["name"]));
-                    $resultat = move_uploaded_file($_FILES['first_image_input_2']['tmp_name'],"pub_covers/".md5(basename($_FILES["first_image_input_2"]["name"])));
+                    $resultat = move_uploaded_file($_FILES['first_image_input_2']['tmp_name'], "pub_covers/" . md5(basename($_FILES["first_image_input_2"]["name"])));
                 }
-                if(isset($_FILES["second_image_input_2"]["name"]) && !empty($_FILES["second_image_input_2"]["name"])){
+                if (isset($_FILES["second_image_input_2"]["name"]) && !empty($_FILES["second_image_input_2"]["name"])) {
                     $dev->setImage2(md5($_FILES["second_image_input_2"]["name"]));
-                    $resultat = move_uploaded_file($_FILES['second_image_input_2']['tmp_name'],"pub_covers/".md5(basename($_FILES["second_image_input_2"]["name"])));
+                    $resultat = move_uploaded_file($_FILES['second_image_input_2']['tmp_name'], "pub_covers/" . md5(basename($_FILES["second_image_input_2"]["name"])));
                 }
-                if(isset($_FILES["third_image_input_2"]["name"]) && !empty($_FILES["third_image_input_2"]["name"])){
+                if (isset($_FILES["third_image_input_2"]["name"]) && !empty($_FILES["third_image_input_2"]["name"])) {
                     $dev->setImage3(md5($_FILES["third_image_input_2"]["name"]));
-                    $resultat = move_uploaded_file($_FILES['third_image_input_2']['tmp_name'],"pub_covers/".md5(basename($_FILES["third_image_input_2"]["name"])));
+                    $resultat = move_uploaded_file($_FILES['third_image_input_2']['tmp_name'], "pub_covers/" . md5(basename($_FILES["third_image_input_2"]["name"])));
                 }
                 $em->persist($dev);
                 $em->flush();
@@ -508,60 +509,60 @@ class DefaultController extends StatsController
         $em = $this->getDoctrine()->getManager();
 
         $mac = $request->request->get("macId");
-        echo "\n Mac Id : ".$mac."\n";
-        $devices = $this->getDoctrine()->getManager()->getRepository("TmyeDeviceBundle:DevicePubPic")->findBy(array("deviceid"=>$_POST["macId"]));
+        echo "\n Mac Id : " . $mac . "\n";
+        $devices = $this->getDoctrine()->getManager()->getRepository("TmyeDeviceBundle:DevicePubPic")->findBy(array("deviceid" => $_POST["macId"]));
 
         if ($devices != null) {
-            foreach ($devices as $dev){
-                if(isset($_FILES["first_image_input_3"]["name"]) && !empty($_FILES["first_image_input_3"]["name"])){
+            foreach ($devices as $dev) {
+                if (isset($_FILES["first_image_input_3"]["name"]) && !empty($_FILES["first_image_input_3"]["name"])) {
                     $lastImage = $dev->getImage1();
-                    if($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg"){
+                    if ($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg") {
                         // Verify if the file exists because we are in a loop
-                        if(file_exists("pub_covers/".$lastImage)){
-                            unlink("pub_covers/".$lastImage);
+                        if (file_exists("pub_covers/" . $lastImage)) {
+                            unlink("pub_covers/" . $lastImage);
                         }
                     }
                     $dev->setImage1(md5($_FILES["first_image_input_3"]["name"]));
-                    $resultat = move_uploaded_file($_FILES['first_image_input_3']['tmp_name'],"pub_covers/".md5(basename($_FILES["first_image_input_3"]["name"])));
+                    $resultat = move_uploaded_file($_FILES['first_image_input_3']['tmp_name'], "pub_covers/" . md5(basename($_FILES["first_image_input_3"]["name"])));
                 }
-                if(isset($_FILES["second_image_input_3"]["name"]) && !empty($_FILES["second_image_input_3"]["name"])){
+                if (isset($_FILES["second_image_input_3"]["name"]) && !empty($_FILES["second_image_input_3"]["name"])) {
                     $lastImage = $dev->getImage2();
-                    if($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg"){
+                    if ($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg") {
                         // Verify if the file exists because we are in a loop
-                        if(file_exists("pub_covers/".$lastImage)){
-                            unlink("pub_covers/".$lastImage);
+                        if (file_exists("pub_covers/" . $lastImage)) {
+                            unlink("pub_covers/" . $lastImage);
                         }
                     }
                     $dev->setImage2(md5($_FILES["second_image_input_3"]["name"]));
-                    $resultat = move_uploaded_file($_FILES['second_image_input_3']['tmp_name'],"pub_covers/".md5(basename($_FILES["second_image_input_3"]["name"])));
+                    $resultat = move_uploaded_file($_FILES['second_image_input_3']['tmp_name'], "pub_covers/" . md5(basename($_FILES["second_image_input_3"]["name"])));
                 }
-                if(isset($_FILES["third_image_input_3"]["name"]) && !empty($_FILES["third_image_input_3"]["name"])){
+                if (isset($_FILES["third_image_input_3"]["name"]) && !empty($_FILES["third_image_input_3"]["name"])) {
                     $lastImage = $dev->getImage3();
-                    if($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg"){
+                    if ($lastImage != null && !empty($lastImage) && $lastImage != "img/pubdef.jpg") {
                         // Verify if the file exists because we are in a loop
-                        if(file_exists("pub_covers/".$lastImage)){
-                            unlink("pub_covers/".$lastImage);
+                        if (file_exists("pub_covers/" . $lastImage)) {
+                            unlink("pub_covers/" . $lastImage);
                         }
                     }
                     $dev->setImage3(md5($_FILES["third_image_input_3"]["name"]));
-                    $resultat = move_uploaded_file($_FILES['third_image_input_3']['tmp_name'],"pub_covers/".md5(basename($_FILES["third_image_input_3"]["name"])));
+                    $resultat = move_uploaded_file($_FILES['third_image_input_3']['tmp_name'], "pub_covers/" . md5(basename($_FILES["third_image_input_3"]["name"])));
                 }
                 $em->flush();
             }
-        }else{
+        } else {
             $dev = new DevicePubPic();
             $dev->setDeviceid($mac);
-            if(isset($_FILES["first_image_input_3"]["name"]) && !empty($_FILES["first_image_input_3"]["name"])){
+            if (isset($_FILES["first_image_input_3"]["name"]) && !empty($_FILES["first_image_input_3"]["name"])) {
                 $dev->setImage1(md5($_FILES["first_image_input_3"]["name"]));
-                $resultat = move_uploaded_file($_FILES['first_image_input_3']['tmp_name'],"pub_covers/".md5(basename($_FILES["first_image_input_3"]["name"])));
+                $resultat = move_uploaded_file($_FILES['first_image_input_3']['tmp_name'], "pub_covers/" . md5(basename($_FILES["first_image_input_3"]["name"])));
             }
-            if(isset($_FILES["second_image_input_3"]["name"]) && !empty($_FILES["second_image_input_3"]["name"])){
+            if (isset($_FILES["second_image_input_3"]["name"]) && !empty($_FILES["second_image_input_3"]["name"])) {
                 $dev->setImage2(md5($_FILES["second_image_input_3"]["name"]));
-                $resultat = move_uploaded_file($_FILES['second_image_input_3']['tmp_name'],"pub_covers/".md5(basename($_FILES["second_image_input_3"]["name"])));
+                $resultat = move_uploaded_file($_FILES['second_image_input_3']['tmp_name'], "pub_covers/" . md5(basename($_FILES["second_image_input_3"]["name"])));
             }
-            if(isset($_FILES["third_image_input_3"]["name"]) && !empty($_FILES["third_image_input_3"]["name"])){
+            if (isset($_FILES["third_image_input_3"]["name"]) && !empty($_FILES["third_image_input_3"]["name"])) {
                 $dev->setImage3(md5($_FILES["third_image_input_3"]["name"]));
-                $resultat = move_uploaded_file($_FILES['third_image_input_3']['tmp_name'],"pub_covers/".md5(basename($_FILES["third_image_input_3"]["name"])));
+                $resultat = move_uploaded_file($_FILES['third_image_input_3']['tmp_name'], "pub_covers/" . md5(basename($_FILES["third_image_input_3"]["name"])));
             }
             $em->persist($dev);
             $em->flush();
@@ -577,15 +578,15 @@ class DefaultController extends StatsController
     {
         $em = $this->getDoctrine()->getManager();
         $code = $request->request->get("code");
-        $device = $this->getDoctrine()->getManager()->getRepository("TmyeDeviceBundle:DevicePubPic")->findOneBy(array("deviceid"=>$code));
+        $device = $this->getDoctrine()->getManager()->getRepository("TmyeDeviceBundle:DevicePubPic")->findOneBy(array("deviceid" => $code));
 
         $t = array();
-        if(!empty($device)){
+        if (!empty($device)) {
             $t[] = $device->getImage1();
             $t[] = $device->getImage2();
             $t[] = $device->getImage3();
             return new Response(json_encode($t));
-        }else{
+        } else {
             return new Response("0");
         }
         //return new Response(json_encode($t));
@@ -599,26 +600,26 @@ class DefaultController extends StatsController
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             $expiry_service->hasExpired();
-            if($expiry_service->hasExpired()){
+            if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
             }
             $session = new Session();
-            if($session->get('companyName') == null || $session->get('companyLogo') == null){
-                return $this->redirectToRoute("manageSocietyName",array('badConfig'=>1));
+            if ($session->get('companyName') == null || $session->get('companyLogo') == null) {
+                return $this->redirectToRoute("manageSocietyName", array('badConfig' => 1));
             }
             $ci = $this->getDoctrine()->getManager()->getRepository("AppBundle:CompanyInfos")->findAll();
-            if(($ci != null) && (!empty($ci))){
+            if (($ci != null) && (!empty($ci))) {
                 $ci = $ci[0];
-            }else{
+            } else {
                 $ci = null;
             }
             $employes = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
             return $this->render('cas/index.html.twig', array(
-                'ci'=>$ci,
-                'employes'=>$employes,
-                'base_dir' => realpath($this->container->getParameter('kernel.root_dir').'/..').DIRECTORY_SEPARATOR,
+                'ci' => $ci,
+                'employes' => $employes,
+                'base_dir' => realpath($this->container->getParameter('kernel.root_dir') . '/..') . DIRECTORY_SEPARATOR,
             ));
-        }else{
+        } else {
             return $this->redirectToRoute("login");
         }
     }
@@ -630,12 +631,12 @@ class DefaultController extends StatsController
     {
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN_CONTROL')) {
             $expiry_service = $this->container->get('app_bundle_expired');
-            if($expiry_service->hasExpired()){
+            if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
             }
             $listDep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAllSafe();
-            return $this->render('cas/historique.html.twig',array('listDep'=>$listDep));
-        }else{
+            return $this->render('cas/historique.html.twig', array('listDep' => $listDep));
+        } else {
             return $this->redirectToRoute("login");
         }
     }
@@ -647,12 +648,12 @@ class DefaultController extends StatsController
     {
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN_CONTROL')) {
             $expiry_service = $this->container->get('app_bundle_expired');
-            if($expiry_service->hasExpired()){
+            if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
             }
             $listDep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAllSafe();
-            return $this->render('cas/historiqueBrute.html.twig',array('listDep'=>$listDep));
-        }else{
+            return $this->render('cas/historiqueBrute.html.twig', array('listDep' => $listDep));
+        } else {
             return $this->redirectToRoute("login");
         }
     }
@@ -697,11 +698,11 @@ class DefaultController extends StatsController
             }
             $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
             $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
-            return $this->render('cas/switch.html.twig',array(
-                'departements'=>$departements,
-                'machines'=>$machines
+            return $this->render('cas/switch.html.twig', array(
+                'departements' => $departements,
+                'machines' => $machines
             ));
-        }else{
+        } else {
             return $this->redirectToRoute("login");
         }
     }
@@ -717,7 +718,7 @@ class DefaultController extends StatsController
                 return $this->redirectToRoute("expiryPage");
             }
             return $this->render('cas/manage.html.twig');
-        }else{
+        } else {
             return $this->redirectToRoute("login");
         }
 
@@ -734,10 +735,10 @@ class DefaultController extends StatsController
                 return $this->redirectToRoute("expiryPage");
             }
             $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
-            return $this->render('cas/manageEmpProfilePicture.html.twig',array(
-                "departements"=>$departements
+            return $this->render('cas/manageEmpProfilePicture.html.twig', array(
+                "departements" => $departements
             ));
-        }else{
+        } else {
             return $this->redirectToRoute("login");
         }
 
@@ -754,10 +755,10 @@ class DefaultController extends StatsController
                 return $this->redirectToRoute("expiryPage");
             }
             $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
-            return $this->render('cas/manageEmpFingerprint.html.twig',array(
-                "departements"=>$departements
+            return $this->render('cas/manageEmpFingerprint.html.twig', array(
+                "departements" => $departements
             ));
-        }else{
+        } else {
             return $this->redirectToRoute("login");
         }
     }
@@ -773,10 +774,10 @@ class DefaultController extends StatsController
                 return $this->redirectToRoute("expiryPage");
             }
             $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
-            return $this->render('cas/manageEmployee.html.twig',array(
-                "departements"=>$departements
+            return $this->render('cas/manageEmployee.html.twig', array(
+                "departements" => $departements
             ));
-        }else{
+        } else {
             return $this->redirectToRoute("login");
         }
 
@@ -794,11 +795,11 @@ class DefaultController extends StatsController
             }
             $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
             $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
-            return $this->render('cas/delete.html.twig',array(
-                "departements"=>$departements,
-                "machines"=>$machines
+            return $this->render('cas/delete.html.twig', array(
+                "departements" => $departements,
+                "machines" => $machines
             ));
-        }else{
+        } else {
             return $this->redirectToRoute("login");
         }
     }
@@ -815,11 +816,11 @@ class DefaultController extends StatsController
             }
             $machines = $this->getDoctrine()->getManager()->getRepository("AppBundle:Machine")->findAll();
             $departements = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement")->findAll();
-            return $this->render('cas/manageDepartement.html.twig',array(
-                "departements"=>$departements,
-                "machines"=>$machines
+            return $this->render('cas/manageDepartement.html.twig', array(
+                "departements" => $departements,
+                "machines" => $machines
             ));
-        }else{
+        } else {
             return $this->redirectToRoute("login");
         }
     }
@@ -836,8 +837,8 @@ class DefaultController extends StatsController
             if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
             }
-            return $this->render('cas/manageSocietyName.html.twig',array("token"=>$token));
-        }else{
+            return $this->render('cas/manageSocietyName.html.twig', array("token" => $token));
+        } else {
             return $this->redirectToRoute("login");
         }
     }
@@ -845,17 +846,18 @@ class DefaultController extends StatsController
     /**
      * @Route("/customizeCompanyInfos",name="customizeCompanyInfos")
      */
-    public function customizeCompanyInfosAction(Request $request){
+    public function customizeCompanyInfosAction(Request $request)
+    {
         if ($this->get('security.authorization_checker')->isGranted('ROLE_SECRET')) {
             $expiry_service = $this->container->get('app_bundle_expired');
-            if($expiry_service->hasExpired()){
+            if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
             }
 
             $ci = $this->getDoctrine()->getManager()->getRepository("AppBundle:CompanyInfos")->findAll();
-            if(($ci != null) && (!empty($ci))){
+            if (($ci != null) && (!empty($ci))) {
                 $ci = $ci[0];
-            }else{
+            } else {
                 $ci = new CompanyInfos();
             }
 
@@ -864,12 +866,12 @@ class DefaultController extends StatsController
 
             // On ajoute les champs de l'entité que l'on veut à notre formulaire
             $formBuilder
-                ->add('vision', TextType::class,array('label'=>' '))
-                ->add('mission', TextType::class,array('label'=>' '))
-                ->add('foundation', TextType::class,array('label'=>' '))
-                ->add('headoffice', TextType::class,array('label'=>' '))
-                ->add('employees', IntegerType::class,array('required'=>false, 'label'=>' ',))
-                ->add('director', TextType::class,array('label'=>' '))
+                ->add('vision', TextType::class, array('label' => ' '))
+                ->add('mission', TextType::class, array('label' => ' '))
+                ->add('foundation', TextType::class, array('label' => ' '))
+                ->add('headoffice', TextType::class, array('label' => ' '))
+                ->add('employees', IntegerType::class, array('required' => false, 'label' => ' ',))
+                ->add('director', TextType::class, array('label' => ' '))
                 ->add("creer", SubmitType::class);
             // À partir du formBuilder, on génère le formulaire
 
@@ -894,15 +896,15 @@ class DefaultController extends StatsController
             // - Soit la requête est de type GET, donc le visiteur vient d'arriver sur la page et veut voir le formulaire
             // - Soit la requête est de type POST, mais le formulaire contient des valeurs invalides, donc on l'affiche de nouveau
 
-            return $this->render('cas/companyInfos.html.twig',array(
+            return $this->render('cas/companyInfos.html.twig', array(
                 'form' => $form->createView()
             ));
-        }else{
+        } else {
             return $this->redirectToRoute("login");
         }
 
-        return $this->render("cas/companyInfos.html.twig",array(
-            "ci"=>$ci
+        return $this->render("cas/companyInfos.html.twig", array(
+            "ci" => $ci
         ));
     }
 
@@ -917,63 +919,63 @@ class DefaultController extends StatsController
 
         $empId = $request->request->get('destination');
         $dateType = $request->request->get('dateType');
-        if($dateType != "0" && $dateType != null){
-            $fromDate = "01-".$dateType."-".date('Y');
-            $toDate = date('t-m-Y',strtotime($fromDate));
-        }else{
+        if ($dateType != "0" && $dateType != null) {
+            $fromDate = "01-" . $dateType . "-" . date('Y');
+            $toDate = date('t-m-Y', strtotime($fromDate));
+        } else {
             $fromDate = $request->request->get('fromDate');
             $toDate = $request->request->get('toDate');
         }
         $t = $request->request->get('type');
         $pdf = new tablepdf();
-        if($t != "1" && $t != "2"){
+        if ($t != "1" && $t != "2") {
             $pdf->AddPage();
-            $pdf->SetFont('Arial','B',16);
+            $pdf->SetFont('Arial', 'B', 16);
 
-            $imageData = getimagesize($this->getParameter("web_dir")."/company_images/".$session->get("companyLogo"));
+            $imageData = getimagesize($this->getParameter("web_dir") . "/company_images/" . $session->get("companyLogo"));
             $theWidth = $imageData[0];
             $theHeight = $imageData[1];
-            $ratio = $theWidth/$theHeight;
-            $percent = $ratio*100;
+            $ratio = $theWidth / $theHeight;
+            $percent = $ratio * 100;
             // if the width is greater than 100px we must fix it at 100
-            if($theWidth > 20){
+            if ($theWidth > 20) {
                 $theWidth = 20;
             }
-            $theHeight = ($theWidth*$percent)/100;
+            $theHeight = ($theWidth * $percent) / 100;
 
             //print_r($theWidth."<br/>");
             //print_r($theHeight);
 
-            $pdf->Image($this->getParameter("web_dir")."/company_images/".$session->get("companyLogo"),10,10,$theWidth,$theHeight);
-            $pdf->Image($this->getParameter("web_dir")."/img/logo.png",180,10,12.62,19.4);
+            $pdf->Image($this->getParameter("web_dir") . "/company_images/" . $session->get("companyLogo"), 10, 10, $theWidth, $theHeight);
+            $pdf->Image($this->getParameter("web_dir") . "/img/logo.png", 180, 10, 12.62, 19.4);
             $pdf->Ln('25');
-            $pdf->Cell(500,10,$session->get("companyName"));
-            $pdf->Cell(500,10,$session->get("companyName"));
+            $pdf->Cell(500, 10, $session->get("companyName"));
+            $pdf->Cell(500, 10, $session->get("companyName"));
             $pdf->Ln('17');
-            $pdf->Cell(25,10,"");
-            $pdf->SetFont('Arial','BU',16);
-            $pdf->Cell(40,10,'Rapport des employes du '.$fromDate.' au '.$toDate);
+            $pdf->Cell(25, 10, "");
+            $pdf->SetFont('Arial', 'BU', 16);
+            $pdf->Cell(40, 10, 'Rapport des employes du ' . $fromDate . ' au ' . $toDate);
             $pdf->Ln('15');
         }
-        $i=0;
-        foreach ($empId as $emp){
+        $i = 0;
+        foreach ($empId as $emp) {
             set_time_limit(0);
             $i++;
-            if($i>=4){ // set up how many table on a page
+            if ($i >= 4) { // set up how many table on a page
                 $pdf->AddPage();
-                $i=0;
+                $i = 0;
             }
 
 
             $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($emp);
-            $empWH = json_decode($employe->getWorkingHour()->getWorkingHour(),true);
+            $empWH = json_decode($employe->getWorkingHour()->getWorkingHour(), true);
             $type = $empWH["lundi"][0]["type"];
 
-            $empData = $this->returnOneEmployeeAction($request,$emp,$fromDate,$toDate);
-            $empDataFormated = json_decode($empData->getContent(),true);
+            $empData = $this->returnOneEmployeeAction($request, $emp, $fromDate, $toDate);
+            $empDataFormated = json_decode($empData->getContent(), true);
 
-            $donnees = $this->userStatsAction($request,$emp,$fromDate,$toDate);
-            $donnees = json_decode($donnees->getContent(),true);
+            $donnees = $this->userStatsAction($request, $emp, $fromDate, $toDate);
+            $donnees = json_decode($donnees->getContent(), true);
             $permission_lost_time = 0;
 
             /* recuperation du taux horaire */
@@ -982,142 +984,146 @@ class DefaultController extends StatsController
             else
                 $taux = ($employe->getWorkingHour()->getTaux());
 
-            if($type == "3" || $type == 3){
-                $ss = (($employe->getSalary*12)/52)/($employe->getWorkingHour()->getJourTravail())*($donnees["nbreJourTravail"]);
-            }else if($type == "2" || $type == 2){
+            if ($type == "3" || $type == 3) {
+                $ss = (($employe->getSalary * 12) / 52) / ($employe->getWorkingHour()->getJourTravail()) * ($donnees["nbreJourTravail"]);
+            } else if ($type == "2" || $type == 2) {
                 if ($taux == 0)
                     $ss = 0;
                 else
-                    $ss = ((($employe->getSalary()*12)/52)/$taux)*$donnees["quota_total"]/60;
-            }else if($type == "1" || $type == 1 || $type == "4" || $type == 4){
+                    $ss = ((($employe->getSalary() * 12) / 52) / $taux) * $donnees["quota_total"] / 60;
+            } else if ($type == "1" || $type == 1 || $type == "4" || $type == 4) {
                 if ($taux == 0) {
                     $ss = 0;
                 } else {
                     $ss = ((($employe->getSalary() * 12) / 52) / $taux) * $donnees["quota_1_4"];
                 }
-            }else{
+            } else {
                 $ss = 0;
             }
 
             // Permission datas
-            foreach($donnees["permissionData"]["absenceStats"] as $row){
+            foreach ($donnees["permissionData"]["absenceStats"] as $row) {
                 $permission_lost_time += $row["tempsPerdu"];
-            }foreach($donnees["permissionData"]["finStats"] as $row){
+            }
+            foreach ($donnees["permissionData"]["finStats"] as $row) {
                 $permission_lost_time += $row["tempsPerdu"];
-            }foreach($donnees["permissionData"]["pauseStats"] as $row){
+            }
+            foreach ($donnees["permissionData"]["pauseStats"] as $row) {
                 $permission_lost_time += $row["tempsPerdu"];
-            }foreach($donnees["permissionData"]["retardPauseStats"] as $row){
+            }
+            foreach ($donnees["permissionData"]["retardPauseStats"] as $row) {
                 $permission_lost_time += $row["tempsPerdu"];
-            }foreach($donnees["permissionData"]["retardStats"] as $row){
+            }
+            foreach ($donnees["permissionData"]["retardStats"] as $row) {
                 $permission_lost_time += $row["tempsPerdu"];
             }
             //print_r($donnees);
-            $finalSalary = ((int)$employe->getSalary())/30;
-            $finalSalaryPerHour = $finalSalary/24;
-            $finalSalaryPerMin = $finalSalaryPerHour/60;
+            $finalSalary = ((int)$employe->getSalary()) / 30;
+            $finalSalaryPerHour = $finalSalary / 24;
+            $finalSalaryPerMin = $finalSalaryPerHour / 60;
             $name = $employe->getSurname();
             $lastName = $employe->getLastName();
-            $permissions = sizeof($donnees["permissionData"]["retardStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["absenceStats"]);
+            $permissions = sizeof($donnees["permissionData"]["retardStats"]) + sizeof($donnees["permissionData"]["retardPauseStats"]) + sizeof($donnees["permissionData"]["pauseStats"]) + sizeof($donnees["permissionData"]["finStats"]) + sizeof($donnees["permissionData"]["absenceStats"]);
 
             $functionAppend = strlen($employe->getFunction()) > 5 ? "..." : "";
             $depAppend = strlen($employe->getDepartement()->getName()) > 5 ? "..." : "";
 
-            $user_info_header = array('Nom', 'Prenom(s)', 'Fonction', 'Departement','Salaire', 'Revenu*','Duree hebdo');
+            $user_info_header = array('Nom', 'Prenom(s)', 'Fonction', 'Departement', 'Salaire', 'Revenu*', 'Duree hebdo');
             $user_info_data = array(
-                array($employe->getSurname(), $employe->getLastName(), substr($employe->getFunction(),0,5)."".$functionAppend, substr($employe->getDepartement()->getName(),0,5)."".$depAppend,$employe->getSalary(), round($ss,2),$taux)
+                array($employe->getSurname(), $employe->getLastName(), substr($employe->getFunction(), 0, 5) . "" . $functionAppend, substr($employe->getDepartement()->getName(), 0, 5) . "" . $depAppend, $employe->getSalary(), round($ss, 2), $taux)
             );
 
-            if($type == "2" or $type == 2){
-                $quota_restant = $donnees["quota_total"]-$donnees["quota_fait"];
-                if ($quota_restant > 0){
+            if ($type == "2" or $type == 2) {
+                $quota_restant = $donnees["quota_total"] - $donnees["quota_fait"];
+                if ($quota_restant > 0) {
                     $qr = $quota_restant;
-                }else{
+                } else {
                     $qr = 0;
                 }
-                if($t=="2"){
-                    $header = array('','Absences', 'Retards', 'Departs', 'Auth','Total','Permissions');
+                if ($t == "2") {
+                    $header = array('', 'Absences', 'Retards', 'Departs', 'Auth', 'Total', 'Permissions');
                     $data = array(
-                        array("Nombre",$donnees["absences"],$donnees["retards"],$donnees["departs"],$donnees["inc_auth"],$donnees["absences"]+$donnees["retards"]+$donnees["departs"]+$donnees["inc_auth"],sizeof($donnees["permissionData"]["absenceStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["retardStats"])),
+                        array("Nombre", $donnees["absences"], $donnees["retards"], $donnees["departs"], $donnees["inc_auth"], $donnees["absences"] + $donnees["retards"] + $donnees["departs"] + $donnees["inc_auth"], sizeof($donnees["permissionData"]["absenceStats"]) + sizeof($donnees["permissionData"]["finStats"]) + sizeof($donnees["permissionData"]["pauseStats"]) + sizeof($donnees["permissionData"]["retardPauseStats"]) + sizeof($donnees["permissionData"]["retardStats"])),
                     );
                     $data2 = array(
-                        array("Temps",$donnees["tpa"],round($donnees["tpr"],2),round($donnees["tpd"],2),$donnees["lost_time"],round($donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"],2),$permission_lost_time),
+                        array("Temps", $donnees["tpa"], round($donnees["tpr"], 2), round($donnees["tpd"], 2), $donnees["lost_time"], round($donnees["tpa"] + $donnees["tpr"] + $donnees["tpd"] + $donnees["lost_time"], 2), $permission_lost_time),
                     );
                     $data3 = array(
-                        array("Somme",round($donnees["spa"],2),round($donnees["spr"],2),round($donnees["spd"],2),round($donnees["spAuth"],2),round($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"],2),$taux == 0 ? 0 : round((($employe->getSalary()*12)/52)/$taux*$permission_lost_time,2)),
+                        array("Somme", round($donnees["spa"], 2), round($donnees["spr"], 2), round($donnees["spd"], 2), round($donnees["spAuth"], 2), round($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"], 2), $taux == 0 ? 0 : round((($employe->getSalary() * 12) / 52) / $taux * $permission_lost_time, 2)),
                     );
                     $data4 = array(
-                        array("Net a payer sans bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"]),2)),
+                        array("Net a payer sans bonus", round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]), 2)),
                     );
-                }else{
-                    $header = array('','Absences', 'Retards', 'Departs', 'Auth','Total','Permissions', 'Bonus');
+                } else {
+                    $header = array('', 'Absences', 'Retards', 'Departs', 'Auth', 'Total', 'Permissions', 'Bonus');
                     $data = array(
-                        array("Nombre",$donnees["absences"],$donnees["retards"],$donnees["departs"],$donnees["inc_auth"],$donnees["absences"]+$donnees["retards"]+$donnees["departs"]+$donnees["inc_auth"],sizeof($donnees["permissionData"]["absenceStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["retardStats"]),$donnees["nbreBonus"]),
+                        array("Nombre", $donnees["absences"], $donnees["retards"], $donnees["departs"], $donnees["inc_auth"], $donnees["absences"] + $donnees["retards"] + $donnees["departs"] + $donnees["inc_auth"], sizeof($donnees["permissionData"]["absenceStats"]) + sizeof($donnees["permissionData"]["finStats"]) + sizeof($donnees["permissionData"]["pauseStats"]) + sizeof($donnees["permissionData"]["retardPauseStats"]) + sizeof($donnees["permissionData"]["retardStats"]), $donnees["nbreBonus"]),
                     );
                     $data2 = array(
-                        array("Temps",$donnees["tpa"],round($donnees["tpr"],2),round($donnees["tpd"],2),$donnees["lost_time"],round($donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"],2),$permission_lost_time,round($donnees["tempsBonus"]*(-1),2)),
+                        array("Temps", $donnees["tpa"], round($donnees["tpr"], 2), round($donnees["tpd"], 2), $donnees["lost_time"], round($donnees["tpa"] + $donnees["tpr"] + $donnees["tpd"] + $donnees["lost_time"], 2), $permission_lost_time, round($donnees["tempsBonus"] * (-1), 2)),
                     );
                     $data3 = array(
-                        array("Somme",round($donnees["spa"],2),round($donnees["spr"],2),round($donnees["spd"],2),round($donnees["spAuth"],2),round($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"],2),$taux == 0 ? 0 : round((($employe->getSalary()*12)/52)/$taux*$permission_lost_time,2),round($donnees["sommeArgentBonus"]*(-1),0)),
+                        array("Somme", round($donnees["spa"], 2), round($donnees["spr"], 2), round($donnees["spd"], 2), round($donnees["spAuth"], 2), round($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"], 2), $taux == 0 ? 0 : round((($employe->getSalary() * 12) / 52) / $taux * $permission_lost_time, 2), round($donnees["sommeArgentBonus"] * (-1), 0)),
                     );
                     $data4 = array(
-                        array("Net a payer sans bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"]),2)),
+                        array("Net a payer sans bonus", round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]), 2)),
                     );
                     $data5 = array(
-                        array("Net a payer avec bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"])+($donnees["sommeArgentBonus"]*(-1)),2)),
+                        array("Net a payer avec bonus", round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]) + ($donnees["sommeArgentBonus"] * (-1)), 2)),
                     );
                 }
-            }else{
-                if($t == "2"){
-                    $header = array('','Absences', 'Retards', 'Departs', 'Auth','Total','Permissions');
+            } else {
+                if ($t == "2") {
+                    $header = array('', 'Absences', 'Retards', 'Departs', 'Auth', 'Total', 'Permissions');
                     $data = array(
-                        array("Nombre",$donnees["absences"],$donnees["retards"],$donnees["departs"],$donnees["inc_auth"],$donnees["absences"]+$donnees["retards"]+$donnees["departs"]+$donnees["inc_auth"],sizeof($donnees["permissionData"]["absenceStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["retardStats"])),
+                        array("Nombre", $donnees["absences"], $donnees["retards"], $donnees["departs"], $donnees["inc_auth"], $donnees["absences"] + $donnees["retards"] + $donnees["departs"] + $donnees["inc_auth"], sizeof($donnees["permissionData"]["absenceStats"]) + sizeof($donnees["permissionData"]["finStats"]) + sizeof($donnees["permissionData"]["pauseStats"]) + sizeof($donnees["permissionData"]["retardPauseStats"]) + sizeof($donnees["permissionData"]["retardStats"])),
                     );
                     $data2 = array(
-                        array("Temps",$donnees["tpa"],round($donnees["tpr"],2),round($donnees["tpd"],2),$donnees["lost_time"],round($donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"],2),$permission_lost_time),
+                        array("Temps", $donnees["tpa"], round($donnees["tpr"], 2), round($donnees["tpd"], 2), $donnees["lost_time"], round($donnees["tpa"] + $donnees["tpr"] + $donnees["tpd"] + $donnees["lost_time"], 2), $permission_lost_time),
                     );
                     $data3 = array(
-                        array("Somme",round($donnees["spa"],2),round($donnees["spr"],2),round($donnees["spd"],2),round($donnees["spAuth"],2),round($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"],2),$taux == 0 ? 0 : round((($employe->getSalary()*12)/52)/$taux*$permission_lost_time,2)),
+                        array("Somme", round($donnees["spa"], 2), round($donnees["spr"], 2), round($donnees["spd"], 2), round($donnees["spAuth"], 2), round($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"], 2), $taux == 0 ? 0 : round((($employe->getSalary() * 12) / 52) / $taux * $permission_lost_time, 2)),
                     );
                     $data4 = array(
-                        array("Net a payer sans bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"]),2)),
+                        array("Net a payer sans bonus", round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]), 2)),
                     );
-                }else{
+                } else {
 
-                    $header = array('','Absences', 'Retards', 'Departs', 'Auth','Total','Permissions', 'Bonus');
+                    $header = array('', 'Absences', 'Retards', 'Departs', 'Auth', 'Total', 'Permissions', 'Bonus');
                     $data = array(
-                        array("Nombre",$donnees["absences"],$donnees["retards"],$donnees["departs"],$donnees["inc_auth"],$donnees["absences"]+$donnees["retards"]+$donnees["departs"]+$donnees["inc_auth"],sizeof($donnees["permissionData"]["absenceStats"])+sizeof($donnees["permissionData"]["finStats"])+sizeof($donnees["permissionData"]["pauseStats"])+sizeof($donnees["permissionData"]["retardPauseStats"])+sizeof($donnees["permissionData"]["retardStats"]),$donnees["nbreBonus"]),
+                        array("Nombre", $donnees["absences"], $donnees["retards"], $donnees["departs"], $donnees["inc_auth"], $donnees["absences"] + $donnees["retards"] + $donnees["departs"] + $donnees["inc_auth"], sizeof($donnees["permissionData"]["absenceStats"]) + sizeof($donnees["permissionData"]["finStats"]) + sizeof($donnees["permissionData"]["pauseStats"]) + sizeof($donnees["permissionData"]["retardPauseStats"]) + sizeof($donnees["permissionData"]["retardStats"]), $donnees["nbreBonus"]),
                     );
                     $data2 = array(
-                        array("Temps",$donnees["tpa"],round($donnees["tpr"],2),round($donnees["tpd"],2),$donnees["lost_time"],round($donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"],2),$permission_lost_time,round($donnees["tempsBonus"]*(-1),2)),
+                        array("Temps", $donnees["tpa"], round($donnees["tpr"], 2), round($donnees["tpd"], 2), $donnees["lost_time"], round($donnees["tpa"] + $donnees["tpr"] + $donnees["tpd"] + $donnees["lost_time"], 2), $permission_lost_time, round($donnees["tempsBonus"] * (-1), 2)),
                     );
                     $data3 = array(
-                        array("Somme",round($donnees["spa"],2),round($donnees["spr"],2),round($donnees["spd"],2),round($donnees["spAuth"],2),round($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"],2),$taux == 0 ? 0 : round((($employe->getSalary()*12)/52)/$taux*$permission_lost_time,2),round($donnees["sommeArgentBonus"]*(-1),0)),
+                        array("Somme", round($donnees["spa"], 2), round($donnees["spr"], 2), round($donnees["spd"], 2), round($donnees["spAuth"], 2), round($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"], 2), $taux == 0 ? 0 : round((($employe->getSalary() * 12) / 52) / $taux * $permission_lost_time, 2), round($donnees["sommeArgentBonus"] * (-1), 0)),
                     );
                     $data4 = array(
-                        array("Net a payer sans bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"]),2)),
+                        array("Net a payer sans bonus", round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]), 2)),
                     );
                     $data5 = array(
-                        array("Net a payer avec bonus",round($ss-($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"])+($donnees["sommeArgentBonus"]*(-1)),2)),
+                        array("Net a payer avec bonus", round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]) + ($donnees["sommeArgentBonus"] * (-1)), 2)),
                     );
                 }
             }
-            if($t == "1" || $t == "2"){
+            if ($t == "1" || $t == "2") {
                 $pdf->AddPage();
-                $pdf->SetFont('Arial','B',16);
-                $pdf->Image($this->getParameter("web_dir")."/company_images/".$session->get("companyLogo"),10,10,20,20);
-                $pdf->Image($this->getParameter("web_dir")."/img/logo.png",180,10,12,12);
+                $pdf->SetFont('Arial', 'B', 16);
+                $pdf->Image($this->getParameter("web_dir") . "/company_images/" . $session->get("companyLogo"), 10, 10, 20, 20);
+                $pdf->Image($this->getParameter("web_dir") . "/img/logo.png", 180, 10, 12, 12);
                 $pdf->Ln('25');
-                $pdf->Cell(500,10,$session->get("companyName"));
+                $pdf->Cell(500, 10, $session->get("companyName"));
                 $pdf->Ln('17');
-                $pdf->Cell(25,10,"");
-                $pdf->SetFont('Arial','BU',16);
-                $pdf->Cell(40,10,'Rapport des employes du '.$fromDate.' au '.$toDate);
+                $pdf->Cell(25, 10, "");
+                $pdf->SetFont('Arial', 'BU', 16);
+                $pdf->Cell(40, 10, 'Rapport des employes du ' . $fromDate . ' au ' . $toDate);
                 $pdf->Ln('15');
             }
-            if(isset($data5) && ($data5 != null)){
-                $pdf->FancyTable($user_info_header,$user_info_data,$header,$data,$data2,$data3,$data4,$data5);
-            }else{
-                $pdf->FancyTable($user_info_header,$user_info_data,$header,$data,$data2,$data3,$data4);
+            if (isset($data5) && ($data5 != null)) {
+                $pdf->FancyTable($user_info_header, $user_info_data, $header, $data, $data2, $data3, $data4, $data5);
+            } else {
+                $pdf->FancyTable($user_info_header, $user_info_data, $header, $data, $data2, $data3, $data4);
             }
             $pdf->Ln('5');
         }
@@ -1126,42 +1132,98 @@ class DefaultController extends StatsController
         //return new Response("OK");
     }
 
-    public function returnVerticalCells($numberOfDays){
+    /**
+     * @Route("/generatePDFPermission/{id}",name="generatePDFPermission")
+     */
+    public function generatePDFPermissionAction(Request $request, $id)
+    {
+        set_time_limit(0);
+
+        $session = new Session();
+
+        $pdf = new tablepdf();
+        $pdf->AddPage();
+        $pdf->SetFont('Arial', 'B', 16);
+
+        $imageData = getimagesize($this->getParameter("web_dir") . "/company_images/" . $session->get("companyLogo"));
+        $permission = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->find($id);
+        $theWidth = $imageData[0];
+        $theHeight = $imageData[1];
+        $ratio = $theWidth / $theHeight;
+        $percent = $ratio * 100;
+        // if the width is greater than 100px we must fix it at 100
+        if ($theWidth > 20) {
+            $theWidth = 20;
+        }
+        $theHeight = ($theWidth * $percent) / 100;
+
+        //print_r($theWidth."<br/>");
+        //print_r($theHeight);
+
+        $pdf->Image($this->getParameter("web_dir") . "/company_images/" . $session->get("companyLogo"), 10, 10, $theWidth, $theHeight);
+        $pdf->Image($this->getParameter("web_dir") . "/img/logo.png", 180, 10, 12.62, 19.4);
+        $pdf->Ln('25');
+        $pdf->Cell(500, 10, $session->get("companyName"));
+        $pdf->Cell(500, 10, $session->get("companyName"));
+        $pdf->Ln('17');
+        $pdf->Cell(25, 10, "");
+        $pdf->SetFont('Arial', 'BU', 16);
+        switch ($permission->getState()) {
+            case 0:
+                $pdf->Cell(40, 10, 'Permission en attente de l\'employe ' . $permission->getEmployee()->getId());
+                break;
+            case 1:
+                $pdf->Cell(40, 10, 'Permission en attente de l\'employe ' . $permission->getEmployee()->getId());
+                break;
+            case 2:
+                $pdf->Cell(40, 10, 'Permission en attente de l\'employe ' . $permission->getEmployee()->getId());
+                break;
+        }
+        $pdf->Ln('15');
+
+
+        $user_info_header = array('Nom', 'Prenom(s)', 'Departement', 'Début P', 'Fin P', 'Motif');
+        $user_info_data = array(
+            array($permission->getEmployee()->getSurname(), $permission->getEmployee()->getLastName(), $permission->getEmployee()->getDepartement()->getName(), $permission->getDateFrom()->format("Y-m-d"), $permission->getDateTo()->format("Y-m-d"), $permission->getTitle())
+        );
+
+        $pdf->PermissionFancyTable($user_info_header, $user_info_data);
+        $pdf->Ln('5');
+        $pdf->Output();
+
+        //return new Response("OK");
+    }
+
+    public function returnVerticalCells($numberOfDays)
+    {
         $result_array = array();
-        $arrayOfAlphabet = array('C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','A','B');
-        $normalArrayOfAlphabet = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
+        $arrayOfAlphabet = array('C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'A', 'B');
+        $normalArrayOfAlphabet = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
         //$restOfDivision = $numberOfDays%26;
-        $numberOfPossibleDivision = (int)($numberOfDays/26);
-        $tour=$numberOfPossibleDivision+1;
+        $numberOfPossibleDivision = (int)($numberOfDays / 26);
+        $tour = $numberOfPossibleDivision + 1;
         $currentTour = 1;
-        $j=0;
-        $i=0;
-        for($cpt=0;$cpt<$tour;$cpt++){
-            while($i<=$numberOfDays)
-            {
-                if($currentTour == 1)
-                {
-                    if($i < 23)
-                    {
-                        $result_array []=$arrayOfAlphabet[$i];
-                    }
-                    else if($i == 23)
-                    {
-                        $result_array []=$arrayOfAlphabet[$i];
+        $j = 0;
+        $i = 0;
+        for ($cpt = 0; $cpt < $tour; $cpt++) {
+            while ($i <= $numberOfDays) {
+                if ($currentTour == 1) {
+                    if ($i < 23) {
+                        $result_array [] = $arrayOfAlphabet[$i];
+                    } else if ($i == 23) {
+                        $result_array [] = $arrayOfAlphabet[$i];
                         $numberOfDays -= 24;
                         $currentTour++;
-                        $i=0;
+                        $i = 0;
                     }
-                }
-                else
-                {
-                    if($i < 26){
-                        $result_array []=$normalArrayOfAlphabet[$j]."".$normalArrayOfAlphabet[$i-1];
-                    }else if($i == 26){
-                        $result_array []=$normalArrayOfAlphabet[$j]."".$normalArrayOfAlphabet[$i-1];
+                } else {
+                    if ($i < 26) {
+                        $result_array [] = $normalArrayOfAlphabet[$j] . "" . $normalArrayOfAlphabet[$i - 1];
+                    } else if ($i == 26) {
+                        $result_array [] = $normalArrayOfAlphabet[$j] . "" . $normalArrayOfAlphabet[$i - 1];
                         $numberOfDays -= 26;
                         $currentTour++;
-                        $i=0;
+                        $i = 0;
                         $j++;
                     }
                 }
@@ -1175,7 +1237,8 @@ class DefaultController extends StatsController
     /**
      * @Route("/generateExcel",name="generateExcel")
      */
-    public function generateExcelAction(Request $request) {
+    public function generateExcelAction(Request $request)
+    {
 
         set_time_limit(0);
 
@@ -1184,10 +1247,10 @@ class DefaultController extends StatsController
         $empId = $request->request->get('destination');
         $dateType = $request->request->get('dateType');
 
-        if($dateType != "0" && $dateType != null){
-            $fromDate = "01-".$dateType."-".date('Y');
-            $toDate = date('t-m-Y',strtotime($fromDate));
-        }else{
+        if ($dateType != "0" && $dateType != null) {
+            $fromDate = "01-" . $dateType . "-" . date('Y');
+            $toDate = date('t-m-Y', strtotime($fromDate));
+        } else {
             $fromDate = $request->request->get('fromDate');
             $toDate = $request->request->get('toDate');
         }
@@ -1203,145 +1266,149 @@ class DefaultController extends StatsController
                 'name' => 'Arial',
                 'bold' => true,
             ],
-            'quotePrefix'    => true
+            'quotePrefix' => true
         ];
 
         $spreadsheet->getActiveSheet()->getStyle('A1')->applyFromArray($boldStyle);
-        $sheet->setCellValue('A1', 'HISTORIQUE DU '.$fromDate.' AU '.$toDate);
+        $sheet->setCellValue('A1', 'HISTORIQUE DU ' . $fromDate . ' AU ' . $toDate);
 
-        $explodedFromDate = explode("-",$fromDate);
-        $explodedToDate = explode("-",$toDate);
-        $reformatedFromDate = $explodedFromDate[2]."-".$explodedFromDate[1]."-".$explodedFromDate[0];
-        $reformatedToDate = $explodedToDate[2]."-".$explodedToDate[1]."-".$explodedToDate[0];
-        $timeFrom = strtotime($reformatedFromDate." 00:00:00");
-        $timeTo = strtotime($reformatedToDate." 00:00:00");
-        $timeDays = $timeTo-$timeFrom;
-        $days = $timeDays/(60*60*24);
+        $explodedFromDate = explode("-", $fromDate);
+        $explodedToDate = explode("-", $toDate);
+        $reformatedFromDate = $explodedFromDate[2] . "-" . $explodedFromDate[1] . "-" . $explodedFromDate[0];
+        $reformatedToDate = $explodedToDate[2] . "-" . $explodedToDate[1] . "-" . $explodedToDate[0];
+        $timeFrom = strtotime($reformatedFromDate . " 00:00:00");
+        $timeTo = strtotime($reformatedToDate . " 00:00:00");
+        $timeDays = $timeTo - $timeFrom;
+        $days = $timeDays / (60 * 60 * 24);
         $theDay = $theDayNumber = null;
 
-        $verticalCellsTab = $this->returnVerticalCells($days+1);
+        $verticalCellsTab = $this->returnVerticalCells($days + 1);
         $newTab = $verticalCellsTab;
-        array_push($newTab,"A");
-        array_push($newTab,"B");
+        array_push($newTab, "A");
+        array_push($newTab, "B");
 
-        foreach ($empId as $emp){
+        foreach ($empId as $emp) {
             set_time_limit(0);
             $nowTime = $timeFrom;
             $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($emp);
-            $empWH = json_decode($employe->getWorkingHour()->getWorkingHour(),true);
+            $empWH = json_decode($employe->getWorkingHour()->getWorkingHour(), true);
             $type = $empWH["lundi"][0]["type"];
 
-            $empData = $this->returnOneEmployeeAction($request,$emp,$fromDate,$toDate);
-            $empDataFormated = json_decode($empData->getContent(),true);
+            $empData = $this->returnOneEmployeeAction($request, $emp, $fromDate, $toDate);
+            $empDataFormated = json_decode($empData->getContent(), true);
 
-            $donnees = $this->userStatsAction($request,$emp,$fromDate,$toDate);
-            $donnees = json_decode($donnees->getContent(),true);
+            $donnees = $this->userStatsAction($request, $emp, $fromDate, $toDate);
+            $donnees = json_decode($donnees->getContent(), true);
             $permission_lost_time = 0;
             // Permission datas
-            foreach($donnees["permissionData"]["absenceStats"] as $row){
+            foreach ($donnees["permissionData"]["absenceStats"] as $row) {
                 $permission_lost_time += $row["tempsPerdu"];
-            }foreach($donnees["permissionData"]["finStats"] as $row){
+            }
+            foreach ($donnees["permissionData"]["finStats"] as $row) {
                 $permission_lost_time += $row["tempsPerdu"];
-            }foreach($donnees["permissionData"]["pauseStats"] as $row){
+            }
+            foreach ($donnees["permissionData"]["pauseStats"] as $row) {
                 $permission_lost_time += $row["tempsPerdu"];
-            }foreach($donnees["permissionData"]["retardPauseStats"] as $row){
+            }
+            foreach ($donnees["permissionData"]["retardPauseStats"] as $row) {
                 $permission_lost_time += $row["tempsPerdu"];
-            }foreach($donnees["permissionData"]["retardStats"] as $row){
+            }
+            foreach ($donnees["permissionData"]["retardStats"] as $row) {
                 $permission_lost_time += $row["tempsPerdu"];
             }
 
-            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber-1))->applyFromArray($boldStyle);
-            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+2))->applyFromArray($boldStyle);
-            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+3))->applyFromArray($boldStyle);
-            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+4))->applyFromArray($boldStyle);
-            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+5))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber - 1))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 2))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 3))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 4))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 5))->applyFromArray($boldStyle);
 
-            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+7))->applyFromArray($boldStyle);
-            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+8))->applyFromArray($boldStyle);
-            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+9))->applyFromArray($boldStyle);
-            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+10))->applyFromArray($boldStyle);
-            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+12))->applyFromArray($boldStyle);
-            $spreadsheet->getActiveSheet()->getStyle('A'.($nextNameCellNumber+13))->applyFromArray($boldStyle);
-            $spreadsheet->getActiveSheet()->getStyle('B'.($nextNameCellNumber-1))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 7))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 8))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 9))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 10))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 12))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 13))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('B' . ($nextNameCellNumber - 1))->applyFromArray($boldStyle);
 
-            $sheet->setCellValue('A'.($nextNameCellNumber-1), "NOM");
-            $sheet->setCellValue('A'.($nextNameCellNumber+2), "Arrivée");
-            $sheet->setCellValue('A'.($nextNameCellNumber+3), "Pause");
-            $sheet->setCellValue('A'.($nextNameCellNumber+4), "Reprise");
-            $sheet->setCellValue('A'.($nextNameCellNumber+5), "Départ");
+            $sheet->setCellValue('A' . ($nextNameCellNumber - 1), "NOM");
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 2), "Arrivée");
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 3), "Pause");
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 4), "Reprise");
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 5), "Départ");
 
-            $sheet->setCellValue('A'.($nextNameCellNumber+7), "NOMBRE D'ABSENCES : ".$donnees["absences"]);
-            $sheet->setCellValue('A'.($nextNameCellNumber+8), "NOMBRE DE RETARDS : ".$donnees["retards"]);
-            $sheet->setCellValue('A'.($nextNameCellNumber+9), "NOMBRE DE DEPARTS : ".$donnees["departs"]);
-            $sheet->setCellValue('A'.($nextNameCellNumber+10), "NOMBRE D'AUTH INC : ".$donnees["inc_auth"]);
-            $sheet->setCellValue('A'.($nextNameCellNumber+12), "TOTAL DES PERTES EN TEMPS : ".floor($donnees["tpa"]+$donnees["tpr"]+$donnees["tpd"]+$donnees["lost_time"])." H");
-            $sheet->setCellValue('A'.($nextNameCellNumber+13), "TOTAL DES PERTES EN ARGENT : ".floor($donnees["spa"]+$donnees["spr"]+$donnees["spd"]+$donnees["spAuth"])." FCFA");
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 7), "NOMBRE D'ABSENCES : " . $donnees["absences"]);
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 8), "NOMBRE DE RETARDS : " . $donnees["retards"]);
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 9), "NOMBRE DE DEPARTS : " . $donnees["departs"]);
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 10), "NOMBRE D'AUTH INC : " . $donnees["inc_auth"]);
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 12), "TOTAL DES PERTES EN TEMPS : " . round($donnees["tpa"] + $donnees["tpr"] + $donnees["tpd"] + $donnees["lost_time"], 4) . " H");
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 13), "TOTAL DES PERTES EN ARGENT : " . round($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"], 4) . " FCFA");
 
-            $sheet->setCellValue('B'.($nextNameCellNumber-1), "PRENOMS");
-            $sheet->setCellValue('A'.$nextNameCellNumber, $employe->getSurname());
-            $sheet->setCellValue('B'.$nextNameCellNumber, $employe->getLastName());
+            $sheet->setCellValue('B' . ($nextNameCellNumber - 1), "PRENOMS");
+            $sheet->setCellValue('A' . $nextNameCellNumber, $employe->getSurname());
+            $sheet->setCellValue('B' . $nextNameCellNumber, $employe->getLastName());
 
-            for ($cpt=0;$cpt<=$days;$cpt++){
+            for ($cpt = 0; $cpt <= $days; $cpt++) {
                 set_time_limit(0);
-                $his = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('d-m-Y',$nowTime),$employe->getId(),$request);
-                $his = json_decode($his->getContent(),true);
+                $his = $this->findHistoriqueAction($employe->getDepartement()->getId(), date('d-m-Y', $nowTime), $employe->getId(), $request);
+                $his = json_decode($his->getContent(), true);
 
-                $theDayNumber = date('N',$nowTime);
+                $theDayNumber = date('N', $nowTime);
                 $theDay = $this->dateDayNameFrench($theDayNumber);
 
-                $spreadsheet->getActiveSheet()->getStyle($verticalCellsTab[$cpt].''.($nextNameCellNumber-1))->applyFromArray($boldStyle);
-                $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber-1), date("d",$nowTime).'/'.date("m",$nowTime));
+                $spreadsheet->getActiveSheet()->getStyle($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber - 1))->applyFromArray($boldStyle);
+                $sheet->setCellValue($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber - 1), date("d", $nowTime) . '/' . date("m", $nowTime));
                 //$sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber-1), date("d",$nowTime).'/'.date("m",$nowTime));
 
-                foreach($newTab as $el){
-                    $spreadsheet->getActiveSheet()->getStyle($el."".($nextNameCellNumber+16))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-                    $spreadsheet->getActiveSheet()->getStyle($el."".($nextNameCellNumber+16))->getFill()->getStartColor()->setARGB('bdbdbd');
+                foreach ($newTab as $el) {
+                    $spreadsheet->getActiveSheet()->getStyle($el . "" . ($nextNameCellNumber + 16))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+                    $spreadsheet->getActiveSheet()->getStyle($el . "" . ($nextNameCellNumber + 16))->getFill()->getStartColor()->setARGB('bdbdbd');
                 }
 
-                if($his["arrive"] != null && $his["arrive"] != ""){
-                    $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber+2), $his["arrive"]);
-                }else{
-                    $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber+2), "--");
+                if ($his["arrive"] != null && $his["arrive"] != "") {
+                    $sheet->setCellValue($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber + 2), $his["arrive"]);
+                } else {
+                    $sheet->setCellValue($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber + 2), "--");
                 }
 
-                if($his["pause"] != null && $his["pause"] != ""){
-                    $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber+3), $his["pause"]);
-                }else{
-                    $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber+3), "--");
+                if ($his["pause"] != null && $his["pause"] != "") {
+                    $sheet->setCellValue($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber + 3), $his["pause"]);
+                } else {
+                    $sheet->setCellValue($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber + 3), "--");
                 }
 
-                if($his["finPause"] != null && $his["finPause"] != ""){
-                    $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber+4), $his["finPause"]);
-                }else{
-                    $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber+4), "--");
+                if ($his["finPause"] != null && $his["finPause"] != "") {
+                    $sheet->setCellValue($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber + 4), $his["finPause"]);
+                } else {
+                    $sheet->setCellValue($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber + 4), "--");
                 }
 
-                if($his["depart"] != null && $his["depart"] != ""){
-                    $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber+5), $his["depart"]);
-                }else{
-                    $sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber+5), "--");
+                if ($his["depart"] != null && $his["depart"] != "") {
+                    $sheet->setCellValue($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber + 5), $his["depart"]);
+                } else {
+                    $sheet->setCellValue($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber + 5), "--");
                 }
 
-                $nowTime = $nowTime+86400;
+                $nowTime = $nowTime + 86400;
             }
 
             $nextNameCellNumber += 20;
         }
 
         $writer = new Xlsx($spreadsheet);
-        $now_date = date('d')."-".date('m').'-'.date('Y').'_'.date('H').':'.date('i').':'.date('s');
-        $writer->save('cache/'.$this->getUser()->getUsername().'_rapport_'.$now_date.'.xlsx');
+        $now_date = date('d') . "-" . date('m') . '-' . date('Y') . '_' . date('H') . ':' . date('i') . ':' . date('s');
+        $writer->save('cache/' . $this->getUser()->getUsername() . '_rapport_' . $now_date . '.xlsx');
 
         //sleep(10);
 
-        $filePath = $this->getParameter("web_dir")."/cache/".$this->getUser()->getUsername()."_rapport_".$now_date.".xlsx";
+        $filePath = $this->getParameter("web_dir") . "/cache/" . $this->getUser()->getUsername() . "_rapport_" . $now_date . ".xlsx";
 
         $response = new BinaryFileResponse($filePath);
         $response->trustXSendfileTypeHeader();
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_INLINE,
-            $this->getUser()->getUsername()."_rapport_".$now_date.".xlsx",
-            iconv('UTF-8', 'ASCII//TRANSLIT', $this->getUser()->getUsername()."_rapport_".$now_date.".xlsx")
+            $this->getUser()->getUsername() . "_rapport_" . $now_date . ".xlsx",
+            iconv('UTF-8', 'ASCII//TRANSLIT', $this->getUser()->getUsername() . "_rapport_" . $now_date . ".xlsx")
         );
         return $response;
     }
@@ -1349,12 +1416,13 @@ class DefaultController extends StatsController
     /**
      * @Route("/editProfile",name="editProfile")
      */
-    public function editProfileAction(Request $request){
+    public function editProfileAction(Request $request)
+    {
         dump($this->getUser());
 
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
-            if($expiry_service->hasExpired()){
+            if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
             }
             $admin = $this->getUser();
@@ -1364,21 +1432,21 @@ class DefaultController extends StatsController
 
             // On ajoute les champs de l'entité que l'on veut à notre formulaire
             $formBuilder
-                ->add('surname', TextType::class,array('label'=>' '))
-                ->add('name', TextType::class,array('label'=>' '))
-                ->add('address', TextType::class,array('label'=>' '))
-                ->add('phonenumber', TextType::class,array('label'=>' '))
-                ->add('password', RepeatedType::class,array(
-                    'label'=>' ',
+                ->add('surname', TextType::class, array('label' => ' '))
+                ->add('name', TextType::class, array('label' => ' '))
+                ->add('address', TextType::class, array('label' => ' '))
+                ->add('phonenumber', TextType::class, array('label' => ' '))
+                ->add('password', RepeatedType::class, array(
+                    'label' => ' ',
                     'type' => PasswordType::class,
                     'invalid_message' => 'The password fields must match.',
                     'required' => true,
-                    'first_options'  => array('label' => ' '),
+                    'first_options' => array('label' => ' '),
                     'second_options' => array('label' => ' ')
                 ))
-                ->add('picture', FileType::class,array(
-                    'required'=>false,
-                    'label'=>' ',
+                ->add('picture', FileType::class, array(
+                    'required' => false,
+                    'label' => ' ',
                     'data_class' => null
                 ))
                 ->add('Modifier', SubmitType::class);
@@ -1399,16 +1467,16 @@ class DefaultController extends StatsController
                     $file = $admin->getPicture();
 
                     $user_profile_pictures = $this->getParameter("user_profile_pictures");
-                    if(isset($file) && !empty($file)){
-                        $fileName = $admin->getUsername().'.'.$file->guessExtension();
+                    if (isset($file) && !empty($file)) {
+                        $fileName = $admin->getUsername() . '.' . $file->guessExtension();
                         // Move the file to the directory where images are stored
                         $file->move($user_profile_pictures, $fileName);
                         // Before setting the new file name to the employee,we must delete the older picture
-                        if($last_picture != null && !empty($last_picture)){
-                            unlink($user_profile_pictures."/".$last_picture);
+                        if ($last_picture != null && !empty($last_picture)) {
+                            unlink($user_profile_pictures . "/" . $last_picture);
                         }
                         $admin->setPicture($fileName);
-                    }else{
+                    } else {
                         $admin->setPicture($last_picture);
                     }
 
@@ -1419,9 +1487,9 @@ class DefaultController extends StatsController
                     $em->persist($admin);
                     $journal = new Journal();
                     $journal->setCrudType('U');
-                    $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
-                    $journal->setDescription($journal->getAuthor()." a modifié ses propres informations");
-                    $journal->setElementConcerned($admin->getSurname()." ".$admin->getName());
+                    $journal->setAuthor($this->getUser()->getName() . ' ' . $this->getUser()->getSurname());
+                    $journal->setDescription($journal->getAuthor() . " a modifié ses propres informations");
+                    $journal->setElementConcerned($admin->getSurname() . " " . $admin->getName());
                     $em->persist($journal);
                     $em->flush();
 
@@ -1431,10 +1499,10 @@ class DefaultController extends StatsController
 
             }
 
-            return $this->render("cas/editProfile.html.twig",array(
-                "form"=>$form->createView()
+            return $this->render("cas/editProfile.html.twig", array(
+                "form" => $form->createView()
             ));
-        }else{
+        } else {
             return $this->redirectToRoute("login");
         }
     }

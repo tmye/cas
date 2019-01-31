@@ -188,6 +188,7 @@ class EmployeController extends Controller {
             $sheet->setCellValue('H1', "salary");
             $sheet->setCellValue('I1', "function");
             $sheet->setCellValue('J1', "hire_date");
+            $sheet->setCellValue('K1', "departement_name");
 
             $employees = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
 
@@ -204,6 +205,7 @@ class EmployeController extends Controller {
                 $sheet->setCellValue('H'.$i, $employe->getSalary());
                 $sheet->setCellValue('I'.$i, $employe->getFunction());
                 $sheet->setCellValue('J'.$i, $employe->getHireDate());
+                $sheet->setCellValue('K'.$i, $employe->getDepartement()->getName());
             }
 
             $writer = new xlswriter($spreadsheet);

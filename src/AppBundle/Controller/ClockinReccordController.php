@@ -651,6 +651,7 @@ class ClockinReccordController extends EmployeController
         $employees = $this->getDoctrine()->getRepository("AppBundle:Employe")->findAll();
         $i=0;
         foreach ($employees as $emp){
+            $empAllRecordPictureFinal = [];
             set_time_limit(0);
             $empAllRecords = [];
             $empAllRecordsResult = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->allEmployeesHistoryBrut($emp->getId(),$min,$max);

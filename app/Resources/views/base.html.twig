@@ -8,7 +8,6 @@
         <link rel="stylesheet" href="{{ asset('materialize/css/materialize.min.css') }}">
         <link rel="stylesheet" href="{{ asset('css/style.css') }}">
         <link rel="stylesheet" href="{{ asset('web-fonts-with-css/css/fontawesome-all.min.css') }}">
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
@@ -62,7 +61,7 @@
                                 </div>
                             </li>
 
-                            {% if is_granted('ROLE_ADMIN') %}
+                            {% if is_granted('ROLE_ADMIN_CONTROL') %}
                                 <li class="">
                                     <div class="collapsible-header collapsible_historique valign-wrapper">
                                         <span class="fa fa-file-alt icons"></span>
