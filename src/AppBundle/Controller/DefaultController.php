@@ -1179,19 +1179,19 @@ class DefaultController extends StatsController
         $pdf->Ln('15');
         $pdf->Cell(0, 0, "Monsieur,Madame");
         $pdf->Ln('10');
-        $pdf->Write(7, "Je vous prie de m’accorder une permission pour m’absenter du ".$permission->getDateFrom()->format("Y-m-d")." ".$permission->getTimeFrom()." au ".$permission->getDateTo()->format("Y-m-d")." ".$permission->getTimeTo()." pour me permettre de (".$permission->getTitle().").
-Je m’engage à fournir tous les documents pouvant justifier de mon absence, à signaler tout éventuel changement ou annulation de ladite permission et à prendre mes dispositions avec la direction des ressources humaines pour que mon absence impact dans une moindre mesure le fonctionnement habituel de la société.
-Dans l’attente d’une réponse favorable, veuillez recevoir mes salutations les plus respectueuses.");
+        $pdf->Write(7, "Je vous prie de m accorder une permission pour m absenter du ".$permission->getDateFrom()->format("Y-m-d")." ".$permission->getTimeFrom()." au ".$permission->getDateTo()->format("Y-m-d")." ".$permission->getTimeTo()." pour me permettre de (".$permission->getTitle().").
+Je m engage a fournir tous les documents pouvant justifier de mon absence, a signaler tout eventuel changement ou annulation de ladite permission et a prendre mes dispositions avec la direction des ressources humaines pour que mon absence impact dans une moindre mesure le fonctionnement habituel de la societe.
+Dans l attente d une reponse favorable, veuillez recevoir mes salutations les plus respectueuses.");
 
         $pdf->Ln('25');
 
         $pdf->Cell(60, 0, "Signature du demandeur",0,0,"C");
-        $pdf->Cell(60, 0, "Signature de la secrétaire",0,0,"C");
+        $pdf->Cell(60, 0, "Signature de la secretaire",0,0,"C");
         $pdf->Cell(60, 0, "Signature du responsable",0,0,"C");
 
         $pdf->Ln('25');
         $pdf->SetFont('Arial', '', 11);
-        $pdf->Write(7, "N.B : Cette fiche est à faire signer au responsable du personnel ou à qui de droit. La signature de la secrétaire ou de toute autre personne chez qui la demande est formulée ne peut en aucun cas remplacer celle du responsable.  La fiche doit être conserver dans les archives pour constituer une preuve en cas de besoin.");
+        $pdf->Write(7, "N.B Cette fiche est a faire signer au responsable du personnel ou a qui de droit. La signature de la secretaire ou de toute autre personne chez qui la demande est formulee ne peut en aucun cas remplacer celle du responsable.  La fiche doit etre conserve dans les archives pour constituer une preuve en cas de besoin.");
 
 
         /*$user_info_header = array('Nom', 'Prenom(s)', 'Departement', 'Début P', 'Fin P', 'Motif');
