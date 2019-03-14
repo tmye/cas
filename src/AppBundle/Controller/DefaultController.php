@@ -1141,9 +1141,9 @@ class DefaultController extends StatsController
 
         $session = new Session();
 
-        $pdf = new tablepdf();
+        $pdf = new FPDF();
         $pdf->AddPage();
-        $pdf->SetFont('Arial', 'B', 16);
+        $pdf->SetFont('Arial', '', 13);
 
         $imageData = getimagesize($this->getParameter("web_dir") . "/company_images/" . $session->get("companyLogo"));
         $permission = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->find($id);
@@ -1160,35 +1160,47 @@ class DefaultController extends StatsController
         //print_r($theWidth."<br/>");
         //print_r($theHeight);
 
-        $pdf->Image($this->getParameter("web_dir") . "/company_images/" . $session->get("companyLogo"), 10, 10, $theWidth, $theHeight);
-        $pdf->Image($this->getParameter("web_dir") . "/img/logo.png", 180, 10, 12.62, 19.4);
-        $pdf->Ln('25');
-        $pdf->Cell(500, 10, $session->get("companyName"));
-        $pdf->Cell(500, 10, $session->get("companyName"));
-        $pdf->Ln('17');
-        $pdf->Cell(25, 10, "");
-        $pdf->SetFont('Arial', 'BU', 16);
-        switch ($permission->getState()) {
-            case 0:
-                $pdf->Cell(40, 10, 'Permission en attente de l\'employe ' . $permission->getEmployee()->getId());
-                break;
-            case 1:
-                $pdf->Cell(40, 10, 'Permission en attente de l\'employe ' . $permission->getEmployee()->getId());
-                break;
-            case 2:
-                $pdf->Cell(40, 10, 'Permission en attente de l\'employe ' . $permission->getEmployee()->getId());
-                break;
-        }
+        $pdf->Cell(25, 10, $session->get("companyName"));
+        $pdf->Image($this->getParameter("web_dir") . "/company_images/" . $session->get("companyLogo"), 180, 10, $theWidth, $theHeight);
+        $pdf->Ln('35');
+        $pdf->Cell(0, 0, "Le " . date('d') . "/" . date('m') . "/" . date('Y'));
         $pdf->Ln('15');
+        $pdf->Cell(0, 0, $permission->getEmployee()->getSurname() . " " . $permission->getEmployee()->getLastName());
+        $pdf->Ln('10');
+        $pdf->Cell(0, 0, $permission->getEmployee()->getFunction());
+        $pdf->Ln('10');
+        $pdf->Cell(0, 0, $permission->getEmployee()->getContact());
+        $pdf->Ln('10');
+        $pdf->Cell(0, 0, "Au responsable du personnel", 0, 0, "R");
+        $pdf->Ln('10');
+        $pdf->Cell(0, 0, "Objet :");
+        $pdf->Ln('10');
+        $pdf->Cell(0, 0, "Demande de permission");
+        $pdf->Ln('15');
+        $pdf->Cell(0, 0, "Monsieur,Madame");
+        $pdf->Ln('10');
+        $pdf->Write(7, "Je vous prie de m accorder une permission pour m absenter du ".$permission->getDateFrom()->format("Y-m-d")." ".$permission->getTimeFrom()." au ".$permission->getDateTo()->format("Y-m-d")." ".$permission->getTimeTo()." pour me permettre de (".$permission->getTitle().").
+Je m engage a fournir tous les documents pouvant justifier de mon absence, a signaler tout eventuel changement ou annulation de ladite permission et a prendre mes dispositions avec la direction des ressources humaines pour que mon absence impact dans une moindre mesure le fonctionnement habituel de la societe.
+Dans l attente d une reponse favorable, veuillez recevoir mes salutations les plus respectueuses.");
+
+        $pdf->Ln('25');
+
+        $pdf->Cell(60, 0, "Signature du demandeur",0,0,"C");
+        $pdf->Cell(60, 0, "Signature de la secretaire",0,0,"C");
+        $pdf->Cell(60, 0, "Signature du responsable",0,0,"C");
+
+        $pdf->Ln('25');
+        $pdf->SetFont('Arial', '', 11);
+        $pdf->Write(7, "N.B Cette fiche est a faire signer au responsable du personnel ou a qui de droit. La signature de la secretaire ou de toute autre personne chez qui la demande est formulee ne peut en aucun cas remplacer celle du responsable.  La fiche doit etre conserve dans les archives pour constituer une preuve en cas de besoin.");
 
 
-        $user_info_header = array('Nom', 'Prenom(s)', 'Departement', 'Début P', 'Fin P', 'Motif');
+        /*$user_info_header = array('Nom', 'Prenom(s)', 'Departement', 'Début P', 'Fin P', 'Motif');
         $user_info_data = array(
             array($permission->getEmployee()->getSurname(), $permission->getEmployee()->getLastName(), $permission->getEmployee()->getDepartement()->getName(), $permission->getDateFrom()->format("Y-m-d"), $permission->getDateTo()->format("Y-m-d"), $permission->getTitle())
         );
 
         $pdf->PermissionFancyTable($user_info_header, $user_info_data);
-        $pdf->Ln('5');
+        $pdf->Ln('5');*/
         $pdf->Output();
 
         //return new Response("OK");
