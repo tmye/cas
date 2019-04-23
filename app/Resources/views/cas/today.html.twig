@@ -45,19 +45,19 @@
                 Activités de ce jour
             </h5>
             <span class="right" style="margin-top:-35px">
-                <button class="btn-perso-historique red darken-4" id="submitPDF"><span class="fa fa-file-pdf"></span> Exporter vers PDF</button>
-                <button class="btn-perso-historique" id="submitExcel"><span class="fa fa-file-excel"></span> Exporter vers Excel</button>
+                <button class="btn-perso-historique export_pdf_btn" style="display: none;" id="submitPDF"><span class="fa fa-file-pdf"></span> Exporter vers PDF</button>
+                <button class="btn-perso-historique export_excel_btn" id="submitExcel"><span class="fa fa-file-excel"></span> Exporter vers Excel</button>
             </span>
             <div class="row">
                     <div class="col l12">
                         <br><br>
                         <div class="row">
                             <div class="col l6">
-                                <span style="position: relative;top: 20px;">Filtrez les resultats en choisissant un departement</span>
+                                <span style="position: relative;top: 20px;" class="description_message">Filtrez les resultats en choisissant un département</span>
                             </div>
                             <div class="col l6">
                                 <select id="depSelect">
-                                    <option value="">Departement</option>
+                                    <option value="">Département</option>
                                     {% for dep in listDep %}
                                         <option value="{{ dep.name }}">{{ dep.name }}</option>
                                     {% endfor %}

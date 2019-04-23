@@ -72,13 +72,13 @@ class AlertController extends ClockinReccordController
             $tempTab = [];
 
             if($this->arrive($c,$day,$request)){
-                $tempTab["type"] = "Arrive";
+                $tempTab["type"] = "Arrivée";
             }elseif ($this->pause($c,$day,$request)){
                 $tempTab["type"] = "Pause";
             }elseif($this->finPause($c,$day,$request)){
                 $tempTab["type"] = "Fin pause";
             }elseif($this->depart($c,$day,$request)){
-                $tempTab["type"] = "Depart";
+                $tempTab["type"] = "Départ";
             }
 
             $tempTab["hour"] = date("H:i",$c->getClockinTime());
@@ -105,13 +105,13 @@ class AlertController extends ClockinReccordController
         $listCR = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->todaysClockinTimes(date('Y').'-'.date('m').'-'.date('d'));
         foreach($listCR as $cr){
             if($this->arrive($cr,$day,$request)){
-                $finalTab[] = array($cr,"Arrivee");
+                $finalTab[] = array($cr,"Arrivée");
             }elseif ($this->pause($cr,$day,$request)){
                 $finalTab[] = array($cr,"Pause");
             }elseif($this->finPause($cr,$day,$request)){
                 $finalTab[] = array($cr,"Fin pause");
             }elseif($this->depart($cr,$day,$request)){
-                $finalTab[] = array($cr,"Depart");
+                $finalTab[] = array($cr,"Départ");
             }
         }
         

@@ -1150,48 +1150,55 @@ class DefaultController extends StatsController
         $theWidth = $imageData[0];
         $theHeight = $imageData[1];
         $ratio = $theWidth / $theHeight;
-        $percent = $ratio * 100;
-        // if the width is greater than 100px we must fix it at 100
-        if ($theWidth > 20) {
-            $theWidth = 20;
-        }
-        $theHeight = ($theWidth * $percent) / 100;
 
-        //print_r($theWidth."<br/>");
-        //print_r($theHeight);
+        // if the width is greater than 100px we must fix it at 100
+        if ($theWidth > 30) {
+            $theWidth = 30;
+        }
+        $theHeight = $theWidth / $ratio;
+//        $theHeight = ($theHeight * 20)/$theWidth;
+
+//        print_r($theWidth."<br/>");
+//        print_r($theHeight);
+
 
         $pdf->Cell(25, 10, $session->get("companyName"));
-        $pdf->Image($this->getParameter("web_dir") . "/company_images/" . $session->get("companyLogo"), 180, 10, $theWidth, $theHeight);
+        $pdf->Image($this->getParameter("web_dir") . "/company_images/" . $session->get("companyLogo"), 170, 10, $theWidth, $theHeight);
         $pdf->Ln('35');
         $pdf->Cell(0, 0, "Le " . date('d') . "/" . date('m') . "/" . date('Y'));
         $pdf->Ln('15');
+        $pdf->SetFont('Arial', 'B', 13);
         $pdf->Cell(0, 0, $permission->getEmployee()->getSurname() . " " . $permission->getEmployee()->getLastName());
         $pdf->Ln('10');
+        $pdf->SetFont('Arial', '', 13);
         $pdf->Cell(0, 0, $permission->getEmployee()->getFunction());
         $pdf->Ln('10');
         $pdf->Cell(0, 0, $permission->getEmployee()->getContact());
         $pdf->Ln('10');
         $pdf->Cell(0, 0, "Au responsable du personnel", 0, 0, "R");
         $pdf->Ln('10');
+        $pdf->SetFont('Arial','U');
         $pdf->Cell(0, 0, "Objet :");
         $pdf->Ln('10');
+        $pdf->SetFont('Arial', '', 13);
         $pdf->Cell(0, 0, "Demande de permission");
         $pdf->Ln('15');
-        $pdf->Cell(0, 0, "Monsieur,Madame");
+        $pdf->Cell(0, 0, "Monsieur, Madame");
         $pdf->Ln('10');
-        $pdf->Write(7, "Je vous prie de m accorder une permission pour m absenter du ".$permission->getDateFrom()->format("Y-m-d")." ".$permission->getTimeFrom()." au ".$permission->getDateTo()->format("Y-m-d")." ".$permission->getTimeTo()." pour me permettre de (".$permission->getTitle().").
-Je m engage a fournir tous les documents pouvant justifier de mon absence, a signaler tout eventuel changement ou annulation de ladite permission et a prendre mes dispositions avec la direction des ressources humaines pour que mon absence impact dans une moindre mesure le fonctionnement habituel de la societe.
-Dans l attente d une reponse favorable, veuillez recevoir mes salutations les plus respectueuses.");
+        $pdf->Write(7, "Je vous prie de m'accorder une permission pour m'absenter du ".$permission->getDateFrom()->format("Y-m-d")." ".$permission->getTimeFrom()." au ".$permission->getDateTo()->format("Y-m-d")." ".$permission->getTimeTo()." pour me permettre de (". utf8_decode($permission->getTitle()).utf8_decode(").
+Je m'engage à fournir tous les documents pouvant justifier mon absence, à signaler tout éventuel changement ou annulation de ladite permission et à prendre mes dispositions avec la direction des ressources humaines pour que mon absence impacte dans une moindre mesure le fonctionnement habituel de la société.
+Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les plus respectueuses."));
 
         $pdf->Ln('25');
 
-        $pdf->Cell(60, 0, "Signature du demandeur",0,0,"C");
-        $pdf->Cell(60, 0, "Signature de la secretaire",0,0,"C");
-        $pdf->Cell(60, 0, "Signature du responsable",0,0,"C");
+        $pdf->Cell(60, 0, "Le Demandeur",0,0,"C");
+        $pdf->Cell(60, 0, utf8_decode("La Sécrétaire"),0,0,"C");
+        $pdf->Cell(60, 0, "Le Responsable",0,0,"C");
 
-        $pdf->Ln('25');
-        $pdf->SetFont('Arial', '', 11);
-        $pdf->Write(7, "N.B Cette fiche est a faire signer au responsable du personnel ou a qui de droit. La signature de la secretaire ou de toute autre personne chez qui la demande est formulee ne peut en aucun cas remplacer celle du responsable.  La fiche doit etre conserve dans les archives pour constituer une preuve en cas de besoin.");
+        $pdf->Ln('45');
+        $pdf->SetFont('Arial', '', 9);
+        $pdf->SetTextColor(158,158,158);
+        $pdf->Write(7, utf8_decode("N.B Cette fiche est à faire signer au responsable du personnel ou à qui de droit. La signature de la sécrétaire ou de toute autre personne chez qui la demande est formulée ne peut en aucun cas remplaçer celle du responsable.  La fiche doit être conservée dans les archives pour constituer une preuve en cas de besoin."));
 
 
         /*$user_info_header = array('Nom', 'Prenom(s)', 'Departement', 'Début P', 'Fin P', 'Motif');
