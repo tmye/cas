@@ -512,3 +512,10 @@ h5 {
     background-color: teal;
     color: #fff;
 }
+
+/* ulrich 24 avril */
+.collapsible-header-title {
+    font-weight: bold;
+    color: gray;
+    text-transform: uppercase;
+}
