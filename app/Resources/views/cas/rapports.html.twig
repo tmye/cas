@@ -471,6 +471,12 @@
         $(function () {
             $(".cl_Rapports").addClass("collapsible_element_active");
             $(".navigation_collapsible").collapsible('open',2);
+
+
+            $('.datepicker').on('mousedown',function(event){
+                event.preventDefault();
+            });
+
         });
     </script>
 {% endblock %}

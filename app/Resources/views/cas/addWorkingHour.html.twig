@@ -787,6 +787,12 @@
         $(function () {
             $(".cl_WH").addClass("collapsible_element_active");
             $(".navigation_collapsible").collapsible('open',6);
+
+
+            $('.timepicker').on('mousedown',function(event){
+                event.preventDefault();
+            });
+
         });
     </script>
 {% endblock %}

@@ -936,12 +936,12 @@ class DefaultController extends StatsController
             $theWidth = $imageData[0];
             $theHeight = $imageData[1];
             $ratio = $theWidth / $theHeight;
-            $percent = $ratio * 100;
+
             // if the width is greater than 100px we must fix it at 100
-            if ($theWidth > 20) {
-                $theWidth = 20;
+            if ($theWidth > 30) {
+                $theWidth = 30;
             }
-            $theHeight = ($theWidth * $percent) / 100;
+            $theHeight = $theWidth / $ratio;
 
             //print_r($theWidth."<br/>");
             //print_r($theHeight);
@@ -954,7 +954,7 @@ class DefaultController extends StatsController
             $pdf->Ln('17');
             $pdf->Cell(25, 10, "");
             $pdf->SetFont('Arial', 'BU', 16);
-            $pdf->Cell(40, 10, 'Rapport des employes du ' . $fromDate . ' au ' . $toDate);
+            $pdf->Cell(40, 10, utf8_decode('Rapport des employés du '). $fromDate . ' au ' . $toDate);
             $pdf->Ln('15');
         }
         $i = 0;
@@ -1052,7 +1052,7 @@ class DefaultController extends StatsController
                         array("Somme", round($donnees["spa"], 2), round($donnees["spr"], 2), round($donnees["spd"], 2), round($donnees["spAuth"], 2), round($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"], 2), $taux == 0 ? 0 : round((($employe->getSalary() * 12) / 52) / $taux * $permission_lost_time, 2)),
                     );
                     $data4 = array(
-                        array("Net a payer sans bonus", round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]), 2)),
+                        array(utf8_decode("Net à payer sans bonus"), round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]), 2)),
                     );
                 } else {
                     $header = array('', 'Absences', 'Retards', 'Departs', 'Auth', 'Total', 'Permissions', 'Bonus');
@@ -1066,10 +1066,10 @@ class DefaultController extends StatsController
                         array("Somme", round($donnees["spa"], 2), round($donnees["spr"], 2), round($donnees["spd"], 2), round($donnees["spAuth"], 2), round($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"], 2), $taux == 0 ? 0 : round((($employe->getSalary() * 12) / 52) / $taux * $permission_lost_time, 2), round($donnees["sommeArgentBonus"] * (-1), 0)),
                     );
                     $data4 = array(
-                        array("Net a payer sans bonus", round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]), 2)),
+                        array(utf8_decode("Net à payer sans bonus"), round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]), 2)),
                     );
                     $data5 = array(
-                        array("Net a payer avec bonus", round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]) + ($donnees["sommeArgentBonus"] * (-1)), 2)),
+                        array(utf8_decode("Net à payer avec bonus"), round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]) + ($donnees["sommeArgentBonus"] * (-1)), 2)),
                     );
                 }
             } else {
@@ -1085,7 +1085,7 @@ class DefaultController extends StatsController
                         array("Somme", round($donnees["spa"], 2), round($donnees["spr"], 2), round($donnees["spd"], 2), round($donnees["spAuth"], 2), round($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"], 2), $taux == 0 ? 0 : round((($employe->getSalary() * 12) / 52) / $taux * $permission_lost_time, 2)),
                     );
                     $data4 = array(
-                        array("Net a payer sans bonus", round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]), 2)),
+                        array(utf8_decode("Net à payer sans bonus"), round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]), 2)),
                     );
                 } else {
 
@@ -1100,10 +1100,10 @@ class DefaultController extends StatsController
                         array("Somme", round($donnees["spa"], 2), round($donnees["spr"], 2), round($donnees["spd"], 2), round($donnees["spAuth"], 2), round($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"], 2), $taux == 0 ? 0 : round((($employe->getSalary() * 12) / 52) / $taux * $permission_lost_time, 2), round($donnees["sommeArgentBonus"] * (-1), 0)),
                     );
                     $data4 = array(
-                        array("Net a payer sans bonus", round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]), 2)),
+                        array(utf8_decode("Net à payer sans bonus"), round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]), 2)),
                     );
                     $data5 = array(
-                        array("Net a payer avec bonus", round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]) + ($donnees["sommeArgentBonus"] * (-1)), 2)),
+                        array(utf8_decode("Net à payer avec bonus"), round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]) + ($donnees["sommeArgentBonus"] * (-1)), 2)),
                     );
                 }
             }
@@ -1117,7 +1117,7 @@ class DefaultController extends StatsController
                 $pdf->Ln('17');
                 $pdf->Cell(25, 10, "");
                 $pdf->SetFont('Arial', 'BU', 16);
-                $pdf->Cell(40, 10, 'Rapport des employes du ' . $fromDate . ' au ' . $toDate);
+                $pdf->Cell(40, 10, utf8_decode('Rapport des employés du ') . $fromDate . ' au ' . $toDate);
                 $pdf->Ln('15');
             }
             if (isset($data5) && ($data5 != null)) {
@@ -1156,7 +1156,6 @@ class DefaultController extends StatsController
             $theWidth = 30;
         }
         $theHeight = $theWidth / $ratio;
-//        $theHeight = ($theHeight * 20)/$theWidth;
 
 //        print_r($theWidth."<br/>");
 //        print_r($theHeight);

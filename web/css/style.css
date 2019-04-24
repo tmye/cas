@@ -533,3 +533,13 @@ h5 {
     width: auto;
     font-size: 1.6em;
 }
+
+.administration_level_txt {
+
+    font-size: 0.8em;
+    background-color: whitesmoke;
+    color: black;
+    border-radius: 0.4em;
+    padding: 0.6em;
+
+}

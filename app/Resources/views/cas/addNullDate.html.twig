@@ -113,6 +113,12 @@
                     window.location.href = id;
                 }
             });
+
+
+            $('.datepicker').on('mousedown',function(event){
+                event.preventDefault();
+            });
+
         });
     </script>
 {% endblock %}

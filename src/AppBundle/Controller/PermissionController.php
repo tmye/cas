@@ -82,7 +82,7 @@ class PermissionController extends Controller {
                     $timeFrom = strtotime($dateFrom." ".$sentTimeFrom);
                     $timeTo = strtotime($dateTo." ".$sentTimeTo);
 
-                    if($timeFrom >= time()){
+//                    if($timeFrom >= time()) {
                         $nowTime = strtotime($dateFrom." 00:00:00");
 
                                 //print_r("<br>$i - NowTime : " . $nowTime . "<br>");
@@ -113,10 +113,10 @@ class PermissionController extends Controller {
                         //$request->getSession()->getFlashBag()->add('notice', 'Cette permission a bien été enregistrée.');
     
                         return $this->redirectToRoute("addPermission");
-                    }else{
-                        $this->get('session')->getFlashBag()->set('error_notice', 'Enregistrement non effectué : vous ne pouvez pas demander une permission pour une date déjà passée!');
-                        return $this->redirectToRoute("addPermission");
-                    }
+                    /* }else{
+                         $this->get('session')->getFlashBag()->set('error_notice', 'Enregistrement non effectué : vous ne pouvez pas demander une permission pour une date déjà passée!');
+                         return $this->redirectToRoute("addPermission");
+                     }*/
                 }
 
             }
