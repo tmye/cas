@@ -41,8 +41,9 @@ use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx as xlswriter;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use TmyeDeviceBundle\Controller\BaseController;
 
-class EmployeController extends Controller {
+class EmployeController extends BaseController {
 
     /**
      * @Route("/importEmployees",name="importEmployees")

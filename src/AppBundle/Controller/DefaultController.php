@@ -11,6 +11,7 @@ use AppBundle\Entity\CompanyConfig;
 use AppBundle\Entity\Expiration;
 use AppBundle\Entity\WorkingHours;
 use AppBundle\fpdf181\tablepdf;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -33,6 +34,8 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class DefaultController extends StatsController
 {
+
+
     public function formatInt($value)
     {
         $value = (string)$value;
@@ -915,6 +918,9 @@ class DefaultController extends StatsController
     {
         set_time_limit(0);
 
+        $SURNAME_MAX = 10;
+        $LASTNAME_MAX = 10;
+
         $session = new Session();
 
         $empId = $request->request->get('destination');
@@ -1030,7 +1036,7 @@ class DefaultController extends StatsController
 
             $user_info_header = array('Nom', 'Prenom(s)', 'Fonction', 'Departement', 'Salaire', 'Revenu*', 'Duree hebdo');
             $user_info_data = array(
-                array($employe->getSurname(), $employe->getLastName(), substr($employe->getFunction(), 0, 5) . "" . $functionAppend, substr($employe->getDepartement()->getName(), 0, 5) . "" . $depAppend, $employe->getSalary(), round($ss, 2), $taux)
+                array(substr($employe->getSurname(), 0,$SURNAME_MAX), substr($employe->getLastName(), 0,$LASTNAME_MAX), substr($employe->getFunction(), 0, 5) . "" . $functionAppend, substr($employe->getDepartement()->getName(), 0, 5) . "" . $depAppend, $employe->getSalary(), round($ss, 2), $taux)
             );
 
             if ($type == "2" or $type == 2) {
@@ -1260,6 +1266,19 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
 
         set_time_limit(0);
 
+        /* not obliged to come - cell fill */
+        $styleArray =  [
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'color' => [
+                    'argb' => '03a9f4',
+                ]
+            ],
+        ];
+
+
+//
+
         $this->returnVerticalCells(80);
         $t = $request->request->get('type');
         $empId = $request->request->get('destination');
@@ -1376,11 +1395,17 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
 
                 $spreadsheet->getActiveSheet()->getStyle($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber - 1))->applyFromArray($boldStyle);
                 $sheet->setCellValue($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber - 1), date("d", $nowTime) . '/' . date("m", $nowTime));
-                //$sheet->setCellValue($verticalCellsTab[$cpt].''.($nextNameCellNumber-1), date("d",$nowTime).'/'.date("m",$nowTime));
+
 
                 foreach ($newTab as $el) {
                     $spreadsheet->getActiveSheet()->getStyle($el . "" . ($nextNameCellNumber + 16))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
                     $spreadsheet->getActiveSheet()->getStyle($el . "" . ($nextNameCellNumber + 16))->getFill()->getStartColor()->setARGB('bdbdbd');
+                }
+
+                /* get a function that check if this day is a normal coming day */
+                if ($this->checkIfEmployeePresenceIsNecessaryToday($emp, $nowTime)) {
+                    $sheet->getStyle($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber -1).':'.$verticalCellsTab[$cpt] . '' . ($nextNameCellNumber + 5))
+                        ->applyFromArray($styleArray);
                 }
 
                 if ($his["arrive"] != null && $his["arrive"] != "") {
@@ -1523,6 +1548,33 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
         } else {
             return $this->redirectToRoute("login");
         }
+    }
+
+    private function checkIfEmployeePresenceIsNecessaryToday($emp, $nowTime)
+    {
+
+        $employee = $this->EmployeeRepo()->find($emp);
+        $res = 0;
+        if ($employee != null) {
+            $wh_id = $employee->getWorkingHour();
+            $wh_obj = $this->WorkingHourRepo()->find($wh_id);
+            $code = $wh_obj->getWorkingHour();
+            $wh_array = json_decode($code, true);
+
+            $dayOfTheWeek = date('w', $nowTime); // 0 sunday, 6 saturday
+
+            if (($dayOfTheWeek == 0 && $wh_array["dimanche"][0]["type"] ==  "null" ) ||
+                $dayOfTheWeek == 1 && $wh_array["lundi"][0]["type"] ==  "null" ||
+                $dayOfTheWeek == 2 && $wh_array["mardi"][0]["type"] ==  "null" ||
+                $dayOfTheWeek == 3 && $wh_array["mercredi"][0]["type"] == "null" ||
+                $dayOfTheWeek == 4 && $wh_array["jeudi"][0]["type"] ==  "null" ||
+                $dayOfTheWeek == 5 && $wh_array["vendredi"][0]["type"] == "null" ||
+                $dayOfTheWeek == 6 && $wh_array["samedi"][0]["type"] ==  "null"
+            ) {
+                $res = 1;
+            }
+        }
+        return $res;
     }
 
 }
