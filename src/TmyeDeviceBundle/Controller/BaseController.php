@@ -152,6 +152,10 @@ class BaseController extends Controller
         return $this->getDoctrine()->getRepository("TmyeDeviceBundle:OkIdEntity");
     }
 
+    protected function JourNullRepo () {
+        return $this->getDoctrine()->getRepository("AppBundle:NullDate");
+    }
+
     protected function ConfigEntityRepo () {
         return $this->getDoctrine()->getRepository("TmyeDeviceBundle:ConfigEntity");
     }

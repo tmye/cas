@@ -68,7 +68,10 @@ class NullDateController extends Controller {
             $formBuilder
                 ->add('jour', TextType::class,array('label'=>' '))
                 ->add('motif', TextType::class,array('label'=>' '))
-                ->add('Ajouter', SubmitType::class);
+//                ->add('Ajouter', SubmitType::class);
+                ->add('Ajouter', SubmitType::class, [
+                    'attr' => ['class' => 'btn-perso-historique'],
+                ]);
             $form = $formBuilder->getForm();
 
             if ($request->isMethod('POST')) {
