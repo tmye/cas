@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -222,7 +223,7 @@ class PermissionController extends Controller {
             $numberOfRefused = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(2);
 
             $listPerm = $permRep->findByOrder();
-            return $this->render('cas/viewPermission.html.twig', array(
+            return $this->render("cas/viewPermission.html.twig" , array(
                 'listPerm' => $listPerm,
                 'stack'=>$numberOfStack,
                 'granted'=>$numberOfGranted,
@@ -232,6 +233,31 @@ class PermissionController extends Controller {
             return $this->redirectToRoute("login");
         }
     }
+
+    /**
+     * @Route("/viewPermissionData",name="viewPermissionData")
+     */
+    public function viewPermissionData(Request $request)
+    {
+        $session = new Session();
+
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_SECRET')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+            $permRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission");
+
+            $listPerm = $permRep->findByOrder();
+            return new JsonResponse( array($listPerm));
+
+        }else{
+            return $this->redirectToRoute("login");
+        }
+    }
+
+
+
 
     /**
      * @Route("/deletePermission/{id}" ,name="deletePermision")
@@ -344,4 +370,7 @@ class PermissionController extends Controller {
             return $this->redirectToRoute("viewPermission");
         }
     }
+
+
+
 }
