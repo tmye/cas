@@ -543,3 +543,18 @@ h5 {
     padding: 0.6em;
 
 }
+
+ /* permission cards */
+.row.card {
+    border-left: #FF5722 solid 1em;
+    text-align: center;
+    width:340px;
+}
+
+ span.description {
+
+    max-height: 40px;
+    overflow: hidden;
+    font-size: 13px;
+    font-style: italic ;
+}

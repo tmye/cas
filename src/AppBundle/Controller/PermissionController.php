@@ -23,10 +23,10 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\HttpFoundation\Session\Session;
+use TmyeDeviceBundle\Controller\BaseController;
 
 
-
-class PermissionController extends Controller {
+class PermissionController extends BaseController {
 
     /**
      * @Route("/addPermission",name="addPermission")
@@ -246,17 +246,17 @@ class PermissionController extends Controller {
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
             }
-            $permRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission");
+            $permRep = $this->PermissionRepo();
 
-            $listPerm = $permRep->findByOrder();
-            return new JsonResponse( array($listPerm));
+            $listPerm = $permRep->findAll();
 
+//            return new Response($this->serialize($listPerm));
+
+            return new JsonResponse($listPerm);
         }else{
             return $this->redirectToRoute("login");
         }
     }
-
-
 
 
     /**

@@ -63,22 +63,22 @@
                                     <div class="col l12">
                                         <div id="pending">
                                             <div class="row">
-                                            {%  set last_month = null %}
-                                            {% for perm in listPerm %}
+                                                {%  set last_month = null %}
+                                                {% for perm in listPerm %}
                                                 {% if perm.state == 0 %}
-                                                    {% if perm.CreateTime | date('m')!=last_month %}
-                                            <!-- juste pour fermer le row et en ouvrir un nouveau pour une séparation des éléments -->
+                                                {% if perm.CreateTime | date('m')!=last_month %}
+                                                <!-- juste pour fermer le row et en ouvrir un nouveau pour une séparation des éléments -->
                                             </div>
                                             <div class="row  ">
-{#                                               <p class="permissionsSeparator">{{ perm.CreateTime | date('M')~" "~perm.CreateTime | date('Y') }}</p> #}
-{#                                                data-toggle="modal" id="myCards" data-target="#myModal"#}
+                                                {#                                               <p class="permissionsSeparator">{{ perm.CreateTime | date('M')~" "~perm.CreateTime | date('Y') }}</p> #}
+                                                {#                                                data-toggle="modal" id="myCards" data-target="#myModal"#}
                                                 {% endif %}
-                                                    <div class =" col " style="margin: 5px;">
-                                                        <div >
-                                                            <div class=" row card  " id="{{ perm.id }}"  style=" border-left: #FF5722 solid 1em;  ;    text-align: center;">
+                                                <div class =" col " style="margin: 5px;">
+                                                    <div >
+                                                        <div class=" row card  " id="{{ perm.id }}"  >
 
-                                                                <div class="" style="">
-                                                                    <div class="card-body" >
+                                                            <div class="" style="">
+                                                                <div class="card-body" >
                                                                         <span>
                                                                             <span class="fa fa-user" style="margin-top: 15px">
                                                                                 <br>
@@ -89,12 +89,13 @@
                                                                             </span>
 
                                                                         </span>
-                                                                        <p style="line-height:5px; font-size: 17px; font-family: 'Tw Cen MT',sans-serif  "> {{ perm.title }} : {{ perm.DateFrom | date('d/m/Y')~"  " }} </p>
-                                                                        <span  style="font-size: 13px; font-style: italic ;">
-                                                                             Motif: {{ perm.description }} <span id="dots"> ... </span>
-                                                                        </span>
-
-                                                                        <span id="more">
+                                                                    <p style="line-height:5px; font-size: 17px; font-family: 'Tw Cen MT',sans-serif  "> {{ perm.title }} : {{ perm.DateFrom | date('d/m/Y')~"  " }} </p>
+                                                                    <p>
+                                                                        <span  class="description" >
+                                                                             Motif: {{ perm.description }}
+                                                                        </span> <span id="dots"> ... </span>
+                                                                    </p>
+                                                                    <span id="more">
                                                                             <p style="font-size: 13px; font-style: italic ;">
                                                                                 <b>
                                                                                     Date de Fin: {{ perm.DateTo | date('d-M-Y')~" à "~perm.TimeTo }}
@@ -103,7 +104,7 @@
                                                                             <p>
                                                                                 <span style="font-size: 13px; font-style: italic ;">
                                                                                         Durée :
-                                                                                        {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days %}
+                                                                                    {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days %}
                                                                                     {% set nbreHeures = date(perm.DateTo | date).diff(perm.DateFrom)|date('%h') %}
                                                                                     {{ nbreJours~" Jours "~nbreHeures~" Heures" }}
                                                                                 </span>
@@ -111,77 +112,77 @@
                                                                             </p>
                                                                         </span>
 
-                                                                    </div>
-
                                                                 </div>
 
-                                                                <div class="modal fade" id = "myModal" style="z-index: 9999; top:10%;" >
-                                                                    <div class="modal-dialog " >
-                                                                        <div class="modal-content">
-                                                                            <div class="model-header">
-                                                                                <h5>Détails de la permission</h5>
+                                                            </div>
 
-                                                                                <span class="fa fa-user" style="margin-top: 15px">
+                                                            <div class="modal fade" id = "myModal" style="z-index: 9999; top:10%;" >
+                                                                <div class="modal-dialog " >
+                                                                    <div class="modal-content">
+                                                                        <div class="model-header">
+                                                                            <h5>Détails de la permission</h5>
+
+                                                                            <span class="fa fa-user" style="margin-top: 15px">
                                                                                 <br>
                                                                                 <br>
                                                                                     <h3 id="fullName" style=" font-size: 15px; font-family: 'Bell MT' , sans-serif  ; font: -apple-system-short-body;">
 
                                                                                     </h3>
                                                                                 </span>
-                                                                            </div>
-                                                                            <div class="modal-body">
+                                                                        </div>
+                                                                        <div class="modal-body">
                                                                                 <span id = "deptName">
                                                                                         {{ perm.employee.departement.Name ~ "  " }}
                                                                                 </span>
 
 
-                                                                                <p id="lengthPerm" style="line-height:5px; font-size: 17px; font-family: 'Tw Cen MT',sans-serif  "> Permission du {{ perm.DateFrom | date('d/m/Y')~" à  "~perm.TimeFrom ~" au " ~
-                                                                                    perm.DateTo | date('d/m/Y')~" à "~perm.TimeTo }}
-                                                                                </p>
-                                                                                <p id="typePerm">Type de permission: {{ perm.title }}</p>
-                                                                                <span  id="motif" style="font-size: 15px; font-style: italic ;">
+                                                                            <p id="lengthPerm" style="line-height:5px; font-size: 17px; font-family: 'Tw Cen MT',sans-serif  "> Permission du {{ perm.DateFrom | date('d/m/Y')~" à  "~perm.TimeFrom ~" au " ~
+                                                                                perm.DateTo | date('d/m/Y')~" à "~perm.TimeTo }}
+                                                                            </p>
+                                                                            <p id="typePerm">Type de permission: {{ perm.title }}</p>
+                                                                            <span  id="motif" style="font-size: 15px; font-style: italic ;">
                                                                                     Motif: {{ perm.description }}
                                                                                 </span>
 
-                                                                                <p>
+                                                                            <p>
                                                                                     <span id="durPerm" style="font-size: 13px; font-style: italic ;">
                                                                                             Durée :
-                                                                                            {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days %}
+                                                                                        {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days %}
                                                                                         {% set nbreHeures = date(perm.DateTo | date).diff(perm.DateFrom)|date('%h') %}
                                                                                         {{ nbreJours~" Jours "~nbreHeures~" Heures" }}
                                                                                     </span>
-                                                                                    <p class="badge deep-orange  white-text " style="font-family: 'Bell MT' , sans-serif  ; font-size:20px;margin-left: 39%; max-width: 150px;">
-                                                                                        En attente
-                                                                                    </p>
-                                                                                </p>
+                                                                            <p class="badge deep-orange  white-text " style="font-family: 'Bell MT' , sans-serif  ; font-size:20px;margin-left: 39%; max-width: 150px;">
+                                                                                En attente
+                                                                            </p>
+                                                                            </p>
 
-                                                                            </div>
+                                                                        </div>
 
-                                                                            <div class="modal-header">
-                                                                                <div style="align-content: center;">
+                                                                        <div class="modal-header">
+                                                                            <div style="align-content: center;">
                                                                                     <span>
                                                                                         <a href="{{ path('grantPermision',{'id':perm.id}) }}"><button class="simple-button-decoration green lighten-1 white-text"><span class="fa fa-check"></span> </button></a>
                                                                                         <a href="{{ path('rejectPermision',{'id':perm.id}) }}"><button class="deleteDep simple-button-decoration red lighten-1 white-text"><span class="fa fa-times"></span> </button></a>
                                                                                         <a href="{{ path('generatePDFPermission',{'id':perm.id}) }}"><button class="simple-button-decoration green darken-3 white-text"><span class="fa fa-print"></span></button></a>
                                                                                     </span>
-                                                                                </div>
                                                                             </div>
-                                                                            <div class="modal-close">
-                                                                                <br>
-                                                                                <input type="button" class="btn btn-sm"  data-dismiss="modal" value="fermer">
-                                                                            </div>
+                                                                        </div>
+                                                                        <div class="modal-close">
+                                                                            <br>
+                                                                            <input type="button" class="btn btn-sm"  data-dismiss="modal" value="fermer">
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-
                                                     </div>
 
+                                                </div>
 
-                                                    {%  set last_month = perm.CreateTime | date('m') %}
+
+                                                {%  set last_month = perm.CreateTime | date('m') %}
                                                 {% endif %}
-                                            {% endfor %}
+                                                {% endfor %}
                                             </div>
                                         </div>
                                         <div id="not_granted">
@@ -225,7 +226,7 @@
                                                                             <p>
                                                                                 <span style="font-size: 13px; font-style: italic ;">
                                                                                         Durée :
-                                                                                        {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days %}
+                                                                                    {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days %}
                                                                                     {% set nbreHeures = date(perm.DateTo | date).diff(perm.DateFrom)|date('%h') %}
                                                                                     {{ nbreJours~" Jours "~nbreHeures~" Heures" }}
                                                                                 </span>
@@ -268,7 +269,7 @@
                                                                             <p>
                                                                                     <span style="font-size: 13px; font-style: italic ;">
                                                                                             Durée :
-                                                                                            {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days %}
+                                                                                        {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days %}
                                                                                         {% set nbreHeures = date(perm.DateTo | date).diff(perm.DateFrom)|date('%h') %}
                                                                                         {{ nbreJours~" Jours "~nbreHeures~" Heures" }}
                                                                                     </span>
@@ -307,7 +308,7 @@
                                                 <!-- Loool + mdr juste pour fermer le row et en ouvrir un nouveau pour une séparation des éléments -->
                                             </div>
                                             <div class="row">
-                                              <!--  <p class="permissionsSeparator">{{ perm.CreateTime | date('M')~" "~perm.CreateTime | date('Y') }}</p> -->
+                                                <!--  <p class="permissionsSeparator">{{ perm.CreateTime | date('M')~" "~perm.CreateTime | date('Y') }}</p> -->
                                                 {% endif %}
                                                 <div class =" col " style="margin: 10px;">
                                                     <div class="  " style=" position: sticky;">
@@ -339,7 +340,7 @@
                                                                             <p>
                                                                                 <span style="font-size: 13px; font-style: italic ;">
                                                                                         Durée :
-                                                                                        {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days %}
+                                                                                    {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days %}
                                                                                     {% set nbreHeures = date(perm.DateTo | date).diff(perm.DateFrom)|date('%h') %}
                                                                                     {{ nbreJours~" Jours "~nbreHeures~" Heures" }}
                                                                                 </span>
@@ -382,7 +383,7 @@
                                                                             <p>
                                                                                     <span style="font-size: 13px; font-style: italic ;">
                                                                                             Durée :
-                                                                                            {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days %}
+                                                                                        {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days %}
                                                                                         {% set nbreHeures = date(perm.DateTo | date).diff(perm.DateFrom)|date('%h') %}
                                                                                         {{ nbreJours~" Jours "~nbreHeures~" Heures" }}
                                                                                     </span>
@@ -467,8 +468,8 @@
     <script src="{{ asset('materialize/js/bootstrap.js') }}"></script>
     <script src="{{ asset('materialize/js/bootstrap.min.js') }}"></script>
 
-     <script>
-       $(document).ready(function () {
+    <script>
+        $(document).ready(function () {
             setTimeout(function () {
                 $("#myModal").modal('show');
                 setTimeout(function () {
@@ -479,68 +480,68 @@
     </script>
     <script>
         //function loadData(){
-            var listPerm;
-            $(document).ready(function () {
-                $(".card").click(function () {
+        var listPerm;
+        $(document).ready(function () {
+            $(".card").click(function () {
 
-                    var idPerm= $(this).attr("id");
-                    $.ajax({
-                        url:"{{ path("viewPermissionData") }}",
-                        method: "GET",
-                        data:{ get_param: "listPerm"},
-                        //dataType: "Array",
-                        success: function (json) {
-                            var elt = json;
-                            //$(json).get
-                            console.log(json);
-                            // var eltList = data;
-                            // var items = [];
-                            //     console.log(eltList );
-                            // //alert(data.length);
-                            // $.each(eltList, function(key, value){
-                            //     $.each(value, function (k, v) {
-                            //         console.log(v);
-                            //         //alert(v);
-                            //     });
-                            //     alert(value);
-                            //     //items.push(val);
-                            // } );
-                            // listPerm = items;
-                            // $.each(items, function(key, val){
-                            //     $.each($.parseJSON(val), function (k, v) {
-                            //         //console.log(v);
-                            //       //  alert(v);
-                            //     });
-                            //
-                            // } );
+                var idPerm= $(this).attr("id");
+                $.ajax({
+                    url:"{{ path("viewPermissionData") }}",
+                    method: "GET",
+                    data:{ get_param: "listPerm"},
+                    //dataType: "Array",
+                    success: function (json) {
+                        var elt = json;
+                        //$(json).get
+                        console.log(json);
+                        // var eltList = data;
+                        // var items = [];
+                        //     console.log(eltList );
+                        // //alert(data.length);
+                        // $.each(eltList, function(key, value){
+                        //     $.each(value, function (k, v) {
+                        //         console.log(v);
+                        //         //alert(v);
+                        //     });
+                        //     alert(value);
+                        //     //items.push(val);
+                        // } );
+                        // listPerm = items;
+                        // $.each(items, function(key, val){
+                        //     $.each($.parseJSON(val), function (k, v) {
+                        //         //console.log(v);
+                        //       //  alert(v);
+                        //     });
+                        //
+                        // } );
 
 
-                        },
+                    },
 
-                        error: function () {
+                    error: function () {
                         alert("erreur");
                     }
-                    });
                 });
-
             });
-         //   return listPerm;
-      //  }
+
+        });
+        //   return listPerm;
+        //  }
 
     </script>
     <script>
         function detailPerm(idPerm, listPerm) {
-          {#  var cardId = $(".card").attr("id");#}
+            {#  var cardId = $(".card").attr("id");#}
 
-          {#  $.forEach()#}
+            {#  $.forEach()#}
 
-          {#  $("#fullName").text({#}
-          {#      html: "{% for perm in listPerm %}"#}
-          {#              +" {% if perm.id == " " ca"#}
+            {#  $("#fullName").text({#}
+            {#      html: "{% for perm in listPerm %}"#}
+            {#              +" {% if perm.id == " " ca"#}
 
-          {#  })#}
-          {#  $("#myModal").show();#}
-          {#// mod.text()#}
+            {#  })#}
+            {#  $("#myModal").show();#}
+            {#// mod.text()#}
         }
     </script>
 
@@ -558,8 +559,8 @@
     </style>
     <link rel="stylesheet" src="{{ asset('materialize/css/bootstrap.css') }}">
     <link rel="stylesheet" src="{{ asset('materialize/css/bootstrap.min.css') }}">
-<!---  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css"> -->
+    <!---  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css"> -->
 
 
 {% endblock %}

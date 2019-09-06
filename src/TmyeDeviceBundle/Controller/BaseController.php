@@ -51,7 +51,7 @@ class BaseController extends Controller
     {
 //        return $this->container->get('jms_serializer')
 //            ->deserialize($data, \ArrayObject::class, 'json');
-        return json_decode(data, true);
+        return json_decode($data, true);
     }
 
     protected function requestInvalid()
@@ -136,9 +136,9 @@ class BaseController extends Controller
         return $this->getDoctrine()->getRepository("AppBundle:ClockinRecord");
     }
 
-    /* protected function PermissionRepo () {
+      protected function PermissionRepo () {
          return $this->getDoctrine()->getRepository("AppBundle:Permission");
-     }*/
+     }
 
     protected function MachineRepo () {
         return $this->getDoctrine()->getRepository("TmyeDeviceBundle:Machine");
