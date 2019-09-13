@@ -110,7 +110,7 @@ class Permission
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -133,7 +133,7 @@ class Permission
     /**
      * Get askerId
      *
-     * @return integer 
+     * @return integer
      */
     public function getAskerId()
     {
@@ -156,7 +156,7 @@ class Permission
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -179,7 +179,7 @@ class Permission
     /**
      * Get description
      *
-     * @return string 
+     * @return string
      */
     public function getDescription()
     {
@@ -202,7 +202,7 @@ class Permission
     /**
      * Get updateTime
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getUpdateTime()
     {
@@ -225,7 +225,7 @@ class Permission
     /**
      * Get dateFrom
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDateFrom()
     {
@@ -248,7 +248,7 @@ class Permission
     /**
      * Get dateTo
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDateTo()
     {
@@ -271,7 +271,7 @@ class Permission
     /**
      * Get state
      *
-     * @return integer 
+     * @return integer
      */
     public function getState()
     {
@@ -294,7 +294,7 @@ class Permission
     /**
      * Get createTime
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreateTime()
     {
@@ -317,7 +317,7 @@ class Permission
     /**
      * Get employee
      *
-     * @return \AppBundle\Entity\Employe 
+     * @return \AppBundle\Entity\Employe
      */
     public function getEmployee()
     {

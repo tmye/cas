@@ -21,7 +21,7 @@ class Employe implements UserInterface
      * @Assert\Valid()
      */
 
-    private $departement;
+    public $departement;
 
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\WorkingHours")
@@ -39,7 +39,7 @@ class Employe implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    public $id;
 
     /**
      * @var int
@@ -92,7 +92,7 @@ class Employe implements UserInterface
      * @ORM\Column(name="surname", type="string", length=45)
      * @Assert\NotBlank()
      */
-    private $surname;
+    public $surname;
 
     /**
      * @var string
@@ -100,7 +100,7 @@ class Employe implements UserInterface
      * @ORM\Column(name="last_name", type="string", length=45)
      * @Assert\NotBlank()
      */
-    private $lastName;
+    public $lastName;
 
 
     /**
@@ -108,7 +108,7 @@ class Employe implements UserInterface
      *
      * @ORM\Column(name="short_name", type="string", length=45, nullable=true)
      */
-    private $shortName;
+    public $shortName;
 
 
     /**
@@ -131,7 +131,7 @@ class Employe implements UserInterface
      * @var string
      * @ORM\Column(name="picture", type="string", nullable=true)
      */
-    private $picture;
+    public $picture;
 
     /**
      * @var string
