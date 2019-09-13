@@ -246,11 +246,17 @@ class PermissionController extends BaseController {
             if($expiry_service->hasExpired()){
                 return $this->redirectToRoute("expiryPage");
             }
-            $permRep = $this->PermissionRepo();
+            $empRep = $this-> EmployeeRepo();
+            $deptRep = $this-> DepartementRepo();
+            $empRep = $empRep->findAll();
+            $deptRep = $deptRep -> findAll();
+            $permRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission");
+//            $numberOfStack = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(0);
+//            $numberOfGranted = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(1);
+//            $numberOfRefused = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(2);
+
 
             $listPerm = $permRep->findAll();
-
-//            return new Response($this->serialize($listPerm));
 
             return new JsonResponse($listPerm);
         }else{
@@ -368,6 +374,33 @@ class PermissionController extends BaseController {
         }else{
             $this->get('session')->getFlashBag()->set('error_notice', 'Vous n\'avez pas les droits nécessaires pour traiter une permission.');
             return $this->redirectToRoute("viewPermission");
+        }
+    }
+
+    /**
+     * @Route("/viewPermissionSearchResult/{motClef}", name="viewPermissionSearchResult")
+     */
+
+    public function searchPermissionByName(Request $request,  $motClef){
+        $session = new Session();
+
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_SECRET')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+            $empRep = $this-> EmployeeRepo();
+            $deptRep = $this-> DepartementRepo();
+            $empRep = $empRep->findAll();
+            $deptRep = $deptRep -> findAll();
+            $permRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findByCriteria($motClef);
+
+            //$listPerm = $permRep ->findAll();
+            $listPerm = $permRep;
+
+            return new JsonResponse($listPerm);
+        }else{
+            return $this->redirectToRoute("login");
         }
     }
 
