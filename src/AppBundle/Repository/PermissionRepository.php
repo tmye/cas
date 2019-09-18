@@ -27,6 +27,46 @@ class PermissionRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    public function findByCriteria($criteria){
+        $qb = $this->createQueryBuilder('p');
+        $qb->where(
+                    $qb->expr()->like('p.title', ':criteria')
+                  );
+        $qb->setParameter('criteria','%'.$criteria.'%');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function  findEndPerms(){
+        $qb = $this->createQueryBuilder('p');
+        $qb->where( 'p.dateTo < :today');
+//        $qb->andwhere('p.dateTo <= :dateTo');
+//        $qb->setParameter('dateFrom',$dateFrom);
+        $qb->setParameter('today', new \DateTime());
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function  findComingPerms(){
+        $qb = $this->createQueryBuilder('p');
+        $qb->where( 'p.dateFrom > :today');
+//        $qb->andwhere('p.dateTo <= :dateTo');
+//        $qb->setParameter('dateFrom',$dateFrom);
+        $qb->setParameter('today', new \DateTime());
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function  findPermEnCours( ){
+        $qb = $this->createQueryBuilder('p');
+        $qb->where( 'p.dateFrom <= :today');
+        $qb->andwhere('p.dateTo >= :todayy');
+        $qb->setParameter('today',new \DateTime());
+        $qb->setParameter('todayy', new \DateTime());
+
+        return $qb->getQuery()->getResult();
+    }
+
     /*public function enPermission($emp,$date,$savedHour,$normalHour){
 
         // The hours are on the H:i format
@@ -116,4 +156,24 @@ class PermissionRepository extends EntityRepository
         $singleScalar = $query->getSingleScalarResult();
         return $singleScalar;
     }
+//
+//    public function countPermission($state){
+//        $queryBuilder = $this->createQueryBuilder("p");
+//        $queryBuilder->select($queryBuilder->expr()->count("p"));
+//        $queryBuilder->where("p.state =:state")->setParameter("state", $state);
+//
+//        $query = $queryBuilder->getQuery();
+//        $singleScalar = $query->getSingleScalarResult();
+//        return $singleScalar;
+//    }
+//
+//    public function countPermission($state){
+//        $queryBuilder = $this->createQueryBuilder("p");
+//        $queryBuilder->select($queryBuilder->expr()->count("p"));
+//        $queryBuilder->where("p.state =:state")->setParameter("state", $state);
+//
+//        $query = $queryBuilder->getQuery();
+//        $singleScalar = $query->getSingleScalarResult();
+//        return $singleScalar;
+//    }
 }
