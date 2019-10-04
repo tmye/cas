@@ -441,84 +441,85 @@ class PermissionController extends BaseController {
                 'listPermCrs'=>$listPermCrs,
                 'listPermCom'=>$listPermCom,
                 'nbPermEnd' => $nbEnd,
-                'nbPermCom' => $nbCom,
-                'nbPermCrs' => $nbCrs
+                'nbPermCrs' => $nbCrs,
+                'nbPermCom' => $nbCom
+
             );
         }else{
             return $this->redirectToRoute("login");
         }
     }
 
-//    /**
-//     * @Route("/findPermissionStatee", name="findPermissionStatee")
-//     */
-//
-//    public function findPermissionStatee(Request $request){
-//        $session = new Session();
-//
-//        if ($this->get('security.authorization_checker')->isGranted('ROLE_SECRET')) {
-//            $expiry_service = $this->container->get('app_bundle_expired');
-//            if($expiry_service->hasExpired()){
-//                return $this->redirectToRoute("expiryPage");
-//            }
-//
-//            $empRep = $this-> EmployeeRepo();
-//            $deptRep = $this-> DepartementRepo();
-//            $empRep = $empRep->findAll();
-//            $deptRep = $deptRep -> findAll();
-//            $permEnd = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findEndPerms();
-//            $permEnCours = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findPermEnCours();
-//            $permComing = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findComingPerms();
-//
-//            $nbEnd = 0;
-//            $nbCrs = 0;
-//            $nbCom = 0;
-//
-//            //$listPerm = $permRep ->findAll();$permEnd
-//            $listPermEnd=array();
-//            $listPermCrs = $permEnCours;
-//            $listPermCom = array();
-//
-//            foreach (  $permEnd as $end){
-//
-//                $diff =date_diff($end->dateTo, new \DateTime('now'));
-//                $diff = $diff->format("%a");
-//
-//                if( $diff <=30  ){
-//                   array_push($listPermEnd, $end);
-//                    $nbEnd++;
-//                }
-//
-//            }
-//
-//            foreach (  $permComing as $com){
-//
-//                $diff =date_diff( new \DateTime('now'),$end->dateTo);
-//                $diff = $diff->format("%a");
-//
-//                if( $diff <=30  ){
-//                    array_push($listPermCom, $com);
-//                    $nbCom++;
-//                }
-//
-//            }
-//
-//            foreach (  $listPermCrs as $crs){
-//                $nbCrs++;
-//            }
-//
-//            return new JsonResponse( array(
-//                'listPermEnd' => $listPermEnd,
-//                'listPermCrs'=>$listPermCrs,
-//                'listPermCom'=>$listPermCom,
-//                'nbPermEnd' => $nbEnd,
-//                'nbPermCom' => $nbCom,
-//                'nbPermCrs' => $nbCrs
-//            ));
-//        }else{
-//            return $this->redirectToRoute("login");
-//        }
-//    }
+    /**
+     * @Route("/findPermissionStatee", name="findPermissionStatee")
+     */
+
+    public function findPermissionStatee(Request $request){
+        $session = new Session();
+
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_SECRET')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if($expiry_service->hasExpired()){
+                return $this->redirectToRoute("expiryPage");
+            }
+
+            $empRep = $this-> EmployeeRepo();
+            $deptRep = $this-> DepartementRepo();
+            $empRep = $empRep->findAll();
+            $deptRep = $deptRep -> findAll();
+            $permEnd = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findEndPerms();
+            $permEnCours = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findPermEnCours();
+            $permComing = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findComingPerms();
+
+            $nbEnd = 0;
+            $nbCrs = 0;
+            $nbCom = 0;
+
+            //$listPerm = $permRep ->findAll();$permEnd
+            $listPermEnd=array();
+            $listPermCrs = $permEnCours;
+            $listPermCom = array();
+
+            foreach (  $permEnd as $end){
+
+                $diff =date_diff($end->dateTo, new \DateTime('now'));
+                $diff = $diff->format("%a");
+
+                if( $diff <=30  ){
+                   array_push($listPermEnd, $end);
+                    $nbEnd++;
+                }
+
+            }
+
+            foreach (  $permComing as $com){
+
+                $diff =date_diff( new \DateTime('now'),$end->dateTo);
+                $diff = $diff->format("%a");
+
+                if( $diff <=30  ){
+                    array_push($listPermCom, $com);
+                    $nbCom++;
+                }
+
+            }
+
+            foreach (  $listPermCrs as $crs){
+                $nbCrs++;
+            }
+
+            return new JsonResponse( array(
+                'listPermEnd' => $listPermEnd,
+                'listPermCrs'=>$listPermCrs,
+                'listPermCom'=>$listPermCom,
+                'nbPermEnd' => $nbEnd,
+                'nbPermCom' => $nbCom,
+                'nbPermCrs' => $nbCrs
+            ));
+        }else{
+            return $this->redirectToRoute("login");
+        }
+    }
 
 
 

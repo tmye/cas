@@ -130,11 +130,24 @@ class StatsController extends ClockinReccordController
             return $this->redirectToRoute("login");
         }
     }
+    /**
+     * @Route("/userStatsTest",name="userStatsTest")
+     */
+
+    public function userStats(Request $request){
+
+        return $this->userStatsAction( $request);
+//        return $this->userStatsAction( $request,$empId,$fromeDate,$toDate);
+    }
 
     /**
      * @Route("/userStats",name="userStats")
-    */
-    public function userStatsAction(Request $request,$empId=null,$fromeDate=null,$toDate=null){
+     */
+    public function userStatsAction(Request $request){
+
+        $empId=$request->request->get("empId");
+        $fromeDate =$request->request->get("fromeDate");
+        $toDate =$request->request->get("toDate");
 
         set_time_limit(0);
 
@@ -144,10 +157,12 @@ class StatsController extends ClockinReccordController
             $emp = $request->request->get("empId");
             $dateFrom = $request->request->get("dateFrom");
             $dateTo = $request->request->get("dateTo");
+            $mes="les valeurs sont nulles";
         }else{
             $emp = $empId;
             $dateFrom = $fromeDate;
             $dateTo = $toDate;
+            $mes="les valeurs ne sont pas nulles";
         }
 
         $pR = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission");
@@ -171,7 +186,17 @@ class StatsController extends ClockinReccordController
         $cr = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord");
 
         $absences=0;
+        $ici1=0;
+        $controlTaux = array();
+        $iciDate1="";
+        $iciPerm1="";
+        $ici2=0;
         $nbrePermission=0;
+        $p11=0;
+        $p22=0;
+        $p33=0;
+        $p44=0;
+        $p55=0;
         $sommePerduAbsence_3 = 0;
         $retards = 0;
         $bonus_retards = 0;
@@ -183,7 +208,9 @@ class StatsController extends ClockinReccordController
         $departsPause = 0;
 
         $retardDiff =0;
+        $retardDiffArray = array();
 
+        $tpsAbsPer =0;
         $sommeAbsences =0;
         $sommeRetards =0;
         $bonusSommeRetards = 0;
@@ -223,6 +250,8 @@ class StatsController extends ClockinReccordController
         $tabRetardsPermission = array();
 
         $tabAbsencesPermission = array();
+        $tabPermissionTrouvee = array();
+        $resReq = array();
 
         $quota_fait = 0;
         $quota_total = 0;
@@ -232,15 +261,36 @@ class StatsController extends ClockinReccordController
         $controlNowTime =0;
         $controlNowTime2 =0;
         $controlNowTimeForOtheType = 0;
+        $pipipi = array();
 
         $jourFeries =0;
+        $nbreJrTravail = 0;
+        $tabNbJrT =  array();
 
         // On boucle sur les jours sélectionnés
         $i=0;$j=0;
         $lost_time = 0;
         $sommePerduAuth = 0;
         $tabType = array();
+
+
+        for ($cpt2=0;$cpt2<=$days;$cpt2++){
+            $theDay = date('N',$nowTime);
+            $tabNbJrT[] = $theDay;
+            $theDay = $this->dateDayNameFrench($theDay);
+            $tabNbJrT[] = $theDay;
+            $type = $empWH[$theDay][0]["type"];
+            if ($type == "1" || $type == "2" || $type == "4"|| $type == "3"){
+                $nbreJrTravail++;
+                $tabNbJrT[]="cpt ".$cpt2." jrT ".$nbreJrTravail;
+            }
+            $nowTime = $nowTime+86400;
+        }
+        $nowTime = $timeFrom;
+
         for ($cpt=0;$cpt<=$days;$cpt++){
+
+
             set_time_limit(0);
             $his = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('d-m-Y',$nowTime),$employe->getId(),$request);
             $his = json_decode($his->getContent(),true);
@@ -316,708 +366,1147 @@ class StatsController extends ClockinReccordController
             if($type != "null" && $type != null){
                 $quota_emp_1_4 += ((($heureNormaleDepartPause - $heureNormaleArrive)+($heureNormaleDepart - $heureNormaleArrivePause))/60)/60;
             }
+            $nowDate = new \DateTime();
 
             if ($type == "1" || $type == "2" || $type == "4"){
+
                 $j++;
-                // Si son workingHour est de type 1 ou 2
+                // Si son workingHour est de type 1 ou 2 ou 4
                 //print_r("//// Heure normale d'arrive ".$nowTime." //////\n");
                 if(!$cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
                     //print_r("Passage ".($cpt+1)." date : ".date('d-m-Y',$nowTime)."\n");
+
+                    /* ************************************************
+                    / l'employé nest pas présent: cherchons la raison *
+                    /**************************************************/
+
                     $nowDate = date('d/m/Y',$nowTime);
                     $permDate = date('Y-m-d',$nowTime);
-                    if(!$pR->enPermission($employe,$permDate)){
-                        if(!$nD->dayIsNull($permDate)){
-                            $absences++;
-                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
-                            $timePauseBegin = strtotime($empWH[$theDay][0]["pauseBeginHour"]);
-                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
-                            $timePauseEnd = strtotime($empWH[$theDay][0]["pauseEndHour"]);
+//                    if(!$pR->enPermission($employe,$permDate)){
 
-                            if($type == "1"){
-                                $timePerdusAbsences = ($timePauseBegin - $timeDebut)+($timeFin - $timePauseEnd);
-                                $timePerdusAbsences /= 3600;
-                            }else if($type == "4"){
-                                $timePerdusAbsences = $timeFin - $timeDebut;
-                                $timePerdusAbsences /= 3600;
-                            }else if($type == "2"){
-                                $qu = (float)$empWH[$theDay][0]["quota"];
-                                $timePerdusAbsences = $qu;
+//                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime));
+                    $lPermCours = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")-> findPermEnCours() ;
+                    $lPermEnd = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findEndPerms();
+                    $isPermDate = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->checkInPerm($emp,date('Y-m-d',$nowTime));
+                    $pipipi[]=$isPermDate;
+                    $inPerm = false;
+                    $hisPermEnd = false;
+                    foreach($lPermCours as $p){
+                        if($p->employee->id == $emp){
+                            $inPerm = true;
+                        }
+                    }
+                    foreach($lPermEnd as $p){
+                        if($p->employee->id == $emp){
+                            $hisPermEnd = true;
+                        }
+                    }
+                    $tabPermissionTrouvee[]=$inPerm;
+                    $tabPermissionTrouvee[]=$hisPermEnd;
+                    $resReq[] = $lPermCours;
+
+                    if(!$nD->dayIsNull($permDate)){
+                        if((($inPerm == true || $hisPermEnd == true)&& $isPermDate == true)){
+                             /*
+                              * We need some other variables to avoid conflicts with userStats variables
+                              */
+
+                            $nbrePermission++;
+                            $p11++;
+                            $iciPerm1 = $iciPerm1." - ".$cpt. " - " .$p11." - ".$permDate." | ";
+
+                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                            $timeDebutPause = strtotime($empWH[$theDay][0]["pauseBeginHour"]);
+                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+                            $timeFinPause = strtotime($empWH[$theDay][0]["pauseEndHour"]);
+                            if($type == "1" || $type == 1){
+                                $timePP = ($timeDebutPause-$timeDebut)+($timeFin-$timeFinPause);
+                            }else if($type == "4" || $type == 4){
+                                $timePP = ($timeFin - $timeDebut);
+                            }else if($type == "2" || $type == 2){
+                                $timePP = (float)$empWH[$theDay][0]["quota"];
                             }
+                            $tempPP = $timePP/60/60; // Hour
+                            $tempsTPP += $tempPP;
+                            $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Permission","tempsPerdu"=>$tempPP);
+
+                        } else {
+                            ///sil n'est pas en permission => absence
+                            $absences++;
+                            $ici1++;
+                            $iciDate1 = $iciDate1." - ".$cpt. " - " .$ici1." - ".$permDate." | ";
+                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                            $timePerdusAbsences = $timeFin - $timeDebut;
+                            $timePerdusAbsences /= 3600;
+                            $timeD = strtotime($empWH[$theDay][0]["beginHour"]);
+                            $timeF = strtotime($empWH[$theDay][0]["endHour"]);
+
+                            $dailyTime = $timeF - $timeD;
+                            $dailyTime /= 3600;
                             //$tempsPerdusAbsences += $tempPerdu;
                             //$sommeAbsences +=$tempsPerdusAbsences;
+                            $tpsAbsPer = $timePerdusAbsences;
                             $sommeAbsences +=$timePerdusAbsences;
                             if($taux > 0){
-                                $sommePerduAbsence = ((($salaire*12)/52)/$taux)*$sommeAbsences;
+                                if( $nbreJrTravail> 0){
+                                    $sommePerduAbsence = ( $salaire/$nbreJrTravail/$dailyTime)*  round($timePerdusAbsences,2);
+                                }
+
+//                                $sommePerduAbsence = ((($salaire*12)/52)/$taux)*$sommeAbsences;
+                                $controlTaux[] = "taux: ".$taux." passé ".$cpt." somme  absence ".$sommeAbsences." tpsPerAbs ".$timePerdusAbsences  ;
                             }else{
                                 $sommePerduAbsence = 0;
                             }
-                        }else{
-                            $jourFeries ++;
+                            $tempPP = $timePerdusAbsences; // Hour
+                            $tempsTPP = $sommeAbsences;
+                            $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Absence","tempsPerdu"=>$tempPP);
+
                         }
+
+                    }else{
+                        $jourFeries ++;
                     }
-                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime));
-                    if($p){
-                        /*
-                         * We need some other variables to avoid conflicts with userStats variables
-                         */
-                        $nbrePermission++;
-                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
-                        $timeDebutPause = strtotime($empWH[$theDay][0]["pauseBeginHour"]);
-                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
-                        $timeFinPause = strtotime($empWH[$theDay][0]["pauseEndHour"]);
-                        if($type == "1" || $type == 1){
-                            $timePP = ($timeDebutPause-$timeDebut)+($timeFin-$timeFinPause);
-                        }else if($type == "4" || $type == 4){
-                            $timePP = ($timeFin - $timeDebut);
-                        }else if($type == "2" || $type == 2){
-                            $timePP = (float)$empWH[$theDay][0]["quota"];
-                        }
-                        $tempPP = $timePP/60/60; // Hour
-                        $tempsTPP += $tempPP;
-                        $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Absence","tempsPerdu"=>$tempPP);
-                    }
+
                 }
-                $retardDiff = $cr->retard($employe,$nowTime,$interval,$heureNormaleArrive,$empWH[$theDay][0]["beginHour"]);
-                if($retardDiff == false){
-                	if($cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
-
-                		//print_r("\n Passage 1 FALSE condition retard diff\n");
-
-                	$ct = date('H:i',$retardDiff[1]);
-                        if($type == 1 || $type == "1"){
-                        	if( ($_arr == 0 || $_arr == null) || ($_pau == 0 || $_pau == null) || (($_arr == 0 || $_arr == null) && ($_pau == 0 || $_pau == null)) ){
-                        		$controlNowTime = $nowTime;
-                        		$inc_auth++;
-		                         $lost_time_jour = ((int)($this->convertHourInMinutes($heureDebutNormalPause)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
-		                        $lost_time += $lost_time_jour;
-		                        if($taux > 0){
-		                            $sommePerduAuth += ((($salaire*12)/52)/$taux)*$lost_time_jour;
-		                        }else{
-		                            $sommePerduAuth = 0;
-		                        }
-                        	}
-                        }elseif (($type == 2 || $type == "2")) {
-                        	if( ($_arr == 0 || $_arr == null) || ($_dep == 0 || $_dep == null) || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
-                        		$controlNowTimeForOtheType = $nowTime;
-
-                        		$inc_auth++;
-	                            $lost_time_jour += ((int)($his["quota"]))/60;
-	                            $lost_time += $lost_time_jour;
-	                            if($taux > 0){
-	                                $sommePerduAuth += ((($salaire*12)/52)/$taux)*$lost_time_jour;
-	                            }else{
-	                                $sommePerduAuth = 0;
-	                            }
-                        	}
-                        		# code...
-                        }elseif(($type == 4 || $type == "4")){
-                        	if( ($_arr == 0 || $_arr == null) || ($_dep == 0 || $_dep == null) || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
-                        		$controlNowTimeForOtheType = $nowTime;
-
-                        		$inc_auth++;
-	                            $lost_time_jour += ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
-	                            $lost_time += $lost_time_jour;
-	                            if($taux > 0){
-	                                $sommePerduAuth += ((($salaire*12)/52)/$taux)*$lost_time_jour;
-	                            }else{
-	                                $sommePerduAuth = 0;
-	                            }
-                        	}
-                        }
-
-                	}
-                }elseif($retardDiff[0] > 0){
-                	//print_r("\n Passage 1 TRUE condition retard diff\n");
-
+                else {
+                    // l'employe est present -> verifions les retards
                     $nowDate = date('d/m/Y',$nowTime);
                     $permDate = date('Y-m-d',$nowTime);
-                    if(!$pR->enPermission($employe,$permDate)) {
-                        if(!$nD->dayIsNull($permDate)){
-		                    $ct = date('H:i',$retardDiff[1]);
-                        	if($type == 1 || $type == "1"){
+//                    if(!$pR->enPermission($employe,$permDate)){
+                    // il se peut que l'employé soit en permission, mais present, pas en retard et pas parti prématurement
+//                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime));
+                    $lPermCours = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")-> findPermEnCours() ;
+                    $lPermEnd = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findEndPerms();
+                    $isPermDate = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->checkInPerm($emp,date('Y-m-d',$nowTime));
+                    $pipipi[]=$isPermDate;
+                    $inPerm = false;
+                    $hisPermEnd = false;
+                    foreach($lPermCours as $p){
+                        if($p->employee->id == $emp){
+                            $inPerm = true;
+                        }
+                    }
+                    foreach($lPermEnd as $p){
+                        if($p->employee->id == $emp){
+                            $hisPermEnd = true;
+                        }
+                    }
+                    $tabPermissionTrouvee[]=$inPerm;
+                    $tabPermissionTrouvee[]=$hisPermEnd;
+                    $resReq[] = $lPermCours;
 
-                        			$retards++;
-		                            $sommeRetards +=$retardDiff[0];
-		                            $tempsPerdusRetards += (float)($retardDiff[0]/(60))/60;
-		                            $perte_temps = (float)($retardDiff[0]/(60))/60;
-		                            if($taux > 0){
-		                                $sommePerduRetard += ((($salaire*12)/52)/$taux)*$perte_temps;
-		                            }else{
-		                                $sommePerduRetard = 0;
-		                            }
-		                            $tabRetards[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$perte_temps,"temps_min"=>$perte_temps*60);
-                        	}elseif (($type == 2 || $type == "2")){
-								$retards++;
-                                $sommeRetards +=$retardDiff[0];
-                                $tempsPerdusRetards += (float)($retardDiff[0]/(60))/60;
-                                $perte_temps = (float)($retardDiff[0]/(60))/60;
+                    if(!$nD->dayIsNull($permDate)){
+                        if((($inPerm == true || $hisPermEnd == true)&& $isPermDate == true)){
+                            /*
+                             * We need some other variables to avoid conflicts with userStats variables
+                             */
+
+                            $nbrePermission++;
+                            $p11++;
+                            $iciPerm1 = $iciPerm1." - ".$cpt. " - " .$p11." - ".$permDate." | ";
+
+                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                            $timeDebutPause = strtotime($empWH[$theDay][0]["pauseBeginHour"]);
+                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+                            $timeFinPause = strtotime($empWH[$theDay][0]["pauseEndHour"]);
+                            if($type == "1" || $type == 1){
+                                $timePP = ($timeDebutPause-$timeDebut)+($timeFin-$timeFinPause);
+                            }else if($type == "4" || $type == 4){
+                                $timePP = ($timeFin - $timeDebut);
+                            }else if($type == "2" || $type == 2){
+                                $timePP = (float)$empWH[$theDay][0]["quota"];
+                            }
+                            $tempPP = $timePP/60/60; // Hour
+                            $tempsTPP += $tempPP;
+                            $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Permission","tempsPerdu"=>$tempPP);
+
+                        }
+                        else {
+                            $retardDiff = $cr->retard($employe,$nowTime,$interval,$heureNormaleArrive,$empWH[$theDay][0]["beginHour"]);
+                            $retardDiffArray[]=$retardDiff;
+                            $retardDiffArray[]=$cpt;
+
+
+                            if($retardDiff == false){
+//                        if($cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
+
+                                // il n'est pas en retard
+                                $nowDate = date('d/m/Y',$nowTime);
                                 $ct = date('H:i',$retardDiff[1]);
-                                if($taux > 0){
-                                    $sommePerduRetard += ((($salaire*12)/52)/$taux)*$perte_temps;
-                                }else{
-                                    $sommePerduRetard = 0;
-                                }
-                                $tabRetards[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$perte_temps,"temps_min"=>$perte_temps*60);
-                        	}elseif(($type == 4 || $type == "4")) {
-								$retards++;
-                                $sommeRetards +=$retardDiff[0];
-                                $tempsPerdusRetards += (float)($retardDiff[0]/(60))/60;
-                                $perte_temps = (float)($retardDiff[0]/(60))/60;
-                                $ct = date('H:i',$retardDiff[1]);
-                                if($taux > 0){
-                                    $sommePerduRetard += ((($salaire*12)/52)/$taux)*$perte_temps;
-                                }else{
-                                    $sommePerduRetard = 0;
-                                }
-							}
-                        }
-                    }
+                                if($type == 1 || $type == "1"){
+                                    if( ($_arr == 0 || $_arr == null) || ($_pau == 0 || $_pau == null) || (($_arr == 0 || $_arr == null) && ($_pau == 0 || $_pau == null)) ){
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
 
-                    // Now we deal with the permissions calculations
-                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime));
-                    if($p){
-                        /*
-                         * We need some other variables to avoid conflicts with userStats variables
-                         */
-                        $nbrePermission++;
-                        $tempPerduRetardPermission = (($retardDiff[0])/(60))/60;
-                        $tempsTPerduRetardPermission += $tempPerduRetardPermission;
-                        $tabRetardsPermission[]= array("date"=>$nowDate,"heureRetard"=>null,"tempsTotal"=>$tempsTPerduRetardPermission,"type"=>"Retard","tempsPerdu"=>$tempPerduRetardPermission);
-                    }
-                }else{
-                    /* Must check if the clockinTime isn't null this date (0 in the history)
-                    *  Because if it is null that day we should not count it as a bonus
-                    */
+                                        $dailyTime = $timeFin - $timeDebut;
+                                        $dailyTime /= 3600;
 
-                    if($type == 1 || $type == "1"){
-                        if( (($retardDiff[1] != null) && !empty($retardDiff[1])) && ($_pau != 0 && $_pau != null) ){
-                            $bonus_retards++;
-                            $bonusSommeRetards +=$retardDiff[0];
-                            $bonusTempsGagneRetards += (float)($retardDiff[0]/(60))/60;
-                            $bonus_gain_temps = (float)($retardDiff[0]/(60))/60;
-                            $ct = date('H:i',$retardDiff[1]);
-                            if($taux > 0){
-                                $bonusSommeGagneRetard += ((($salaire*12)/52)/$taux)*$bonus_gain_temps;
-                            }else{
-                                $bonusSommeGagneRetard = 0;
-                            }
+                                        $controlNowTime = $nowTime;
+                                        $inc_auth++;
+                                        $lost_time_jour = ((int)($this->convertHourInMinutes($heureDebutNormalPause)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
+                                        $lost_time += $lost_time_jour;
+                                        if($taux > 0){
+                                            if( $nbreJrTravail> 0){
+                                                $sommePerduAuth += ($salaire/$nbreJrTravail/$dailyTime)* round($lost_time_jour,2);
 
-                            /*print_r("retard diff : ".$departDiff[0]."\n");
-                            print_r("somme totale : ".$bonusSommeRetards."\n");
-                            print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
-                        }
-                    }elseif( ($type == 2 || $type == "2") || ($type == 4 || $type == "4") ){
-                        if( (($retardDiff[1] != null) && !empty($retardDiff[1])) && ($_dep != 0 && $_dep != null) ){
-                            $bonus_retards++;
-                            $bonusSommeRetards +=$retardDiff[0];
-                            $bonusTempsGagneRetards += (float)($retardDiff[0]/(60))/60;
-                            $bonus_gain_temps = (float)($retardDiff[0]/(60))/60;
-                            $ct = date('H:i',$retardDiff[1]);
-                            if($taux > 0){
-                                $bonusSommeGagneRetard += ((($salaire*12)/52)/$taux)*$bonus_gain_temps;
-                            }else{
-                                $bonusSommeGagneRetard = 0;
-                            }
-
-                            /*print_r("retard diff : ".$departDiff[0]."\n");
-                            print_r("somme totale : ".$bonusSommeRetards."\n");
-                            print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
-                        }
-                    }
-                }
-                $retardPauseDiff = $cr->retardPause($employe,$nowTime,$interval_pause,$heureNormaleArrivePause,$empWH[$theDay][0]["pauseEndHour"]);
-                if($retardPauseDiff == false){
-                	if($cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
-
-                		$ct = date('H:i',$retardPauseDiff[1]);
-                        	if($type == 1 || $type == "1"){
-                        		if( ($_fpa == 0 || $_fpa == null) || ($_dep == 0 || $_dep == null) || (($_fpa == 0 || $_fpa == null) && ($_dep == 0 || $_dep == null)) ){
-                        			$controlNowTime2 = $nowTime;
-                        			$inc_auth++;
-		                            $lost_time_jour= ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureFinNormalPause)))/60;
-		                            $lost_time += $lost_time_jour;
-		                            if($taux > 0){
-		                                $sommePerduAuth += ((($salaire*12)/52)/$taux)*$lost_time_jour;
-		                            }else{
-		                                $sommePerduAuth = 0;
-		                            }
-                        		}
-                        	}elseif (($type == 2 || $type == "2") || ($type == 4 || $type == "4")) {
-                        		# code...
-                        	}
-
-
-                	}
-
-
-                }elseif($retardPauseDiff[0] > 0){
-                	//print_r("\n Passage 2 one condition retardPause diff\n");
-
-                    $nowDate = date('d/m/Y',$nowTime);
-                    $permDate = date('Y-m-d',$nowTime);
-                    if(!$pR->enPermission($employe,$permDate)){
-                        if(!$nD->dayIsNull($permDate)) {
-		                    $ct = date('H:i',$retardPauseDiff[1]);
-                        	if($type == 1 || $type == "1"){
-                        			$retards++;
-		                            $sommeRetards +=$retardPauseDiff[0];
-		                            $tempsPerdusRetardsPause = ($retardPauseDiff[0]/(60))/60;
-		                            $tempsPerdusRetards+= ($retardPauseDiff[0]/(60))/60;
-		                            if($taux > 0){
-		                                $sommePerduRetard += ((($salaire*12)/52)/$taux)*$tempsPerdusRetardsPause;
-		                            }else{
-		                                $sommePerduRetard = 0;
-		                            }
-		                            $tabRetardsPause[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$tempsPerdusRetardsPause,"temps_min"=>$tempsPerdusRetardsPause*60);
-                        	}elseif (($type == 2 || $type == "2")){
-                        		$retards++;
-                                $sommeRetards +=$retardPauseDiff[0];
-                                $tempsPerdusRetardsPause = ($retardPauseDiff[0]/(60))/60;
-                                $tempsPerdusRetards+= ($retardPauseDiff[0]/(60))/60;
-                                $ct = date('H:i',$retardPauseDiff[1]);
-                                if($taux > 0){
-                                    $sommePerduRetard += ((($salaire*12)/52)/$taux)*$tempsPerdusRetardsPause;
-                                }else{
-                                    $sommePerduRetard = 0;
-                                }
-                                $tabRetardsPause[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$tempsPerdusRetardsPause,"temps_min"=>$tempsPerdusRetardsPause*60);
-                        	}elseif(($type == 4 || $type == "4")) {
-                        		$retards++;
-                                $sommeRetards +=$retardPauseDiff[0];
-                                $tempsPerdusRetardsPause = ($retardPauseDiff[0]/(60))/60;
-                                $tempsPerdusRetards+= ($retardPauseDiff[0]/(60))/60;
-                                $ct = date('H:i',$retardPauseDiff[1]);
-                                if($taux > 0){
-                                    $sommePerduRetard += ((($salaire*12)/52)/$taux)*$tempsPerdusRetardsPause;
-                                }else{
-                                    $sommePerduRetard = 0;
-                                }
-                                $tabRetardsPause[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$tempsPerdusRetardsPause,"temps_min"=>$tempsPerdusRetardsPause*60);
-                        	}
-                        }
-                    }
-                    // Now we deal with the permissions calculations
-                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime));
-                    if($p){
-                        /*
-                         * We need some other variables to avoid conflicts with userStats variables
-                         */
-                        $nbrePermission++;
-                        $tempPerduRetardPausePermission = (($retardPauseDiff[0])/(60))/60;
-                        $tempsTPerduRetardPausePermission += $tempPerduRetardPausePermission;
-                        $tabRetardsPausePermission[]= array("date"=>$nowDate,"heureRetard"=>null,"tempsTotal"=>$tempsTPerduRetardPausePermission,"type"=>"Retard pause","tempsPerdu"=>$tempPerduRetardPausePermission);
-                    }
-                }else{
-                    /* Must check if the clockinTime isn't null this date (0 in the history)
-                    *  Because if it is null that day we should not count it as a bonus
-                    */
-
-                    if($type == 1 || $type == "1"){
-                        if( (($retardPauseDiff[1] != null) && !empty($retardPauseDiff[1])) && ($_dep != 0 && $_dep != null) ){
-                            $bonus_retards++;
-                            $bonusSommeRetards +=$retardPauseDiff[0];
-                            $bonusTempsGagneRetards += (float)($retardPauseDiff[0]/(60))/60;
-                            $bonus_gain_temps = (float)($retardPauseDiff[0]/(60))/60;
-                            $ct = date('H:i',$retardPauseDiff[1]);
-                            if($taux > 0){
-                                $bonusSommeGagneRetard += ((($salaire*12)/52)/$taux)*$bonus_gain_temps;
-                            }else{
-                                $bonusSommeGagneRetard = 0;
-                            }
-
-                            /*print_r("retard diff : ".$departDiff[0]."\n");
-                            print_r("somme totale : ".$bonusSommeRetards."\n");
-                            print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
-                        }
-                    }
-                }
-                $departDiff = $cr->departPremature($employe,$nowTime,$interval,$heureNormaleDepart);
-                if($departDiff == false){
-                	if($cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
-
-                		//print_r("\n Passage 3 FALSE condition departPremature diff\n");
-
-                	$ct = date('H:i',$retardDiff[1]);
-                        if($type == 1 || $type == "1"){
-                        	if( ($_fpa == 0 || $_fpa == null) || ($_dep == 0 || $_dep == null) || (($_fpa == 0 || $_fpa == null) && ($_dep == 0 || $_dep == null)) ){
-                        			if($controlNowTime2 != $nowTime){
-                        				$inc_auth++;
-			                            $lost_time_jour= ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureFinNormalPause)))/60;
-			                            $lost_time += $lost_time_jour;
-			                            if($taux > 0){
-			                                $sommePerduAuth += ((($salaire*12)/52)/$taux)*$lost_time_jour;
-			                            }else{
-			                                $sommePerduAuth = 0;
-			                            }
-                        			}
-                        		}
-                        }elseif (($type == 2 || $type == "2")) {
-                        	if( ($_arr == 0 || $_arr == null) || ($_dep == 0 || $_dep == null) || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
-
-                        		if($controlNowTimeForOtheType != $nowTime){
-                                    $inc_auth++;
-		                            $lost_time_jour = ((int)($his["quota"]))/60;
-		                            //$lost_time_jour += ((int)($his["quota"]))/60;
-		                            $lost_time += $lost_time_jour;
-		                            if($taux > 0){
-		                                $sommePerduAuth += ((($salaire*12)/52)/$taux)*$lost_time_jour;
-		                            }else{
-		                                $sommePerduAuth = 0;
-		                            }
-                        		}
-                        	}
-                        }elseif(($type == 4 || $type == "4")){
-                        	if( ($_arr == 0 || $_arr == null) || ($_dep == 0 || $_dep == null) || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
-
-                        		if($controlNowTimeForOtheType != $nowTime){
-                        			$inc_auth++;
-		                            $lost_time_jour = ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
-		                            //$lost_time_jour += ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
-                                    $lost_time += $lost_time_jour;
-		                            if($taux > 0){
-		                                $sommePerduAuth += ((($salaire*12)/52)/$taux)*$lost_time_jour;
-		                            }else{
-		                                $sommePerduAuth = 0;
-		                            }
-                        		}
-
-                        	}
-                        }
-                	}
-                }elseif($departDiff[0] > 0){
-                	//print_r("\n Passage 3 TRUE condition departPremature diff\n");
-
-                    $nowDate = date('d/m/Y',$nowTime);
-                    $permDate = date('Y-m-d',$nowTime);
-                    if(!$pR->enPermission($employe,$permDate)){
-                        if(!$nD->dayIsNull($permDate)) {
-		                    $ct = date('H:i',$departDiff[1]);
-                        	if($controlNowTime2 != $nowTime){
-                        		if($type == 1 || $type == "1"){
-                        			$departs++;
-		                            $sommeDeparts +=$departDiff[0];
-		                            $tempsPerdusDepartsFin = ($departDiff[0])/(60);
-		                            $tempsPerdusDepartsFin /=60;
-
-		                            $tempsPerdusDeparts+=$tempsPerdusDepartsFin;
-		                            if($taux > 0){
-		                                $sommePerduDepart += ((($salaire*12)/52)/$taux)*$tempsPerdusDepartsFin;
-		                            }else{
-		                                $sommePerduDepart = 0;
-		                            }
-		                            $tabDeparts[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsFin,"temps_min"=>$tempsPerdusDepartsFin*60);
-	                        	}elseif (($type == 2 || $type == "2")){
-	                        		$departs++;
-                                    $sommeDeparts +=$departDiff[0];
-                                    $tempsPerdusDepartsFin = ($departDiff[0])/(60);
-                                    $tempsPerdusDepartsFin /=60;
-
-                                    $tempsPerdusDeparts+=$tempsPerdusDepartsFin;
-                                    $ct = date('H:i',$departDiff[1]);
-                                    if($taux > 0){
-                                        $sommePerduDepart += ((($salaire*12)/52)/$taux)*$tempsPerdusDepartsFin;
-                                    }else{
-                                        $sommePerduDepart = 0;
+                                            }
+                                        }else{
+                                            $sommePerduAuth = 0;
+                                        }
                                     }
-                                    $tabDeparts[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsFin,"temps_min"=>$tempsPerdusDepartsFin*60);
-	                        	}elseif(($type == 4 || $type == "4")) {
-	                        		$departs++;
-                                    $sommeDeparts +=$departDiff[0];
-                                    $tempsPerdusDepartsFin = ($departDiff[0])/(60);
-                                    $tempsPerdusDepartsFin /=60;
+                                }elseif (($type == 2 || $type == "2")) {
+                                    if( ($_arr == 0 || $_arr == null) || ($_dep == 0 || $_dep == null) || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
 
-                                    $tempsPerdusDeparts+=$tempsPerdusDepartsFin;
-                                    $ct = date('H:i',$departDiff[1]);
-                                    if($taux > 0){
-                                        $sommePerduDepart += ((($salaire*12)/52)/$taux)*$tempsPerdusDepartsFin;
-                                    }else{
-                                        $sommePerduDepart = 0;
+                                        $dailyTime = $timeFin - $timeDebut;
+                                        $dailyTime /= 3600;
+
+                                        $controlNowTimeForOtheType = $nowTime;
+
+                                        $inc_auth++;
+                                        $lost_time_jour += ((int)($his["quota"]))/60;
+                                        $lost_time += $lost_time_jour;
+                                        if($taux > 0){
+                                            if( $nbreJrTravail> 0){
+                                                $sommePerduAuth += ($salaire/$nbreJrTravail/$dailyTime)*round($lost_time_jour,2);
+                                            }
+
+                                        }else{
+                                            $sommePerduAuth = 0;
+                                        }
                                     }
-                                    $tabDeparts[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsFin,"temps_min"=>$tempsPerdusDepartsFin*60);
-	                        	}
-                        	}
-                        }
-                    }
-                    // Now we deal with the permissions calculations
-                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime));
-                    if($p){
-                        /*
-                         * We need some other variables to avoid conflicts with userStats variables
-                         */
-                        $nbrePermission++;
-                        $tempPerduDepartPermission = (($departDiff[0])/(60))/60;
-                        $tempsTPerduDepartPermission += $tempPerduDepartPermission;
-                        $tabDepartsPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPerduDepartPermission,"type"=>"Départ prématuré","tempsPerdu"=>$tempPerduDepartPermission);
-                    }
-                }else{
-                    /* Must check if the clockinTime isn't null this date (0 in the history)
-                    *  Because if it is null that day we should not count it as a bonus
-                    */
-                    if($type == 1 || $type == "1"){
-                        if( (($departDiff[1] != null) && !empty($departDiff[1])) && ($_fpa != 0 && $_fpa != null) ){
-                            $bonus_retards++;
-                            $bonusSommeRetards +=$departDiff[0];
-                            $bonusTempsGagneRetards += (float)($departDiff[0]/(60))/60;
-                            $bonus_gain_temps = (float)($departDiff[0]/(60))/60;
-                            $ct = date('H:i',$departDiff[1]);
-                            if($taux > 0){
-                                $bonusSommeGagneRetard += ((($salaire*12)/52)/$taux)*$bonus_gain_temps;
-                            }else{
-                                $bonusSommeGagneRetard = 0;
+                                    # code...
+                                }elseif(($type == 4 || $type == "4")){
+                                    if( ($_arr == 0 || $_arr == null) || ($_dep == 0 || $_dep == null) || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                        $dailyTime = $timeFin - $timeDebut;
+                                        $dailyTime /= 3600;
+                                        $controlNowTimeForOtheType = $nowTime;
+
+                                        $inc_auth++;
+                                        $lost_time_jour += ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
+                                        $lost_time += $lost_time_jour;
+                                        if($taux > 0){
+                                            if( $nbreJrTravail> 0){
+                                                $sommePerduAuth += ($salaire/$nbreJrTravail/$dailyTime)*round($lost_time_jour,2);
+                                            }
+
+                                            $controlTaux[] = "taux: ".$taux." passé ".$cpt ." somme perdu auth ".$sommePerduAuth ;
+                                        }else{
+                                            $sommePerduAuth = 0;
+                                        }
+                                    }
+                                }
+
+                            }elseif($retardDiff[0] > 0){
+                                //print_r("\n Passage 1 TRUE condition retard diff\n");
+                                $retardDiffArray[]=$retardDiff;
+                                $retardDiffArray[]=$cpt;
+                                // il est en retard
+                                $nowDate = date('d/m/Y',$nowTime);
+                                $permDate = date('Y-m-d',$nowTime);
+                                $lPermCours = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")-> findPermEnCours() ;
+                                $lPermEnd = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findEndPerms();
+                                $isPermDate = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->checkInPerm($emp,date('Y-m-d',$nowTime));
+                                $pipipi[]=$isPermDate;
+                                $inPerm = false;
+                                $hisPermEnd = false;
+                                foreach($lPermCours as $p){
+                                    if($p->employee->id == $emp){
+                                        $inPerm = true;
+                                    }
+                                }
+
+                                foreach($lPermEnd as $p){
+                                    if($p->employee->id == $emp){
+                                        $hisPermEnd = true;
+                                    }
+                                }
+                                if(!$nD->dayIsNull($permDate)){
+                                    if((($inPerm == true || $hisPermEnd == true)&& $isPermDate == true)){
+                                        /*
+                                         * We need some other variables to avoid conflicts with userStats variables
+                                         */
+                                        //est-il en permission si oui
+                                        $nbrePermission++;
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeDebutPause = strtotime($empWH[$theDay][0]["pauseBeginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+                                        $timeFinPause = strtotime($empWH[$theDay][0]["pauseEndHour"]);
+                                        if($type == "1" || $type == 1){
+                                            $timePP = ($timeDebutPause-$timeDebut)+($timeFin-$timeFinPause);
+                                        }else if($type == "4" || $type == 4){
+                                            $timePP = ($timeFin - $timeDebut);
+                                        }else if($type == "2" || $type == 2){
+                                            $timePP = (float)$empWH[$theDay][0]["quota"];
+                                        }
+                                        $tempPP = $timePP/60/60; // Hour
+                                        $tempsTPP += $tempPP;
+                                        $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Permission","tempsPerdu"=>$tempPP);
+                                        //$tabRetardsPermission[]= array("date"=>$nowDate,"heureRetard"=>null,"tempsTotal"=>$tempsTPerduRetardPermission,"type"=>"Permission","tempsPerdu"=>$tempPerduRetardPermission);
+                                    }
+                                    else {
+                                        //il est en retard
+
+                                        $ct = date('H:i',$retardDiff[1]);
+                                        if($type == 1 || $type == "1"){
+                                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                            $dailyTime = $timeFin - $timeDebut;
+                                            $dailyTime /= 3600;
+                                            $retards++;
+                                            $sommeRetards +=$retardDiff[0];
+                                            $tempsPerdusRetards += (float)($retardDiff[0]/(60))/60;
+                                            $perte_temps = (float)($retardDiff[0]/(60))/60;
+                                            if($taux > 0){
+                                                if( $nbreJrTravail> 0){
+                                                    $sommePerduRetard += ( $salaire/$nbreJrTravail/$dailyTime)*round($perte_temps,2);
+                                                }
+
+                                                //$sommePerduRetard += ((($salaire*12)/52/5)/$taux)*$perte_temps;
+                                            }else{
+                                                $sommePerduRetard = 0;
+                                            }
+                                            $tabRetards[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$perte_temps,"temps_min"=>$perte_temps*60);
+                                        }elseif (($type == 2 || $type == "2")){
+
+                                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                            $dailyTime = $timeFin - $timeDebut;
+                                            $dailyTime /= 3600;
+
+                                            $retards++;
+                                            $sommeRetards +=$retardDiff[0];
+                                            $tempsPerdusRetards += (float)($retardDiff[0]/(60))/60;
+                                            $perte_temps = (float)($retardDiff[0]/(60))/60;
+                                            $ct = date('H:i',$retardDiff[1]);
+                                            if($taux > 0){
+                                                if( $nbreJrTravail> 0){
+                                                    $sommePerduRetard += ( $salaire/$nbreJrTravail/$dailyTime)*round($perte_temps,2);
+                                                }
+
+                                            }else{
+                                                $sommePerduRetard = 0;
+                                            }
+                                            $tabRetards[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$perte_temps,"temps_min"=>$perte_temps*60);
+                                        }
+                                        elseif(($type == 4 || $type == "4")) {
+
+                                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                            $dailyTime = $timeFin - $timeDebut;
+                                            $dailyTime /= 3600;
+
+                                            $retards++;
+                                            $mes = "entree ds le calcul de retards";
+                                            $sommeRetards +=$retardDiff[0];
+                                            $tempsPerdusRetards += (float)($retardDiff[0]/(60))/60;
+                                            $perte_temps = (float)($retardDiff[0]/(60))/60;
+                                            $ct = date('H:i',$retardDiff[1]);
+                                            if($taux > 0){
+                                                if( $nbreJrTravail> 0){
+                                                    $sommePerduRetard += ( $salaire/$nbreJrTravail/$dailyTime)*round($perte_temps,2);
+                                                }
+
+//                                        $sommePerduRetard += ((($salaire*12)/52)/$taux)*$perte_temps;
+                                                $controlTaux[] = "taux: ".$taux." passé ".$cpt." somme perdu retard ".$sommePerduRetard." perte temps ".$perte_temps." salaire ".$salaire." nbrejrT ".$nbreJrTravail." dailytime ".$dailyTime  ;
+                                            }else{
+                                                $sommePerduRetard = 0;
+                                            }
+                                            $tabRetards[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$perte_temps,"temps_min"=>$perte_temps*60);
+                                        }
+                                    }
+                                }
+
+                            } else {
+                                /* Must check if the clockinTime isn't null this date (0 in the history)
+                                *  Because if it is null that day we should not count it as a bonus
+                                */
+
+                                //calcul des bonus
+
+                                if($type == 1 || $type == "1"){
+                                    if( (($retardDiff[1] != null) && !empty($retardDiff[1])) && ($_pau != 0 && $_pau != null) ){
+
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                        $dailyTime = $timeFin - $timeDebut;
+                                        $dailyTime /= 3600;
+
+                                        $bonus_retards++;
+                                        $bonusSommeRetards +=$retardDiff[0];
+                                        $bonusTempsGagneRetards += (float)($retardDiff[0]/(60))/60;
+                                        $bonus_gain_temps = (float)($retardDiff[0]/(60))/60;
+                                        $ct = date('H:i',$retardDiff[1]);
+                                        if($taux > 0){
+                                            if( $nbreJrTravail> 0){
+                                                $bonusSommeGagneRetard += ($salaire/$nbreJrTravail/$dailyTime)*round($bonus_gain_temps,2);
+                                            }
+
+                                        }else{
+                                            $bonusSommeGagneRetard = 0;
+                                        }
+
+                                        /*print_r("retard diff : ".$departDiff[0]."\n");
+                                        print_r("somme totale : ".$bonusSommeRetards."\n");
+                                        print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
+                                    }
+                                }elseif( ($type == 2 || $type == "2") || ($type == 4 || $type == "4") ){
+                                    if( (($retardDiff[1] != null) && !empty($retardDiff[1])) && ($_dep != 0 && $_dep != null) ){
+
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                        $dailyTime = $timeFin - $timeDebut;
+                                        $dailyTime /= 3600;
+
+                                        $bonus_retards++;
+                                        $bonusSommeRetards +=$retardDiff[0];
+                                        $bonusTempsGagneRetards += (float)($retardDiff[0]/(60))/60;
+                                        $bonus_gain_temps = (float)($retardDiff[0]/(60))/60;
+                                        $ct = date('H:i',$retardDiff[1]);
+                                        if($taux > 0){
+                                            if( $nbreJrTravail> 0){
+                                                $bonusSommeGagneRetard += ($salaire/$nbreJrTravail/$dailyTime)*round($bonus_gain_temps,2);
+                                            }
+
+                                            $controlTaux[] = "taux: ".$taux." passé ".$cpt." somme gagne retard bonus ".$bonusSommeGagneRetard  ;
+                                        }else{
+                                            $bonusSommeGagneRetard = 0;
+                                        }
+
+                                        /*print_r("retard diff : ".$departDiff[0]."\n");
+                                        print_r("somme totale : ".$bonusSommeRetards."\n");
+                                        print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
+                                    }
+                                }
                             }
+                            // retards des pauses
+                            $retardPauseDiff = $cr->retardPause($employe,$nowTime,$interval_pause,$heureNormaleArrivePause,$empWH[$theDay][0]["pauseEndHour"]);
+                            //on gere le retard au niveau des pauses
+                            if($retardPauseDiff == false){
+                                if($cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
 
-                            /*print_r("retard diff : ".$departDiff[0]."\n");
-                            print_r("somme totale : ".$bonusSommeRetards."\n");
-                            print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
-                        }
-                    }elseif( ($type == 2 || $type == "2") || ($type == 4 || $type == "4") ){
-                        if( (($departDiff[1] != null) && !empty($departDiff[1])) && ($_arr != 0 && $_arr != null) ){
-                            $bonus_retards++;
-                            $bonusSommeRetards +=$departDiff[0];
-                            $bonusTempsGagneRetards += (float)($departDiff[0]/(60))/60;
-                            $bonus_gain_temps = (float)($departDiff[0]/(60))/60;
-                            $ct = date('H:i',$departDiff[1]);
-                            if($taux > 0){
-                                $bonusSommeGagneRetard += ((($salaire*12)/52)/$taux)*$bonus_gain_temps;
-                            }else{
-                                $bonusSommeGagneRetard = 0;
+                                    $ct = date('H:i',$retardPauseDiff[1]);
+                                    if($type == 1 || $type == "1"){
+                                        if( ($_fpa == 0 || $_fpa == null) || ($_dep == 0 || $_dep == null) || (($_fpa == 0 || $_fpa == null) && ($_dep == 0 || $_dep == null)) ){
+                                            $controlNowTime2 = $nowTime;
+                                            $inc_auth++;
+                                            $lost_time_jour= ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureFinNormalPause)))/60;
+                                            $lost_time += $lost_time_jour;
+                                            if($taux > 0){
+                                                $sommePerduAuth += ((($salaire*12)/52)/$taux)*round($lost_time_jour,2);
+                                                $controlTaux[] = "taux: ".$taux." passé ".$cpt." somme perdu auth ".$sommePerduAuth ;
+                                            }else{
+                                                $sommePerduAuth = 0;
+                                            }
+                                        }
+                                    }elseif (($type == 2 || $type == "2") || ($type == 4 || $type == "4")) {
+                                        # code...
+                                    }
+
+                                }
+                            } elseif($retardPauseDiff[0] > 0){
+                                //retard pause
+
+                                //print_r("\n Passage 2 one condition retardPause diff\n");
+
+                                $nowDate = date('d/m/Y',$nowTime);
+                                $permDate = date('Y-m-d',$nowTime);
+                                $lPermCours = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")-> findPermEnCours() ;
+                                $lPermEnd = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findEndPerms();
+                                $isPermDate = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->checkInPerm($emp,date('Y-m-d',$nowTime));
+                                $pipipi[]=$isPermDate;
+                                $inPerm = false;
+                                $hisPermEnd = false;
+                                foreach($lPermCours as $p){
+                                    if($p->employee->id == $emp){
+                                        $inPerm = true;
+                                    }
+                                }
+                                foreach($lPermEnd as $p){
+                                    if($p->employee->id == $emp){
+                                        $hisPermEnd = true;
+                                    }
+                                }
+
+                                if(!$nD->dayIsNull($permDate)) {
+
+                                    if((($inPerm == true || $hisPermEnd == true)&& $isPermDate == true)){
+                                        /*
+                                         * We need some other variables to avoid conflicts with userStats variables
+                                         */
+                                        $nbrePermission++;
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeDebutPause = strtotime($empWH[$theDay][0]["pauseBeginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+                                        $timeFinPause = strtotime($empWH[$theDay][0]["pauseEndHour"]);
+                                        if($type == "1" || $type == 1){
+                                            $timePP = ($timeDebutPause-$timeDebut)+($timeFin-$timeFinPause);
+                                        }else if($type == "4" || $type == 4){
+                                            $timePP = ($timeFin - $timeDebut);
+                                        }else if($type == "2" || $type == 2){
+                                            $timePP = (float)$empWH[$theDay][0]["quota"];
+                                        }
+                                        $tempPP = $timePP/60/60; // Hour
+                                        $tempsTPP += $tempPP;
+                                        $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Permission","tempsPerdu"=>$tempPP);
+//                                $tabRetardsPausePermission[]= array("date"=>$nowDate,"heureRetard"=>null,"tempsTotal"=>$tempsTPerduRetardPausePermission,"type"=>"Retard pause","tempsPerdu"=>$tempPerduRetardPausePermission);
+                                    }
+                                    else {
+
+                                        $ct = date('H:i',$retardPauseDiff[1]);
+                                        if($type == 1 || $type == "1"){
+                                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                            $dailyTime = $timeFin - $timeDebut;
+                                            $dailyTime /= 3600;
+                                            $retards++;
+                                            $sommeRetards +=$retardPauseDiff[0];
+                                            $tempsPerdusRetardsPause = ($retardPauseDiff[0]/(60))/60;
+                                            $tempsPerdusRetards+= ($retardPauseDiff[0]/(60))/60;
+                                            if($taux > 0){
+                                                if( $nbreJrTravail> 0){
+                                                    $sommePerduRetard += ($salaire/$nbreJrTravail/$dailyTime)*round($tempsPerdusRetardsPause,2);
+                                                }
+
+                                            }else{
+                                                $sommePerduRetard = 0;
+                                            }
+                                            $tabRetardsPause[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$tempsPerdusRetardsPause,"temps_min"=>$tempsPerdusRetardsPause*60);
+                                        }elseif (($type == 2 || $type == "2")){
+                                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                            $dailyTime = $timeFin - $timeDebut;
+                                            $dailyTime /= 3600;
+
+                                            $retards++;
+                                            $sommeRetards +=$retardPauseDiff[0];
+                                            $tempsPerdusRetardsPause = ($retardPauseDiff[0]/(60))/60;
+                                            $tempsPerdusRetards+= ($retardPauseDiff[0]/(60))/60;
+                                            $ct = date('H:i',$retardPauseDiff[1]);
+                                            if($taux > 0){
+                                                if( $nbreJrTravail> 0){
+                                                    $sommePerduRetard += ($salaire/$nbreJrTravail/$dailyTime)*round($tempsPerdusRetardsPause,2);
+                                                }
+
+                                            }else{
+                                                $sommePerduRetard = 0;
+                                            }
+                                            $tabRetardsPause[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$tempsPerdusRetardsPause,"temps_min"=>$tempsPerdusRetardsPause*60);
+                                        }elseif(($type == 4 || $type == "4")) {
+                                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                            $dailyTime = $timeFin - $timeDebut;
+                                            $dailyTime /= 3600;
+
+                                            $retards++;
+                                            $sommeRetards +=$retardPauseDiff[0];
+                                            $tempsPerdusRetardsPause = ($retardPauseDiff[0]/(60))/60;
+                                            $tempsPerdusRetards+= ($retardPauseDiff[0]/(60))/60;
+                                            $ct = date('H:i',$retardPauseDiff[1]);
+                                            if($taux > 0){
+                                                if( $nbreJrTravail> 0){
+                                                    $sommePerduRetard += ($salaire/$nbreJrTravail/$dailyTime)*round($tempsPerdusRetardsPause,2);
+                                                }
+
+                                                $controlTaux[] = "taux: ".$taux." passé ".$cpt ." somme perdu retard ".$sommePerduRetard ;
+                                            }else{
+                                                $sommePerduRetard = 0;
+                                            }
+                                            $tabRetardsPause[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$tempsPerdusRetardsPause,"temps_min"=>$tempsPerdusRetardsPause*60);
+                                        }
+                                    }
+                                }
+                            } else {
+                                /* Must check if the clockinTime isn't null this date (0 in the history)
+                                *  Because if it is null that day we should not count it as a bonus
+                                */
+
+                                if($type == 1 || $type == "1"){
+                                    if( (($retardPauseDiff[1] != null) && !empty($retardPauseDiff[1])) && ($_dep != 0 && $_dep != null) ){
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                        $dailyTime = $timeFin - $timeDebut;
+                                        $dailyTime /= 3600;
+
+                                        $bonus_retards++;
+                                        $bonusSommeRetards +=$retardPauseDiff[0];
+                                        $bonusTempsGagneRetards += (float)($retardPauseDiff[0]/(60))/60;
+                                        $bonus_gain_temps = (float)($retardPauseDiff[0]/(60))/60;
+                                        $ct = date('H:i',$retardPauseDiff[1]);
+                                        if($taux > 0){
+                                            if( $nbreJrTravail> 0){
+                                                $bonusSommeGagneRetard += ($salaire/$nbreJrTravail/$dailyTime)*round($bonus_gain_temps,2);
+                                            }
+
+                                        }else{
+                                            $bonusSommeGagneRetard = 0;
+                                        }
+
+                                        /*print_r("retard diff : ".$departDiff[0]."\n");
+                                        print_r("somme totale : ".$bonusSommeRetards."\n");
+                                        print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
+                                    }
+                                }
                             }
+                            // departs prematurés à la fin de la journée
 
-                            /*print_r("retard diff : ".$departDiff[0]."\n");
-                            print_r("somme totale : ".$bonusSommeRetards."\n");
-                            print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
-                        }
-                    }
-                }
-                $departPauseDiff = $cr->departPausePremature($employe,$nowTime,$interval_pause,$heureNormaleDepartPause);
-                if($departPauseDiff == false){
-                	if($cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
+                            $departDiff = $cr->departPremature($employe,$nowTime,$interval,$heureNormaleDepart);
+                            if($departDiff == false){
+                                if($cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
 
-                		$ct = date('H:i',$departPauseDiff[1]);
-                        	if($type == 1 || $type == "1"){
-                        		if( ($_arr == 0 || $_arr == null) || ($_pau == 0 || $_pau == null) || (($_arr == 0 || $_arr == null) && ($_pau == 0 || $_pau == null)) ){
-                        			// Last verification
-                        			if($controlNowTime != $nowTime){
-                        				$inc_auth++;
-			                            $lost_time_jour = ((int)($this->convertHourInMinutes($heureDebutNormalPause)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
-			                            $lost_time += $lost_time_jour;
-			                            if($taux > 0){
-			                                $sommePerduAuth += ((($salaire*12)/52)/$taux)*$lost_time_jour;
-			                            }else{
-			                                $sommePerduAuth = 0;
-			                            }
-                        			}
-                        		}
-                        	}
+                                    //print_r("\n Passage 3 FALSE condition departPremature diff\n");
 
-                	}
+                                    $ct = date('H:i',$retardDiff[1]);
+                                    if($type == 1 || $type == "1"){
+                                        if( ($_fpa == 0 || $_fpa == null) || ($_dep == 0 || $_dep == null) || (($_fpa == 0 || $_fpa == null) && ($_dep == 0 || $_dep == null)) ){
+                                            if($controlNowTime2 != $nowTime){
+                                                $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                                $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
 
-                }elseif($departPauseDiff[0] > 0){
-                	//print_r("\n Passage 4 one condition departPause diff\n");
-                    $nowDate = date('d/m/Y',$nowTime);
-                    $permDate = date('Y-m-d',$nowTime);
-                    if(!$pR->enPermission($employe,$permDate)){
-                        if(!$nD->dayIsNull($permDate)) {
-		                    $ct = date('H:i',$departPauseDiff[1]);
-                        	if($controlNowTime != $nowTime){
-                        		if($type == 1 || $type == "1"){
-                        			$i++;
-		                            $departsPause++;
-		                            // Pour prendre en compte les departs de 12 h aussi
-		                            $departs++;
-		                            $sommeDepartsPause +=$departPauseDiff[0];
-		                            $tempsPerdusDepartsPause = ($departPauseDiff[0])/(60);
-		                            $tempsPerdusDepartsPause /= 60;
-		                            // Pour prendre en compte les departs de 12h aussi
-		                            $tempsPerdusDeparts +=$tempsPerdusDepartsPause;
-		                            if($taux > 0){
-		                                $sommePerduDepart += ((($salaire*12)/52)/$taux)*$tempsPerdusDepartsPause;
-		                            }else{
-		                                $sommePerduDepart = 0;
-		                            }
-		                            $tabDepartsPause[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsPause,"temps_min"=>$tempsPerdusDepartsPause*60);
-	                        	}elseif (($type == 2 || $type == "2")){
-	                        		$i++;
-                                    $departsPause++;
-                                    // Pour prendre en compte les departs de 12 h aussi
-                                    $departs++;
-                                    $sommeDepartsPause +=$departPauseDiff[0];
-                                    $tempsPerdusDepartsPause = ($departPauseDiff[0])/(60);
-                                    $tempsPerdusDepartsPause /= 60;
-                                    // Pour prendre en compte les departs de 12h aussi
-                                    $tempsPerdusDeparts +=$tempsPerdusDepartsPause;
+                                                $dailyTime = $timeFin - $timeDebut;
+                                                $dailyTime /= 3600;
+                                                $inc_auth++;
+                                                $lost_time_jour= ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureFinNormalPause)))/60;
+                                                $lost_time += $lost_time_jour;
+                                                if($taux > 0){
+                                                    if( $nbreJrTravail> 0){
+                                                        $sommePerduAuth += ($salaire/$nbreJrTravail/$dailyTime)*round($lost_time_jour,2);
+                                                    }
+
+                                                }else{
+                                                    $sommePerduAuth = 0;
+                                                }
+                                            }
+                                        }
+                                    }elseif (($type == 2 || $type == "2")) {
+                                        if( ($_arr == 0 || $_arr == null) || ($_dep == 0 || $_dep == null) || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
+
+                                            if($controlNowTimeForOtheType != $nowTime){
+                                                $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                                $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                                $dailyTime = $timeFin - $timeDebut;
+                                                $dailyTime /= 3600;
+
+                                                $inc_auth++;
+                                                $lost_time_jour = ((int)($his["quota"]))/60;
+                                                //$lost_time_jour += ((int)($his["quota"]))/60;
+                                                $lost_time += $lost_time_jour;
+                                                if($taux > 0){
+                                                    if( $nbreJrTravail> 0){
+                                                        $sommePerduAuth += ($salaire/$nbreJrTravail/$dailyTime)*round($lost_time_jour,2);
+                                                    }
+
+                                                }else{
+                                                    $sommePerduAuth = 0;
+                                                }
+                                            }
+                                        }
+                                    }elseif(($type == 4 || $type == "4")){
+                                        if( ($_arr == 0 || $_arr == null) || ($_dep == 0 || $_dep == null) || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
+
+                                            if($controlNowTimeForOtheType != $nowTime){
+                                                $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                                $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                                $dailyTime = $timeFin - $timeDebut;
+                                                $dailyTime /= 3600;
+                                                $inc_auth++;
+                                                $lost_time_jour = ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
+                                                //$lost_time_jour += ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
+                                                $lost_time += $lost_time_jour;
+                                                if($taux > 0){
+                                                    if( $nbreJrTravail> 0){
+                                                        $sommePerduAuth += ($salaire/$nbreJrTravail/$dailyTime)*round($lost_time_jour,2);
+                                                    }
+
+                                                    $controlTaux[] = "taux: ".$taux." passé ".$cpt ." somme perdu Auth ".$sommePerduAuth ;
+                                                }else{
+                                                    $sommePerduAuth = 0;
+                                                }
+                                            }
+
+                                        }
+                                    }
+                                }
+                            }
+                            elseif($departDiff[0] > 0){
+
+                                //print_r("\n Passage 3 TRUE condition departPremature diff\n");
+
+                                //il est parti prematurement à la fin de la journée
+
+                                $nowDate = date('d/m/Y',$nowTime);
+                                $permDate = date('Y-m-d',$nowTime);
+                                $lPermCours = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")-> findPermEnCours() ;
+                                $lPermEnd = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findEndPerms();
+                                $isPermDate = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->checkInPerm($emp,date('Y-m-d',$nowTime));
+
+                                $inPerm = false;
+                                $hisPermEnd = false;
+                                foreach($lPermCours as $p){
+                                    if($p->employee->id == $emp){
+                                        $inPerm = true;
+                                    }
+                                }
+                                foreach($lPermEnd as $p){
+                                    if($p->employee->id == $emp){
+                                        $hisPermEnd = true;
+                                    }
+                                }
+                                if(!$nD->dayIsNull($permDate)) {
+
+                                    if((($inPerm == true || $hisPermEnd == true)&& $isPermDate == true)){
+                                        /*
+                                         * We need some other variables to avoid conflicts with userStats variables
+                                         */
+                                        $nbrePermission++;
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeDebutPause = strtotime($empWH[$theDay][0]["pauseBeginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+                                        $timeFinPause = strtotime($empWH[$theDay][0]["pauseEndHour"]);
+                                        if($type == "1" || $type == 1){
+                                            $timePP = ($timeDebutPause-$timeDebut)+($timeFin-$timeFinPause);
+                                        }else if($type == "4" || $type == 4){
+                                            $timePP = ($timeFin - $timeDebut);
+                                        }else if($type == "2" || $type == 2){
+                                            $timePP = (float)$empWH[$theDay][0]["quota"];
+                                        }
+                                        $tempPP = $timePP/60/60; // Hour
+                                        $tempsTPP += $tempPP;
+                                        $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Permission","tempsPerdu"=>$tempPP);
+//                                $tabDepartsPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPerduDepartPermission,"type"=>"Départ prématuré","tempsPerdu"=>$tempPerduDepartPermission);
+                                    }
+                                    else{
+
+                                        $ct = date('H:i',$departDiff[1]);
+                                        if($controlNowTime2 != $nowTime){
+                                            if($type == 1 || $type == "1"){
+                                                $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                                $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                                $dailyTime = $timeFin - $timeDebut;
+                                                $dailyTime /= 3600;
+
+                                                $departs++;
+                                                $sommeDeparts +=$departDiff[0];
+                                                $tempsPerdusDepartsFin = ($departDiff[0])/(60);
+                                                $tempsPerdusDepartsFin /=60;
+
+                                                $tempsPerdusDeparts+=$tempsPerdusDepartsFin;
+                                                if($taux > 0){
+                                                    if( $nbreJrTravail> 0){
+                                                        $sommePerduDepart += ($salaire/$nbreJrTravail/$dailyTime)*round($tempsPerdusDepartsFin,2);
+                                                    }
+
+                                                    $controlTaux[] = "taux: ".$taux." passé ".$cpt." somme  dep fin ".$sommePerduDepart." tpsPerDep ".$tempsPerdusDepartsFin  ;
+                                                }else{
+                                                    $sommePerduDepart = 0;
+                                                }
+                                                $tabDeparts[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsFin,"temps_min"=>$tempsPerdusDepartsFin*60);
+                                            }elseif (($type == 2 || $type == "2")){
+                                                $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                                $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                                $dailyTime = $timeFin - $timeDebut;
+                                                $dailyTime /= 3600;
+
+                                                $departs++;
+                                                $sommeDeparts +=$departDiff[0];
+                                                $tempsPerdusDepartsFin = ($departDiff[0])/(60);
+                                                $tempsPerdusDepartsFin /=60;
+
+                                                $tempsPerdusDeparts+=$tempsPerdusDepartsFin;
+                                                $ct = date('H:i',$departDiff[1]);
+                                                if($taux > 0){
+                                                    if( $nbreJrTravail> 0){
+                                                        $sommePerduDepart += ($salaire/$nbreJrTravail/$dailyTime)*round($tempsPerdusDepartsFin,2);
+                                                    }
+
+                                                }else{
+                                                    $sommePerduDepart = 0;
+                                                }
+                                                $tabDeparts[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsFin,"temps_min"=>$tempsPerdusDepartsFin*60);
+                                            }elseif(($type == 4 || $type == "4")) {
+                                                $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                                $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                                $dailyTime = $timeFin - $timeDebut;
+                                                $dailyTime /= 3600;
+
+                                                $departs++;
+                                                $sommeDeparts +=$departDiff[0];
+                                                $tempsPerdusDepartsFin = ($departDiff[0])/(60);
+                                                $tempsPerdusDepartsFin /=60;
+
+                                                $tempsPerdusDeparts+=$tempsPerdusDepartsFin;
+                                                $ct = date('H:i',$departDiff[1]);
+                                                if($taux > 0){
+                                                    if( $nbreJrTravail> 0){
+                                                        $sommePerduDepart += ($salaire/$nbreJrTravail/$dailyTime)*round($tempsPerdusDepartsFin,2);
+                                                    }
+
+                                                    $controlTaux[] = "taux: ".$taux." passé ".$cpt ." somme perdu depart ".$sommePerduDepart ;
+                                                }else{
+                                                    $sommePerduDepart = 0;
+                                                }
+                                                $tabDeparts[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsFin,"temps_min"=>$tempsPerdusDepartsFin*60);
+                                            }
+                                        }
+                                    }
+                                }
+                                // Now we deal with the permissions calculations
+
+                            } else {
+                                /* Must check if the clockinTime isn't null this date (0 in the history)
+                                *  Because if it is null that day we should not count it as a bonus
+                                */
+                                if($type == 1 || $type == "1"){
+                                    if( (($departDiff[1] != null) && !empty($departDiff[1])) && ($_fpa != 0 && $_fpa != null) ){
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                        $dailyTime = $timeFin - $timeDebut;
+                                        $dailyTime /= 3600;
+
+                                        $bonus_retards++;
+                                        $bonusSommeRetards +=$departDiff[0];
+                                        $bonusTempsGagneRetards += (float)($departDiff[0]/(60))/60;
+                                        $bonus_gain_temps = (float)($departDiff[0]/(60))/60;
+                                        $ct = date('H:i',$departDiff[1]);
+                                        if($taux > 0){
+                                            if( $nbreJrTravail> 0){
+                                                $bonusSommeGagneRetard += ($salaire/$nbreJrTravail/$dailyTime)*round($bonus_gain_temps,2);
+                                            }
+
+                                        }else{
+                                            $bonusSommeGagneRetard = 0;
+                                        }
+
+                                        /*print_r("retard diff : ".$departDiff[0]."\n");
+                                        print_r("somme totale : ".$bonusSommeRetards."\n");
+                                        print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
+                                    }
+                                }elseif( ($type == 2 || $type == "2") || ($type == 4 || $type == "4") ){
+                                    if( (($departDiff[1] != null) && !empty($departDiff[1])) && ($_arr != 0 && $_arr != null) ){
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                        $dailyTime = $timeFin - $timeDebut;
+                                        $dailyTime /= 3600;
+
+                                        $bonus_retards++;
+                                        $bonusSommeRetards +=$departDiff[0];
+                                        $bonusTempsGagneRetards += (float)($departDiff[0]/(60))/60;
+                                        $bonus_gain_temps = (float)($departDiff[0]/(60))/60;
+                                        $ct = date('H:i',$departDiff[1]);
+                                        if($taux > 0){
+                                            if( $nbreJrTravail> 0){
+                                                $bonusSommeGagneRetard += ($salaire/$nbreJrTravail/$dailyTime)*round($bonus_gain_temps,2);
+                                            }
+
+                                            $controlTaux[] = "taux: ".$taux." passé ".$cpt ." somme bonus retard ".$bonusSommeGagneRetard ;
+                                        }else{
+                                            $bonusSommeGagneRetard = 0;
+                                        }
+
+                                        /*print_r("retard diff : ".$departDiff[0]."\n");
+                                        print_r("somme totale : ".$bonusSommeRetards."\n");
+                                        print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
+                                    }
+                                }
+                            }
+                            //depart pause prematuree
+
+                            $departPauseDiff = $cr->departPausePremature($employe,$nowTime,$interval_pause,$heureNormaleDepartPause);
+                            if($departPauseDiff == false){
+                                if($cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
+
                                     $ct = date('H:i',$departPauseDiff[1]);
-                                    if($taux > 0){
-                                        $sommePerduDepart += ((($salaire*12)/52)/$taux)*$tempsPerdusDepartsPause;
-                                    }else{
-                                        $sommePerduDepart = 0;
+                                    if($type == 1 || $type == "1"){
+                                        if( ($_arr == 0 || $_arr == null) || ($_pau == 0 || $_pau == null) || (($_arr == 0 || $_arr == null) && ($_pau == 0 || $_pau == null)) ){
+                                            // Last verification
+                                            if($controlNowTime != $nowTime){
+                                                $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                                $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                                $dailyTime = $timeFin - $timeDebut;
+                                                $dailyTime /= 3600;
+
+                                                $inc_auth++;
+                                                $lost_time_jour = ((int)($this->convertHourInMinutes($heureDebutNormalPause)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
+                                                $lost_time += $lost_time_jour;
+                                                if($taux > 0){
+                                                    if( $nbreJrTravail> 0){
+                                                        $sommePerduAuth += ($salaire/$nbreJrTravail/$dailyTime)*round($lost_time_jour,2);
+                                                    }
+
+                                                    $controlTaux[] = "taux: ".$taux." passé ".$cpt ." somme perdu  auth ".$sommePerduAuth ;
+                                                }else{
+                                                    $sommePerduAuth = 0;
+                                                }
+                                            }
+                                        }
                                     }
-                                    $tabDepartsPause[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsPause,"temps_min"=>$tempsPerdusDepartsPause*60);
-	                        	}elseif(($type == 4 || $type == "4")) {
-	                        		$i++;
-                                    $departsPause++;
-                                    // Pour prendre en compte les departs de 12 h aussi
-                                    $departs++;
-                                    $sommeDepartsPause +=$departPauseDiff[0];
-                                    $tempsPerdusDepartsPause = ($departPauseDiff[0])/(60);
-                                    $tempsPerdusDepartsPause /= 60;
-                                    // Pour prendre en compte les departs de 12h aussi
-                                    $tempsPerdusDeparts +=$tempsPerdusDepartsPause;
-                                    $ct = date('H:i',$departPauseDiff[1]);
-                                    if($taux > 0){
-                                        $sommePerduDepart += ((($salaire*12)/52)/$taux)*$tempsPerdusDepartsPause;
-                                    }else{
-                                        $sommePerduDepart = 0;
+
+                                }
+
+                            } elseif($departPauseDiff[0] > 0){
+                                //print_r("\n Passage 4 one condition departPause diff\n");
+                                $nowDate = date('d/m/Y',$nowTime);
+                                $lPermCours = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")-> findPermEnCours() ;
+                                $lPermEnd = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findEndPerms();
+                                $isPermDate = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->checkInPerm($emp,date('Y-m-d',$nowTime));
+                                $pipipi[]=$isPermDate;
+                                $inPerm = false;
+                                $hisPermEnd = false;
+                                foreach($lPermCours as $p){
+                                    if($p->employee->id == $emp){
+                                        $inPerm = true;
                                     }
-                                    $tabDepartsPause[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsPause,"temps_min"=>$tempsPerdusDepartsPause*60);
-	                        	}
-                        	}
-                        }
-                    }
+                                }
+                                foreach($lPermEnd as $p){
+                                    if($p->employee->id == $emp){
+                                        $hisPermEnd = true;
+                                    }
+                                }
+                                $tabPermissionTrouvee[]=$inPerm;
+                                if(!$nD->dayIsNull($permDate)) {
+                                    if((($inPerm == true || $hisPermEnd == true)&& $isPermDate == true)){
+                                        /*
+                                         * We need some other variables to avoid conflicts with userStats variables
+                                         */
+                                        $nbrePermission++;
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeDebutPause = strtotime($empWH[$theDay][0]["pauseBeginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+                                        $timeFinPause = strtotime($empWH[$theDay][0]["pauseEndHour"]);
+                                        if($type == "1" || $type == 1){
+                                            $timePP = ($timeDebutPause-$timeDebut)+($timeFin-$timeFinPause);
+                                        }else if($type == "4" || $type == 4){
+                                            $timePP = ($timeFin - $timeDebut);
+                                        }else if($type == "2" || $type == 2){
+                                            $timePP = (float)$empWH[$theDay][0]["quota"];
+                                        }
+                                        $tempPP = $timePP/60/60; // Hour
+                                        $tempsTPP += $tempPP;
+                                        $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Permission","tempsPerdu"=>$tempPP);
+//                                $tabDepartsPausePermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPerduDepartPausePermission,"type"=>"Depart pause prématuré","tempsPerdu"=>$tempPerduDepartPausePermission);
+                                    }
+                                    else {
+                                        $ct = date('H:i',$departPauseDiff[1]);
+                                        if($controlNowTime != $nowTime){
+                                            if($type == 1 || $type == "1"){
+                                                $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                                $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
 
-                    // Now we deal with the permissions calculations
-                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime));
-                    if($p){
-                        /*
-                         * We need some other variables to avoid conflicts with userStats variables
-                         */
-                        $nbrePermission++;
-                        $tempPerduDepartPausePermission = (($departPauseDiff[0])/(60))/60;
-                        $tempsTPerduDepartPausePermission += $tempPerduDepartPausePermission;
-                        $tabDepartsPausePermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPerduDepartPausePermission,"type"=>"Depart pause prématuré","tempsPerdu"=>$tempPerduDepartPausePermission);
-                    }
-                }else{
-                    /* Must check if the clockinTime isn't null this date (0 in the history)
-                    *  Because if it is null that day we should not count it as a bonus
-                    */
-                    if($type == 1 || $type == "1"){
-                        if( (($departPauseDiff[1] != null) && !empty($departPauseDiff[1])) && ($_arr != 0 && $_arr != null) ){
-                            $bonus_retards++;
-                            $bonusSommeRetards +=$departPauseDiff[0];
-                            $bonusTempsGagneRetards += (float)($departPauseDiff[0]/(60))/60;
-                            $bonus_gain_temps = (float)($departPauseDiff[0]/(60))/60;
-                            $ct = date('H:i',$departPauseDiff[1]);
-                            if($taux > 0){
-                                $bonusSommeGagneRetard += ((($salaire*12)/52)/$taux)*$bonus_gain_temps;
-                            }else{
-                                $bonusSommeGagneRetard = 0;
+                                                $dailyTime = $timeFin - $timeDebut;
+                                                $dailyTime /= 3600;
+
+                                                $i++;
+                                                $departsPause++;
+                                                // Pour prendre en compte les departs de 12 h aussi
+                                                $departs++;
+                                                $sommeDepartsPause +=$departPauseDiff[0];
+                                                $tempsPerdusDepartsPause = ($departPauseDiff[0])/(60);
+                                                $tempsPerdusDepartsPause /= 60;
+                                                // Pour prendre en compte les departs de 12h aussi
+                                                $tempsPerdusDeparts +=$tempsPerdusDepartsPause;
+                                                if($taux > 0){
+                                                    if( $nbreJrTravail> 0){
+                                                        $sommePerduDepart += ($salaire/$nbreJrTravail/$dailyTime)*round($tempsPerdusDepartsPause,2);
+                                                    }
+
+                                                    $controlTaux[] = "taux: ".$taux." passé ".$cpt ." somme perdu depart ".$sommePerduDepart ;
+                                                }else{
+                                                    $sommePerduDepart = 0;
+                                                }
+                                                $tabDepartsPause[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsPause,"temps_min"=>$tempsPerdusDepartsPause*60);
+                                            }elseif (($type == 2 || $type == "2")){
+                                                $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                                $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                                $dailyTime = $timeFin - $timeDebut;
+                                                $dailyTime /= 3600;
+
+                                                $i++;
+                                                $departsPause++;
+                                                // Pour prendre en compte les departs de 12 h aussi
+                                                $departs++;
+                                                $sommeDepartsPause +=$departPauseDiff[0];
+                                                $tempsPerdusDepartsPause = ($departPauseDiff[0])/(60);
+                                                $tempsPerdusDepartsPause /= 60;
+                                                // Pour prendre en compte les departs de 12h aussi
+                                                $tempsPerdusDeparts +=$tempsPerdusDepartsPause;
+                                                $ct = date('H:i',$departPauseDiff[1]);
+                                                if($taux > 0){
+                                                    if( $nbreJrTravail> 0){
+                                                        $sommePerduDepart += ($salaire/$nbreJrTravail/$dailyTime)*round($tempsPerdusDepartsPause,2);
+                                                    }
+
+                                                }else{
+                                                    $sommePerduDepart = 0;
+                                                }
+                                                $tabDepartsPause[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsPause,"temps_min"=>$tempsPerdusDepartsPause*60);
+                                            }elseif(($type == 4 || $type == "4")) {
+                                                $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                                $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                                $dailyTime = $timeFin - $timeDebut;
+                                                $dailyTime /= 3600;
+
+                                                $i++;
+                                                $departsPause++;
+                                                // Pour prendre en compte les departs de 12 h aussi
+                                                $departs++;
+                                                $sommeDepartsPause +=$departPauseDiff[0];
+                                                $tempsPerdusDepartsPause = ($departPauseDiff[0])/(60);
+                                                $tempsPerdusDepartsPause /= 60;
+                                                // Pour prendre en compte les departs de 12h aussi
+                                                $tempsPerdusDeparts +=$tempsPerdusDepartsPause;
+                                                $ct = date('H:i',$departPauseDiff[1]);
+                                                if($taux > 0){
+                                                    if( $nbreJrTravail> 0){
+                                                        $sommePerduDepart += ($salaire/$nbreJrTravail/$dailyTime)*round($tempsPerdusDepartsPause,2);
+                                                    }
+
+                                                    $controlTaux[] = "taux: ".$taux." passé ".$cpt ." somme perdu depart ".$sommePerduDepart ;
+                                                }else{
+                                                    $sommePerduDepart = 0;
+                                                }
+                                                $tabDepartsPause[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsPause,"temps_min"=>$tempsPerdusDepartsPause*60);
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    /* Must check if the clockinTime isn't null this date (0 in the history)
+                                    *  Because if it is null that day we should not count it as a bonus
+                                    */
+                                    if($type == 1 || $type == "1"){
+                                        if( (($departPauseDiff[1] != null) && !empty($departPauseDiff[1])) && ($_arr != 0 && $_arr != null) ){
+                                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                            $dailyTime = $timeFin - $timeDebut;
+                                            $dailyTime /= 3600;
+
+                                            $bonus_retards++;
+                                            $bonusSommeRetards +=$departPauseDiff[0];
+                                            $bonusTempsGagneRetards += (float)($departPauseDiff[0]/(60))/60;
+                                            $bonus_gain_temps = (float)($departPauseDiff[0]/(60))/60;
+                                            $ct = date('H:i',$departPauseDiff[1]);
+                                            if($taux > 0){
+                                                if( $nbreJrTravail> 0){
+                                                    $bonusSommeGagneRetard += ($salaire/$nbreJrTravail/$dailyTime)*round($bonus_gain_temps,2);
+                                                }
+
+                                            }else{
+                                                $bonusSommeGagneRetard = 0;
+                                            }
+
+                                            /*print_r("retard diff : ".$departDiff[0]."\n");
+                                            print_r("somme totale : ".$bonusSommeRetards."\n");
+                                            print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
+                                        }
+                                    }
+
+                                    // SI le type est exclusivement 2,On calcul les quotas horraires
+                                    if($type == "2"){
+                                        // Après tous on recupère ses quotas en appelant la fonction historique
+
+                                        $history = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('d-m-Y',$nowTime),$employe->getId(),$request);
+                                        if(($history != null) && ($history != "")){
+                                            $history = json_decode($history->getContent(),true);
+                                            $quota_total += $history["quota"];
+                                            $quota_fait += $history["quota_fait"];
+                                        }
+                                    }
+                                }
+
                             }
-
-                            /*print_r("retard diff : ".$departDiff[0]."\n");
-                            print_r("somme totale : ".$bonusSommeRetards."\n");
-                            print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
                         }
                     }
+
                 }
 
-                /*// Now we deal with lost time calculations
-                // First of all we need the terminals
-                $his = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('d-m-Y',$nowTime),$employe->getId(),$request);
-                //print_r("(((((((");
-                $his = json_decode($his->getContent(),true);
-                //print_r(")))))))");
-                if((($his["arrive"] != null) && ($his["arrive"] != "")) || (($his["depart"] != null) && ($his["depart"] != "")) || (($his["pause"] != null) && ($his["pause"] != "")) || (($his["finPause"] != null) && ($his["finPause"] != ""))){
-                    //print_r($his);
-                    $_arr = $his["arrive"];
-                    $_dep = $his["depart"];
-                    $_pau = $his["pause"];
-                    $_fpa = $his["finPause"];
 
-                    // Now that we have terminals, we must check the type of workingHour
-                    if($type == "1" || $type == 1){
-                        // Un double test a faire
-                        if(($_arr == 0 && $_pau != 0) || ($_pau == 0 && $_arr != 0) || ($_pau == 0 && $_arr == 0)){
-                            $inc_auth++;
-                            $lost_time_jour = ((int)($this->convertHourInMinutes($heureDebutNormalPause)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
-                            $lost_time += $lost_time_jour;
-                            if($taux > 0){
-                                $sommePerduAuth += ((($salaire*12)/52)/$taux)*$lost_time_jour;
-                            }else{
-                                $sommePerduAuth = 0;
-                            }
-                        }
-                        if(($_fpa == 0 && $_dep != 0) || ($_dep == 0 && $_fpa !=0) || ($_dep == 0 && $_fpa ==0)){
-                            $inc_auth++;
-                            $lost_time_jour= ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureFinNormalPause)))/60;
-                            $lost_time += $lost_time_jour;
-                            if($taux > 0){
-                                $sommePerduAuth += ((($salaire*12)/52)/$taux)*$lost_time_jour;
-                            }else{
-                                $sommePerduAuth = 0;
-                            }
-                        }
-                    }if($type == "4" || $type == 4){
-                        if($_arr == 0 || $_dep == 0){
-                            $inc_auth++;
-                            $lost_time_jour += ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
-                            $lost_time += $lost_time_jour;
-                            if($taux > 0){
-                                $sommePerduAuth += ((($salaire*12)/52)/$taux)*$lost_time_jour;
-                            }else{
-                                $sommePerduAuth = 0;
-                            }
-                        }
-                    }elseif ($type == "2" || $type == 2){
-                        // in this case the lost time is his quota because of his terminals
-                        //$lost_time += (int)($his["quota"]);
-                        if($_arr == 0 || $_dep == 0){
-                            $inc_auth++;
-                            $lost_time_jour += ((int)($his["quota"]))/60;
-                            $lost_time += $lost_time_jour;
-                            if($taux > 0){
-                                $sommePerduAuth += ((($salaire*12)/52)/$taux)*$lost_time_jour;
-                            }else{
-                                $sommePerduAuth = 0;
-                            }
-
-                        }
-                    }
-                }
-                */
-
-                // SI le type est exclusivement 2,On calcul les quotas horraires
-                if($type == "2"){
-                    // Après tous on recupère ses quotas en appelant la fonction historique
-
-                    $history = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('d-m-Y',$nowTime),$employe->getId(),$request);
-                    if(($history != null) && ($history != "")){
-                        $history = json_decode($history->getContent(),true);
-                        $quota_total += $history["quota"];
-                        $quota_fait += $history["quota_fait"];
-                    }
-                }
             }else if($type == "3"){
+
                 $j++;
                 // Si son workingHour est de type 3
                 $his = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('d-m-Y',$nowTime),$employe->getId(),$request);
                 $his = json_decode($his->getContent(),true);
-                if(!$cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
-                    $permDate = date('Y-m-d',$nowTime);
-                    if(!$pR->enPermission($employe,$permDate)) {
-                        if (!$nD->dayIsNull($permDate)) {
-                            $nowDate = date('d/m/Y',$nowTime);
+                if(!$cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)) {
+                    $permDate = date('Y-m-d', $nowTime);
+//                    if(!$pR->enPermission($employe,$permDate)) {
+                    $lPermCours = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findPermEnCours();
+                    $lPermEnd = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findEndPerms();
+                    $isPermDate = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->checkInPerm($emp,date('Y-m-d',$nowTime));
+
+                    $inPerm = false;
+                    $hisPermEnd = false;
+                    foreach ($lPermCours as $p) {
+                        if ($p->employee->id == $emp) {
+                            $inPerm = true;
+                        }
+                    }
+                    foreach ($lPermEnd as $p) {
+                        if ($p->employee->id == $emp) {
+                            $hisPermEnd = true;
+                        }
+                    }
+                    $tabPermissionTrouvee[] = $inPerm;
+                    $tabPermissionTrouvee[] = $hisPermEnd;
+                    $resReq[] = $lPermCours;
+
+                    if (!$nD->dayIsNull($permDate)) {
+
+                        if ((($inPerm == true || $hisPermEnd == true)&& $isPermDate == true)) {
+//                            $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime));
+//                            if($p){
+                            /*
+                             * We need some other variables to avoid conflicts with userStats variables
+                             */
+                            $nowDate = date('d/m/Y', $nowTime);
+                            $timePP = ($timeFin - $timeDebut);
+                            $tempPP = $timePP / 60;
+                            $tempsTPP += $tempPP;
+                            $tabAbsencesPermission[] = array("date" => $nowDate, "heureDepart" => null, "tempsTotal" => $tempsTPP, "type" => "Permission", "tempsPerdu" => $tempPP);
+                        }
+                        else {
+
+                            $nowDate = date('d/m/Y', $nowTime);
                             $absences++;
-                            $sommePerduAbsence += (($salaire*12)/52)/$jour_travail;
+                            $ici2++;
+                            if( $nbreJrTravail> 0){
+                                $sommePerduAbsence += ($salaire/$nbreJrTravail) / round($jour_travail,2);
+                            }
+
+                            //$sommePerduAbsence2 += (($salaire * 12) / 52) / $jour_travail;
                             /*$timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
                             $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
                             $timePerdusAbsences = ($timeFin - $timeDebut);
                             $tempPerdu = $timePerdusAbsences/60;
                             //$tempsPerdusAbsences = $tempPerdu;*/
                             //$sommeAbsences +=$tempsPerdusAbsences;
+                            $tabAbsencesPermission[] = array("date" => $nowDate, "heureDepart" => null, "tempsTotal" => $tempsTPP, "type" => "Absence", "tempsPerdu" => $tempPP);
 
-
-                            $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime));
-                            if($p){
-                                /*
-                                 * We need some other variables to avoid conflicts with userStats variables
-                                 */
-                                $timePP = ($timeFin - $timeDebut);
-                                $tempPP = $timePP/60;
-                                $tempsTPP += $tempPP;
-                                $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Absence","tempsPerdu"=>$tempPP);
-                            }
                         }
-
                     }
                 }
             }else if($type == null || $type == "null"){
@@ -1026,9 +1515,19 @@ class StatsController extends ClockinReccordController
             }
 
             $historiques[] = $his;
+
             $donneesPermission = array("retardStats"=>$tabRetardsPermission,"retardPauseStats"=>$tabRetardsPausePermission,"pauseStats"=>$tabDepartsPausePermission,"finStats"=> $tabDepartsPermission,"absenceStats"=>$tabAbsencesPermission);
-            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpa"=>$sommeAbsences,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType,"permissionData"=>$donneesPermission,"lost_time"=>$lost_time,"inc_auth"=>$inc_auth,"historique"=>$historiques,"sommePerduQuota"=>$sommePerduQuota
-            ,"quota_1_4"=>$quota_emp_1_4,"spd"=>$sommePerduDepart,"spr"=>$sommePerduRetard,"spa"=>$sommePerduAbsence,"nbreJourTravail"=>$j,"spAuth"=>$sommePerduAuth,"nbreBonus"=>$bonus_retards,"sommeBonus"=>$bonusSommeRetards,"tempsBonus"=>$bonusTempsGagneRetards,"sommeArgentBonus"=>$bonusSommeGagneRetard,"nbrePermission"=>$nbrePermission,"jourFeries"=>$jourFeries);
+//            $donnees = array("request"=> json_decode($request->getContent(),true), "req_content"=> $request->getContent() , "empId"=>$empId,"fromDate"=>$dateFrom,"toDate"=>$dateTo,"nbrePerm"=>$nbrePermission,"message"=>$mes);
+               // $ab = sizeof($tabAbsencesPermission);
+            //$tpa =.length;
+
+            $donnees = array( "absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpa"=>$sommeAbsences,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,
+                "retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType,"permissionData"=>$donneesPermission,"lost_time"=>$lost_time,"inc_auth"=>$inc_auth,
+                "historique"=>$historiques,"sommePerduQuota"=>$sommePerduQuota,"quota_1_4"=>$quota_emp_1_4,"spd"=>$sommePerduDepart,"spr"=>$sommePerduRetard,"spa"=>$sommePerduAbsence,"nbreJourTravail"=>$j,"spAuth"=>$sommePerduAuth,"nbreBonus"=>$bonus_retards,
+                "sommeBonus"=>$bonusSommeRetards,"tempsBonus"=>$bonusTempsGagneRetards,"sommeArgentBonus"=>$bonusSommeGagneRetard,"nbrePermission"=>$nbrePermission,"jourFeries"=>$jourFeries,"message"=>$mes,"salMin"=>$salaire_en_minuite,  "taux"=>$taux
+             , "nowDte"=>date('Y-m-d',$nowTime), "pipipi"=>$pipipi, "controlTaux"=>$controlTaux,"days"=>$nbreJrTravail,"tabJT"=>$tabNbJrT
+            );
+
             $nowTime = $nowTime+86400;
         }
 
@@ -1041,8 +1540,1401 @@ class StatsController extends ClockinReccordController
         }
     }
 
+    /**
+     * @Route("/userStatsPDF",name="userStatsPDF")
+     */
+    public function userStatsActionPDF(Request $request,$empId=null,$fromeDate=null,$toDate=null){
+
+        set_time_limit(0);
+
+        $lost_time_jour = 0;
+        // if/else condition because of calling this in the generatePDF function
+        if($empId==null && $fromeDate==null && $toDate==null){
+            $emp = $request->request->get("empId");
+            $dateFrom = $request->request->get("dateFrom");
+            $dateTo = $request->request->get("dateTo");
+            $mes="les valeurs sont nulles";
+        }else{
+            $emp = $empId;
+            $dateFrom = $fromeDate;
+            $dateTo = $toDate;
+            $mes="les valeurs ne sont pas nulles";
+        }
+
+        $pR = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission");
+        $nD = $this->getDoctrine()->getManager()->getRepository("AppBundle:NullDate");
+
+        $timeFrom = strtotime($dateFrom." 00:00:00");
+        $timeTo = strtotime($dateTo." 00:00:00");
+
+        $timeDays = $timeTo-$timeFrom;
+        $days = $timeDays/(60*60*24);
+
+        $nowTime = $timeFrom;
+        $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($emp);
+        $interval = ($employe->getWorkingHour()->getTolerance())*60;
+        $empWH = json_decode($employe->getWorkingHour()->getWorkingHour(),true);
+        $taux = (float)$employe->getWorkingHour()->getTaux();
+        $salaire = $employe->getSalary();
+        $jour_travail = (int)$employe->getWorkingHour()->getJourTravail();
+        $salaire_en_minuite = (($salaire/30)/24)/60;
+        $salaire_quota_en_minuite = (($salaire/30)/8)/60;
+        $cr = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord");
+
+        $absences=0;
+        $ici1=0;
+        $controlTaux = array();
+        $iciDate1="";
+        $iciPerm1="";
+        $ici2=0;
+        $nbrePermission=0;
+        $p11=0;
+        $p22=0;
+        $p33=0;
+        $p44=0;
+        $p55=0;
+        $sommePerduAbsence_3 = 0;
+        $retards = 0;
+        $bonus_retards = 0;
+
+        $totalTempsabsences=0;
+        $totalTempsretards = 0;
+
+        $departs = 0;
+        $departsPause = 0;
+
+        $retardDiff =0;
+        $retardDiffArray = array();
+
+        $tpsAbsPer =0;
+        $sommeAbsences =0;
+        $sommeRetards =0;
+        $bonusSommeRetards = 0;
+        $sommeDeparts =0;
+        $sommeDepartsPause =0;
+
+        $tempsPerdusAbsences=0;
+        $tempsPerdusRetards=0;
+        $bonusTempsGagneRetards = 0;
+        $tempsPerdusDeparts=0;
+
+        $sommePerduQuota = 0;
+        $sommePerduAbsence = 0;
+        $sommePerduDepart = 0;
+        $sommePerduRetard = 0;
+        $bonusSommeGagneRetard = 0;
+
+        $timePP = 0;
+        $tempPP = 0;
+        $tempsTPP = 0;
+        $tempPerduDepartPausePermission = 0;
+        $tempsTPerduDepartPausePermission = 0;
+        $tempPerduDepartPermission = 0;
+        $tempsTPerduDepartPermission = 0;
+        $tempPerduRetardPausePermission = 0;
+        $tempsTPerduRetardPausePermission = 0;
+        $tempPerduRetardPermission = 0;
+        $tempsTPerduRetardPermission = 0;
+
+        $tabDepartsPause = array();
+        $tabDepartsPausePermission = array();
+        $tabRetardsPause = array();
+        $tabRetardsPausePermission = array();
+        $tabDeparts = array();
+        $tabDepartsPermission = array();
+        $tabRetards = array();
+        $tabRetardsPermission = array();
+
+        $tabAbsencesPermission = array();
+        $tabPermissionTrouvee = array();
+        $resReq = array();
+
+        $quota_fait = 0;
+        $quota_total = 0;
+        $quota_emp_1_4 = 0;
+        $inc_auth=0;
+
+        $controlNowTime =0;
+        $controlNowTime2 =0;
+        $controlNowTimeForOtheType = 0;
+        $pipipi = array();
+
+        $jourFeries =0;
+        $nbreJrTravail = 0;
+        $tabNbJrT =  array();
+
+        // On boucle sur les jours sélectionnés
+        $i=0;$j=0;
+        $lost_time = 0;
+        $sommePerduAuth = 0;
+        $tabType = array();
 
 
+        for ($cpt2=0;$cpt2<=$days;$cpt2++){
+            $theDay = date('N',$nowTime);
+            $tabNbJrT[] = $theDay;
+            $theDay = $this->dateDayNameFrench($theDay);
+            $tabNbJrT[] = $theDay;
+            $type = $empWH[$theDay][0]["type"];
+            if ($type == "1" || $type == "2" || $type == "4"|| $type == "3"){
+                $nbreJrTravail++;
+                $tabNbJrT[]="cpt ".$cpt2." jrT ".$nbreJrTravail;
+            }
+            $nowTime = $nowTime+86400;
+        }
+        $nowTime = $timeFrom;
+
+        for ($cpt=0;$cpt<=$days;$cpt++){
+
+
+            set_time_limit(0);
+            $his = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('d-m-Y',$nowTime),$employe->getId(),$request);
+            $his = json_decode($his->getContent(),true);
+
+            $_arr = $his["arrive"];
+            $_dep = $his["depart"];
+            $_pau = $his["pause"];
+            $_fpa = $his["finPause"];
+
+            $theDay = date('N',$nowTime);
+            $theDay = $this->dateDayNameFrench($theDay);
+            $type = $empWH[$theDay][0]["type"];
+
+            $tabType[$theDay] = $type;
+
+            $quota = $empWH[$theDay][0]["quota"];
+            $quotaUtilisateur = $empWH[$theDay][0]["quota"];
+
+            $hAN = $empWH[$theDay][0]["beginHour"];
+            $hDN = $empWH[$theDay][0]["endHour"];
+            $hDPN = $empWH[$theDay][0]["pauseBeginHour"];
+            $hFPN = $empWH[$theDay][0]["pauseEndHour"];
+            $_heure_debut = null;
+            $_minuites_debut = null;
+            $_time_heure_debut = null;
+            $_time_minuites_debut = null;
+
+            // Pour éviter les erreurs de "offset"
+            if(($hAN != null) && ($hAN !="")){
+                $_heure_debut = explode(':',$hAN)[0];
+                $_minuites_debut = explode(':',$hAN)[1];
+
+                $_time_heure_debut = ((int)$_heure_debut)*60*60;
+                $_time_minuites_debut =((int)$_minuites_debut)*60;
+
+                $_total_time = $_time_heure_debut+$_time_minuites_debut;
+            }
+
+            // Pour le calcul d'un depart prématuré de pause,Calculons l'intervalle
+            $heureDebutNormal = $empWH[$theDay][0]["beginHour"];
+            $heureFinNormal = $empWH[$theDay][0]["endHour"];
+            $heureDebutNormalPause = $empWH[$theDay][0]["pauseBeginHour"];
+            $heureFinNormalPause = $empWH[$theDay][0]["pauseEndHour"];
+
+            $beginHourExploded = explode(":",$heureDebutNormal);
+            $endHourExploded = explode(":",$heureFinNormal);
+            $pauseBeginHourExploded = explode(":",$heureDebutNormalPause);
+            $pauseEndHourExploded = explode(":",$heureFinNormalPause);
+
+            if(sizeof($beginHourExploded)>1 && sizeof($endHourExploded)>1){
+                $beginHourInMinutes = (((int)$beginHourExploded[0])*60)+((int)$beginHourExploded[1]);
+                $endHourInMinutes = (((int)$endHourExploded[0])*60)+((int)$endHourExploded[1]);
+            }else{
+                $beginHourInMinutes = 0;
+                $endHourInMinutes = 0;
+            }
+            $heureNormaleArrive = $beginHourInMinutes*60;
+            $heureNormaleDepart = $endHourInMinutes*60;
+
+            if(sizeof($pauseBeginHourExploded)>1){
+                $pauseBeginHourInMinutes = (((int)$pauseBeginHourExploded[0])*60)+((int)$pauseBeginHourExploded[1]);
+                $pauseEndHourInMinutes = (((int)$pauseEndHourExploded[0])*60)+((int)$pauseEndHourExploded[1]);
+
+                $interval_pause = (($pauseEndHourInMinutes - $pauseBeginHourInMinutes)/2)*60;
+                $heureNormaleArrivePause = $pauseEndHourInMinutes*60;
+                $heureNormaleDepartPause = $pauseBeginHourInMinutes*60;
+            }else{
+                $interval_pause = 0;
+                $heureNormaleArrivePause = 0;
+                $heureNormaleDepartPause = 0;
+            }
+
+            if($type != "null" && $type != null){
+                $quota_emp_1_4 += ((($heureNormaleDepartPause - $heureNormaleArrive)+($heureNormaleDepart - $heureNormaleArrivePause))/60)/60;
+            }
+            $nowDate = new \DateTime();
+
+            if ($type == "1" || $type == "2" || $type == "4"){
+
+                $j++;
+                // Si son workingHour est de type 1 ou 2 ou 4
+                //print_r("//// Heure normale d'arrive ".$nowTime." //////\n");
+                if(!$cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
+                    //print_r("Passage ".($cpt+1)." date : ".date('d-m-Y',$nowTime)."\n");
+
+                    /* ************************************************
+                    / l'employé nest pas présent: cherchons la raison *
+                    /**************************************************/
+
+                    $nowDate = date('d/m/Y',$nowTime);
+                    $permDate = date('Y-m-d',$nowTime);
+//                    if(!$pR->enPermission($employe,$permDate)){
+
+//                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime));
+                    $lPermCours = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")-> findPermEnCours() ;
+                    $lPermEnd = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findEndPerms();
+                    $isPermDate = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->checkInPerm($emp,date('Y-m-d',$nowTime));
+                    $pipipi[]=$isPermDate;
+                    $inPerm = false;
+                    $hisPermEnd = false;
+                    foreach($lPermCours as $p){
+                        if($p->employee->id == $emp){
+                            $inPerm = true;
+                        }
+                    }
+                    foreach($lPermEnd as $p){
+                        if($p->employee->id == $emp){
+                            $hisPermEnd = true;
+                        }
+                    }
+                    $tabPermissionTrouvee[]=$inPerm;
+                    $tabPermissionTrouvee[]=$hisPermEnd;
+                    $resReq[] = $lPermCours;
+
+                    if(!$nD->dayIsNull($permDate)){
+                        if((($inPerm == true || $hisPermEnd == true)&& $isPermDate == true)){
+                            /*
+                             * We need some other variables to avoid conflicts with userStats variables
+                             */
+
+                            $nbrePermission++;
+                            $p11++;
+                            $iciPerm1 = $iciPerm1." - ".$cpt. " - " .$p11." - ".$permDate." | ";
+
+                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                            $timeDebutPause = strtotime($empWH[$theDay][0]["pauseBeginHour"]);
+                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+                            $timeFinPause = strtotime($empWH[$theDay][0]["pauseEndHour"]);
+                            if($type == "1" || $type == 1){
+                                $timePP = ($timeDebutPause-$timeDebut)+($timeFin-$timeFinPause);
+                            }else if($type == "4" || $type == 4){
+                                $timePP = ($timeFin - $timeDebut);
+                            }else if($type == "2" || $type == 2){
+                                $timePP = (float)$empWH[$theDay][0]["quota"];
+                            }
+                            $tempPP = $timePP/60/60; // Hour
+                            $tempsTPP += $tempPP;
+                            $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Permission","tempsPerdu"=>$tempPP);
+
+                        } else {
+                            ///sil n'est pas en permission => absence
+                            $absences++;
+                            $ici1++;
+                            $iciDate1 = $iciDate1." - ".$cpt. " - " .$ici1." - ".$permDate." | ";
+                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                            $timePerdusAbsences = $timeFin - $timeDebut;
+                            $timePerdusAbsences /= 3600;
+                            $timeD = strtotime($empWH[$theDay][0]["beginHour"]);
+                            $timeF = strtotime($empWH[$theDay][0]["endHour"]);
+
+                            $dailyTime = $timeF - $timeD;
+                            $dailyTime /= 3600;
+                            //$tempsPerdusAbsences += $tempPerdu;
+                            //$sommeAbsences +=$tempsPerdusAbsences;
+                            $tpsAbsPer = $timePerdusAbsences;
+                            $sommeAbsences +=$timePerdusAbsences;
+                            if($taux > 0){
+                                if( $nbreJrTravail> 0){
+                                    $sommePerduAbsence = ( $salaire/$nbreJrTravail/$dailyTime)*  round($timePerdusAbsences,2);
+                                }
+
+//                                $sommePerduAbsence = ((($salaire*12)/52)/$taux)*$sommeAbsences;
+                                $controlTaux[] = "taux: ".$taux." passé ".$cpt." somme  absence ".$sommeAbsences." tpsPerAbs ".$timePerdusAbsences  ;
+                            }else{
+                                $sommePerduAbsence = 0;
+                            }
+                            $tempPP = $timePerdusAbsences; // Hour
+                            $tempsTPP = $sommeAbsences;
+                            $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Absence","tempsPerdu"=>$tempPP);
+
+                        }
+
+                    }else{
+                        $jourFeries ++;
+                    }
+
+                }
+                else {
+                    // l'employe est present -> verifions les retards
+                    $nowDate = date('d/m/Y',$nowTime);
+                    $permDate = date('Y-m-d',$nowTime);
+//                    if(!$pR->enPermission($employe,$permDate)){
+                    // il se peut que l'employé soit en permission, mais present, pas en retard et pas parti prématurement
+//                    $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime));
+                    $lPermCours = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")-> findPermEnCours() ;
+                    $lPermEnd = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findEndPerms();
+                    $isPermDate = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->checkInPerm($emp,date('Y-m-d',$nowTime));
+                    $pipipi[]=$isPermDate;
+                    $inPerm = false;
+                    $hisPermEnd = false;
+                    foreach($lPermCours as $p){
+                        if($p->employee->id == $emp){
+                            $inPerm = true;
+                        }
+                    }
+                    foreach($lPermEnd as $p){
+                        if($p->employee->id == $emp){
+                            $hisPermEnd = true;
+                        }
+                    }
+                    $tabPermissionTrouvee[]=$inPerm;
+                    $tabPermissionTrouvee[]=$hisPermEnd;
+                    $resReq[] = $lPermCours;
+
+                    if(!$nD->dayIsNull($permDate)){
+                        if((($inPerm == true || $hisPermEnd == true)&& $isPermDate == true)){
+                            /*
+                             * We need some other variables to avoid conflicts with userStats variables
+                             */
+
+                            $nbrePermission++;
+                            $p11++;
+                            $iciPerm1 = $iciPerm1." - ".$cpt. " - " .$p11." - ".$permDate." | ";
+
+                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                            $timeDebutPause = strtotime($empWH[$theDay][0]["pauseBeginHour"]);
+                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+                            $timeFinPause = strtotime($empWH[$theDay][0]["pauseEndHour"]);
+                            if($type == "1" || $type == 1){
+                                $timePP = ($timeDebutPause-$timeDebut)+($timeFin-$timeFinPause);
+                            }else if($type == "4" || $type == 4){
+                                $timePP = ($timeFin - $timeDebut);
+                            }else if($type == "2" || $type == 2){
+                                $timePP = (float)$empWH[$theDay][0]["quota"];
+                            }
+                            $tempPP = $timePP/60/60; // Hour
+                            $tempsTPP += $tempPP;
+                            $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Permission","tempsPerdu"=>$tempPP);
+
+                        }
+                        else {
+                            $retardDiff = $cr->retard($employe,$nowTime,$interval,$heureNormaleArrive,$empWH[$theDay][0]["beginHour"]);
+                            $retardDiffArray[]=$retardDiff;
+                            $retardDiffArray[]=$cpt;
+
+
+                            if($retardDiff == false){
+//                        if($cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
+
+                                // il n'est pas en retard
+                                $nowDate = date('d/m/Y',$nowTime);
+                                $ct = date('H:i',$retardDiff[1]);
+                                if($type == 1 || $type == "1"){
+                                    if( ($_arr == 0 || $_arr == null) || ($_pau == 0 || $_pau == null) || (($_arr == 0 || $_arr == null) && ($_pau == 0 || $_pau == null)) ){
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                        $dailyTime = $timeFin - $timeDebut;
+                                        $dailyTime /= 3600;
+
+                                        $controlNowTime = $nowTime;
+                                        $inc_auth++;
+                                        $lost_time_jour = ((int)($this->convertHourInMinutes($heureDebutNormalPause)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
+                                        $lost_time += $lost_time_jour;
+                                        if($taux > 0){
+                                            if( $nbreJrTravail> 0){
+                                                $sommePerduAuth += ($salaire/$nbreJrTravail/$dailyTime)* round($lost_time_jour,2);
+
+                                            }
+                                        }else{
+                                            $sommePerduAuth = 0;
+                                        }
+                                    }
+                                }elseif (($type == 2 || $type == "2")) {
+                                    if( ($_arr == 0 || $_arr == null) || ($_dep == 0 || $_dep == null) || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                        $dailyTime = $timeFin - $timeDebut;
+                                        $dailyTime /= 3600;
+
+                                        $controlNowTimeForOtheType = $nowTime;
+
+                                        $inc_auth++;
+                                        $lost_time_jour += ((int)($his["quota"]))/60;
+                                        $lost_time += $lost_time_jour;
+                                        if($taux > 0){
+                                            if( $nbreJrTravail> 0){
+                                                $sommePerduAuth += ($salaire/$nbreJrTravail/$dailyTime)*round($lost_time_jour,2);
+                                            }
+
+                                        }else{
+                                            $sommePerduAuth = 0;
+                                        }
+                                    }
+                                    # code...
+                                }elseif(($type == 4 || $type == "4")){
+                                    if( ($_arr == 0 || $_arr == null) || ($_dep == 0 || $_dep == null) || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                        $dailyTime = $timeFin - $timeDebut;
+                                        $dailyTime /= 3600;
+                                        $controlNowTimeForOtheType = $nowTime;
+
+                                        $inc_auth++;
+                                        $lost_time_jour += ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
+                                        $lost_time += $lost_time_jour;
+                                        if($taux > 0){
+                                            if( $nbreJrTravail> 0){
+                                                $sommePerduAuth += ($salaire/$nbreJrTravail/$dailyTime)*round($lost_time_jour,2);
+                                            }
+
+                                            $controlTaux[] = "taux: ".$taux." passé ".$cpt ." somme perdu auth ".$sommePerduAuth ;
+                                        }else{
+                                            $sommePerduAuth = 0;
+                                        }
+                                    }
+                                }
+
+                            }elseif($retardDiff[0] > 0){
+                                //print_r("\n Passage 1 TRUE condition retard diff\n");
+                                $retardDiffArray[]=$retardDiff;
+                                $retardDiffArray[]=$cpt;
+                                // il est en retard
+                                $nowDate = date('d/m/Y',$nowTime);
+                                $permDate = date('Y-m-d',$nowTime);
+                                $lPermCours = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")-> findPermEnCours() ;
+                                $lPermEnd = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findEndPerms();
+                                $isPermDate = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->checkInPerm($emp,date('Y-m-d',$nowTime));
+                                $pipipi[]=$isPermDate;
+                                $inPerm = false;
+                                $hisPermEnd = false;
+                                foreach($lPermCours as $p){
+                                    if($p->employee->id == $emp){
+                                        $inPerm = true;
+                                    }
+                                }
+
+                                foreach($lPermEnd as $p){
+                                    if($p->employee->id == $emp){
+                                        $hisPermEnd = true;
+                                    }
+                                }
+                                if(!$nD->dayIsNull($permDate)){
+                                    if((($inPerm == true || $hisPermEnd == true)&& $isPermDate == true)){
+                                        /*
+                                         * We need some other variables to avoid conflicts with userStats variables
+                                         */
+                                        //est-il en permission si oui
+                                        $nbrePermission++;
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeDebutPause = strtotime($empWH[$theDay][0]["pauseBeginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+                                        $timeFinPause = strtotime($empWH[$theDay][0]["pauseEndHour"]);
+                                        if($type == "1" || $type == 1){
+                                            $timePP = ($timeDebutPause-$timeDebut)+($timeFin-$timeFinPause);
+                                        }else if($type == "4" || $type == 4){
+                                            $timePP = ($timeFin - $timeDebut);
+                                        }else if($type == "2" || $type == 2){
+                                            $timePP = (float)$empWH[$theDay][0]["quota"];
+                                        }
+                                        $tempPP = $timePP/60/60; // Hour
+                                        $tempsTPP += $tempPP;
+                                        $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Permission","tempsPerdu"=>$tempPP);
+                                        //$tabRetardsPermission[]= array("date"=>$nowDate,"heureRetard"=>null,"tempsTotal"=>$tempsTPerduRetardPermission,"type"=>"Permission","tempsPerdu"=>$tempPerduRetardPermission);
+                                    }
+                                    else {
+                                        //il est en retard
+
+                                        $ct = date('H:i',$retardDiff[1]);
+                                        if($type == 1 || $type == "1"){
+                                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                            $dailyTime = $timeFin - $timeDebut;
+                                            $dailyTime /= 3600;
+                                            $retards++;
+                                            $sommeRetards +=$retardDiff[0];
+                                            $tempsPerdusRetards += (float)($retardDiff[0]/(60))/60;
+                                            $perte_temps = (float)($retardDiff[0]/(60))/60;
+                                            if($taux > 0){
+                                                if( $nbreJrTravail> 0){
+                                                    $sommePerduRetard += ( $salaire/$nbreJrTravail/$dailyTime)*round($perte_temps,2);
+                                                }
+
+                                                //$sommePerduRetard += ((($salaire*12)/52/5)/$taux)*$perte_temps;
+                                            }else{
+                                                $sommePerduRetard = 0;
+                                            }
+                                            $tabRetards[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$perte_temps,"temps_min"=>$perte_temps*60);
+                                        }elseif (($type == 2 || $type == "2")){
+
+                                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                            $dailyTime = $timeFin - $timeDebut;
+                                            $dailyTime /= 3600;
+
+                                            $retards++;
+                                            $sommeRetards +=$retardDiff[0];
+                                            $tempsPerdusRetards += (float)($retardDiff[0]/(60))/60;
+                                            $perte_temps = (float)($retardDiff[0]/(60))/60;
+                                            $ct = date('H:i',$retardDiff[1]);
+                                            if($taux > 0){
+                                                if( $nbreJrTravail> 0){
+                                                    $sommePerduRetard += ( $salaire/$nbreJrTravail/$dailyTime)*round($perte_temps,2);
+                                                }
+
+                                            }else{
+                                                $sommePerduRetard = 0;
+                                            }
+                                            $tabRetards[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$perte_temps,"temps_min"=>$perte_temps*60);
+                                        }
+                                        elseif(($type == 4 || $type == "4")) {
+
+                                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                            $dailyTime = $timeFin - $timeDebut;
+                                            $dailyTime /= 3600;
+
+                                            $retards++;
+                                            $mes = "entree ds le calcul de retards";
+                                            $sommeRetards +=$retardDiff[0];
+                                            $tempsPerdusRetards += (float)($retardDiff[0]/(60))/60;
+                                            $perte_temps = (float)($retardDiff[0]/(60))/60;
+                                            $ct = date('H:i',$retardDiff[1]);
+                                            if($taux > 0){
+                                                if( $nbreJrTravail> 0){
+                                                    $sommePerduRetard += ( $salaire/$nbreJrTravail/$dailyTime)*round($perte_temps,2);
+                                                }
+
+//                                        $sommePerduRetard += ((($salaire*12)/52)/$taux)*$perte_temps;
+                                                $controlTaux[] = "taux: ".$taux." passé ".$cpt." somme perdu retard ".$sommePerduRetard." perte temps ".$perte_temps." salaire ".$salaire." nbrejrT ".$nbreJrTravail." dailytime ".$dailyTime  ;
+                                            }else{
+                                                $sommePerduRetard = 0;
+                                            }
+                                            $tabRetards[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$perte_temps,"temps_min"=>$perte_temps*60);
+                                        }
+                                    }
+                                }
+
+                            } else {
+                                /* Must check if the clockinTime isn't null this date (0 in the history)
+                                *  Because if it is null that day we should not count it as a bonus
+                                */
+
+                                //calcul des bonus
+
+                                if($type == 1 || $type == "1"){
+                                    if( (($retardDiff[1] != null) && !empty($retardDiff[1])) && ($_pau != 0 && $_pau != null) ){
+
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                        $dailyTime = $timeFin - $timeDebut;
+                                        $dailyTime /= 3600;
+
+                                        $bonus_retards++;
+                                        $bonusSommeRetards +=$retardDiff[0];
+                                        $bonusTempsGagneRetards += (float)($retardDiff[0]/(60))/60;
+                                        $bonus_gain_temps = (float)($retardDiff[0]/(60))/60;
+                                        $ct = date('H:i',$retardDiff[1]);
+                                        if($taux > 0){
+                                            if( $nbreJrTravail> 0){
+                                                $bonusSommeGagneRetard += ($salaire/$nbreJrTravail/$dailyTime)*round($bonus_gain_temps,2);
+                                            }
+
+                                        }else{
+                                            $bonusSommeGagneRetard = 0;
+                                        }
+
+                                        /*print_r("retard diff : ".$departDiff[0]."\n");
+                                        print_r("somme totale : ".$bonusSommeRetards."\n");
+                                        print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
+                                    }
+                                }elseif( ($type == 2 || $type == "2") || ($type == 4 || $type == "4") ){
+                                    if( (($retardDiff[1] != null) && !empty($retardDiff[1])) && ($_dep != 0 && $_dep != null) ){
+
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                        $dailyTime = $timeFin - $timeDebut;
+                                        $dailyTime /= 3600;
+
+                                        $bonus_retards++;
+                                        $bonusSommeRetards +=$retardDiff[0];
+                                        $bonusTempsGagneRetards += (float)($retardDiff[0]/(60))/60;
+                                        $bonus_gain_temps = (float)($retardDiff[0]/(60))/60;
+                                        $ct = date('H:i',$retardDiff[1]);
+                                        if($taux > 0){
+                                            if( $nbreJrTravail> 0){
+                                                $bonusSommeGagneRetard += ($salaire/$nbreJrTravail/$dailyTime)*round($bonus_gain_temps,2);
+                                            }
+
+                                            $controlTaux[] = "taux: ".$taux." passé ".$cpt." somme gagne retard bonus ".$bonusSommeGagneRetard  ;
+                                        }else{
+                                            $bonusSommeGagneRetard = 0;
+                                        }
+
+                                        /*print_r("retard diff : ".$departDiff[0]."\n");
+                                        print_r("somme totale : ".$bonusSommeRetards."\n");
+                                        print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
+                                    }
+                                }
+                            }
+                            // retards des pauses
+                            $retardPauseDiff = $cr->retardPause($employe,$nowTime,$interval_pause,$heureNormaleArrivePause,$empWH[$theDay][0]["pauseEndHour"]);
+                            //on gere le retard au niveau des pauses
+                            if($retardPauseDiff == false){
+                                if($cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
+
+                                    $ct = date('H:i',$retardPauseDiff[1]);
+                                    if($type == 1 || $type == "1"){
+                                        if( ($_fpa == 0 || $_fpa == null) || ($_dep == 0 || $_dep == null) || (($_fpa == 0 || $_fpa == null) && ($_dep == 0 || $_dep == null)) ){
+                                            $controlNowTime2 = $nowTime;
+                                            $inc_auth++;
+                                            $lost_time_jour= ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureFinNormalPause)))/60;
+                                            $lost_time += $lost_time_jour;
+                                            if($taux > 0){
+                                                $sommePerduAuth += ((($salaire*12)/52)/$taux)*round($lost_time_jour,2);
+                                                $controlTaux[] = "taux: ".$taux." passé ".$cpt." somme perdu auth ".$sommePerduAuth ;
+                                            }else{
+                                                $sommePerduAuth = 0;
+                                            }
+                                        }
+                                    }elseif (($type == 2 || $type == "2") || ($type == 4 || $type == "4")) {
+                                        # code...
+                                    }
+
+                                }
+                            } elseif($retardPauseDiff[0] > 0){
+                                //retard pause
+
+                                //print_r("\n Passage 2 one condition retardPause diff\n");
+
+                                $nowDate = date('d/m/Y',$nowTime);
+                                $permDate = date('Y-m-d',$nowTime);
+                                $lPermCours = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")-> findPermEnCours() ;
+                                $lPermEnd = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findEndPerms();
+                                $isPermDate = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->checkInPerm($emp,date('Y-m-d',$nowTime));
+                                $pipipi[]=$isPermDate;
+                                $inPerm = false;
+                                $hisPermEnd = false;
+                                foreach($lPermCours as $p){
+                                    if($p->employee->id == $emp){
+                                        $inPerm = true;
+                                    }
+                                }
+                                foreach($lPermEnd as $p){
+                                    if($p->employee->id == $emp){
+                                        $hisPermEnd = true;
+                                    }
+                                }
+
+                                if(!$nD->dayIsNull($permDate)) {
+
+                                    if((($inPerm == true || $hisPermEnd == true)&& $isPermDate == true)){
+                                        /*
+                                         * We need some other variables to avoid conflicts with userStats variables
+                                         */
+                                        $nbrePermission++;
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeDebutPause = strtotime($empWH[$theDay][0]["pauseBeginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+                                        $timeFinPause = strtotime($empWH[$theDay][0]["pauseEndHour"]);
+                                        if($type == "1" || $type == 1){
+                                            $timePP = ($timeDebutPause-$timeDebut)+($timeFin-$timeFinPause);
+                                        }else if($type == "4" || $type == 4){
+                                            $timePP = ($timeFin - $timeDebut);
+                                        }else if($type == "2" || $type == 2){
+                                            $timePP = (float)$empWH[$theDay][0]["quota"];
+                                        }
+                                        $tempPP = $timePP/60/60; // Hour
+                                        $tempsTPP += $tempPP;
+                                        $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Permission","tempsPerdu"=>$tempPP);
+//                                $tabRetardsPausePermission[]= array("date"=>$nowDate,"heureRetard"=>null,"tempsTotal"=>$tempsTPerduRetardPausePermission,"type"=>"Retard pause","tempsPerdu"=>$tempPerduRetardPausePermission);
+                                    }
+                                    else {
+
+                                        $ct = date('H:i',$retardPauseDiff[1]);
+                                        if($type == 1 || $type == "1"){
+                                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                            $dailyTime = $timeFin - $timeDebut;
+                                            $dailyTime /= 3600;
+                                            $retards++;
+                                            $sommeRetards +=$retardPauseDiff[0];
+                                            $tempsPerdusRetardsPause = ($retardPauseDiff[0]/(60))/60;
+                                            $tempsPerdusRetards+= ($retardPauseDiff[0]/(60))/60;
+                                            if($taux > 0){
+                                                if( $nbreJrTravail> 0){
+                                                    $sommePerduRetard += ($salaire/$nbreJrTravail/$dailyTime)*round($tempsPerdusRetardsPause,2);
+                                                }
+
+                                            }else{
+                                                $sommePerduRetard = 0;
+                                            }
+                                            $tabRetardsPause[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$tempsPerdusRetardsPause,"temps_min"=>$tempsPerdusRetardsPause*60);
+                                        }elseif (($type == 2 || $type == "2")){
+                                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                            $dailyTime = $timeFin - $timeDebut;
+                                            $dailyTime /= 3600;
+
+                                            $retards++;
+                                            $sommeRetards +=$retardPauseDiff[0];
+                                            $tempsPerdusRetardsPause = ($retardPauseDiff[0]/(60))/60;
+                                            $tempsPerdusRetards+= ($retardPauseDiff[0]/(60))/60;
+                                            $ct = date('H:i',$retardPauseDiff[1]);
+                                            if($taux > 0){
+                                                if( $nbreJrTravail> 0){
+                                                    $sommePerduRetard += ($salaire/$nbreJrTravail/$dailyTime)*round($tempsPerdusRetardsPause,2);
+                                                }
+
+                                            }else{
+                                                $sommePerduRetard = 0;
+                                            }
+                                            $tabRetardsPause[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$tempsPerdusRetardsPause,"temps_min"=>$tempsPerdusRetardsPause*60);
+                                        }elseif(($type == 4 || $type == "4")) {
+                                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                            $dailyTime = $timeFin - $timeDebut;
+                                            $dailyTime /= 3600;
+
+                                            $retards++;
+                                            $sommeRetards +=$retardPauseDiff[0];
+                                            $tempsPerdusRetardsPause = ($retardPauseDiff[0]/(60))/60;
+                                            $tempsPerdusRetards+= ($retardPauseDiff[0]/(60))/60;
+                                            $ct = date('H:i',$retardPauseDiff[1]);
+                                            if($taux > 0){
+                                                if( $nbreJrTravail> 0){
+                                                    $sommePerduRetard += ($salaire/$nbreJrTravail/$dailyTime)*round($tempsPerdusRetardsPause,2);
+                                                }
+
+                                                $controlTaux[] = "taux: ".$taux." passé ".$cpt ." somme perdu retard ".$sommePerduRetard ;
+                                            }else{
+                                                $sommePerduRetard = 0;
+                                            }
+                                            $tabRetardsPause[]= array("date"=>$nowDate,"heureRetard"=>$ct,"temps"=>$tempsPerdusRetardsPause,"temps_min"=>$tempsPerdusRetardsPause*60);
+                                        }
+                                    }
+                                }
+                            } else {
+                                /* Must check if the clockinTime isn't null this date (0 in the history)
+                                *  Because if it is null that day we should not count it as a bonus
+                                */
+
+                                if($type == 1 || $type == "1"){
+                                    if( (($retardPauseDiff[1] != null) && !empty($retardPauseDiff[1])) && ($_dep != 0 && $_dep != null) ){
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                        $dailyTime = $timeFin - $timeDebut;
+                                        $dailyTime /= 3600;
+
+                                        $bonus_retards++;
+                                        $bonusSommeRetards +=$retardPauseDiff[0];
+                                        $bonusTempsGagneRetards += (float)($retardPauseDiff[0]/(60))/60;
+                                        $bonus_gain_temps = (float)($retardPauseDiff[0]/(60))/60;
+                                        $ct = date('H:i',$retardPauseDiff[1]);
+                                        if($taux > 0){
+                                            if( $nbreJrTravail> 0){
+                                                $bonusSommeGagneRetard += ($salaire/$nbreJrTravail/$dailyTime)*round($bonus_gain_temps,2);
+                                            }
+
+                                        }else{
+                                            $bonusSommeGagneRetard = 0;
+                                        }
+
+                                        /*print_r("retard diff : ".$departDiff[0]."\n");
+                                        print_r("somme totale : ".$bonusSommeRetards."\n");
+                                        print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
+                                    }
+                                }
+                            }
+                            // departs prematurés à la fin de la journée
+
+                            $departDiff = $cr->departPremature($employe,$nowTime,$interval,$heureNormaleDepart);
+                            if($departDiff == false){
+                                if($cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
+
+                                    //print_r("\n Passage 3 FALSE condition departPremature diff\n");
+
+                                    $ct = date('H:i',$retardDiff[1]);
+                                    if($type == 1 || $type == "1"){
+                                        if( ($_fpa == 0 || $_fpa == null) || ($_dep == 0 || $_dep == null) || (($_fpa == 0 || $_fpa == null) && ($_dep == 0 || $_dep == null)) ){
+                                            if($controlNowTime2 != $nowTime){
+                                                $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                                $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                                $dailyTime = $timeFin - $timeDebut;
+                                                $dailyTime /= 3600;
+                                                $inc_auth++;
+                                                $lost_time_jour= ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureFinNormalPause)))/60;
+                                                $lost_time += $lost_time_jour;
+                                                if($taux > 0){
+                                                    if( $nbreJrTravail> 0){
+                                                        $sommePerduAuth += ($salaire/$nbreJrTravail/$dailyTime)*round($lost_time_jour,2);
+                                                    }
+
+                                                }else{
+                                                    $sommePerduAuth = 0;
+                                                }
+                                            }
+                                        }
+                                    }elseif (($type == 2 || $type == "2")) {
+                                        if( ($_arr == 0 || $_arr == null) || ($_dep == 0 || $_dep == null) || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
+
+                                            if($controlNowTimeForOtheType != $nowTime){
+                                                $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                                $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                                $dailyTime = $timeFin - $timeDebut;
+                                                $dailyTime /= 3600;
+
+                                                $inc_auth++;
+                                                $lost_time_jour = ((int)($his["quota"]))/60;
+                                                //$lost_time_jour += ((int)($his["quota"]))/60;
+                                                $lost_time += $lost_time_jour;
+                                                if($taux > 0){
+                                                    if( $nbreJrTravail> 0){
+                                                        $sommePerduAuth += ($salaire/$nbreJrTravail/$dailyTime)*round($lost_time_jour,2);
+                                                    }
+
+                                                }else{
+                                                    $sommePerduAuth = 0;
+                                                }
+                                            }
+                                        }
+                                    }elseif(($type == 4 || $type == "4")){
+                                        if( ($_arr == 0 || $_arr == null) || ($_dep == 0 || $_dep == null) || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
+
+                                            if($controlNowTimeForOtheType != $nowTime){
+                                                $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                                $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                                $dailyTime = $timeFin - $timeDebut;
+                                                $dailyTime /= 3600;
+                                                $inc_auth++;
+                                                $lost_time_jour = ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
+                                                //$lost_time_jour += ((int)($this->convertHourInMinutes($heureFinNormal)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
+                                                $lost_time += $lost_time_jour;
+                                                if($taux > 0){
+                                                    if( $nbreJrTravail> 0){
+                                                        $sommePerduAuth += ($salaire/$nbreJrTravail/$dailyTime)*round($lost_time_jour,2);
+                                                    }
+
+                                                    $controlTaux[] = "taux: ".$taux." passé ".$cpt ." somme perdu Auth ".$sommePerduAuth ;
+                                                }else{
+                                                    $sommePerduAuth = 0;
+                                                }
+                                            }
+
+                                        }
+                                    }
+                                }
+                            }
+                            elseif($departDiff[0] > 0){
+
+                                //print_r("\n Passage 3 TRUE condition departPremature diff\n");
+
+                                //il est parti prematurement à la fin de la journée
+
+                                $nowDate = date('d/m/Y',$nowTime);
+                                $permDate = date('Y-m-d',$nowTime);
+                                $lPermCours = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")-> findPermEnCours() ;
+                                $lPermEnd = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findEndPerms();
+                                $isPermDate = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->checkInPerm($emp,date('Y-m-d',$nowTime));
+
+                                $inPerm = false;
+                                $hisPermEnd = false;
+                                foreach($lPermCours as $p){
+                                    if($p->employee->id == $emp){
+                                        $inPerm = true;
+                                    }
+                                }
+                                foreach($lPermEnd as $p){
+                                    if($p->employee->id == $emp){
+                                        $hisPermEnd = true;
+                                    }
+                                }
+                                if(!$nD->dayIsNull($permDate)) {
+
+                                    if((($inPerm == true || $hisPermEnd == true)&& $isPermDate == true)){
+                                        /*
+                                         * We need some other variables to avoid conflicts with userStats variables
+                                         */
+                                        $nbrePermission++;
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeDebutPause = strtotime($empWH[$theDay][0]["pauseBeginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+                                        $timeFinPause = strtotime($empWH[$theDay][0]["pauseEndHour"]);
+                                        if($type == "1" || $type == 1){
+                                            $timePP = ($timeDebutPause-$timeDebut)+($timeFin-$timeFinPause);
+                                        }else if($type == "4" || $type == 4){
+                                            $timePP = ($timeFin - $timeDebut);
+                                        }else if($type == "2" || $type == 2){
+                                            $timePP = (float)$empWH[$theDay][0]["quota"];
+                                        }
+                                        $tempPP = $timePP/60/60; // Hour
+                                        $tempsTPP += $tempPP;
+                                        $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Permission","tempsPerdu"=>$tempPP);
+//                                $tabDepartsPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPerduDepartPermission,"type"=>"Départ prématuré","tempsPerdu"=>$tempPerduDepartPermission);
+                                    }
+                                    else{
+
+                                        $ct = date('H:i',$departDiff[1]);
+                                        if($controlNowTime2 != $nowTime){
+                                            if($type == 1 || $type == "1"){
+                                                $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                                $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                                $dailyTime = $timeFin - $timeDebut;
+                                                $dailyTime /= 3600;
+
+                                                $departs++;
+                                                $sommeDeparts +=$departDiff[0];
+                                                $tempsPerdusDepartsFin = ($departDiff[0])/(60);
+                                                $tempsPerdusDepartsFin /=60;
+
+                                                $tempsPerdusDeparts+=$tempsPerdusDepartsFin;
+                                                if($taux > 0){
+                                                    if( $nbreJrTravail> 0){
+                                                        $sommePerduDepart += ($salaire/$nbreJrTravail/$dailyTime)*round($tempsPerdusDepartsFin,2);
+                                                    }
+
+                                                    $controlTaux[] = "taux: ".$taux." passé ".$cpt." somme  dep fin ".$sommePerduDepart." tpsPerDep ".$tempsPerdusDepartsFin  ;
+                                                }else{
+                                                    $sommePerduDepart = 0;
+                                                }
+                                                $tabDeparts[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsFin,"temps_min"=>$tempsPerdusDepartsFin*60);
+                                            }elseif (($type == 2 || $type == "2")){
+                                                $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                                $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                                $dailyTime = $timeFin - $timeDebut;
+                                                $dailyTime /= 3600;
+
+                                                $departs++;
+                                                $sommeDeparts +=$departDiff[0];
+                                                $tempsPerdusDepartsFin = ($departDiff[0])/(60);
+                                                $tempsPerdusDepartsFin /=60;
+
+                                                $tempsPerdusDeparts+=$tempsPerdusDepartsFin;
+                                                $ct = date('H:i',$departDiff[1]);
+                                                if($taux > 0){
+                                                    if( $nbreJrTravail> 0){
+                                                        $sommePerduDepart += ($salaire/$nbreJrTravail/$dailyTime)*round($tempsPerdusDepartsFin,2);
+                                                    }
+
+                                                }else{
+                                                    $sommePerduDepart = 0;
+                                                }
+                                                $tabDeparts[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsFin,"temps_min"=>$tempsPerdusDepartsFin*60);
+                                            }elseif(($type == 4 || $type == "4")) {
+                                                $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                                $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                                $dailyTime = $timeFin - $timeDebut;
+                                                $dailyTime /= 3600;
+
+                                                $departs++;
+                                                $sommeDeparts +=$departDiff[0];
+                                                $tempsPerdusDepartsFin = ($departDiff[0])/(60);
+                                                $tempsPerdusDepartsFin /=60;
+
+                                                $tempsPerdusDeparts+=$tempsPerdusDepartsFin;
+                                                $ct = date('H:i',$departDiff[1]);
+                                                if($taux > 0){
+                                                    if( $nbreJrTravail> 0){
+                                                        $sommePerduDepart += ($salaire/$nbreJrTravail/$dailyTime)*round($tempsPerdusDepartsFin,2);
+                                                    }
+
+                                                    $controlTaux[] = "taux: ".$taux." passé ".$cpt ." somme perdu depart ".$sommePerduDepart ;
+                                                }else{
+                                                    $sommePerduDepart = 0;
+                                                }
+                                                $tabDeparts[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsFin,"temps_min"=>$tempsPerdusDepartsFin*60);
+                                            }
+                                        }
+                                    }
+                                }
+                                // Now we deal with the permissions calculations
+
+                            } else {
+                                /* Must check if the clockinTime isn't null this date (0 in the history)
+                                *  Because if it is null that day we should not count it as a bonus
+                                */
+                                if($type == 1 || $type == "1"){
+                                    if( (($departDiff[1] != null) && !empty($departDiff[1])) && ($_fpa != 0 && $_fpa != null) ){
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                        $dailyTime = $timeFin - $timeDebut;
+                                        $dailyTime /= 3600;
+
+                                        $bonus_retards++;
+                                        $bonusSommeRetards +=$departDiff[0];
+                                        $bonusTempsGagneRetards += (float)($departDiff[0]/(60))/60;
+                                        $bonus_gain_temps = (float)($departDiff[0]/(60))/60;
+                                        $ct = date('H:i',$departDiff[1]);
+                                        if($taux > 0){
+                                            if( $nbreJrTravail> 0){
+                                                $bonusSommeGagneRetard += ($salaire/$nbreJrTravail/$dailyTime)*round($bonus_gain_temps,2);
+                                            }
+
+                                        }else{
+                                            $bonusSommeGagneRetard = 0;
+                                        }
+
+                                        /*print_r("retard diff : ".$departDiff[0]."\n");
+                                        print_r("somme totale : ".$bonusSommeRetards."\n");
+                                        print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
+                                    }
+                                }elseif( ($type == 2 || $type == "2") || ($type == 4 || $type == "4") ){
+                                    if( (($departDiff[1] != null) && !empty($departDiff[1])) && ($_arr != 0 && $_arr != null) ){
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                        $dailyTime = $timeFin - $timeDebut;
+                                        $dailyTime /= 3600;
+
+                                        $bonus_retards++;
+                                        $bonusSommeRetards +=$departDiff[0];
+                                        $bonusTempsGagneRetards += (float)($departDiff[0]/(60))/60;
+                                        $bonus_gain_temps = (float)($departDiff[0]/(60))/60;
+                                        $ct = date('H:i',$departDiff[1]);
+                                        if($taux > 0){
+                                            if( $nbreJrTravail> 0){
+                                                $bonusSommeGagneRetard += ($salaire/$nbreJrTravail/$dailyTime)*round($bonus_gain_temps,2);
+                                            }
+
+                                            $controlTaux[] = "taux: ".$taux." passé ".$cpt ." somme bonus retard ".$bonusSommeGagneRetard ;
+                                        }else{
+                                            $bonusSommeGagneRetard = 0;
+                                        }
+
+                                        /*print_r("retard diff : ".$departDiff[0]."\n");
+                                        print_r("somme totale : ".$bonusSommeRetards."\n");
+                                        print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
+                                    }
+                                }
+                            }
+                            //depart pause prematuree
+
+                            $departPauseDiff = $cr->departPausePremature($employe,$nowTime,$interval_pause,$heureNormaleDepartPause);
+                            if($departPauseDiff == false){
+                                if($cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
+
+                                    $ct = date('H:i',$departPauseDiff[1]);
+                                    if($type == 1 || $type == "1"){
+                                        if( ($_arr == 0 || $_arr == null) || ($_pau == 0 || $_pau == null) || (($_arr == 0 || $_arr == null) && ($_pau == 0 || $_pau == null)) ){
+                                            // Last verification
+                                            if($controlNowTime != $nowTime){
+                                                $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                                $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                                $dailyTime = $timeFin - $timeDebut;
+                                                $dailyTime /= 3600;
+
+                                                $inc_auth++;
+                                                $lost_time_jour = ((int)($this->convertHourInMinutes($heureDebutNormalPause)) - (int)($this->convertHourInMinutes($heureDebutNormal)))/60;
+                                                $lost_time += $lost_time_jour;
+                                                if($taux > 0){
+                                                    if( $nbreJrTravail> 0){
+                                                        $sommePerduAuth += ($salaire/$nbreJrTravail/$dailyTime)*round($lost_time_jour,2);
+                                                    }
+
+                                                    $controlTaux[] = "taux: ".$taux." passé ".$cpt ." somme perdu  auth ".$sommePerduAuth ;
+                                                }else{
+                                                    $sommePerduAuth = 0;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                }
+
+                            } elseif($departPauseDiff[0] > 0){
+                                //print_r("\n Passage 4 one condition departPause diff\n");
+                                $nowDate = date('d/m/Y',$nowTime);
+                                $lPermCours = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")-> findPermEnCours() ;
+                                $lPermEnd = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findEndPerms();
+                                $isPermDate = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->checkInPerm($emp,date('Y-m-d',$nowTime));
+                                $pipipi[]=$isPermDate;
+                                $inPerm = false;
+                                $hisPermEnd = false;
+                                foreach($lPermCours as $p){
+                                    if($p->employee->id == $emp){
+                                        $inPerm = true;
+                                    }
+                                }
+                                foreach($lPermEnd as $p){
+                                    if($p->employee->id == $emp){
+                                        $hisPermEnd = true;
+                                    }
+                                }
+                                $tabPermissionTrouvee[]=$inPerm;
+                                if(!$nD->dayIsNull($permDate)) {
+                                    if((($inPerm == true || $hisPermEnd == true)&& $isPermDate == true)){
+                                        /*
+                                         * We need some other variables to avoid conflicts with userStats variables
+                                         */
+                                        $nbrePermission++;
+                                        $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                        $timeDebutPause = strtotime($empWH[$theDay][0]["pauseBeginHour"]);
+                                        $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+                                        $timeFinPause = strtotime($empWH[$theDay][0]["pauseEndHour"]);
+                                        if($type == "1" || $type == 1){
+                                            $timePP = ($timeDebutPause-$timeDebut)+($timeFin-$timeFinPause);
+                                        }else if($type == "4" || $type == 4){
+                                            $timePP = ($timeFin - $timeDebut);
+                                        }else if($type == "2" || $type == 2){
+                                            $timePP = (float)$empWH[$theDay][0]["quota"];
+                                        }
+                                        $tempPP = $timePP/60/60; // Hour
+                                        $tempsTPP += $tempPP;
+                                        $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Permission","tempsPerdu"=>$tempPP);
+//                                $tabDepartsPausePermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPerduDepartPausePermission,"type"=>"Depart pause prématuré","tempsPerdu"=>$tempPerduDepartPausePermission);
+                                    }
+                                    else {
+                                        $ct = date('H:i',$departPauseDiff[1]);
+                                        if($controlNowTime != $nowTime){
+                                            if($type == 1 || $type == "1"){
+                                                $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                                $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                                $dailyTime = $timeFin - $timeDebut;
+                                                $dailyTime /= 3600;
+
+                                                $i++;
+                                                $departsPause++;
+                                                // Pour prendre en compte les departs de 12 h aussi
+                                                $departs++;
+                                                $sommeDepartsPause +=$departPauseDiff[0];
+                                                $tempsPerdusDepartsPause = ($departPauseDiff[0])/(60);
+                                                $tempsPerdusDepartsPause /= 60;
+                                                // Pour prendre en compte les departs de 12h aussi
+                                                $tempsPerdusDeparts +=$tempsPerdusDepartsPause;
+                                                if($taux > 0){
+                                                    if( $nbreJrTravail> 0){
+                                                        $sommePerduDepart += ($salaire/$nbreJrTravail/$dailyTime)*round($tempsPerdusDepartsPause,2);
+                                                    }
+
+                                                    $controlTaux[] = "taux: ".$taux." passé ".$cpt ." somme perdu depart ".$sommePerduDepart ;
+                                                }else{
+                                                    $sommePerduDepart = 0;
+                                                }
+                                                $tabDepartsPause[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsPause,"temps_min"=>$tempsPerdusDepartsPause*60);
+                                            }elseif (($type == 2 || $type == "2")){
+                                                $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                                $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                                $dailyTime = $timeFin - $timeDebut;
+                                                $dailyTime /= 3600;
+
+                                                $i++;
+                                                $departsPause++;
+                                                // Pour prendre en compte les departs de 12 h aussi
+                                                $departs++;
+                                                $sommeDepartsPause +=$departPauseDiff[0];
+                                                $tempsPerdusDepartsPause = ($departPauseDiff[0])/(60);
+                                                $tempsPerdusDepartsPause /= 60;
+                                                // Pour prendre en compte les departs de 12h aussi
+                                                $tempsPerdusDeparts +=$tempsPerdusDepartsPause;
+                                                $ct = date('H:i',$departPauseDiff[1]);
+                                                if($taux > 0){
+                                                    if( $nbreJrTravail> 0){
+                                                        $sommePerduDepart += ($salaire/$nbreJrTravail/$dailyTime)*round($tempsPerdusDepartsPause,2);
+                                                    }
+
+                                                }else{
+                                                    $sommePerduDepart = 0;
+                                                }
+                                                $tabDepartsPause[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsPause,"temps_min"=>$tempsPerdusDepartsPause*60);
+                                            }elseif(($type == 4 || $type == "4")) {
+                                                $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                                $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                                $dailyTime = $timeFin - $timeDebut;
+                                                $dailyTime /= 3600;
+
+                                                $i++;
+                                                $departsPause++;
+                                                // Pour prendre en compte les departs de 12 h aussi
+                                                $departs++;
+                                                $sommeDepartsPause +=$departPauseDiff[0];
+                                                $tempsPerdusDepartsPause = ($departPauseDiff[0])/(60);
+                                                $tempsPerdusDepartsPause /= 60;
+                                                // Pour prendre en compte les departs de 12h aussi
+                                                $tempsPerdusDeparts +=$tempsPerdusDepartsPause;
+                                                $ct = date('H:i',$departPauseDiff[1]);
+                                                if($taux > 0){
+                                                    if( $nbreJrTravail> 0){
+                                                        $sommePerduDepart += ($salaire/$nbreJrTravail/$dailyTime)*round($tempsPerdusDepartsPause,2);
+                                                    }
+
+                                                    $controlTaux[] = "taux: ".$taux." passé ".$cpt ." somme perdu depart ".$sommePerduDepart ;
+                                                }else{
+                                                    $sommePerduDepart = 0;
+                                                }
+                                                $tabDepartsPause[]= array("date"=>$nowDate,"heureDepart"=>$ct,"temps"=>$tempsPerdusDepartsPause,"temps_min"=>$tempsPerdusDepartsPause*60);
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    /* Must check if the clockinTime isn't null this date (0 in the history)
+                                    *  Because if it is null that day we should not count it as a bonus
+                                    */
+                                    if($type == 1 || $type == "1"){
+                                        if( (($departPauseDiff[1] != null) && !empty($departPauseDiff[1])) && ($_arr != 0 && $_arr != null) ){
+                                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                                            $dailyTime = $timeFin - $timeDebut;
+                                            $dailyTime /= 3600;
+
+                                            $bonus_retards++;
+                                            $bonusSommeRetards +=$departPauseDiff[0];
+                                            $bonusTempsGagneRetards += (float)($departPauseDiff[0]/(60))/60;
+                                            $bonus_gain_temps = (float)($departPauseDiff[0]/(60))/60;
+                                            $ct = date('H:i',$departPauseDiff[1]);
+                                            if($taux > 0){
+                                                if( $nbreJrTravail> 0){
+                                                    $bonusSommeGagneRetard += ($salaire/$nbreJrTravail/$dailyTime)*round($bonus_gain_temps,2);
+                                                }
+
+                                            }else{
+                                                $bonusSommeGagneRetard = 0;
+                                            }
+
+                                            /*print_r("retard diff : ".$departDiff[0]."\n");
+                                            print_r("somme totale : ".$bonusSommeRetards."\n");
+                                            print_r("somme totale en heure : ".$bonusTempsGagneRetards."\n\n");*/
+                                        }
+                                    }
+
+                                    // SI le type est exclusivement 2,On calcul les quotas horraires
+                                    if($type == "2"){
+                                        // Après tous on recupère ses quotas en appelant la fonction historique
+
+                                        $history = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('d-m-Y',$nowTime),$employe->getId(),$request);
+                                        if(($history != null) && ($history != "")){
+                                            $history = json_decode($history->getContent(),true);
+                                            $quota_total += $history["quota"];
+                                            $quota_fait += $history["quota_fait"];
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+
+                }
+
+
+            }else if($type == "3"){
+
+                $j++;
+                // Si son workingHour est de type 3
+                $his = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('d-m-Y',$nowTime),$employe->getId(),$request);
+                $his = json_decode($his->getContent(),true);
+                if(!$cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)) {
+                    $permDate = date('Y-m-d', $nowTime);
+//                    if(!$pR->enPermission($employe,$permDate)) {
+                    $lPermCours = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findPermEnCours();
+                    $lPermEnd = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->findEndPerms();
+                    $isPermDate = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->checkInPerm($emp,date('Y-m-d',$nowTime));
+
+                    $inPerm = false;
+                    $hisPermEnd = false;
+                    foreach ($lPermCours as $p) {
+                        if ($p->employee->id == $emp) {
+                            $inPerm = true;
+                        }
+                    }
+                    foreach ($lPermEnd as $p) {
+                        if ($p->employee->id == $emp) {
+                            $hisPermEnd = true;
+                        }
+                    }
+                    $tabPermissionTrouvee[] = $inPerm;
+                    $tabPermissionTrouvee[] = $hisPermEnd;
+                    $resReq[] = $lPermCours;
+
+                    if (!$nD->dayIsNull($permDate)) {
+
+                        if ((($inPerm == true || $hisPermEnd == true)&& $isPermDate == true)) {
+//                            $p = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->enPermission($employe->getId(),date('Y-m-d',$nowTime));
+//                            if($p){
+                            /*
+                             * We need some other variables to avoid conflicts with userStats variables
+                             */
+                            $nowDate = date('d/m/Y', $nowTime);
+                            $timePP = ($timeFin - $timeDebut);
+                            $tempPP = $timePP / 60;
+                            $tempsTPP += $tempPP;
+                            $tabAbsencesPermission[] = array("date" => $nowDate, "heureDepart" => null, "tempsTotal" => $tempsTPP, "type" => "Permission", "tempsPerdu" => $tempPP);
+                        }
+                        else {
+
+                            $nowDate = date('d/m/Y', $nowTime);
+                            $absences++;
+                            $ici2++;
+                            if( $nbreJrTravail> 0){
+                                $sommePerduAbsence += ($salaire/$nbreJrTravail) / round($jour_travail,2);
+                            }
+
+                            //$sommePerduAbsence2 += (($salaire * 12) / 52) / $jour_travail;
+                            /*$timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+                            $timePerdusAbsences = ($timeFin - $timeDebut);
+                            $tempPerdu = $timePerdusAbsences/60;
+                            //$tempsPerdusAbsences = $tempPerdu;*/
+                            //$sommeAbsences +=$tempsPerdusAbsences;
+                            $tabAbsencesPermission[] = array("date" => $nowDate, "heureDepart" => null, "tempsTotal" => $tempsTPP, "type" => "Absence", "tempsPerdu" => $tempPP);
+
+                        }
+                    }
+                }
+            }else if($type == null || $type == "null"){
+                $his = $this->findHistoriqueAction($employe->getDepartement()->getId(),date('d-m-Y',$nowTime),$employe->getId(),$request);
+                $his = json_decode($his->getContent(),true);
+            }
+
+            $historiques[] = $his;
+
+            $donneesPermission = array("retardStats"=>$tabRetardsPermission,"retardPauseStats"=>$tabRetardsPausePermission,"pauseStats"=>$tabDepartsPausePermission,"finStats"=> $tabDepartsPermission,"absenceStats"=>$tabAbsencesPermission);
+//            $donnees = array("request"=> json_decode($request->getContent(),true), "req_content"=> $request->getContent() , "empId"=>$empId,"fromDate"=>$dateFrom,"toDate"=>$dateTo,"nbrePerm"=>$nbrePermission,"message"=>$mes);
+            // $ab = sizeof($tabAbsencesPermission);
+            //$tpa =.length;
+
+            $donnees = array( "absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpa"=>$sommeAbsences,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,
+                "retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType,"permissionData"=>$donneesPermission,"lost_time"=>$lost_time,"inc_auth"=>$inc_auth,
+                "historique"=>$historiques,"sommePerduQuota"=>$sommePerduQuota,"quota_1_4"=>$quota_emp_1_4,"spd"=>$sommePerduDepart,"spr"=>$sommePerduRetard,"spa"=>$sommePerduAbsence,"nbreJourTravail"=>$j,"spAuth"=>$sommePerduAuth,"nbreBonus"=>$bonus_retards,
+                "sommeBonus"=>$bonusSommeRetards,"tempsBonus"=>$bonusTempsGagneRetards,"sommeArgentBonus"=>$bonusSommeGagneRetard,"nbrePermission"=>$nbrePermission,"jourFeries"=>$jourFeries,"message"=>$mes,"salMin"=>$salaire_en_minuite,  "taux"=>$taux
+            , "nowDte"=>date('Y-m-d',$nowTime), "pipipi"=>$pipipi, "controlTaux"=>$controlTaux,"days"=>$nbreJrTravail,"tabJT"=>$tabNbJrT
+            );
+
+            $nowTime = $nowTime+86400;
+        }
+
+
+        //return new Response($history);
+        if($donnees != null){
+            return new JsonResponse($donnees);
+        }else{
+            return new Response("Erreur");
+        }
+    }
 
     /*
      * Section des statistiques departementales
@@ -1305,4 +3197,7 @@ class StatsController extends ClockinReccordController
         }
         return new JsonResponse($tabStats);
     }
+
+
 }
+

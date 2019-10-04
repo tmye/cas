@@ -401,16 +401,19 @@
                     alert("erreur");
                 }
             });
+            var url3 = "{{ path('generatePDFPermission',{'id':"perm_id"}) }}";
+            url3 = url3.replace("perm_id", 6);
 
-            {#$.ajax({#}
-            {#    url: "{{ path("findPermissionStatee") }}",#}
-            {#    method: "GET",#}
-            {#    success: function (data) {#}
-            {#        var elt = data;#}
-            {#        //const elt2 = json;#}
-            {#        console.log(elt);#}
-            {#    }#}
-            {#});#}
+            $.ajax({
+                url: url3,
+                {#url: "{{ path("userStatsTest") }}",#}
+                method: "GET",
+                 // data :{ "empId":  6, "fromeDate":  "2019-09-09", "toDate": "2019-09-25"},
+                success: function (data) {
+
+                    console.log("ok");
+                }
+            });
 
         });
     </script>

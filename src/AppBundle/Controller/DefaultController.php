@@ -21,6 +21,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -980,7 +981,8 @@ class DefaultController extends StatsController
             $empData = $this->returnOneEmployeeAction($request, $emp, $fromDate, $toDate);
             $empDataFormated = json_decode($empData->getContent(), true);
 
-            $donnees = $this->userStatsAction($request, $emp, $fromDate, $toDate);
+
+            $donnees = $this->userStatsActionPDF($request, $emp, $fromDate, $toDate);
             $donnees = json_decode($donnees->getContent(), true);
             $permission_lost_time = 0;
 
@@ -1008,8 +1010,14 @@ class DefaultController extends StatsController
             }
 
             // Permission datas
+            $nbAbsence = 0;
             foreach ($donnees["permissionData"]["absenceStats"] as $row) {
-                $permission_lost_time += $row["tempsPerdu"];
+                if(strcasecmp($row["type"],"Absence")==0  ){
+                    $permission_lost_time += $row["tempsPerdu"];
+                    $nbAbsence++;
+                }else{
+                    $permission_lost_time += $row["tempsPerdu"];
+                }
             }
             foreach ($donnees["permissionData"]["finStats"] as $row) {
                 $permission_lost_time += $row["tempsPerdu"];
@@ -1075,7 +1083,7 @@ class DefaultController extends StatsController
                         array(utf8_decode("Net à payer sans bonus"), round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]), 2)),
                     );
                     $data5 = array(
-                        array(utf8_decode("Net à payer avec bonus"), round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]) + ($donnees["sommeArgentBonus"] * (-1)), 2)),
+                        array(utf8_decode("Net à payer avec bonus"), round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]) + round($donnees["sommeArgentBonus"] * (-1),0), 2)),
                     );
                 }
             } else {
@@ -1085,7 +1093,7 @@ class DefaultController extends StatsController
                         array("Nombre", $donnees["absences"], $donnees["retards"], $donnees["departs"], $donnees["inc_auth"], $donnees["absences"] + $donnees["retards"] + $donnees["departs"] + $donnees["inc_auth"], sizeof($donnees["permissionData"]["absenceStats"]) + sizeof($donnees["permissionData"]["finStats"]) + sizeof($donnees["permissionData"]["pauseStats"]) + sizeof($donnees["permissionData"]["retardPauseStats"]) + sizeof($donnees["permissionData"]["retardStats"])),
                     );
                     $data2 = array(
-                        array("Temps", $donnees["tpa"], round($donnees["tpr"], 2), round($donnees["tpd"], 2), $donnees["lost_time"], round($donnees["tpa"] + $donnees["tpr"] + $donnees["tpd"] + $donnees["lost_time"], 2), $permission_lost_time),
+                        array("Temps", $donnees["tpa"], round($donnees["tpr"], 2), round($donnees["tpd"], 2), $donnees["lost_time"], round($donnees["tpa"] + $donnees["tpr"] + $donnees["tpd"] + $donnees["lost_time"], 2), round($permission_lost_time,2)),
                     );
                     $data3 = array(
                         array("Somme", round($donnees["spa"], 2), round($donnees["spr"], 2), round($donnees["spd"], 2), round($donnees["spAuth"], 2), round($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"], 2), $taux == 0 ? 0 : round((($employe->getSalary() * 12) / 52) / $taux * $permission_lost_time, 2)),
@@ -1097,10 +1105,10 @@ class DefaultController extends StatsController
 
                     $header = array('', 'Absences', 'Retards', 'Departs', 'Auth', 'Total', 'Permissions', 'Bonus');
                     $data = array(
-                        array("Nombre", $donnees["absences"], $donnees["retards"], $donnees["departs"], $donnees["inc_auth"], $donnees["absences"] + $donnees["retards"] + $donnees["departs"] + $donnees["inc_auth"], sizeof($donnees["permissionData"]["absenceStats"]) + sizeof($donnees["permissionData"]["finStats"]) + sizeof($donnees["permissionData"]["pauseStats"]) + sizeof($donnees["permissionData"]["retardPauseStats"]) + sizeof($donnees["permissionData"]["retardStats"]), $donnees["nbreBonus"]),
+                        array("Nombre", $donnees["absences"], $donnees["retards"], $donnees["departs"], $donnees["inc_auth"], $donnees["absences"] + $donnees["retards"] + $donnees["departs"] + $donnees["inc_auth"], sizeof($donnees["permissionData"]["absenceStats"]) + sizeof($donnees["permissionData"]["finStats"]) + sizeof($donnees["permissionData"]["pauseStats"]) + sizeof($donnees["permissionData"]["retardPauseStats"]) + sizeof($donnees["permissionData"]["retardStats"]) - $nbAbsence, $donnees["nbreBonus"]),
                     );
                     $data2 = array(
-                        array("Temps", $donnees["tpa"], round($donnees["tpr"], 2), round($donnees["tpd"], 2), $donnees["lost_time"], round($donnees["tpa"] + $donnees["tpr"] + $donnees["tpd"] + $donnees["lost_time"], 2), $permission_lost_time, round($donnees["tempsBonus"] * (-1), 2)),
+                        array("Temps", $donnees["tpa"], round($donnees["tpr"], 2), round($donnees["tpd"], 2), $donnees["lost_time"], round($donnees["tpa"] + $donnees["tpr"] + $donnees["tpd"] + $donnees["lost_time"], 2), round($permission_lost_time,2), round($donnees["tempsBonus"] * (-1), 2)),
                     );
                     $data3 = array(
                         array("Somme", round($donnees["spa"], 2), round($donnees["spr"], 2), round($donnees["spd"], 2), round($donnees["spAuth"], 2), round($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"], 2), $taux == 0 ? 0 : round((($employe->getSalary() * 12) / 52) / $taux * $permission_lost_time, 2), round($donnees["sommeArgentBonus"] * (-1), 0)),
@@ -1109,7 +1117,7 @@ class DefaultController extends StatsController
                         array(utf8_decode("Net à payer sans bonus"), round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]), 2)),
                     );
                     $data5 = array(
-                        array(utf8_decode("Net à payer avec bonus"), round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]) + ($donnees["sommeArgentBonus"] * (-1)), 2)),
+                        array(utf8_decode("Net à payer avec bonus"), round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]) + round($donnees["sommeArgentBonus"] * (-1),0), 2)),
                     );
                 }
             }
@@ -1134,8 +1142,8 @@ class DefaultController extends StatsController
             $pdf->Ln('5');
         }
         $pdf->Output();
-
-        //return new Response("OK");
+        //}
+//        return new JsonResponse(array("donnee"=>$donnees));
     }
 
     /**
@@ -1291,6 +1299,7 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
         $this->returnVerticalCells(80);
         $t = $request->request->get('type');
         $empId = $request->request->get('destination');
+
         $dateType = $request->request->get('dateType');
 
         if ($dateType != "0" && $dateType != null) {
@@ -1343,7 +1352,7 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
             $empData = $this->returnOneEmployeeAction($request, $emp, $fromDate, $toDate);
             $empDataFormated = json_decode($empData->getContent(), true);
 
-            $donnees = $this->userStatsAction($request, $emp, $fromDate, $toDate);
+            $donnees = $this->userStatsActionPDF($request, $emp, $fromDate, $toDate);
             $donnees = json_decode($donnees->getContent(), true);
             $permission_lost_time = 0;
             // Permission datas
@@ -1462,7 +1471,7 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
 
         $writer = new Xlsx($spreadsheet);
         $now_date = date('d') . "-" . date('m') . '-' . date('Y') . '_' . date('H') . ':' . date('i') . ':' . date('s');
-        $writer->save('cache/' . $this->getUser()->getUsername() . '_rapport_' . $now_date . '.xlsx');
+        $writer->save('/output_files/' . $this->getUser()->getUsername() . '_rapport_' . $now_date . '.xls');
 
         //sleep(10);
 
