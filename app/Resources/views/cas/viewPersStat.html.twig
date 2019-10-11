@@ -174,7 +174,7 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div id="tblePerm" class="row">
                     <h5 class="table-title">Permissions</h5>
                     <table class="center">
                         <thead>
@@ -623,7 +623,7 @@
                         $.ajax({
                             type: "POST",
                             url: "userStats",
-                            data: {"empId":employeeId,"fromeDate":fromDate,"toDate":toDate},
+                            data: {"empId":employeeId,"fromeDate":fromDate,"toDate":toDate,"selectedOption":$('select[name=statType]').val()},
                             success: function (data) {
                                 // We need to empty some fields
                                 $("#tempsPerduQuotaSpan").text("-");
@@ -646,7 +646,7 @@
                                     ss += 0;
                                 }
                                 $("#containerMustBeHidden").attr("style","display:block");
-                                $("#totalSalarySpan").text(precisionRound(ss,2));
+                                $("#totalSalarySpan").text(precisionRound(data["salTotal"],2));
 
                                 $("#jourTravailleSpan").text(data.nbreJourTravail - data.jourFeries);
                                 $("#nbrePermissionSpan").text(data.nbrePermission);
@@ -794,12 +794,10 @@
                                     durationEnd = durationEnd ||(dateFromConvertEnd <= fFromDate && fFromDate <= fToDate && fToDate   <= dateToConvertEnd);
                                      // console.log("durationEnd "+durationEnd);
 
-
-
-
                                     i++;
                                     if((data.historique[arrayID]["arrive"] != "" && data.historique[arrayID]["arrive"] != null) || (data.historique[arrayID]["depart"] != "" && data.historique[arrayID]["depart"] != null) || (data.historique[arrayID]["pause"] != "" && data.historique[arrayID]["pause"] != null) || (data.historique[arrayID]["finPause"] != "" && data.historique[arrayID]["finPause"] != null)){
                                         switch (data.historique[arrayID]["type"]){
+
                                             case "1":
                                                 if((inPerm == true || hisPermEnd == true) && (durationCrs == true || durationEnd == true) ){
 
@@ -850,6 +848,7 @@
                                                 $(".redSpanEnd_1_"+i).css("color","red");
                                             }
                                                 break;
+
                                             case "2":
 
                                                 if((inPerm == true || hisPermEnd == true) && (durationCrs == true || durationEnd == true) ){
@@ -900,6 +899,7 @@
                                                 $(".redSpanEnd_2_"+i).css("color","red");
                                             }
                                                 break;
+
                                             case "3":
                                                 $("#rowsContainer").append("" +
                                                     "<tr>" +
@@ -907,14 +907,18 @@
                                                     "</tr>"
                                                 );
                                                 break;
-                                            case "4":
-                                                var curDate = new Date(data.historique[arrayID]["date"]);
-                                                // var curDateConvert = new Date((curDate.getMonth() + 1) + "/" + curDate.getDate() + "/" + curDate.getFullYear() );
 
-                                                if((inPerm == true || hisPermEnd == true) && (durationCrs == true || durationEnd == true) ){
+                                            case "4":
+                                                // var curDate = new Date(data.historique[arrayID]["date"]);
+                                                // var curDateConvert = new Date((curDate.getMonth() + 1) + "/" + curDate.getDate() + "/" + curDate.getFullYear() );
+                                                //  console.log("curDate "+ data.historique[arrayID]["date"].split("-").reverse().join("/"));
+                                                var frDate = data.historique[arrayID]["date"].split("-").reverse().join("/");
+                                                var dt = new Date(frDate);
+                                               // console.log("condition: "+(inPerm == true || hisPermEnd == true) && (durationCrs == true || durationEnd == true) && (fFromDate <= dt && dt <= fToDate));
+                                                // var isPermDate = false;
+                                                if((inPerm == true || hisPermEnd == true) && (durationCrs == true || durationEnd == true) && (fFromDate <= dt && dt <= fToDate) ){
                                                     nbPerm++;
-                                                    var frDate = data.historique[arrayID]["date"].split("-").reverse().join("/");
-                                                    var dt = new Date(frDate);
+
                                                     if( (dt >= dateFromConvertEnd && dt <= dateToConvertEnd) ||  (dt >= dateFromConvertCrs && dt <= dateToConvertCrs) ){
                                                         $("#rowsContainer").append("" +
                                                             "<tr colspan='6' class='green lighten-2'>" +
@@ -927,37 +931,40 @@
                                                         );
                                                     }
                                                     else {
-                                                        if((data.historique[arrayID]["type"] == "null" || data.historique[arrayID]["type"] == null)){
-                                                            $("#rowsContainer").append("" +
-                                                                "<tr>" +
-                                                                "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
-                                                                "<td colspan='4' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence</span></td>" +
-                                                                "</tr>"
-                                                            );
-                                                        }
-                                                        else {
-                                                            $("#rowsContainer").append("" +
-                                                                "<tr>" +
-                                                                "<td ><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
-                                                                "<td><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
-                                                                "<td><span class='redSpanPauseBegin_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
-                                                                "<td><span class='redSpanPauseEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
-                                                                "<td><span class='redSpanEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
-                                                                "</tr>"
-                                                            );
-                                                        }
+
+                                                        $("#rowsContainer").append("" +
+                                                            "<tr>" +
+                                                            "<td ><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                            "<td><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
+                                                            "<td><span class='redSpanPauseBegin_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                            "<td><span class='redSpanPauseEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                            "<td><span class='redSpanEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
+                                                            "</tr>"
+                                                        );
+
                                                     }
                                                      // console.log("rrgegre: "+ (dte >= dateFromConvertEnd && dte <= dateToConvertEnd) ||  (dte >= dateFromConvertCrs && dte <= dateToConvertCrs) );
                                                 }else {
-                                                    $("#rowsContainer").append("" +
-                                                        "<tr>" +
-                                                        "<td ><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
-                                                        "<td><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
-                                                        "<td><span class='redSpanPauseBegin_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
-                                                        "<td><span class='redSpanPauseEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
-                                                        "<td><span class='redSpanEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
-                                                        "</tr>"
-                                                    );
+                                                    if((data.historique[arrayID]["arrive"] == "" || data.historique[arrayID]["arrive"] == null)){
+                                                        $("#rowsContainer").append("" +
+                                                            "<tr>" +
+                                                            "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                            "<td colspan='4' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence</span></td>" +
+                                                            "</tr>"
+                                                        );
+                                                    } else {
+                                                        $("#rowsContainer").append("" +
+                                                            "<tr>" +
+                                                            "<td ><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                            "<td><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
+                                                            "<td><span class='redSpanPauseBegin_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                            "<td><span class='redSpanPauseEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                            "<td><span class='redSpanEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
+                                                            "</tr>"
+                                                        );
+                                                    }
+
+
                                                 }
 
                                                 if(data.historique[arrayID]["arrive"] > data.historique[arrayID]["bH"]){
@@ -970,6 +977,7 @@
                                                     $(".redSpanEnd_3_"+i).css("color","red");
                                                 }
                                                 break;
+
                                             case "null":
 
                                                     $("#rowsContainer").append("" +
@@ -992,8 +1000,9 @@
 
                                     }
                                     else {
-                                    // else if (duration == false || durationEnd == false) {
-                                        if(inPerm == true || hisPermEnd == true ){
+                                    // else if (duration == false || durationEnd == false) { fFromDate <= dt && dt <= fToDate
+                                    //     console.log("inperm: "+inPerm+" hisPermEnd: "+hisPermEnd);
+                                        if((inPerm == true || hisPermEnd == true) ){
                                              nbPerm++;
                                              var froDate = data.historique[arrayID]["date"].split("-").reverse().join("/");
                                              var dte = new Date(froDate);
@@ -1004,16 +1013,25 @@
                                                      "<td colspan='4' class='center  white-text' > Permission </td>" +
                                                      "</tr>"
                                                  );
+                                             } else {
+                                                 $("#rowsContainer").append("" +
+                                                     "<tr>" +
+                                                     "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                     "<td colspan='4' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence</span></td>" +
+                                                     "</tr>"
+                                                 );
                                              }
-                                        } else {
-                                             $("#rowsContainer").append("" +
-                                                 "<tr>" +
-                                                 "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
-                                                 "<td colspan='4' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence</span></td>" +
-                                                 "</tr>"
-                                             );
+                                             // console.log("cdtion: "+(inPerm == true || hisPermEnd == false) && (inPerm == true || hisPermEnd == false) && (inPerm == false || hisPermEnd == false));
                                         }
+                                        else {
+                                            $("#rowsContainer").append("" +
+                                                "<tr>" +
+                                                "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                "<td colspan='4' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence</span></td>" +
+                                                "</tr>"
+                                            );
 
+                                        }
                                     }
                                 });
                                // $("#nbrePermissionSpan").text(nbPerm);
@@ -1328,26 +1346,47 @@
                                 $.each(data.permissionData,function (id) {
                                     $.each(data.permissionData[id],function (el) {
                                         var losedTime = data.permissionData[id][el].tempsPerdu;
-                                        totSomRaj += precisionRound((data.permissionData[id][el].tempsPerdu*(salary/data.nbreJourTravail/losedTime)),0);
+
+
                                         if (losedTime >= 60){
                                             losedTime = precisionRound((losedTime/60),2);
                                         }else{
                                             losedTime = precisionRound(losedTime,2);
                                         }
-                                        console.log("tPErdu "+data.permissionData[id][el].tempsPerdu+" sall "+salary+" nbT "+data.nbreJourTravail);
-                                        console.log("selected: "+$('select[name=statType]').val());
-                                        // var statValue = $('select[name=statType]').val();
+                                        // console.log("tPErdu "+data.permissionData[id][el].tempsPerdu+" sall "+salary+" nbT "+data.nbreJourTravail);
+                                        // console.log("selected: "+$('select[name=statType]').val());4
+
+
                                         if(statValue == "2"){
+                                            var nbt = 0;
+                                            $.each(data.jrPerMonth, function ( id2) {
+                                                $.each(data.jrPerMonth["month"], function ( e,el1) {
+                                                    var dt = new Date((data.permissionData[id][el].date).split("/").reverse().join("-"));
+                                                    if(((el1+"").includes((dt.getMonth()+1)+""))){
+                                                        nbt = data.jrPerMonth["nbJrT"][e];
+
+
+                                                    }
+                                                });
+
+                                            });
+
+                                            if(((data.permissionData[id][el].type)+"").includes("Permission") ){
+                                                totSomRaj += precisionRound((data.permissionData[id][el].tempsPerdu*(salary/nbt/losedTime)),0);
+                                            }
+
                                             $("#tabPermissions").append("" +
                                                 "<tr>" +
                                                 "<td>"+data.permissionData[id][el].date+"</td>" +
                                                 "<td>"+data.permissionData[id][el].type+"</td>" +
                                                 "<td>"+losedTime+" H </td>"+
-                                                "<td>"+precisionRound((data.permissionData[id][el].tempsPerdu * (salary/data.nbreJourTravail/losedTime)),0)+"</td>" +
+                                                "<td>"+precisionRound((data.permissionData[id][el].tempsPerdu * (salary/nbt/losedTime)),0)+"</td>" +
                                                 "</tr>"
-
-
                                             );
+
+                                            $("#tblePerm").show();
+                                        } else {
+                                            $("#tblePerm").hide();
                                         }
 
                                         // console.log("le djè "+data.permissionData[id][el].tempsPerdu );

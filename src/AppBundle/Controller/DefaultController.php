@@ -915,7 +915,7 @@ class DefaultController extends StatsController
     /**
      * @Route("/generatePDF",name="generatePDF")
      */
-    public function generatePDFAction(Request $request)
+    public function generatePDFAction(Request $request )
     {
         set_time_limit(0);
 
@@ -926,12 +926,14 @@ class DefaultController extends StatsController
 
         $empId = $request->request->get('destination');
         $dateType = $request->request->get('dateType');
-        if ($dateType != "0" && $dateType != null) {
+        $sel = $request->request->get("selectedOp");
+        if ($dateType != "0" && $dateType != null ) {
             $fromDate = "01-" . $dateType . "-" . date('Y');
             $toDate = date('t-m-Y', strtotime($fromDate));
         } else {
             $fromDate = $request->request->get('fromDate');
             $toDate = $request->request->get('toDate');
+            $sel = $request->request->get("statType");
         }
         $t = $request->request->get('type');
         $pdf = new tablepdf();
@@ -982,9 +984,11 @@ class DefaultController extends StatsController
             $empDataFormated = json_decode($empData->getContent(), true);
 
 
-            $donnees = $this->userStatsActionPDF($request, $emp, $fromDate, $toDate);
+            $donnees = $this->userStatsActionPDF($request, $emp, $fromDate, $toDate,$sel);
             $donnees = json_decode($donnees->getContent(), true);
             $permission_lost_time = 0;
+
+            $nbreJourTravail = $donnees["nbreJourTravail"];
 
             /* recuperation du taux horaire */
             if (($employe->getWorkingHour()->getTaux()) == 0)
@@ -993,6 +997,7 @@ class DefaultController extends StatsController
                 $taux = ($employe->getWorkingHour()->getTaux());
 
             if ($type == "3" || $type == 3) {
+//                $ss = (($employe->getSalary * 12) / 52) / ($employe->getWorkingHour()->getJourTravail()) * ($donnees["nbreJourTravail"]);
                 $ss = (($employe->getSalary * 12) / 52) / ($employe->getWorkingHour()->getJourTravail()) * ($donnees["nbreJourTravail"]);
             } else if ($type == "2" || $type == 2) {
                 if ($taux == 0)
@@ -1003,7 +1008,9 @@ class DefaultController extends StatsController
                 if ($taux == 0) {
                     $ss = 0;
                 } else {
-                    $ss = ((($employe->getSalary() * 12) / 52) / $taux) * $donnees["quota_1_4"];
+                    $ss = $donnees["salTotal"] ;
+
+//                    $ss = ((($employe->getSalary() * 12) / 52) / $taux) * $donnees["quota_1_4"];
                 }
             } else {
                 $ss = 0;
@@ -1012,12 +1019,21 @@ class DefaultController extends StatsController
             // Permission datas
             $nbAbsence = 0;
             foreach ($donnees["permissionData"]["absenceStats"] as $row) {
-                if(strcasecmp($row["type"],"Absence")==0  ){
-                    $permission_lost_time += $row["tempsPerdu"];
-                    $nbAbsence++;
-                }else{
-                    $permission_lost_time += $row["tempsPerdu"];
+                if($sel == 1){
+                    if(strcasecmp($row["type"],"Absence")==0  ){
+                        $nbAbsence++;
+                        //$permission_lost_time += $row["tempsPerdu"];
+                    }else{
+                        $permission_lost_time += $row["tempsPerdu"];
+                    }
+                } else {
+                    if(strcasecmp($row["type"],"Absence")==0 || strcasecmp($row["type"],"Permission")==0 ){
+                        $nbAbsence++;
+                    }
                 }
+
+
+
             }
             foreach ($donnees["permissionData"]["finStats"] as $row) {
                 $permission_lost_time += $row["tempsPerdu"];
@@ -1111,7 +1127,7 @@ class DefaultController extends StatsController
                         array("Temps", $donnees["tpa"], round($donnees["tpr"], 2), round($donnees["tpd"], 2), $donnees["lost_time"], round($donnees["tpa"] + $donnees["tpr"] + $donnees["tpd"] + $donnees["lost_time"], 2), round($permission_lost_time,2), round($donnees["tempsBonus"] * (-1), 2)),
                     );
                     $data3 = array(
-                        array("Somme", round($donnees["spa"], 2), round($donnees["spr"], 2), round($donnees["spd"], 2), round($donnees["spAuth"], 2), round($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"], 2), $taux == 0 ? 0 : round((($employe->getSalary() * 12) / 52) / $taux * $permission_lost_time, 2), round($donnees["sommeArgentBonus"] * (-1), 0)),
+                        array("Somme", round($donnees["spa"], 2), round($donnees["spr"], 2), round($donnees["spd"], 2), round($donnees["spAuth"], 2), round($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"], 2),  round(($donnees["salPerHour"]  * $permission_lost_time), 2), round($donnees["sommeArgentBonus"] * (-1), 0)),
                     );
                     $data4 = array(
                         array(utf8_decode("Net à payer sans bonus"), round($ss - ($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"]), 2)),
@@ -1143,7 +1159,7 @@ class DefaultController extends StatsController
         }
         $pdf->Output();
         //}
-//        return new JsonResponse(array("donnee"=>$donnees));
+        return new JsonResponse(array("donnee"=>$donnees));
     }
 
     /**
