@@ -401,21 +401,25 @@
                     alert("erreur");
                 }
             });
-            var url3 = "{{ path('generatePDFPermission',{'id':"perm_id"}) }}";
-            url3 = url3.replace("perm_id", 6);
-
+            {#var url3 = "{{ path('generatePDFPermission',{'id':"perm_id"}) }}";#}
+            // url3 = url3.replace("perm_id", 6);
+//url: url3,
+            //data: {"empId":employeeId,"fromeDate":fromDate,"toDate":toDate,"selectedOption":$('select[name=statType]').val()},
+            //url: "userStatsPDF",
+            //type: "POST",
             $.ajax({
-                url: url3,
-                {#url: "{{ path("userStatsTest") }}",#}
-                method: "GET",
-                 // data :{ "empId":  6, "fromeDate":  "2019-09-09", "toDate": "2019-09-25"},
-                success: function (data) {
 
-                    console.log("ok");
+                type: "POST",
+                url: "generatePDF",
+
+                // data :{ "destination":  6, "fromDate":  "2019-09-01","statType":1},
+                data :{ "destination":  6, "dateFrom":  "2019-09-01", "dateTo": "2019-09-20","statType":1},
+                success: function (data) {
+                    console.log(data);
                 }
             });
 
-        });
+         });
     </script>
     <script>
 
@@ -514,8 +518,8 @@
             var today = new Date($.now());
             var todayConvert = new Date((today.getMonth() + 1) + "/" + today.getDate() + "/" + today.getFullYear() + " " +today.getHours() +":"+today.getMinutes()+ "");
 
-            var url3 = "{{ path('generatePDFPermission',{'id':"perm_id"}) }}";
-            url3 = url3.replace("perm_id", permission.id);
+            {#var url3 = "{{ path('generatePDFPermission',{'id':"perm_id"}) }}";#}
+           // url3 = url3.replace("perm_id", permission.id);
 
             var createBtn1 = "<a href=" + url3 + "><button class=\"simple-button-decoration btn btn-primary green darken-3 white-text\"><span class=\"fa fa-print\"></span></button></a>"
 

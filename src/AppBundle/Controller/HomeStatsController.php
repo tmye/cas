@@ -19,16 +19,16 @@ class HomeStatsController extends Controller
 {
     // fonction qui renvoi la date du premier jour de la semaine
     private function jourSemaine($date){
-        $time = strtotime($date."00:00:00");
-        $j = date('N',$time);
+        $time = strtotime($date."00:00:00"); // 2019-09-18 00 00 00
+        $j = date('N',$time); //3 -> aujourdhui
         $dayToSubstract = 0;
         if($j > 1){
-            $dayToSubstract = $j-1;
+            $dayToSubstract = $j-1; //2
         }
-        $timeToSubstract = 60*60*24*$dayToSubstract;
-        $timeAfterSubstract = $time - $timeToSubstract;
-        $dateAfterSubstract = date('d-m-Y',$timeAfterSubstract);
-        return array($j,$dayToSubstract,$dateAfterSubstract);
+        $timeToSubstract = 60*60*24*$dayToSubstract; //conversion en timestamp d'aujourdhui
+        $timeAfterSubstract = $time - $timeToSubstract; //difference entre la date-param et la date daujourdhui
+        $dateAfterSubstract = date('d-m-Y',$timeAfterSubstract); //reconversion en date de la difference
+        return array($j,$dayToSubstract,$dateAfterSubstract); //3 2
     }
 
     /**
@@ -72,10 +72,12 @@ class HomeStatsController extends Controller
      */
     public function homeStatsAction(Request $request)
     {
-        $jour = date("Y").'-'.date("m").'-'.date("d");
-        $tab = $this->jourSemaine($jour);
+        $jour = date("Y").'-'.date("m").'-'.date("d"); //2019-09-18 on prend la date
+        echo "jour ".$jour." \n";
+        $tab = $this->jourSemaine($jour);//3
         //echo "<br><br> Jour : $tab[0] <br><br>";
         $timeFrom = strtotime($tab[2]."00:00:00");
+        echo "timeFrom ".$timeFrom." \n";
         $timeTo = strtotime($jour." 00:00:00");
 
         // On initialise le $nowTime par $timeFrom
@@ -102,7 +104,7 @@ class HomeStatsController extends Controller
         //$temp["depart"] = [];
 
         // On récupère les clockinRecord pour une fois
-        $cr = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord");
+        $cr = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord"); // les enregistrements dheure au niveau de la machine à empreinte
         $clockinR = $cr->findAll();
         // On boucle sur les jours sélectionnés
         $i=0;
@@ -113,6 +115,7 @@ class HomeStatsController extends Controller
         // On boucle sur les jours
         for ($cpt=0;$cpt<$tab[0];$cpt++){
             $theDay = date('N',$nowTime);
+            echo "theDay ".$theDay." \n";
             $theDay = $this->dateDayNameFrench($theDay);
             foreach ($listEmp as $emp){
 
@@ -130,11 +133,19 @@ class HomeStatsController extends Controller
                 $heureFinNormal = $empWH[$theDay][0]["endHour"];
                 $heureDebutNormalPause = $empWH[$theDay][0]["pauseBeginHour"];
                 $heureFinNormalPause = $empWH[$theDay][0]["pauseEndHour"];
+//                echo "heureDebutNormal ".$heureDebutNormal." \n";
+//                echo "heureFinNormal ".$heureFinNormal." \n";
+//                echo "heureDebutNormalPause ".$heureDebutNormalPause." \n";
+//                echo "heureFinNormalPause ".$heureFinNormalPause." \n";
 
                 $beginHourExploded = explode(":",$heureDebutNormal);
                 $endHourExploded = explode(":",$heureFinNormal);
                 $pauseBeginHourExploded = explode(":",$heureDebutNormalPause);
                 $pauseEndHourExploded = explode(":",$heureFinNormalPause);
+//                echo "beginHourExploded ".$beginHourExploded." \n";
+//                echo "endHourExploded ".$endHourExploded." \n";
+//                echo "pauseBeginHourExploded ".$pauseBeginHourExploded." \n";
+//                echo "pauseEndHourExploded ".$pauseEndHourExploded." \n";
 
                 $interval = ($emp->getWorkingHour()->getTolerance())*60;
 
@@ -145,7 +156,9 @@ class HomeStatsController extends Controller
 
                     $interval_pause = (($pauseEndHourInMinutes - $pauseBeginHourInMinutes)/2)*60;
                     $heureNormaleArrivePause = $pauseEndHourInMinutes*60;
+                    //echo "heureNormaleArrivePause ".$heureNormaleArrivePause." \n";
                     $heureNormaleDepartPause = $pauseBeginHourInMinutes*60;
+                   // echo "heureNormaleDepartPause ".$heureNormaleDepartPause." \n";
                 }else{
                     $interval_pause = 0;
                     $heureNormaleArrivePause = 0;
@@ -161,7 +174,8 @@ class HomeStatsController extends Controller
                 }
                 $heureNormaleArrive = $beginHourInMinutes*60;
                 $heureNormaleDepart = $endHourInMinutes*60;
-
+//                echo "heureNormaleArrive ".$heureNormaleArrive." \n";
+//                echo "heureNormaleDepartPause ".$heureNormaleDepartPause." \n";
                 //print_r(date("d-m-Y H:i:s",$nowTime+$heureNormaleArrive+$interval)."\n");
 
                 if ($type == "1" || $type == 1 || $type == "2" || $type == 2 || $type == "4" || $type == 4) {
@@ -184,10 +198,12 @@ class HomeStatsController extends Controller
                             }
                         }
                         $retardPauseDiff = $cr->retardPause($emp,$nowTime,$interval_pause,$heureNormaleArrivePause);
+//                        echo "retardPauseDiff  ".$retardPauseDiff." \n";
                         if ($retardPauseDiff[0] != null) {
                             $retards++;
                             $sommeRetards += $retardPauseDiff[0];
                             $tempsPerdusRetards += $retardPauseDiff[0] / (60);
+//                            echo "tempsPerdusRetards  ".$tempsPerdusRetards." \n";
 
                             if ($this->exist($tabClassementRetard, $emp->getId())) {
                                 $lastNumber = $tabClassementRetard[$emp->getId()]["nombre"];
@@ -237,6 +253,7 @@ class HomeStatsController extends Controller
             }
             // On incrémente la date d'un jour
             $nowTime = $nowTime+86400;
+            echo "now time ".$nowTime;
         }
         $permissionsData = $this->permissionSelect();
 

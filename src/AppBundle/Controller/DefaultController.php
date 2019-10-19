@@ -924,16 +924,20 @@ class DefaultController extends StatsController
 
         $session = new Session();
 
+
+
         $empId = $request->request->get('destination');
         $dateType = $request->request->get('dateType');
-        $sel = $request->request->get("selectedOp");
+        $sel = $request->request->get("statType");
         if ($dateType != "0" && $dateType != null ) {
             $fromDate = "01-" . $dateType . "-" . date('Y');
             $toDate = date('t-m-Y', strtotime($fromDate));
+            $mes = "datetype non null";
         } else {
             $fromDate = $request->request->get('fromDate');
             $toDate = $request->request->get('toDate');
             $sel = $request->request->get("statType");
+            $mes = "datetype null";
         }
         $t = $request->request->get('type');
         $pdf = new tablepdf();
@@ -967,6 +971,7 @@ class DefaultController extends StatsController
             $pdf->Ln('15');
         }
         $i = 0;
+
         foreach ($empId as $emp) {
             set_time_limit(0);
             $i++;
@@ -984,7 +989,7 @@ class DefaultController extends StatsController
             $empDataFormated = json_decode($empData->getContent(), true);
 
 
-            $donnees = $this->userStatsActionPDF($request, $emp, $fromDate, $toDate,$sel);
+            $donnees = $this->userStatsActionPDF($request, $emp, $fromDate, $toDate, $sel);
             $donnees = json_decode($donnees->getContent(), true);
             $permission_lost_time = 0;
 
@@ -1159,7 +1164,7 @@ class DefaultController extends StatsController
         }
         $pdf->Output();
         //}
-        return new JsonResponse(array("donnee"=>$donnees));
+       // return new JsonResponse(array("donnee"=>$donnees));
     }
 
     /**
@@ -1238,8 +1243,8 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
         $pdf->PermissionFancyTable($user_info_header, $user_info_data);
         $pdf->Ln('5');*/
         $pdf->Output();
-
-        //return new Response("OK");
+        //}
+        //return new JsonResponse(array("donn "=>$donnees,"mes"=>$mes));
     }
 
     public function returnVerticalCells($numberOfDays)
@@ -1290,12 +1295,21 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
 
         set_time_limit(0);
 
-        /* not obliged to come - cell fill */
+        /* not obliged to come - cell fill*/
         $not_supposed_to_come_styleArray =  [
             'fill' => [
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                 'color' => [
                     'argb' => 'FF03a9f4',
+                ]
+            ],
+        ];
+
+        $perm_date =  [
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'color' => [
+                    'argb' => '81C784',
                 ]
             ],
         ];
@@ -1318,18 +1332,22 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
 
         $dateType = $request->request->get('dateType');
 
-        if ($dateType != "0" && $dateType != null) {
+        $sel = $request->request->get("statType");
+        if ($dateType != "0" && $dateType != null ) {
             $fromDate = "01-" . $dateType . "-" . date('Y');
             $toDate = date('t-m-Y', strtotime($fromDate));
+            $mes = "datetype non null";
         } else {
             $fromDate = $request->request->get('fromDate');
             $toDate = $request->request->get('toDate');
+            $sel = $request->request->get("statType");
+            $mes = "datetype null";
         }
 
         $beginNameCellNumber = 5;
         $nextNameCellNumber = 5;
 
-        $spreadsheet = new Spreadsheet;
+        $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
         $boldStyle = [
@@ -1368,7 +1386,7 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
             $empData = $this->returnOneEmployeeAction($request, $emp, $fromDate, $toDate);
             $empDataFormated = json_decode($empData->getContent(), true);
 
-            $donnees = $this->userStatsActionPDF($request, $emp, $fromDate, $toDate);
+            $donnees = $this->userStatsActionPDF($request, $emp, $fromDate, $toDate,$sel);
             $donnees = json_decode($donnees->getContent(), true);
             $permission_lost_time = 0;
             // Permission datas
@@ -1398,8 +1416,10 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
             $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 8))->applyFromArray($boldStyle);
             $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 9))->applyFromArray($boldStyle);
             $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 10))->applyFromArray($boldStyle);
-            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 12))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 11))->applyFromArray($boldStyle);
+
             $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 13))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 14))->applyFromArray($boldStyle);
             $spreadsheet->getActiveSheet()->getStyle('B' . ($nextNameCellNumber - 1))->applyFromArray($boldStyle);
 
             $sheet->setCellValue('A' . ($nextNameCellNumber - 1), "NOM");
@@ -1412,8 +1432,10 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
             $sheet->setCellValue('A' . ($nextNameCellNumber + 8), "NOMBRE DE RETARDS : " . $donnees["retards"]);
             $sheet->setCellValue('A' . ($nextNameCellNumber + 9), "NOMBRE DE DEPARTS : " . $donnees["departs"]);
             $sheet->setCellValue('A' . ($nextNameCellNumber + 10), "NOMBRE D'AUTH INC : " . $donnees["inc_auth"]);
-            $sheet->setCellValue('A' . ($nextNameCellNumber + 12), "TOTAL DES PERTES EN TEMPS : " . round($donnees["tpa"] + $donnees["tpr"] + $donnees["tpd"] + $donnees["lost_time"], 4) . " H");
-            $sheet->setCellValue('A' . ($nextNameCellNumber + 13), "TOTAL DES PERTES EN ARGENT : " . round($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"], 4) . " FCFA");
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 11), "NOMBRE DE PERM: " . $donnees["nbrePermission"]);
+
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 13), "TOTAL DES PERTES EN TEMPS : " . round($donnees["tpa"] + $donnees["tpr"] + $donnees["tpd"] + $donnees["lost_time"], 4) . " H");
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 14), "TOTAL DES PERTES EN ARGENT : " . round($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"], 4) . " FCFA");
 
             $sheet->setCellValue('B' . ($nextNameCellNumber - 1), "PRENOMS");
             $sheet->setCellValue('A' . $nextNameCellNumber, $employe->getSurname());
@@ -1436,20 +1458,21 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
                     $spreadsheet->getActiveSheet()->getStyle($el . "" . ($nextNameCellNumber + 16))->getFill()->getStartColor()->setARGB('bdbdbd');
                 }
 
-                /* if you are not supposed to come on this day */
+                /* if you are not supposed to come on this day*/
                 if ($this->checkIfEmployeePresenceIsNecessaryToday($emp, $nowTime)) {
                     $sheet->getStyle($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber -1).':'.$verticalCellsTab[$cpt] . '' . ($nextNameCellNumber + 5))
                         ->applyFromArray($not_supposed_to_come_styleArray);
                 }
 
-                /* if the day is a null day */
+                /* if the day is a null day*/
                 if ($this->checkIfDayIsNull($nowTime)) {
                     $sheet->getStyle($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber -1).':'.$verticalCellsTab[$cpt] . '' . ($nextNameCellNumber + 5))
                         ->applyFromArray($nullDayStyleArray);
                 }
 
-                if ($this->checkIfDayHasPermission ($nowTime)) {
-
+                if ($this->checkIfDayHasPermission ($emp,$nowTime)) {
+                    $sheet->getStyle($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber -1).':'.$verticalCellsTab[$cpt] . '' . ($nextNameCellNumber + 5))
+                        ->applyFromArray($perm_date);
                 }
 
 
@@ -1487,20 +1510,46 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
 
         $writer = new Xlsx($spreadsheet);
         $now_date = date('d') . "-" . date('m') . '-' . date('Y') . '_' . date('H') . ':' . date('i') . ':' . date('s');
-        $writer->save('/output_files/' . $this->getUser()->getUsername() . '_rapport_' . $now_date . '.xls');
+        $file_date = $now_date;
+        $rd = rand(0,100);
+        $filePath = $this->getParameter("web_dir") . "/output_files/" . $this->getUser()->getUsername() . "_rapport_" ."_".$rd.  ".xlsx";
+
+        $writer->save($filePath."");
 
         //sleep(10);
 
-        $filePath = $this->getParameter("web_dir") . "/cache/" . $this->getUser()->getUsername() . "_rapport_" . $now_date . ".xlsx";
 
         $response = new BinaryFileResponse($filePath);
         $response->trustXSendfileTypeHeader();
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_INLINE,
-            $this->getUser()->getUsername() . "_rapport_" . $now_date . ".xlsx",
-            iconv('UTF-8', 'ASCII//TRANSLIT', $this->getUser()->getUsername() . "_rapport_" . $now_date . ".xlsx")
+            $this->getUser()->getUsername() . "_rapport_" . "_".$rd. ".xlsx",
+            iconv('UTF-8', 'ASCII//TRANSLIT', $this->getUser()->getUsername() . "_rapport_" ."_".$rd. ".xlsx")
         );
         return $response;
+//        return new Response("Excel generated succesfully ".$file_date."  *** ".$now_date." **** ".$filePath);
+        //return $response;
+
+       /* $spreadsheet = new Spreadsheet();
+
+        /* @var $sheet \PhpOffice\PhpSpreadsheet\Writer\Xlsx\Worksheet
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'Hello World !');
+        $sheet->setTitle("My First Worksheet");
+
+        // Create your Office 2007 Excel (XLSX Format)
+        $writer = new Xlsx($spreadsheet);
+
+        // In this case, we want to write the file in the public directory
+       // $publicDirectory = $this->get('kernel')->getProjectDir() . '/public';
+        // e.g /var/www/project/public/my_first_excel_symfony4.xlsx
+        $excelFilepath = 'my_first_excel_symfony4.xlsx';
+
+        // Create the file
+        $writer->save($excelFilepath);
+
+        // Return a text response to the browser saying that the excel was succesfully created
+        return new Response("Excel generated succesfully");*/
     }
 
     /**
@@ -1638,10 +1687,12 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
         return true;
     }
 
-    private function checkIfDayHasPermission($nowTime)
+    private function checkIfDayHasPermission($emp,$nowTime)
     {
+//        $day =  date('d-m-Y', $nowTime);
+        return  $isPermDate = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->checkInPerm($emp,date('Y-m-d',$nowTime));
 
-        return false;
+//        return false;
     }
 
 }

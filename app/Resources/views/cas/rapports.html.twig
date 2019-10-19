@@ -150,10 +150,17 @@
                                                     <div class="col l6">
                                                         <button id="allEmployeesSelectButton" type="button" style="margin-top: 20px">Tout selectionner</button>
                                                     </div>
+                                                </div>
+                                                <br>
+                                                <div class="row row-no-margin">
                                                     <div class="col l6">
-                                                        <span class="right" style="margin-top: 20px">
+                                                        <select name="statType" id="statType" class="input-customized browser-default">
+                                                            <option  value="1" selected>Statistiques sans déduction</option>
+                                                            <option value="2" selected>Statistiques avec déduction</option>
+                                                        </select>
+                                                    </div>
+                                                        <span class="right" style="">
                                                             <input type="button" id="submitIndividualWithoutBonusButton" value="Individuel sans bonus" class="btn-perso-historique">
-
                                                             <input type="button" id="submitIndividualButton" value="Individuel" class="btn-perso-historique">
                                                             <input type="button" id="submitButton" value="Collectif" class="btn-perso-historique">
                                                         </span>
@@ -184,6 +191,7 @@
         });
     </script>
     <script>
+        console.log("selecteddd "+$('select[name=statType]').val());
         $(function () {
             var state = 0;
             $("#allEmployeesSelectButton").click(function () {
@@ -272,13 +280,14 @@
                         $("#fromDateSpan").text(fromDate);
                         $("#toDateSpan").text(toDate);
                         $("#totalSalarySpan").text(precisionRound(res.salaryFinal,0));
-
+                        console.log("chhhh "+$('select[name=statType]').val());
                         // Recuperation des autres informations
                         $.ajax({
                             type: 'POST',
                             url: "userStats",
-                            data: {'empId':employeeId,'dateFrom':fromDate,'dateTo':toDate},
+                            data: {'empId':employeeId,'dateFrom':fromDate,'dateTo':toDate,"selectedOption":$('select[name=statType]').val()},
                             success: function (data) {
+
 
                                 // Closing the loading box
 

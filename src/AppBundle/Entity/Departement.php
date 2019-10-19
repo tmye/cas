@@ -28,7 +28,7 @@ class Departement
      * @ORM\Column(name="name", type="string", length=45, unique=true)
      * @Assert\NotBlank()
      */
-    private $name;
+    public $name;
 
     /**
      * @var string
