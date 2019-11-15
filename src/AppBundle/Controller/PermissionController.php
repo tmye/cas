@@ -250,7 +250,9 @@ class PermissionController extends BaseController {
 
             $listPerm = $permRep->findAll();
 
-//            return new Response($this->serialize($listPerm));
+
+//            $data [$i]["askerId"] = 1;
+
 
             return new JsonResponse($listPerm);
         }else{
