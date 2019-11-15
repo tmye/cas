@@ -6993,6 +6993,7 @@ select {
 
 .select-wrapper {
   position: relative;
+  max-width: 40%;
 }
 
 .select-wrapper.valid + label,

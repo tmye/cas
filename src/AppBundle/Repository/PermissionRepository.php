@@ -27,50 +27,73 @@ class PermissionRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    /*public function enPermission($emp,$date,$savedHour,$normalHour){
-
-        // The hours are on the H:i format
+    public function findByCriteria($criteria){
         $qb = $this->createQueryBuilder('p');
-        $qb->where('p.state = :state');
-        $qb->setParameter('state',1);
-        $qb->andWhere('p.employee = :e');
-        $qb->setParameter('e',$emp);
+        $qb->where(
+                    $qb->expr()->like('p.title', ':criteria')
+                  );
+        $qb->setParameter('criteria','%'.$criteria.'%');
 
-        $permissionHourB = null;
-        $permissionHourA = null;
-        $result = $qb->getQuery()->getResult();
-        $recycledResult = array();
+        return $qb->getQuery()->getResult();
+    }
 
-        foreach ($result as $r){
-            if($r->getDateFrom()->format("Y-m-d") == $date){
-                $recycledResult[]=$r;
-            }
-        }
+    public function  findEndPerms(){
+        $qb = $this->createQueryBuilder('p');
+        $qb->where( 'p.dateTo < :today');
+//        $qb->andwhere('p.dateTo <= :dateTo');
+//        $qb->setParameter('dateFrom',$dateFrom);
+        $qb->setParameter('today', new \DateTime());
 
-        if(sizeof($recycledResult)>0){
+        return $qb->getQuery()->getResult();
+    }
 
-            $firstResult = $recycledResult[0];
-            $permissionHourA = strtotime($date.' '.$firstResult->getTimeFrom());
-            $permissionHourB = strtotime($date.' '.$firstResult->getTimeTo());
+    public function  findComingPerms(){
+        $qb = $this->createQueryBuilder('p');
+        $qb->where( 'p.dateFrom > :today');
+//        $qb->andwhere('p.dateTo <= :dateTo');
+//        $qb->setParameter('dateFrom',$dateFrom);
+        $qb->setParameter('today', new \DateTime());
 
-            $empHourA = strtotime($date.' '.$normalHour);
-            $empHourB = strtotime($date.' '.$savedHour);
+        return $qb->getQuery()->getResult();
+    }
 
-            if($empHourB <= $permissionHourB && $empHourA >= $permissionHourA){
-                //print_r("\n OUI DATE : ".$date);
-                return true;
-            }else{
-                //print_r("\n NON DATE : ".$date);
-                return true;
-            }
-        } else{
-            //print_r("\n NON DEUXIEME CAS ".$date);
+    public function  findPermEnCours( ){
+        $qb = $this->createQueryBuilder('p');
+        $qb->where( 'p.dateFrom <= :today');
+        $qb->andwhere('p.dateTo >= :todayy');
+        $qb->setParameter('today',new \DateTime());
+        $qb->setParameter('todayy', new \DateTime());
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function checkInPerm($empId,$dateToCheck){
+        $qb = $this->createQueryBuilder('p');
+        $qb->where('p.dateFrom <= :checkDate');
+        $qb->setParameter('checkDate',$dateToCheck);
+        $qb ->andWhere('p.dateTo >= :checkDate');
+        $qb->setParameter('checkDate',$dateToCheck);
+        $qb->andWhere('p.employee = :empId ');
+        $qb->setParameter('empId',$empId);
+        $result= $qb->getQuery()->getResult();
+        if($result!=null){
+            return true;
+        } else {
             return false;
         }
-    }*/
+    }
+
+    public function  findPermByTwoDates($fromDate, $toDate ){
+        $qb = $this->createQueryBuilder('p');
+        $qb->where( 'p.dateFrom >= :fromDate');
+        $qb->andwhere('p.dateTo <= :toDate');
+        $qb->setParameter('fromDate',$fromDate);
+        $qb->setParameter('toDate', $toDate);
+
+        return $qb->getQuery()->getResult();
+    }
 
     public function enPermission($emp,$date){
-
 
         // The hours are on the H:i format
         $qb = $this->createQueryBuilder('p');
@@ -116,4 +139,67 @@ class PermissionRepository extends EntityRepository
         $singleScalar = $query->getSingleScalarResult();
         return $singleScalar;
     }
+//
+//    public function countPermission($state){
+//        $queryBuilder = $this->createQueryBuilder("p");
+//        $queryBuilder->select($queryBuilder->expr()->count("p"));
+//        $queryBuilder->where("p.state =:state")->setParameter("state", $state);
+//
+//        $query = $queryBuilder->getQuery();
+//        $singleScalar = $query->getSingleScalarResult();
+//        return $singleScalar;
+//    }
+//
+//    public function countPermission($state){
+//        $queryBuilder = $this->createQueryBuilder("p");
+//        $queryBuilder->select($queryBuilder->expr()->count("p"));
+//        $queryBuilder->where("p.state =:state")->setParameter("state", $state);
+//
+//        $query = $queryBuilder->getQuery();
+//        $singleScalar = $query->getSingleScalarResult();
+//        return $singleScalar;
+//    }
+
+    /*public function enPermission($emp,$date,$savedHour,$normalHour){
+
+            // The hours are on the H:i format
+            $qb = $this->createQueryBuilder('p');
+            $qb->where('p.state = :state');
+            $qb->setParameter('state',1);
+            $qb->andWhere('p.employee = :e');
+            $qb->setParameter('e',$emp);
+
+            $permissionHourB = null;
+            $permissionHourA = null;
+            $result = $qb->getQuery()->getResult();
+            $recycledResult = array();
+
+            foreach ($result as $r){
+                if($r->getDateFrom()->format("Y-m-d") == $date){
+                    $recycledResult[]=$r;
+                }
+            }
+
+            if(sizeof($recycledResult)>0){
+
+                $firstResult = $recycledResult[0];
+                $permissionHourA = strtotime($date.' '.$firstResult->getTimeFrom());
+                $permissionHourB = strtotime($date.' '.$firstResult->getTimeTo());
+
+                $empHourA = strtotime($date.' '.$normalHour);
+                $empHourB = strtotime($date.' '.$savedHour);
+
+                if($empHourB <= $permissionHourB && $empHourA >= $permissionHourA){
+                    //print_r("\n OUI DATE : ".$date);
+                    return true;
+                }else{
+                    //print_r("\n NON DATE : ".$date);
+                    return true;
+                }
+            } else{
+                //print_r("\n NON DEUXIEME CAS ".$date);
+                return false;
+            }
+        }*/
+
 }

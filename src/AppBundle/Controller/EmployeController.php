@@ -94,6 +94,7 @@ class EmployeController extends BaseController {
                                 $employe->setSalary($empArr[7]);
                                 $employe->setFunction($empArr[8]);
 
+
                                 if((trim($empArr[9]) != null) && (trim($empArr[9]) != null)){
                                     $hireTime = strtotime($empArr[9]." 00:00:00");
                                     $hireDate = new \DateTime();

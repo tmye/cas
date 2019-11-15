@@ -149,11 +149,22 @@
                                                     <div class="col l6">
                                                         <button id="allEmployeesSelectButton" type="button" style="margin-top: 20px">Tout selectionner</button>
                                                     </div>
+                                                </div>
+                                                <br>
+                                                <div class="row row-no-margin">
                                                     <div class="col l6">
-                                                        <span class="right" style="margin-top: 20px">
+                                                        <select name="statType" id="statType" class="input-customized browser-default">
+                                                            <option  value="1" selected>Statistiques sans déduction</option>
+                                                            <option value="2" selected>Statistiques avec déduction</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="col l6">
+                                                        <span class="right" style="">
                                                             <input type="button" id="submitButton" value="Valider" class="btn-perso-historique">
                                                         </span>
                                                     </div>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -274,7 +285,7 @@
                         $.ajax({
                             type: 'POST',
                             url: "userStats",
-                            data: {'empId':employeeId,'dateFrom':fromDate,'dateTo':toDate},
+                            data: {'empId':employeeId,'dateFrom':fromDate,'dateTo':toDate,"selectedOption":$('select[name=statType]').val()},
                             success: function (data) {
 
                                 // Closing the loading box
