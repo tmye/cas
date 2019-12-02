@@ -548,14 +548,16 @@ class MachineSysController extends BaseController
     private function standardSetup () {
 
         $config = $this->ConfigEntityRepo()->findAll();
-
+        //
         if ($config != null && sizeof($config) > 0) {
             $config = $config[0];
+            var_dump($config);
         }
 
+        //var_dump($config->ge);
         $tmp['id'] = 0;
         $tmp['do'] = 'update';
-        $tmp['data'] = 'config';
+        $tmp['data'] = 'config';//var_dump($tmp);
         $tmp['name'] = $config->getSysname();
         $tmp['company'] = $config->getCompany() . ' - '. $config->getSysname(); // company name
         $tmp['max'] = $config->getMax();

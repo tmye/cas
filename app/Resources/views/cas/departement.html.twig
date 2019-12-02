@@ -33,17 +33,19 @@
                                 </div>
                                 <div class="row">
                                     {{ form_start(form) }}
-                                    <div class="input-field col s5">
-                                        {{ form_row(form.name, {'attr': {'class': 'input-customized','placeholder':'Nom du département'}}) }}
-                                    </div>
-                                    <div class="input-field col s5">
-                                        {{ form_row(form.maxCount, {'attr': {'class': 'input-customized','placeholder':'Nombre maximum d\'employés'}}) }}
-                                    </div>
-                                    <div class="input-field col l2">
-                                        {{ form_rest(form) }}
-                                    </div>
-
-                                    {{ form_widget(form.creer, { 'label': 'Créer','attr': {'class':'btn'} }) }}
+                                        <div class="input-field col s5">
+                                            {{ form_row(form.name, {'attr': {'class': 'input-customized','placeholder':'Nom du département'}}) }}
+                                        </div>
+                                        <div class="input-field col s5">
+                                            {{ form_row(form.maxCount, {'attr': {'class': 'input-customized','placeholder':'Nombre maximum d\'employés'}}) }}
+                                        </div>
+                                        <div class="input-field col l2">
+                                            {{ form_widget(form.creer, { 'label': 'Créer','attr': {'class':'btn-perso-historique'} }) }}
+                                            {{ form_rest(form) }}
+                                        </div>
+{#                                        &nbsp;#}
+{#                                        &nbsp;#}
+{#                                        &nbsp;#}
 
                                     {{ form_end(form) }}
                                 </div>

@@ -903,7 +903,8 @@ class DefaultController extends StatsController
             return $this->render('cas/companyInfos.html.twig', array(
                 'form' => $form->createView()
             ));
-        } else {
+        }
+        else {
             return $this->redirectToRoute("login");
         }
 

@@ -422,7 +422,7 @@ class PermissionController extends BaseController {
 
             foreach (  $permComing as $com){
 
-                $diff =date_diff( new \DateTime('now'),$end->dateTo);
+                $diff =date_diff( new \DateTime('now'),$com->dateTo);
                 $diff = $diff->format("%a");
 
                 if( $diff <=30  ){
@@ -449,6 +449,8 @@ class PermissionController extends BaseController {
             return $this->redirectToRoute("login");
         }
     }
+
+    //FONCTION TEST findPermissionState  en json et non en tableau
 
     /**
      * @Route("/findPermissionStatee", name="findPermissionStatee")
@@ -494,7 +496,7 @@ class PermissionController extends BaseController {
 
             foreach (  $permComing as $com){
 
-                $diff =date_diff( new \DateTime('now'),$end->dateTo);
+                $diff =date_diff( new \DateTime('now'),$com->dateTo);
                 $diff = $diff->format("%a");
 
                 if( $diff <=30  ){

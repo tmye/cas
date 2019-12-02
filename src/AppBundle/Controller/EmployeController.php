@@ -210,17 +210,23 @@ class EmployeController extends BaseController {
                 $sheet->setCellValue('K'.$i, $employe->getDepartement()->getName());
             }
 
-            $writer = new xlswriter($spreadsheet);
-            $now_date = date('d')."-".date('m').'-'.date('Y').'_'.date('H').':'.date('i').':'.date('s');
-            $writer->save('employes_'.$now_date.'.xlsx');
-            $filePath = $this->getParameter("web_dir")."/employes_".$now_date.".xlsx";
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+            $now_date = date('d') . "-" . date('m') . '-' . date('Y') . '_' . date('H') . ':' . date('i') . ':' . date('s');
+            $file_date = $now_date;
+            $rd = rand(0,100);
+            $filePath = $this->getParameter("web_dir") . "/output_files/" . $this->getUser()->getUsername() . "_rapport_" ."_".$rd.  ".xlsx";
+
+            $writer->save($filePath."");
+
+            //sleep(10);
+
 
             $response = new BinaryFileResponse($filePath);
             $response->trustXSendfileTypeHeader();
             $response->setContentDisposition(
                 ResponseHeaderBag::DISPOSITION_INLINE,
-                "employes_".$now_date.".xlsx",
-                iconv('UTF-8', 'ASCII//TRANSLIT', "employes_".$now_date.".xlsx")
+                $this->getUser()->getUsername() . "_rapport_" . "_".$rd. ".xlsx",
+                iconv('UTF-8', 'ASCII//TRANSLIT', $this->getUser()->getUsername() . "_rapport_" ."_".$rd. ".xlsx")
             );
 
             $journal = new Journal();

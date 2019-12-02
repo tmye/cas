@@ -39,7 +39,6 @@ class Permission
      */
     public $askerId;
 
-
     /**
      * @var string
      *

@@ -131,10 +131,11 @@
 
         // Recuperation des autres informations
         $.ajax({
-            type: 'POST',
             url: "{{ path('homeStats') }}",
+            type: 'POST',
+
             success: function (data) {
-                console.log(data);
+                // console.log(data.classementRetard);
                 //console.log(data);
                 $(".spanRetard").text(data.retards);
                 $(".spanDepart").text(data.departs);
@@ -276,13 +277,14 @@
                             "        <span><b>"+tabD[arrayID][2]+"</b></span>\n" +
                             "    </span>\n" +
                             "</div>");
+
                         console.log("Index : "+arrayID);
                         cpt++;
                     });
                 }
             },
             error: function(msg) {
-                alert(msg);
+                alert("Impossible de charger les données! ");
                 console.log(msg);
             }
         });

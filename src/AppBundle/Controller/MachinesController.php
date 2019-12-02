@@ -22,6 +22,7 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Session\Session;
 use TmyeDeviceBundle\Entity\UpdateEntity;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class MachinesController extends Controller
 {
@@ -962,10 +963,10 @@ class MachinesController extends Controller
 
             foreach ($finalTab as $mac){
                 $found = 0;
-                echo "\n J'arrive meme ici et le found est : ".$found;
+//                echo "\n J'arrive meme ici et le found est : ".$found;
                 while($found == 0 && $i < sizeof($donnees)){
-                    echo "\n size of donnees =: ".sizeof($donnees);
-                    echo "\n isActive =: ".$donnees[$i]->getIsactive();
+//                    echo "\n size of donnees =: ".sizeof($donnees);
+//                    echo "\n isActive =: ".$donnees[$i]->getIsactive();
                     echo ("Comparaison : ".$donnees[$i]->getDeviceId()." vs ".$mac);
                     if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="dept" && $donnees[$i]->getIsactive()==1){
                         $found = 1;
@@ -975,7 +976,7 @@ class MachinesController extends Controller
                     //$session->getFlashBag()->add('passage : ',$donnees[$i]->getDeviceId());
                     $i++;
                 }
-                echo "\n Found = :".$found;
+                echo "\n Found = :".$found." \n";
                 if ($found == 0){
                     $updateE = new UpdateEntity();
                     $updateE->setDeviceId($mac);
@@ -988,7 +989,7 @@ class MachinesController extends Controller
                 }
             }
             //return new Response(json_encode($finalTab));
-            return new Response("OK");
+            return new Response("OK je l'ai eu");
         }elseif($len == 1){
             echo "Je suis dans le dernier cas";
             // On persiste les éléments en fonction du cas
@@ -1294,9 +1295,16 @@ class MachinesController extends Controller
         $d = $this->syncEmpFAction($request);
         $e = $this->syncEmpPPAction($request);
         $f = $this->syncPubCoverAllAction($request);
-        //$g = $this->syncRebootAction($request);
+        $g = $this->syncRebootAction($request);
 
-        return new Response("OK");
+        echo  " regarrde xa commence: " ;
+
+//        echo  " regarrde: ".$request->request->all();
+        $donnees = array("a"=>$a,"b"=>$b,"c"=>$c,"d"=>$d,"e"=>$e,"f"=>$f,"g"=>$g);
+
+        //return new \Symfony\Component\HttpFoundation\Response(var_dump($request->request->all()));;
+        return new JsonResponse($donnees);
+
 
     }
 }
