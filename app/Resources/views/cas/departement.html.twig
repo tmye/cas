@@ -6,11 +6,12 @@
     <div class="row">
         <div class="col l12">
             <h5 class="h5_title page-title"><span class="fa fa-link"></span> Gestion des Départements</h5>
+            <p class="description_message">Créez de nouveaux départements ou modifiez ceux existants</p>
             <div class="row">
                 <div class="col l12">
                     <ul class="collapsible" data-collapsible="accordion">
                         <li>
-                            <div class="collapsible-header active">Formulaire d'ajout d'un nouveau département</div>
+                            <div class="collapsible-header active collapsible-header-title">Formulaire d'ajout d'un nouveau département</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 {% for message in  app.session.flashbag.get('notice') %}
                                     <div class="row">
@@ -32,17 +33,19 @@
                                 </div>
                                 <div class="row">
                                     {{ form_start(form) }}
-                                    <div class="input-field col s5">
-                                        {{ form_row(form.name, {'attr': {'class': 'input-customized','placeholder':'Nom du département'}}) }}
-                                    </div>
-                                    <div class="input-field col s5">
-                                        {{ form_row(form.maxCount, {'attr': {'class': 'input-customized','placeholder':'Nombre maximum d\'employés'}}) }}
-                                    </div>
-                                    <div class="input-field col l2">
-                                        {{ form_rest(form) }}
-                                    </div>
-
-                                    {{ form_widget(form.creer, { 'label': 'Créer','attr': {'class':'btn'} }) }}
+                                        <div class="input-field col s5">
+                                            {{ form_row(form.name, {'attr': {'class': 'input-customized','placeholder':'Nom du département'}}) }}
+                                        </div>
+                                        <div class="input-field col s5">
+                                            {{ form_row(form.maxCount, {'attr': {'class': 'input-customized','placeholder':'Nombre maximum d\'employés'}}) }}
+                                        </div>
+                                        <div class="input-field col l2">
+                                            {{ form_widget(form.creer, { 'label': 'Créer','attr': {'class':'btn-perso-historique'} }) }}
+                                            {{ form_rest(form) }}
+                                        </div>
+{#                                        &nbsp;#}
+{#                                        &nbsp;#}
+{#                                        &nbsp;#}
 
                                     {{ form_end(form) }}
                                 </div>
@@ -55,7 +58,7 @@
                 <div class="col l12">
                     <ul class="collapsible" data-collapsible="accordion">
                         <li>
-                            <div class="collapsible-header active">Liste des départements</div>
+                            <div class="collapsible-header active collapsible-header-title">Liste des départements</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
                                     <table class="col l12 centered striped bordered condensed">

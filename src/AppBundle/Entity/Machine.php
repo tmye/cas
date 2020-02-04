@@ -170,5 +170,4 @@ class Machine
     {
         return $this->departements;
     }
-
 }

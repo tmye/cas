@@ -6,13 +6,23 @@
 {% block body %}
     <div class="row">
         <div class="col l12">
-            <h5 class="page-title">Gestion des heures de travail</h5>
-
+            <h5 class="page-title"><span class="fa fa-calendar-plus"></span> Gestion des heures de travail</h5>
+            <p class="description_message">Sur ce formulaire vous pouvez définir les heures de travail. Faites attention à entrer les informations correctement car une erreur dans l'heure de travail peut affecter le calcul de vos statistiques.</p>
             <div class="row">
                 <div class="col l12">
                     <ul class="collapsible" data-collapsible="accordion">
+                        {% for message in  app.session.flashbag.get('notice') %}
+                            <div class="row">
+                                <div class="col l12">
+                                    <div class="operation_message">
+                                        {{ message }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <br/>
                         <li>
-                            <div class="collapsible-header">Ajouter un nouvel heure</div>
+                            <div class="collapsible-header" style="padding-top: 0px;"><span class="collapsible-header-title">Ajouter une nouvelle heure de travail</span></div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
                                     <div class="col l12">
@@ -20,11 +30,11 @@
                                         <!-- Formulaire pour lundi -->
 
                                         <div class="row">
-                                            <div class="input-field col s6">
+                                            <div class="input-field col s4">
                                                 <span>Nom de code</span>
                                                 <input type="text" id="code" class="input-customized">
                                             </div>
-                                            <div class="input-field col s6">
+                                            <div class="input-field col s4">
                                                 <span>Type</span>
                                                 <select id="form_type_all" name="form[type]">
                                                     <option value="1">Heures figées</option>
@@ -32,6 +42,10 @@
                                                     <option value="3">Présence</option>
                                                     <option value="4">Heures figées sans pause</option>
                                                 </select>
+                                            </div>
+                                            <div class="input-field col s4">
+                                                <span>Tolérance (en minutes)</span>
+                                                <input type="number" min="60" value="60" id="tolerance" class="input-customized">
                                             </div>
                                         </div>
                                         <h5 class="permissionsSeparator whH5">Lundi</h5>
@@ -56,7 +70,7 @@
                                             </div>
                                             <div class="input-field col l2 quotaSectionLundi">
                                                 <span>Quota horraire</span>
-                                                <input type="number" id="lundiQuota" min="1" max="8" class="input-customized">
+                                                <input type="number" id="lundiQuota" min="1" max="24" class="input-customized">
                                             </div>
                                         </div>
 
@@ -84,7 +98,7 @@
                                             </div>
                                             <div class="input-field col l2 quotaSectionMardi">
                                                 <span>Quota horraire</span>
-                                                <input type="number" id="mardiQuota" min="1" max="8" class="input-customized">
+                                                <input type="number" id="mardiQuota" min="1" max="24" class="input-customized">
                                             </div>
                                         </div>
 
@@ -112,7 +126,7 @@
                                             </div>
                                             <div class="input-field col s2 quotaSectionMercredi">
                                                 <span>Quota horraire</span>
-                                                <input type="number" id="mercrediQuota" min="1" max="8" class="input-customized">
+                                                <input type="number" id="mercrediQuota" min="1" max="24" class="input-customized">
                                             </div>
                                         </div>
 
@@ -140,7 +154,7 @@
                                             </div>
                                             <div class="input-field col s2 quotaSectionJeudi">
                                                 <span>Quota horraire</span>
-                                                <input type="number" id="jeudiQuota" min="1" max="8" class="input-customized">
+                                                <input type="number" id="jeudiQuota" min="1" max="24" class="input-customized">
                                             </div>
                                         </div>
 
@@ -168,7 +182,7 @@
                                             </div>
                                             <div class="input-field col s2 quotaSectionVendredi">
                                                 <span>Quota horraire</span>
-                                                <input type="number" id="vendrediQuota" min="1" max="8" class="input-customized">
+                                                <input type="number" id="vendrediQuota" min="1" max="24" class="input-customized">
                                             </div>
                                         </div>
 
@@ -200,7 +214,7 @@
                                             </div>
                                             <div class="input-field col s2 quotaSectionSamedi">
                                                 <span>Quota horraire</span>
-                                                <input type="number" id="samediQuota" min="1" max="8" class="input-customized">
+                                                <input type="number" id="samediQuota" min="1" max="24" class="input-customized">
                                             </div>
                                         </div>
 
@@ -232,20 +246,20 @@
                                             </div>
                                             <div class="input-field col s2 quotaSectionDimanche">
                                                 <span>Quota horraire</span>
-                                                <input type="number" id="dimancheQuota" min="1" max="8" class="input-customized">
+                                                <input type="number" id="dimancheQuota" min="1" max="24" class="input-customized">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col l12">
-                                        <button id="btnSave">Enregistrer</button>
+                                        <button id="btnSave" class="btn-perso-historique">Enregistrer</button>
                                     </div>
                                 </div>
                             </div>
                         </li>
                         <li>
-                            <div class="collapsible-header active">Liste des heures de travail</div>
+                            <div class="collapsible-header active "><span class="collapsible-header-title">Liste des heures de travail</span></div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
                                     <div class="col l12">
@@ -589,8 +603,16 @@
     </script>
 
     <script>
-        var saturdayType = null;
-        var sundayType = null;
+        function hoursDiff(begin_hour,end_hour){
+            var splited_first_hour = begin_hour.split(":");
+            var splited_second_hour = end_hour.split(":");
+            var first_hour = Number(splited_first_hour[0])+(Number(splited_first_hour[1])/60);
+            var second_hour = Number(splited_second_hour[0])+(Number(splited_second_hour[1])/60);
+            return second_hour-first_hour;
+        }
+
+        var saturdayType = $("#form_type_all").val();
+        var sundayType = $("#form_type_all").val();
         $(function(){
             $(".checkItSamedi").change(function() {
                 if(this.checked) {
@@ -598,7 +620,7 @@
                     $('.maybeHiddenSamedi').hide();
                     $('.quotaSectionSamedi input').val("");
                 }else{
-                    saturdayType = $('#form_type_all').val("");
+                    saturdayType = $('#form_type_all').val();
                     $('.maybeHiddenSamedi').show();
                 }
             });
@@ -615,29 +637,94 @@
             });
         });
 
-
+        var taux = 0;
+        var jour_travail = 5;
         $("#btnSave").click(function(){
-            var obj = {"code":$("#code").val(),"lundi":[{"type":$("#form_type_all").val(),"quota":$("#lundiQuota").val(),"beginHour":$("#lundiBH").val(),"pauseBeginHour":$("#lundiPBH").val(),"pauseEndHour":$("#lundiPEH").val(),"endHour":$("#lundiEH").val()}],"mardi":[{"type":$("#form_type_all").val(),"quota":$("#mardiQuota").val(),"beginHour":$("#mardiBH").val(),"pauseBeginHour":$("#mardiPBH").val(),"pauseEndHour":$("#mardiPEH").val(),"endHour":$("#mardiEH").val()}],"mercredi":[{"type":$("#form_type_all").val(),"quota":$("#mercrediQuota").val(),"beginHour":$("#mercrediBH").val(),"pauseBeginHour":$("#mercrediPBH").val(),"pauseEndHour":$("#mercrediPEH").val(),"endHour":$("#mercrediEH").val()}],"jeudi":[{"type":$("#form_type_all").val(),"quota":$("#jeudiQuota").val(),"beginHour":$("#jeudiBH").val(),"pauseBeginHour":$("#jeudiPBH").val(),"pauseEndHour":$("#jeudiPEH").val(),"endHour":$("#jeudiEH").val()}],"vendredi":[{"type":$("#form_type_all").val(),"quota":$("#vendrediQuota").val(),"beginHour":$("#vendrediBH").val(),"pauseBeginHour":$("#vendrediPBH").val(),"pauseEndHour":$("#vendrediPEH").val(),"endHour":$("#vendrediEH").val()}],"samedi":[{"type":saturdayType,"quota":$("#samediQuota").val(),"beginHour":$("#samediBH").val(),"pauseBeginHour":$("#samediPBH").val(),"pauseEndHour":$("#samediPEH").val(),"endHour":$("#samediEH").val()}],"dimanche":[{"type":sundayType,"quota":$("#dimancheQuota").val(),"beginHour":$("#dimancheBH").val(),"pauseBeginHour":$("#dimanchePBH").val(),"pauseEndHour":$("#dimanchePEH").val(),"endHour":$("#dimancheEH").val()}]};
-            var json_string = JSON.stringify(obj);
-            $.ajax({
-                type: 'POST',
-                url: 'persistWorkingHour',
-                data: { json_s:json_string,code:$("#code").val() },
-                timeout: 0,
-                success:
-                    function (data) {
-                        if(data==1){
-                            alert("Enregistrement effectué avec succès");
-                            window.location.href = "addWorkingHour";
-                        }else{
-                            alert("Erreur inconnue");
+            if($("#code").val() != "" && $("#code").val() != null){
+                switch($("#form_type_all").val()){
+                    case "1":
+                        taux = hoursDiff($("#lundiBH").val(),$("#lundiPBH").val())+hoursDiff($("#lundiPEH").val(),$("#lundiEH").val())
+                                    +hoursDiff($("#mardiBH").val(),$("#mardiPBH").val())+hoursDiff($("#mardiPEH").val(),$("#mardiEH").val())
+                                    +hoursDiff($("#mercrediBH").val(),$("#mercrediPBH").val())+hoursDiff($("#mercrediPEH").val(),$("#mercrediEH").val())
+                                    +hoursDiff($("#jeudiBH").val(),$("#jeudiPBH").val())+hoursDiff($("#jeudiPEH").val(),$("#jeudiEH").val())
+                                    +hoursDiff($("#vendrediBH").val(),$("#vendrediPBH").val())+hoursDiff($("#vendrediPEH").val(),$("#vendrediEH").val());
+                        if(saturdayType != "null" && saturdayType != null){
+                            jour_travail++;
+                            taux+=hoursDiff($("#samediBH").val(),$("#samediPBH").val())+hoursDiff($("#samediPEH").val(),$("#samediEH").val());
                         }
-                    },
-                error:
-                    function () {
-                        alert('La requête n\'a pas abouti');
-                    }
-            });
+                        if(sundayType != "null" && sundayType != null){
+                            jour_travail++;
+                            taux+=hoursDiff($("#dimancheBH").val(),$("#dimanchePBH").val())+hoursDiff($("#dimanchePEH").val(),$("#dimancheEH").val());
+                        }
+                        console.log(taux);
+                        //alert("case 1 : "+taux);
+                        break;
+                    case "2":
+                        taux = Number($("#lundiQuota").val())+Number($("#mardiQuota").val())+Number($("#mercrediQuota").val())+Number($("#jeudiQuota").val())+Number($("#vendrediQuota").val());
+                        if(saturdayType != "null" && saturdayType != null){
+                            jour_travail++;
+                            taux+=Number($("#samediQuota").val());
+                        }
+                        if(sundayType != "null" && sundayType != null){
+                            jour_travail++;
+                            taux+=Number($("#dimancheQuota").val());
+                        }
+                        console.log(taux);
+                        //alert("case 2 : "+taux);
+                        break;
+                    case "3":
+                        taux = 0;
+                        if(saturdayType != "null" && saturdayType != null){
+                            jour_travail++;
+                        }
+                        if(sundayType != "null" && sundayType != null){
+                            jour_travail++;
+                        }
+                        //alert("case 3 : "+taux);
+                        break;
+                    case "4":
+                        taux = hoursDiff($("#lundiBH").val(),$("#lundiEH").val())
+                                    +hoursDiff($("#mardiBH").val(),$("#mardiEH").val())
+                                    +hoursDiff($("#mercrediBH").val(),$("#mercrediEH").val())
+                                    +hoursDiff($("#jeudiBH").val(),$("#jeudiEH").val())
+                                    +hoursDiff($("#vendrediBH").val(),$("#vendrediEH").val());
+                        if(saturdayType != "null" && saturdayType != null){
+                            jour_travail++;
+                            taux+=hoursDiff($("#samediBH").val(),$("#samediEH").val());
+                        }
+                        if(sundayType != "null" && sundayType != null){
+                            jour_travail++;
+                            taux+=hoursDiff($("#dimancheBH").val(),$("#dimancheEH").val());
+                        }
+                        console.log(taux);
+                        //alert("case 4 : "+taux);
+                        break;
+                }
+                var obj = {"code":$("#code").val(),"lundi":[{"type":$("#form_type_all").val(),"quota":$("#lundiQuota").val(),"beginHour":$("#lundiBH").val(),"pauseBeginHour":$("#lundiPBH").val(),"pauseEndHour":$("#lundiPEH").val(),"endHour":$("#lundiEH").val()}],"mardi":[{"type":$("#form_type_all").val(),"quota":$("#mardiQuota").val(),"beginHour":$("#mardiBH").val(),"pauseBeginHour":$("#mardiPBH").val(),"pauseEndHour":$("#mardiPEH").val(),"endHour":$("#mardiEH").val()}],"mercredi":[{"type":$("#form_type_all").val(),"quota":$("#mercrediQuota").val(),"beginHour":$("#mercrediBH").val(),"pauseBeginHour":$("#mercrediPBH").val(),"pauseEndHour":$("#mercrediPEH").val(),"endHour":$("#mercrediEH").val()}],"jeudi":[{"type":$("#form_type_all").val(),"quota":$("#jeudiQuota").val(),"beginHour":$("#jeudiBH").val(),"pauseBeginHour":$("#jeudiPBH").val(),"pauseEndHour":$("#jeudiPEH").val(),"endHour":$("#jeudiEH").val()}],"vendredi":[{"type":$("#form_type_all").val(),"quota":$("#vendrediQuota").val(),"beginHour":$("#vendrediBH").val(),"pauseBeginHour":$("#vendrediPBH").val(),"pauseEndHour":$("#vendrediPEH").val(),"endHour":$("#vendrediEH").val()}],"samedi":[{"type":saturdayType,"quota":$("#samediQuota").val(),"beginHour":$("#samediBH").val(),"pauseBeginHour":$("#samediPBH").val(),"pauseEndHour":$("#samediPEH").val(),"endHour":$("#samediEH").val()}],"dimanche":[{"type":sundayType,"quota":$("#dimancheQuota").val(),"beginHour":$("#dimancheBH").val(),"pauseBeginHour":$("#dimanchePBH").val(),"pauseEndHour":$("#dimanchePEH").val(),"endHour":$("#dimancheEH").val()}]};
+                var json_string = JSON.stringify(obj);
+                $.ajax({
+                    type: 'POST',
+                    url: 'persistWorkingHour',
+                    data: { json_s:json_string,code:$("#code").val(),tolerance:$("#tolerance").val(),taux:taux,jour_travail:jour_travail },
+                    timeout: 0,
+                    success:
+                        function (data) {
+                            if(data==1){
+                                alert("Enregistrement effectué avec succès");
+                                window.location.href = "addWorkingHour";
+                            }else{
+                                alert("Erreur inconnue");
+                                alert(data);
+                            }
+                        },
+                    error:
+                        function () {
+                            alert('La requête n\'a pas abouti');
+                        }
+                });
+            }else{
+                alert("Erreur : Veuillez préciser un nom de code");
+            }
         });
     </script>
 
@@ -693,6 +780,7 @@
                 $("#dimanchePEH").val($("#lundiPEH").val());
                 $("#dimancheQuota").val($("#lundiQuota").val());
             });
+            // alert("Duplication terminée");
         });
     </script>
     <script>
@@ -700,6 +788,12 @@
         $(function () {
             $(".cl_WH").addClass("collapsible_element_active");
             $(".navigation_collapsible").collapsible('open',6);
+
+
+            $('.timepicker').on('mousedown',function(event){
+                event.preventDefault();
+            });
+
         });
     </script>
 {% endblock %}

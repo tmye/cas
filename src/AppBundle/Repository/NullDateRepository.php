@@ -22,4 +22,5 @@ class NullDateRepository extends \Doctrine\ORM\EntityRepository
             return false;
         }
     }
+
 }

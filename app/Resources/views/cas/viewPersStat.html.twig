@@ -16,7 +16,8 @@
 
     <div class="row">
         <div class="col l12">
-            <h5 class="page-title">Statistiques</h5>
+            <h5 class="page-title"><span class="fa fa-chart-line"></span> Statistiques</h5>
+            <p class="description_message">Affichez les statistiques individuelles d'un employé précis.Vous verrez les pertes en temps et en argent occasionnées par ses absences ou ses retards</p>
 
             <!-- <div id="modal1" class="modal modal-loading" style="overflow: hidden">
                 <div class="modal-content" style="overflow: hidden">
@@ -28,10 +29,10 @@
                 <div class="col l12">
                     <ul class="collapsible" data-collapsible="accordion">
                         <li>
-                            <div class="collapsible-header active">Choisissez les paramètres</div>
+                            <div class="collapsible-header collapsible-header-title active">Choisissez les paramètres</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
-                                    <form method="post" action="{{ path('generatePDF') }}" id="form" class="col l12">
+                                    <form method="POST" action="{{ path('generatePDF') }}"  target="_blank" id="form" class="col l12">
                                         <div class="row row-no-margin">
                                             <div class="input-field col s12">
                                                 <div class="row" id="errorContainer">
@@ -70,6 +71,17 @@
                                                         <input id="toDate" name="toDate" type="text" class="datepicker input-customized" placeholder="AU">
                                                     </div>
                                                 </div>
+                                                <br>
+                                                <div class="row row-no-margin">
+                                                    <div class="col l6">
+                                                        <span>Voulez-vous les statistiques avec ou sans déduction des permissions? </span>
+                                                        <br>
+                                                        <select name="statType" id="statType" class="input-customized browser-default">
+                                                            <option  value="1" selected>Statistiques sans déduction</option>
+                                                            <option value="2" selected>Statistiques avec déduction</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                                 <div class="row row-no-margin">
                                                     <div class="col l6">
                                                     </div>
@@ -89,16 +101,24 @@
                 </div>
             </div>
             <div id="containerMustBeHidden" style="display: none">
-            <h5 class="table-title">Statistiques de l'employé</h5>
+                <h5 class="table-title">Statistiques de l'employé</h5>
                 <div class="row">
                     <div class="col l12">
                         <table class="card table bordered striped condensed centered">
-                            <tr>
-                                <td colspan="3">Nom : <span id="nameSpan"></span></td>
+                            <tr id="detLigne" class="blue lighten-2 white-text">
+                                <td colspan="2">Nom : <span id="nameSpan"></span></td>
+                                <td>Fonction : <span id="fonctionSpan"></span></td>
                                 <td colspan="2">Salaire : <span id="salarySpan"></span></td>
+                                <td colspan="2"><button id="detailEmp" class="btn-perso-historique center grey darken-3 white-text" onclick="window.open('{{ path("viewEmployee") }}','_blank') ">Details</button></td>
+                            </tr>
+                            <tr class="">
+                                <th class="center">Date :</th>
+                                <th class="center">Jours à travailler :</th>
+                                <th class="center">Nombre de permission :</th>
+                                <th colspan="3" class="center">Salaire équivalant : <span id="salarySpan"></span></th>
                             </tr>
                             <tr>
-                                <td colspan="2">
+                                <td>
                                     <span id="fromDateSpan"></span>
                                     <br>
                                     au
@@ -106,59 +126,77 @@
                                     <span id="toDateSpan"></span>
                                 </td>
                                 <td>
+                                    <span id="jourTravailleSpan">-</span>
+                                </td>
+                                <td>
+                                    <span id="nbrePermissionSpan">-</span>
+                                </td>
+                                <td colspan="3">
                                     =
                                     <br>
                                     <span id="totalSalarySpan"></span>
                                 </td>
+
                             </tr>
                             <tr>
                                 <th class="center">Absences</th>
                                 <th class="center">Retards</th>
                                 <th class="center">Départs prématurés</th>
-                                <th class="center" colspan="2">Quota de l'employé</th>
+                                <th class="center" colspan="3">Authentifications incomplètes</th>
                             </tr>
                             <tr>
                                 <td><span id="absenceSpan"></span></td>
                                 <td><span id="retardSpan"></span></td>
                                 <td><span id="departSpan"></span></td>
-                                <td colspan="2"><span id="quotaTotalSpan"></span></td>
+                                <td colspan="3"><span id="nbreAuthInc"></span></td>
+
                             </tr>
                             <tr>
-                                <th colspan="5" class="center">Total Temps Perdu (En Minuites)</th>
+                                <th colspan="6" class="center">Total Temps Perdu (En Heures)</th>
                             </tr>
                             <tr>
-                                <td>-</td>
+                                <td><span id="tpaSpan">-</span></td>
                                 <td><span id="tprSpan"></span></td>
                                 <td><span id="tpdSpan"></span></td>
-                                <td colspan="2"><span id="tempsPerduQuotaSpan">-</span></td>
+                                <td colspan="3"><span id="tpAuthSpan">-</span></td>
                             </tr>
                             <tr>
-                                <th colspan="5" class="center">Total d'argent Perdu</th>
+                                <th colspan="6" class="center">Total d'argent Perdu</th>
                             </tr>
                             <tr>
                                 <td><span id="spaSpan"></span> FCFA</td>
                                 <td><span id="sprSpan"></span> FCFA</td>
                                 <td><span id="spdSpan"></span> FCFA</td>
-                                <td colspan="2"><span id="sommePerduQuotaSpan">-</span></td>
+                                <td colspan="3"><span id="spAuthSpan">-</span></td>
                             </tr>
-                            <tr>
-                                <th colspan="5" class="center">Temps perdu d&ucirc; à des authentifications incomplètes</th>
-                            </tr>
-                            <tr>
-                                <td colspan="5"><span id="tpAuthSpan"></span> min</td>
-                            </tr>
-                            <tr>
-                                <th colspan="5" class="center">Argent perdu d&ucirc; à des authentifications incomplètes</th>
-                            </tr>
-                            <tr>
-                                <td colspan="5"><span id="spAuthSpan"></span> FCFA</td>
-                            </tr>
-                            <tr>
-                                <td colspan="5">=<span id="tapSpan"></span> FCFA (<span id="papSpan"></span>%)</td>
+                            <tr class="red lighten-2 white-text">
+                                <td colspan="2">Total temps perdu : <span id="ttpSpan"></span> H</td>
+                                <td colspan="4">Total d'argent perdu : <span id="tapSpan"></span> FCFA (<span id="papSpan"></span>%)</td>
                             </tr>
                         </table>
                     </div>
                 </div>
+
+                <div id="tblePerm" class="row">
+                    <h5 class="table-title">Permissions</h5>
+                    <table class="center">
+                        <thead>
+                        <tr>
+                            <th>Date de la permission</th>
+                            <th>Type</th>
+                            <th>Temps à rajouter</th>
+                            <th>Somme à rajouter</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tabPermissions">
+                        <tr>
+                            <td colspan="4" style="text-align: center">Aucune permission</td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
                 <div class="row">
                     <div class="col l12">
                         <h5 class="table-title">Historique des présences</h5>
@@ -171,13 +209,13 @@
                                 <th>Pause</th>
                                 <th>Fin pause</th>
                                 <th>Départ</th>
-                                <th>Quota</th>
+                                <!-- <th>Quota</th> -->
                             </tr>
                             </thead>
 
                             <tbody id="rowsContainer">
                             <tr>
-                                <td colspan="10">
+                                <td colspan="9">
                                     <h5 class="center">Aucun résultat</h5>
                                 </td>
                             </tr>
@@ -192,24 +230,7 @@
                     </div>
                 </div>
 
-                <div class="row">
-                    <h5 class="table-title">Permissions</h5>
-                    <table class="center">
-                        <thead>
-                            <tr>
-                                <th>Date de la permission</th>
-                                <th>Type</th>
-                                <th>Temps à rajouter</th>
-                                <th>Somme à rajouter</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabPermissions">
-                            <tr>
-                                <td colspan="4" style="text-align: center">Aucune permission</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+
                 <div class="row delaysPieChart">
                     <div class="col l6">
                         <span>Diagramme cumulé des absences</span>
@@ -221,6 +242,7 @@
                     <div class="col l6 departuresChart">
                         <span>Diagramme des absences</span>
                         <div class="myChartContainer">
+                            <h5 style="padding:20px" class="data_placeholder">Aucune absence enregistrée</h5>
                             <canvas id="myChart" class="card">
                             </canvas>
                         </div>
@@ -228,29 +250,29 @@
                 </div>
                 <div class="row">
                     <div class="col l6">
-                        <span>Départs prématurés de 12H00</span>
-                        <table class="card table bordered centered striped highlight responsive-table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Heure de départ</th>
-                                    <th>Lapse</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabDepartsPrematures12">
-                                <tr>
-                                    <td colspan="3">Aucune donnée à afficher</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col l6">
-                        <span>Retards de 8H00</span>
+                        <span>Départs prématurés de midi</span>
                         <table class="card table bordered centered striped highlight responsive-table">
                             <thead>
                             <tr>
                                 <th>Date</th>
                                 <th>Heure de départ</th>
+                                <th>Lapse</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tabDepartsPrematures12">
+                            <tr>
+                                <td colspan="3">Aucune donnée à afficher</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col l6">
+                        <span>Retards début de journée</span>
+                        <table class="card table bordered centered striped highlight responsive-table">
+                            <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Heure d'arrivée</th>
                                 <th>Lapse</th>
                             </tr>
                             </thead>
@@ -264,7 +286,7 @@
                 </div>
                 <div class="row">
                     <div class="col l6">
-                        <span>Départs prématurés de 18H00</span>
+                        <span>Départs prématurés de fin d'après-midi</span>
                         <table class="card table bordered centered striped highlight responsive-table">
                             <thead>
                             <tr>
@@ -281,12 +303,12 @@
                         </table>
                     </div>
                     <div class="col l6">
-                        <span>Retards de 14H00</span>
+                        <span>Retards début d'après-midi</span>
                         <table class="card table bordered centered striped highlight responsive-table">
                             <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>Heure de départ</th>
+                                <th>Heure d'arrivée</th>
                                 <th>Lapse</th>
                             </tr>
                             </thead>
@@ -475,7 +497,7 @@
         });
     </script>
     <script>
-
+        var employeeID ;
         function precisionRound(number, precision) {
             var factor = Math.pow(10, precision);
             return Math.round(number * factor) / factor;
@@ -501,183 +523,603 @@
 
             /* Création de la fonction de chargement des données de l'employé sélectionné */
             function loadSelectedEmpData(id) {
-
+                function hoursDiff(begin_hour,end_hour){
+                    var splited_first_hour = begin_hour.split(":");
+                    var splited_second_hour = end_hour.split(":");
+                    var first_hour = Number(splited_first_hour[0])+(Number(splited_first_hour[1])/60);
+                    var second_hour = Number(splited_second_hour[0])+(Number(splited_second_hour[1])/60);
+                    return second_hour-first_hour;
+                }
                 var abs = 0;
-                var fromDate = $("#fromDate").val();
-                var fFromDate = new Date($("#fromDate").val());
-                var toDate = $("#toDate").val();
-                var fToDate = new Date($("#toDate").val());
-
+                // Formatting the date into yyyy-mm-dd format
+                var fromDate = $("#fromDate").val().split("-").reverse().join("-");
+                console.log("fromDate --- : "+fromDate);
+                var fFromDate = new Date(fromDate);
+                // Formatting the date into yyyy-mm-dd format
+                var toDate = $("#toDate").val().split("-").reverse().join("-");
+                console.log("toDate --- : "+toDate);
+                var fToDate = new Date(toDate);
+                // $("#")
+               // console.log("fdat --- : "+fToDate);
                 // fonction d'ajout de date
                 Date.prototype.addDays = function(days) {
                     var dat = new Date(this.valueOf());
                     dat.setDate(dat.getDate() + days);
                     return dat;
                 }
+
+
+
+                console.log("à chercher id="+id);
+
+                var lPermCoursId = [];
+                var lPermEndId = [];
+                var nbPermCours;
+                var nbPermEnd;
+                var inPerm = false;
+                var hisPermEnd = false;
+
+                $.ajax({
+                    type:"GET",
+                    url:"{{ path("findPermissionStatee") }}",
+                    success: function (dt) {
+                        var eltCrs  = dt["listPermCrs"] ;
+                        var eltEnd  = dt["listPermEnd"] ;
+                        $.each(eltCrs, function (i, item) {
+                            lPermCoursId.push(item);
+                        });
+                        
+                        $.each(eltEnd, function (i, item) {
+                            lPermEndId.push(item);
+                        });
+                        nbPermCours = dt["nbPermCrs"];
+                        nbPermEnd = dt["nbPermEnd"];
+                        console.log(nbPermCours);
+                        console.log(lPermCoursId);
+                       // console.log("today"+new Date());
+                    },
+                    error:function (msg) {
+                        alert("erreur 1: "+msg);
+                        console.log(msg);
+                    }
+                });
+
                 $.ajax({
                     type: 'POST',
                     url: "returnOneEmployee/"+id,
                     data: {'dateFrom':fromDate,'dateTo':toDate},
                     success: function(data) {
                         var res = JSON.parse(data);
+                        console.log("debug");
+                        console.log(res);
+                        console.log("end debug");
                         //alert("Le résultat : "+res.emp["id"]);
                         var employeeId = res.emp["id"];
+                        console.log("empId: "+employeeId);
                         var fullName = res.emp["surname"]+" "+res.emp["lastName"];
                         var salary = res.emp["salary"];
+                        var fonction = res.emp["function"];
 
                         var timeDiff = Math.abs(fToDate.getTime() - fFromDate.getTime());
                         var diffDays = timeDiff / (1000 * 3600 * 24);
                         diffDays +=1;
                         var totalSalary = (salary/30)*diffDays;
                         var salaryPerDay = (salary/30);
-                        var salaryPerMin = (((salary/30)/24)/60);
+                        var salaryPerHour = res.emp["workingHour"]["taux"];
+                        var jour_travail = Number(res.emp["workingHour"]["jourTravail"]);
+                        var salaryPerMin = (((salary/30)/8)/60);
 
+                        console.log("salaryPerMin "+salaryPerMin);
                         tempsPerduRetards = data.tpr;
 
                         $("#nameSpan").text(fullName);
-                        $("#salarySpan").text(salary);
+                        $("#salarySpan").text(salary+"");
+                        $("#detailEmp").attr('style','display:block');
+                        $("#fonctionSpan").text(fonction);
                         $("#fromDateSpan").text(fromDate);
                         $("#toDateSpan").text(toDate);
-                        $("#totalSalarySpan").text(precisionRound(totalSalary,0));
+                        console.log("Salary : "+salary);
+                        console.log("Total salary : "+totalSalary);
+                        console.log("Diff days : "+diffDays);
+                        // console.log("Diff days : "+diffDays);
+                        //<a href="{{ path('viewPermission') }}" class="collapsible-links cl_PermList">Liste</a>
 
                         // Recuperation des autres informations
                         $.ajax({
-                            type: 'POST',
+                            type: "POST",
                             url: "userStats",
-                            data: {'empId':employeeId,'dateFrom':fromDate,'dateTo':toDate},
+                            data: {"empId":employeeId,"fromeDate":fromDate,"toDate":toDate,"selectedOption":$('select[name=statType]').val()},
                             success: function (data) {
+                                console.log("selected: "+$('select[name=statType]').val());
                                 // We need to empty some fields
                                 $("#tempsPerduQuotaSpan").text("-");
 
                                 console.log(data);
-                                var type = data.tabType["lundi"];
+                                // console.log(data);
+                                console.log(data.tabFerie);
+                                var type = JSON.parse(res.emp["workingHour"]["workingHour"])["lundi"][0]["type"];
+                                //
+                                var ss = 0;
+                                var nbPerm = 0;
+                                if(type == "3" || type == 3){
+                                    ss = ((Number(salary)*12)/52)/(Number(jour_travail))*(Number(data["nbreJourTravail"]));
+                                }else if(type == "2" || type == 2){
+                                    console.log(res.emp["workingHour"]["taux"]);
+                                    ss = (((Number(salary)*12)/52)/Number(res.emp["workingHour"]["taux"]))*Number(data["quota_total"]/60);
+                                    console.log(ss);
+                                }else if(type == "1" || type == 1 || type == "4" || type == 4){
+                                    ss = (((Number(salary)*12)/52)/Number(res.emp["workingHour"]["taux"]))*Number(data["quota_1_4"]);
+                                }else{
+                                    ss += 0;
+                                }
                                 $("#containerMustBeHidden").attr("style","display:block");
-                                $("#absenceSpan").text(data.absences);
-                                $("#retardSpan").text(data.retards);
-                                $("#departSpan").text(data.departs);
+                                $("#totalSalarySpan").text(precisionRound(data["salTotal"],2));
+
+                                $("#jourTravailleSpan").text(data.nbreJourTravail - data.jourFeries);
+                                $("#nbrePermissionSpan").text(data.nbrePermission);
+
+                                if(data.absences != 0){
+                                    $("#absenceSpan").text(data.absences);
+                                }  else {
+                                    $("#absenceSpan").text("-");
+                                }
+
+                                if(data.retards != 0){
+                                    $("#retardSpan").text(data.retards);
+                                }else {
+                                    $("#retardSpan").text("-");
+                                }
+                                if(data.departs != 0){
+                                    $("#departSpan").text(data.departs);
+                                }else {
+                                    $("#departSpan").text("-");
+                                }
+
+
                                 // On fait d'abord un test
                                 if(data.quota_fait > data.quota_total){
                                     $("#quotaTotalSpan").text(precisionRound(data.quota_total/60,1)+"/"+data.quota_total/60);
                                 }else if(data.quota_fait < data.quota_total){
                                     var quotaDiff = (data.quota_total - data.quota_fait);
                                     $("#tempsPerduQuotaSpan").text(quotaDiff);
-                                    $("#sommePerduQuotaSpan").text(precisionRound(salaryPerMin*quotaDiff,0));
+                                    $("#sommePerduQuotaSpan").text(precisionRound(data.sommePerduQuota,0));
                                 }
                                 $("#quotaTotalSpan").text(precisionRound(data.quota_fait/60,1)+"/"+data.quota_total/60);
                                 var stp = 0;
+                                var ttp = 0;
+
                                 if(type == 2 || type == "2"){
-                                    $("#tprSpan").text("-");
-                                    $("#tpdSpan").text("-");
-                                    $("#sprSpan").text(0);
-                                    $("#spdSpan").text(0);
-                                    stp = (salaryPerDay*data.nbreAbsences)+(data.lost_time*salaryPerMin);
+                                    $("#nbreAuthInc").text(data.inc_auth);
+                                    $("#tpaSpan").text(precisionRound(data.tpa,2)+" H");
+                                    $("#tprSpan").text(precisionRound(data.tpr,2)+" H");
+                                    $("#tpdSpan").text(precisionRound(data.tpd,2));
+                                    $("#sprSpan").text(precisionRound(data.spr,2));
+                                    $("#spdSpan").text(precisionRound(data.spd,2));
+                                    $("#spaSpan").text(precisionRound(data.spa,2));
+                                    stp = data.spa+data.spr+data.spd+data.spAuth;
+                                    ttp = data.tpa+data.tpr+data.tpd+data.lost_time;
+                                }else if(type == 3 || type == "3"){
+                                    $("#nbreAuthInc").text(data.inc_auth);
+                                    $("#tpaSpan").text("-");
+                                    $("#tprSpan").text(precisionRound(data.tpr,2)+" H");
+                                    $("#tpdSpan").text(precisionRound(data.tpd,2)+" H");
+                                    $("#sprSpan").text(precisionRound(data.spr,2));
+                                    $("#spdSpan").text(precisionRound(data.spd,2));
+                                    $("#spaSpan").text(precisionRound(data.spa,2));
+                                    stp = data.spa+data.spr+data.spd+data.spAuth;
+                                    ttp = data.tpa+data.tpr+data.tpd+data.lost_time;
                                 }else{
-                                    $("#tprSpan").text(precisionRound(data.tpr,0)+" min");
-                                    $("#tpdSpan").text(precisionRound(data.tpd,0)+" min");
-                                    $("#sprSpan").text(precisionRound(salaryPerMin*data.tpr,0));
-                                    $("#spdSpan").text(precisionRound(salaryPerMin*data.tpd,0));
-                                    stp = (salaryPerMin*data.tpr)+(salaryPerMin*data.tpd)+(salaryPerDay*data.nbreAbsences)+(data.lost_time*salaryPerMin);
+                                    $("#nbreAuthInc").text(data.inc_auth);
+                                    $("#tpaSpan").text(precisionRound(data.tpa,2)+" H");
+                                    $("#tprSpan").text(precisionRound(data.tpr,2)+" H");
+                                    $("#tpdSpan").text(precisionRound(data.tpd,2)+" H");
+                                    $("#sprSpan").text(precisionRound(data.spr,2));
+                                    $("#spdSpan").text(precisionRound(data.spd,2));
+                                    $("#spaSpan").text(precisionRound(data.spa,2));
+                                    stp = data.spa+data.spr+data.spd+data.spAuth;
+                                    ttp = data.tpa+data.tpr+data.tpd+data.lost_time;
                                 }
-                                $("#tpAuthSpan").text(precisionRound(data.lost_time,0));
-                                $("#spAuthSpan").text(precisionRound(data.lost_time*salaryPerMin,0));
-                                $("#spaSpan").text(precisionRound(salaryPerDay*data.nbreAbsences,0));
-                                $("#tapSpan").text(precisionRound(stp,0));
-                                $("#papSpan").text(precisionRound(((stp/salary)*100),0));
+                                $("#nbreAuthInc").text(data.inc_auth);
+                                $("#tpAuthSpan").text(precisionRound(data.lost_time,2)+" H");
+                                $("#spAuthSpan").text(precisionRound(data.spAuth,2));
+                                $("#spaSpan").text(precisionRound(data.spa,2));
+                                $("#tapSpan").text(precisionRound(stp,2));
+                                $("#ttpSpan").text(precisionRound(ttp,2));
+                                $("#papSpan").text(precisionRound(((stp/salary)*100),2));
+
+
                                 //var res = JSON.parse(data.test);
                                 var i=0;
                                 $("#rowsContainer").html("");
-                                    $.each(data.historique,function (arrayID) {
+
+                                var fromDate = $("#fromDate").val().split("-").reverse().join("/");
+                                var fFromDate = new Date(fromDate);
+                                var toDate = $("#toDate").val().split("-").reverse().join("/");
+                                var fToDate = new Date(toDate);
+
+                                var dateFromConvertCrs = new Date();
+                                var dateToConvertCrs = new Date();
+                                var dateFromConvertEnd = new Date();
+                                var dateToConvertEnd = new Date();
+
+                                $.each(data.historique,function (arrayID) {
+
+                                    for(c = 0; c < nbPermCours;c++){
+                                        // console.log("actuellement id="+lPermCoursId[c].employee.id);
+                                        if(id == lPermCoursId[c].employee.id ){
+                                            var date = new Date(lPermCoursId[c].dateFrom.date);
+                                            var date2 = new Date(lPermCoursId[c].dateTo.date);
+                                            var dateFromConvert = new Date((date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear() );
+                                            var dateToConvert = new Date((date2.getMonth() + 1) + "/" + date2.getDate() + "/" + date2.getFullYear() );
+
+                                            var duration = false;
+                                             duration = duration || (fFromDate <= dateFromConvert   &&  dateToConvert <= fToDate);
+                                            // console.log("duration "+duration);
+                                             duration = duration || (dateFromConvert <= fFromDate && fFromDate <= dateToConvert &&   dateToConvert <= fToDate);
+                                            // console.log("duration "+duration);
+                                             duration = duration || (fFromDate <= dateFromConvert   && dateFromConvert <= fToDate  &&  fToDate <= dateToConvert);
+                                            // console.log("duration "+duration);
+                                            duration = duration ||(dateFromConvert <= fFromDate && fFromDate <= fToDate && fToDate   <= dateToConvert);
+                                            // console.log("duration "+duration);
+                                             if( duration ){
+                                                inPerm = true;
+                                                dateFromConvertCrs = dateFromConvert ;
+                                                dateToConvertCrs = dateToConvert;
+                                            }
+                                        }
+                                    }
+                                     // console.log("fFromDate "+fFromDate);
+                                    var durationCrs = false;
+                                    durationCrs = durationCrs || (fFromDate <= dateFromConvertCrs   &&  dateToConvertCrs <= fToDate);
+                                     // console.log("duration "+duration);
+                                    durationCrs = durationCrs || (dateFromConvertCrs <= fFromDate && fFromDate <= dateToConvertCrs &&   dateToConvertCrs <= fToDate);
+                                     // console.log("duration "+duration);
+                                    durationCrs = durationCrs || (fFromDate <= dateFromConvertCrs   && dateFromConvertCrs <= fToDate  &&  fToDate <= dateToConvertCrs);
+                                     // console.log("duration "+duration);
+                                    durationCrs = durationCrs ||(dateFromConvertCrs <= fFromDate && fFromDate <= fToDate && fToDate   <= dateToConvertCrs);
+                                     // console.log("duration "+duration);
+
+                                    for(c = 0; c < nbPermEnd;c++){
+                                        // console.log("actuellement end id="+lPermEndId[c].employee.id);
+                                        if(id == lPermEndId[c].employee.id ){
+                                            var date01 = new Date(lPermEndId[c].dateFrom.date);
+                                            var date02 = new Date(lPermEndId[c].dateTo.date);
+                                            var dateFromConvert01 = new Date((date01.getMonth() + 1) + "/" + date01.getDate() + "/" + date01.getFullYear() );
+                                            var dateToConvert01 = new Date((date02.getMonth() + 1) + "/" + date02.getDate() + "/" + date02.getFullYear() );
+                                            // console.log("dateFromConvert "+dateFromConvert+" dateToConvert "+dateToConvert);
+                                            var duration01 = false;
+                                             duration01 = duration01 || (fFromDate <= dateFromConvert01   &&  dateToConvert01 <= fToDate);
+                                            // console.log("duration "+duration);
+                                             duration01 = duration01 || (dateFromConvert01 <= fFromDate && fFromDate <= dateToConvert01 &&   dateToConvert01 <= fToDate);
+                                            // console.log("duration "+duration);
+                                             duration01 = duration01 || (fFromDate <= dateFromConvert01   && dateFromConvert01 <= fToDate  &&  fToDate <= dateToConvert01);
+                                            // console.log("duration "+duration);
+                                            duration01 = duration01 ||(dateFromConvert01 <= fFromDate && fFromDate <= fToDate && fToDate   <= dateToConvert01);
+                                            // console.log("duration "+duration);
+                                             if( duration01 ){
+                                                hisPermEnd = true;
+                                                  dateFromConvertEnd = dateFromConvert01 ;
+                                                  dateToConvertEnd = dateToConvert01;
+                                                // console.log("dateToConvertEnd0 "+dateToConvertEnd);
+                                            }
+                                        }
+                                    }
+                                     // console.log("dateToConvertEnd1 "+dateToConvertEnd);
+                                    var durationEnd = false;
+                                    durationEnd = durationEnd || (fFromDate <= dateFromConvertEnd   &&  dateToConvertEnd <= fToDate);
+                                    // console.log("duration "+duration);
+                                    durationEnd = durationEnd || (dateFromConvertEnd <= fFromDate && fFromDate <= dateToConvertEnd &&   dateToConvertEnd <= fToDate);
+                                    // console.log("duration "+duration);
+                                    durationEnd = durationEnd || (fFromDate <= dateFromConvertEnd   && dateFromConvertEnd <= fToDate  &&  fToDate <= dateToConvertEnd);
+                                    // console.log("duration "+duration);
+                                    durationEnd = durationEnd ||(dateFromConvertEnd <= fFromDate && fFromDate <= fToDate && fToDate   <= dateToConvertEnd);
+                                     // console.log("durationEnd "+durationEnd);
+
                                     i++;
                                     if((data.historique[arrayID]["arrive"] != "" && data.historique[arrayID]["arrive"] != null) || (data.historique[arrayID]["depart"] != "" && data.historique[arrayID]["depart"] != null) || (data.historique[arrayID]["pause"] != "" && data.historique[arrayID]["pause"] != null) || (data.historique[arrayID]["finPause"] != "" && data.historique[arrayID]["finPause"] != null)){
                                         switch (data.historique[arrayID]["type"]){
+
                                             case "1":
-                                                $("#rowsContainer").append("" +
-                                                    "<tr>" +
-                                                    "<td><span class='redSpan_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
-                                                    "<td><span class='redSpan_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
-                                                    "<td><span class='redSpanPauseBegin_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["pause"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["pBH"]+"</span></td>" +
-                                                    "<td><span class='redSpanPauseEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["finPause"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["pEH"]+"</span></td>" +
-                                                    "<td><span class='redSpanEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
-                                                    "<td>0</td>" +
-                                                    "</tr>"
-                                                );
+                                                if((inPerm == true || hisPermEnd == true) && (durationCrs == true || durationEnd == true) ){
+
+                                                    var frDate = data.historique[arrayID]["date"].split("-").reverse().join("/");
+                                                    var dt = new Date(frDate);
+                                                    if( (dt >= dateFromConvertEnd && dt <= dateToConvertEnd) ||  (dt >= dateFromConvertCrs && dt <= dateToConvertCrs) ){
+                                                        nbPerm++;
+                                                        $("#rowsContainer").append("" +
+                                                            "<tr colspan='6' class='green lighten-2'>" +
+                                                                "<td><span class='redSpan_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                                "<td><span class='redSpan_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
+                                                                "<td><span class='redSpanPauseBegin_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["pause"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["pBH"]+"</span></td>" +
+                                                                "<td><span class='redSpanPauseEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["finPause"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["pEH"]+"</span></td>" +
+                                                                "<td><span class='redSpanEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
+                                                            "</tr>"
+                                                        );
+                                                    }else {
+                                                        $("#rowsContainer").append("" +
+                                                            "<tr>" +
+                                                            "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                            "<td><span class='redSpan_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
+                                                            "<td><span class='redSpanPauseBegin_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                            "<td><span class='redSpanPauseEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                            "<td><span class='redSpanEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
+                                                            "</tr>"
+                                                        );
+                                                    }
+                                                    // console.log("rrgegre: "+ (dte >= dateFromConvertEnd && dte <= dateToConvertEnd) ||  (dte >= dateFromConvertCrs && dte <= dateToConvertCrs) );
+                                                }else {
+                                                    $("#rowsContainer").append("" +
+                                                        "<tr>" +
+                                                        "<td><span class='redSpan_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                        "<td><span class='redSpan_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
+                                                        "<td><span class='redSpanPauseBegin_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["pause"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["pBH"]+"</span></td>" +
+                                                        "<td><span class='redSpanPauseEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["finPause"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["pEH"]+"</span></td>" +
+                                                        "<td><span class='redSpanEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
+                                                        "</tr>"
+                                                    );
+                                                }
+
                                                 if(data.historique[arrayID]["arrive"] > data.historique[arrayID]["bH"]){
                                                     $(".redSpan_1_"+i).css("color","red");
                                                 }if(data.historique[arrayID]["pause"] < data.historique[arrayID]["pBH"]){
-                                                    $(".redSpanPauseBegin_1_"+i).css("color","red");
-                                                }if(data.historique[arrayID]["finPause"] > data.historique[arrayID]["pEH"]){
-                                                    $(".redSpanPauseEnd_1_"+i).css("color","red");
-                                                }if(data.historique[arrayID]["depart"] < data.historique[arrayID]["eH"]){
-                                                    $(".redSpanEnd_1_"+i).css("color","red");
-                                                }
+                                                $(".redSpanPauseBegin_1_"+i).css("color","red");
+                                            }if(data.historique[arrayID]["finPause"] > data.historique[arrayID]["pEH"]){
+                                                $(".redSpanPauseEnd_1_"+i).css("color","red");
+                                            }if(data.historique[arrayID]["depart"] < data.historique[arrayID]["eH"]){
+                                                $(".redSpanEnd_1_"+i).css("color","red");
+                                            }
                                                 break;
+
                                             case "2":
-                                                $("#rowsContainer").append("" +
-                                                    "<tr>" +
-                                                    "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
-                                                    "<td><span class='redSpan_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
-                                                    "<td><span class='redSpanPauseBegin_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
-                                                    "<td><span class='redSpanPauseEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
-                                                    "<td><span class='redSpanEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
-                                                    "<td>" + data.historique[arrayID]["quota"] + "Min</td>" +
-                                                    "</tr>"
-                                                );
+
+                                                if((inPerm == true || hisPermEnd == true) && (durationCrs == true || durationEnd == true) ){
+                                                    nbPerm++;
+                                                    var frDate = data.historique[arrayID]["date"].split("-").reverse().join("/");
+                                                    var dt = new Date(frDate);
+                                                    if( (dt >= dateFromConvertEnd && dt <= dateToConvertEnd) ||  (dt >= dateFromConvertCrs && dt <= dateToConvertCrs) ){
+                                                        $("#rowsContainer").append("" +
+                                                            "<tr colspan='6' class='green lighten-2'>" +
+                                                                "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                                "<td><span class='redSpan_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
+                                                                "<td><span class='redSpanPauseBegin_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                                "<td><span class='redSpanPauseEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                                "<td><span class='redSpanEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
+                                                            "</tr>"
+                                                        );
+                                                    }else {
+                                                        $("#rowsContainer").append("" +
+                                                            "<tr>" +
+                                                            "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                            "<td><span class='redSpan_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
+                                                            "<td><span class='redSpanPauseBegin_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                            "<td><span class='redSpanPauseEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                            "<td><span class='redSpanEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
+                                                            "</tr>"
+                                                        );
+                                                    }
+                                                    // console.log("rrgegre: "+ (dte >= dateFromConvertEnd && dte <= dateToConvertEnd) ||  (dte >= dateFromConvertCrs && dte <= dateToConvertCrs) );
+                                                }else {
+                                                    $("#rowsContainer").append("" +
+                                                        "<tr>" +
+                                                        "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                        "<td><span class='redSpan_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
+                                                        "<td><span class='redSpanPauseBegin_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                        "<td><span class='redSpanPauseEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                        "<td><span class='redSpanEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
+                                                        "</tr>"
+                                                    );
+                                                }
+
                                                 if(data.historique[arrayID]["arrive"] > data.historique[arrayID]["bH"]){
                                                     $(".redSpan_2_"+i).css("color","red");
                                                 }if(data.historique[arrayID]["pause"] < data.historique[arrayID]["pBH"]){
-                                                    $(".redSpanPauseBegin_2_"+i).css("color","red");
-                                                }if(data.historique[arrayID]["finPause"] > data.historique[arrayID]["pEH"]){
-                                                    $(".redSpanPauseEnd_2_"+i).css("color","red");
-                                                }if(data.historique[arrayID]["depart"] < data.historique[arrayID]["eH"]){
-                                                    $(".redSpanEnd_2_"+i).css("color","red");
-                                                }
+                                                $(".redSpanPauseBegin_2_"+i).css("color","red");
+                                            }if(data.historique[arrayID]["finPause"] > data.historique[arrayID]["pEH"]){
+                                                $(".redSpanPauseEnd_2_"+i).css("color","red");
+                                            }if(data.historique[arrayID]["depart"] < data.historique[arrayID]["eH"]){
+                                                $(".redSpanEnd_2_"+i).css("color","red");
+                                            }
                                                 break;
+
                                             case "3":
-                                                $("#rowsContainer").append("" +
-                                                    "<tr>" +
-                                                    "<td colspan='6' class='green lighten-2 white-text center'> Présent </td>" +
-                                                    "</tr>"
-                                                );
+                                                if((inPerm == true || hisPermEnd == true) && (durationCrs == true || durationEnd == true) ){
+                                                    nbPerm++;
+                                                    var frDate = data.historique[arrayID]["date"].split("-").reverse().join("/");
+
+                                                    var dt = new Date(frDate);
+                                                    console.log("frdteC: "+dt);
+                                                    if( (dt >= dateFromConvertEnd && dt <= dateToConvertEnd) ||  (dt >= dateFromConvertCrs && dt <= dateToConvertCrs) ){
+                                                        $("#rowsContainer").append("" +
+                                                            "<tr colspan='6' class='green lighten-2'>" +
+                                                            "<td ><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                            "<td colspan='4' class='center  white-text' > Permission </td>" +
+                                                            "</tr>"
+                                                        );
+                                                    }
+                                                }else{
+                                                    $("#rowsContainer").append("" +
+                                                        "<tr>" +
+                                                        "<td colspan='6' class='green lighten-2 white-text center'> Présent </td>" +
+                                                        "</tr>"
+                                                    );
+                                                }
+
                                                 break;
+
                                             case "4":
-                                                $("#rowsContainer").append("" +
-                                                    "<tr>" +
-                                                    "<td><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
-                                                    "<td><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
-                                                    "<td><span class='redSpanPauseBegin_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
-                                                    "<td><span class='redSpanPauseEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
-                                                    "<td><span class='redSpanEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
-                                                    "<td>0</td>" +
-                                                    "</tr>"
-                                                );
+                                                // var curDate = new Date(data.historique[arrayID]["date"]);
+                                                // var curDateConvert = new Date((curDate.getMonth() + 1) + "/" + curDate.getDate() + "/" + curDate.getFullYear() );
+                                                //  console.log("curDate "+ data.historique[arrayID]["date"].split("-").reverse().join("/"));
+                                                var frDate = data.historique[arrayID]["date"].split("-").reverse().join("/");
+                                                var dt = new Date(frDate);
+                                               // console.log("condition: "+(inPerm == true || hisPermEnd == true) && (durationCrs == true || durationEnd == true) && (fFromDate <= dt && dt <= fToDate));
+                                                // var isPermDate = false;
+                                                if((inPerm == true || hisPermEnd == true) && (durationCrs == true || durationEnd == true) && (fFromDate <= dt && dt <= fToDate) ){
+                                                    nbPerm++;
+
+                                                    if( (dt >= dateFromConvertEnd && dt <= dateToConvertEnd) ||  (dt >= dateFromConvertCrs && dt <= dateToConvertCrs) ){
+                                                        $("#rowsContainer").append("" +
+                                                            "<tr colspan='6' class='green lighten-2'>" +
+                                                            "<td ><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                            "<td><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
+                                                            "<td><span class='redSpanPauseBegin_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                            "<td><span class='redSpanPauseEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                            "<td><span class='redSpanEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
+                                                            "</tr>"
+                                                        );
+                                                    }
+                                                    else {
+
+                                                        $("#rowsContainer").append("" +
+                                                            "<tr>" +
+                                                            "<td ><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                            "<td><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
+                                                            "<td><span class='redSpanPauseBegin_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                            "<td><span class='redSpanPauseEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                            "<td><span class='redSpanEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
+                                                            "</tr>"
+                                                        );
+
+                                                    }
+                                                     // console.log("rrgegre: "+ (dte >= dateFromConvertEnd && dte <= dateToConvertEnd) ||  (dte >= dateFromConvertCrs && dte <= dateToConvertCrs) );
+                                                }
+                                                else {
+                                                    if((data.historique[arrayID]["arrive"] == "" || data.historique[arrayID]["arrive"] == null)){
+
+                                                        $.each(data.tabFerie,function (tabFID) {
+                                                            var jrFerieDate = data.tabFerie[tabFID]["date"].split("-").reverse().join("/");
+
+                                                            var dt = new Date(Date.parse(jrFerieDate)).format("dd-mm-yyyy");
+                                                            console.log("sfiss2: "+dt);
+                                                            var curDatetab = data.historique[arrayID]["date"].split("-").reverse().join("/");
+
+
+                                                            var curDte = new Date(curDatetab);
+                                                            console.log("jrfrerie: "+dt+" currentdt: "+curDte)
+                                                            if(curDte == dt ){
+                                                                // $("#rowsContainer").append("" +
+                                                                //     "<tr>" +
+                                                                //     "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                                //     "<td colspan='4' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:green'> Férié </span></td>" +
+                                                                //     "</tr>"
+                                                                // );
+                                                            } else {
+                                                                $("#rowsContainer").append("" +
+                                                                    "<tr>" +
+                                                                    "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                                    "<td colspan='4' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence1</span></td>" +
+                                                                    "</tr>"
+                                                                );
+                                                            }
+                                                        });
+
+                                                    } else {
+                                                        $("#rowsContainer").append("" +
+                                                            "<tr>" +
+                                                            "<td ><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                            "<td><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
+                                                            "<td><span class='redSpanPauseBegin_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                            "<td><span class='redSpanPauseEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                            "<td><span class='redSpanEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
+                                                            "</tr>"
+                                                        );
+                                                    }
+
+
+                                                }
+
                                                 if(data.historique[arrayID]["arrive"] > data.historique[arrayID]["bH"]){
                                                     $(".redSpan_3_"+i).css("color","red");
                                                 }if(data.historique[arrayID]["pause"] < data.historique[arrayID]["pBH"]){
-                                                    $(".redSpanPauseBegin_3_"+i).css("color","red");
+                                                $(".redSpanPauseBegin_3_"+i).css("color","red");
                                                 }if(data.historique[arrayID]["finPause"] > data.historique[arrayID]["pEH"]){
                                                     $(".redSpanPauseEnd_3_"+i).css("color","red");
                                                 }if(data.historique[arrayID]["depart"] < data.historique[arrayID]["eH"]){
                                                     $(".redSpanEnd_3_"+i).css("color","red");
                                                 }
                                                 break;
+
+                                            case "null":
+
+                                                    $("#rowsContainer").append("" +
+                                                        "<tr>" +
+                                                        "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                        "<td colspan='4' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:green'> Présence non requise </span></td>" +
+                                                        "</tr>"
+                                                    );
+
+                                                break;
                                         }
                                     }else if(data.historique[arrayID]["type"] == "null" || data.historique[arrayID]["type"] == null){
-                                        $("#rowsContainer").append("" +
-                                            "<tr>" +
-                                            "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
-                                            "<td colspan='5' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:green'> Présence non requise </span></td>" +
-                                            "</tr>"
-                                        );
-                                    }else{
-                                        $("#rowsContainer").append("" +
-                                            "<tr>" +
-                                            "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
-                                            "<td colspan='5' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence</span></td>" +
-                                            "</tr>"
-                                        );
+
+                                            $("#rowsContainer").append("" +
+                                                "<tr>" +
+                                                "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                "<td colspan='4' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:green'> Week-end </span></td>" +
+                                                "</tr>"
+                                            );
+
+                                    }
+
+                                    else {
+                                    // else if (duration == false || durationEnd == false) { fFromDate <= dt && dt <= fToDate
+                                    //     console.log("inperm: "+inPerm+" hisPermEnd: "+hisPermEnd);
+                                        if((inPerm == true || hisPermEnd == true) ){
+                                             nbPerm++;
+                                             var froDate = data.historique[arrayID]["date"].split("-").reverse().join("/");
+                                             var dte = new Date(froDate);
+                                             if( (dte >= dateFromConvertEnd && dte <= dateToConvertEnd) ||  (dte >= dateFromConvertCrs && dte <= dateToConvertCrs) ){
+                                                 $("#rowsContainer").append("" +
+                                                     "<tr colspan='6' class='green lighten-2'>" +
+                                                     "<td ><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                     "<td colspan='4' class='center  white-text' > Permission </td>" +
+                                                     "</tr>"
+                                                 );
+                                             } else {
+                                                 $("#rowsContainer").append("" +
+                                                     "<tr>" +
+                                                     "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                     "<td colspan='4' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence2</span></td>" +
+                                                     "</tr>"
+                                                 );
+                                             }
+                                             // console.log("cdtion: "+(inPerm == true || hisPermEnd == false) && (inPerm == true || hisPermEnd == false) && (inPerm == false || hisPermEnd == false));
+                                        }
+                                        else {
+                                            $.each(data.tabFerie,function (tabFID) {
+                                                var jrFerieDate = data.tabFerie[tabFID]["date"].split("-").reverse().join("/");
+                                                var dt = new Date(jrFerieDate);
+                                                var curDatetab = data.historique[arrayID]["date"].split("-").reverse().join("/");
+                                                var curDte = new Date(curDatetab);
+                                                // console.log("sfiss: "+  new Date(( dt.getDate()+ "/" + dt.getMonth() + 1) + "/" + dt.getFullYear() ));
+                                                // console.log("sfissij: "+new Date((curDte.getMonth() + 1) + "/" + curDte.getDate() + "/" + curDte.getFullYear() ));
+                                                console.log("sfiss: "+  dt);
+                                                console.log("sfissij: "+curDte+" ok?? "+( dt.getTime() ==curDte.getTime()));
+
+
+                                                //console.log("jrfrerie: "+dt+" currentdt: "+curDte)
+                                                if(dt.getTime() == curDte.getTime()){
+                                                    $("#rowsContainer").append("" +
+                                                        "<tr>" +
+                                                        "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                        "<td colspan='4' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:green'> Férié </span></td>" +
+                                                        "</tr>"
+                                                    );
+                                                } else {
+                                                    $("#rowsContainer").append("" +
+                                                        "<tr>" +
+                                                        "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                        "<td colspan='4' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence</span></td>" +
+                                                        "</tr>"
+                                                    );
+                                                }
+                                            });
+
+
+                                        }
                                     }
                                 });
-
+                               // $("#nbrePermissionSpan").text(nbPerm);
                                 // Boucle pour remplir les tableau
 
                                 var pauseDatas = [];
@@ -764,6 +1206,7 @@
                                 var dimancheRetardPauseTabLabels = [];
                                 var dimancheFinTabLabels = [];
 
+                                var statValue = $('select[name=statType]').val();
                                 // Before any action else we must delete the content
                                 $("#tabDepartsPrematures12").html("");
                                 if(data.pauseStats.length > 0){
@@ -776,31 +1219,31 @@
                                         var leJour = dateObject.getDay();
                                         switch (leJour){
                                             case 1:
-                                                lundiPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,0));
+                                                lundiPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,2));
                                                 lundiPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 2:
-                                                mardiPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,0));
+                                                mardiPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,2));
                                                 mardiPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 3:
-                                                mercrediPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,0));
+                                                mercrediPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,2));
                                                 mercrediPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 4:
-                                                jeudiPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,0));
+                                                jeudiPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,2));
                                                 jeudiPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 5:
-                                                vendrediPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,0));
+                                                vendrediPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,2));
                                                 vendrediPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 6:
-                                                samediPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,0));
+                                                samediPauseTabDatas.push(precisionRound(data.pauseStats[j].temps,2));
                                                 samediPauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                             case 0:
-                                                dimanchePauseTabDatas.push(precisionRound(data.pauseStats[j].temps,0));
+                                                dimanchePauseTabDatas.push(precisionRound(data.pauseStats[j].temps,2));
                                                 dimanchePauseTabLabels.push(data.pauseStats[j].date);
                                                 break;
                                         }
@@ -809,9 +1252,9 @@
                                         pauseLabels.push(data.pauseStats[j].date);
                                         $("#tabDepartsPrematures12").append(
                                             "<tr>"+
-                                                "<td>"+data.pauseStats[j].date+"</td>"+
-                                                "<td>"+data.pauseStats[j].heureDepart+"</td>"+
-                                                "<td>"+precisionRound(data.pauseStats[j].temps,0)+" Min</td>"+
+                                            "<td>"+data.pauseStats[j].date+"</td>"+
+                                            "<td>"+data.pauseStats[j].heureDepart+"</td>"+
+                                            "<td>"+(Math.trunc(data.pauseStats[j].temps_min)+1)+" Min</td>"+
                                             "</tr>"
                                         );
                                     }
@@ -864,7 +1307,7 @@
                                             "<tr>"+
                                             "<td>"+data.finStats[k].date+"</td>"+
                                             "<td>"+data.finStats[k].heureDepart+"</td>"+
-                                            "<td>"+precisionRound(data.finStats[k].temps,0)+" Min</td>"+
+                                            "<td>"+(Math.trunc(data.finStats[k].temps_min)+1)+" Min</td>"+
                                             "</tr>"
                                         );
                                     }
@@ -883,7 +1326,7 @@
                                         switch (leJour){
                                             case 1:
                                                 lundiRetardPauseTabDatas.push(precisionRound(data.retardPauseStats[l].temps,0));
-                                                lundiRetardPauseTabLabels.push(data.retardStats[l].date);
+                                                lundiRetardPauseTabLabels.push(data.retardPauseStats[l].date);
                                                 break;
                                             case 2:
                                                 mardiRetardPauseTabDatas.push(precisionRound(data.retardPauseStats[l].temps,0));
@@ -917,7 +1360,7 @@
                                             "<tr>"+
                                             "<td>"+data.retardPauseStats[l].date+"</td>"+
                                             "<td>"+data.retardPauseStats[l].heureRetard+"</td>"+
-                                            "<td>"+precisionRound(data.retardPauseStats[l].temps,0)+" Min</td>"+
+                                            "<td>"+Math.trunc(data.retardPauseStats[l].temps_min)+" Min</td>"+
                                             "</tr>"
                                         );
                                     }
@@ -970,7 +1413,7 @@
                                             "<tr>"+
                                             "<td>"+data.retardStats[m].date+"</td>"+
                                             "<td>"+data.retardStats[m].heureRetard+"</td>"+
-                                            "<td>"+precisionRound(data.retardStats[m].temps,0)+" Min</td>"+
+                                            "<td>"+Math.trunc(data.retardStats[m].temps_min)+" Min</td>"+
                                             "</tr>"
                                         );
                                     }
@@ -978,22 +1421,64 @@
 
                                 // Script pour remplir le tableau de stats des permissions
 
-                                $("#tabPermisions").html("");
+                                $("#tabPermissions").html("");
+                                var totSomRaj = 0;
+                                /*
+                                *$("#sprSpan").text(precisionRound( salaryPerMin*taiRet ,2));
+                                    $("#spdSpan").text(precisionRound(salaryPerMin*taiDep,2));
+
+                                * */
                                 $.each(data.permissionData,function (id) {
                                     $.each(data.permissionData[id],function (el) {
                                         var losedTime = data.permissionData[id][el].tempsPerdu;
+
+
                                         if (losedTime >= 60){
-                                            losedTime = Math.trunc((losedTime/60))+" H "+Math.round(losedTime%60)+" Min";
+                                            losedTime = precisionRound((losedTime/60),2);
                                         }else{
-                                            losedTime = losedTime+" Min";
+                                            losedTime = precisionRound(losedTime,2);
                                         }
-                                        $("#tabPermissions").append("" +
-                                            "<tr>" +
+                                        // console.log("tPErdu "+data.permissionData[id][el].tempsPerdu+" sall "+salary+" nbT "+data.nbreJourTravail);
+
+
+
+                                        if(statValue == "2"){
+                                            var nbt = 0;
+                                            $.each(data.jrPerMonth, function ( id2) {
+                                                $.each(data.jrPerMonth["month"], function ( e,el1) {
+                                                    var dt = new Date((data.permissionData[id][el].date).split("/").reverse().join("-"));
+                                                    if(((el1+"").includes((dt.getMonth()+1)+""))){
+                                                        nbt = data.jrPerMonth["nbJrT"][e];
+
+
+                                                    }
+                                                });
+
+                                            });
+
+                                            if(((data.permissionData[id][el].type)+"").includes("Permission") ){
+                                                totSomRaj += precisionRound((data.permissionData[id][el].tempsPerdu*(salary/nbt/losedTime)),0);
+                                            }
+
+                                            $("#tabPermissions").append("" +
+                                                "<tr>" +
                                                 "<td>"+data.permissionData[id][el].date+"</td>" +
                                                 "<td>"+data.permissionData[id][el].type+"</td>" +
-                                                "<td>"+losedTime+"</td>"+
-                                                "<td>"+precisionRound((data.permissionData[id][el].tempsPerdu*salaryPerMin),0)+"</td>" +
-                                            "</tr>");
+                                                "<td>"+losedTime+" H </td>"+
+                                                "<td>"+precisionRound((data.permissionData[id][el].tempsPerdu * (salary/nbt/losedTime)),0)+"</td>" +
+                                                "</tr>"
+                                            );
+
+                                            $("#tblePerm").show();
+                                        } else {
+                                            $("#tblePerm").hide();
+                                        }
+
+                                        // console.log("le djè "+data.permissionData[id][el].tempsPerdu );
+                                        /*
+                                        * var taiRet = data["permissionData"]["retardStats"].length;
+                                var taiDep = data["permissionData"]["finStats"].length;*/
+
                                     });
                                 });
 
@@ -1013,8 +1498,8 @@
                                             data: [data.tpr,data.tpd],
                                         }],
                                         labels : [
-                                            'Cumul des retards en minuite',
-                                            'Cumul des départs avnt l\'heure en minuite'
+                                            'Cumul des retards (en heure)',
+                                            'Cumul des départs avant l\'heure (en heure)'
                                         ]
                                     },
                                     options: {
@@ -1052,6 +1537,7 @@
 
                                 // Diagramme à bandes des absences
                                 $("#myChart").remove();
+                                $(".data_placeholder").remove();
                                 var element = "<canvas id='myChart' class='card' style='cursor: pointer'></canvas>";
                                 $(".myChartContainer").append(element);
                                 var ctx = document.getElementById('myChart').getContext('2d');
@@ -1092,6 +1578,9 @@
                                 */
 
                                 // Pour lundi
+                                $("#lundi-m-chart").remove();
+                                var element = "<canvas id='lundi-m-chart'></canvas>";
+                                $(".lundiDiagDep12").append(element);
                                 var ctx = document.getElementById('lundi-m-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1101,8 +1590,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#36a2eb',
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: lundiPauseTabDatas,
                                         }],
@@ -1118,6 +1606,9 @@
                                     }
                                 });
 
+                                $("#lundi-n-chart").remove();
+                                var element = "<canvas id='lundi-n-chart'></canvas>";
+                                $(".lundiDiagDep18").append(element);
                                 var ctx = document.getElementById('lundi-n-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1127,8 +1618,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#ff6384',
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: lundiFinTabDatas,
                                         }],
@@ -1144,6 +1634,9 @@
                                     }
                                 });
 
+                                $("#lundi-m8-chart").remove();
+                                var element = "<canvas id='lundi-m8-chart'></canvas>";
+                                $(".lundiDiagRet8").append(element);
                                 var ctx = document.getElementById('lundi-m8-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1153,8 +1646,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#36a2eb',
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: lundiRetardTabDatas,
                                         }],
@@ -1170,6 +1662,9 @@
                                     }
                                 });
 
+                                $("#lundi-n14-chart").remove();
+                                var element = "<canvas id='lundi-n14-chart'></canvas>";
+                                $(".lundiDiagRet14").append(element);
                                 var ctx = document.getElementById('lundi-n14-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1179,8 +1674,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#ff6384',
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: lundiRetardPauseTabDatas,
                                         }],
@@ -1200,6 +1694,9 @@
                                 * Pour Mardi                       |
                                 *  --------------------------------|
                                 */
+                                $("#mardi-m-chart").remove();
+                                var element = "<canvas id='mardi-m-chart'></canvas>";
+                                $(".mardiDiagDep12").append(element);
                                 var ctx = document.getElementById('mardi-m-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1209,8 +1706,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#36a2eb',
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: mardiPauseTabDatas,
                                         }],
@@ -1226,6 +1722,9 @@
                                     }
                                 });
 
+                                $("#mardi-n-chart").remove();
+                                var element = "<canvas id='mardi-n-chart'></canvas>";
+                                $(".mardiDiagDep18").append(element);
                                 var ctx = document.getElementById('mardi-n-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1235,8 +1734,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#ff6384',
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: mardiFinTabDatas,
                                         }],
@@ -1252,6 +1750,9 @@
                                     }
                                 });
 
+                                $("#mardi-m8-chart").remove();
+                                var element = "<canvas id='mardi-m8-chart'></canvas>";
+                                $(".mardiDiagRet8").append(element);
                                 var ctx = document.getElementById('mardi-m8-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1261,8 +1762,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#36a2eb',
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: mardiRetardTabDatas,
                                         }],
@@ -1278,6 +1778,9 @@
                                     }
                                 });
 
+                                $("#mardi-n14-chart").remove();
+                                var element = "<canvas id='mardi-n14-chart'></canvas>";
+                                $(".mardiDiagRet14").append(element);
                                 var ctx = document.getElementById('mardi-n14-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1287,8 +1790,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#ff6384',
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: mardiRetardPauseTabDatas,
                                         }],
@@ -1308,6 +1810,9 @@
                                 * Pour Mercredi                    |
                                 *  --------------------------------|
                                 */
+                                $("#mercredi-m-chart").remove();
+                                var element = "<canvas id='mercredi-m-chart'></canvas>";
+                                $(".mercrediDiagDep12").append(element);
                                 var ctx = document.getElementById('mercredi-m-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1317,8 +1822,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#36a2eb',
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: mercrediPauseTabDatas,
                                         }],
@@ -1334,6 +1838,9 @@
                                     }
                                 });
 
+                                $("#mercredi-n-chart").remove();
+                                var element = "<canvas id='mercredi-n-chart'></canvas>";
+                                $(".mercrediDiagDep18").append(element);
                                 var ctx = document.getElementById('mercredi-n-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1343,8 +1850,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#ff6384',
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: mercrediFinTabDatas,
                                         }],
@@ -1360,6 +1866,9 @@
                                     }
                                 });
 
+                                $("#mercredi-m8-chart").remove();
+                                var element = "<canvas id='mercredi-m8-chart'></canvas>";
+                                $(".mercrediDiagRet8").append(element);
                                 var ctx = document.getElementById('mercredi-m8-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1369,8 +1878,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#36a2eb',
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: mercrediRetardTabDatas,
                                         }],
@@ -1386,6 +1894,9 @@
                                     }
                                 });
 
+                                $("#mercredi-n14-chart").remove();
+                                var element = "<canvas id='mercredi-n14-chart'></canvas>";
+                                $(".mercrediDiagRet14").append(element);
                                 var ctx = document.getElementById('mercredi-n14-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1395,8 +1906,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#ff6384',
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: mercrediRetardPauseTabDatas,
                                         }],
@@ -1416,6 +1926,9 @@
                                 * Pour Jeudi                       |
                                 *  --------------------------------|
                                 */
+                                $("#jeudi-m-chart").remove();
+                                var element = "<canvas id='jeudi-m-chart'></canvas>";
+                                $(".jeudiDiagDep12").append(element);
                                 var ctx = document.getElementById('jeudi-m-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1425,8 +1938,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#36a2eb',
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: jeudiPauseTabDatas,
                                         }],
@@ -1442,6 +1954,9 @@
                                     }
                                 });
 
+                                $("#jeudi-n-chart").remove();
+                                var element = "<canvas id='jeudi-n-chart'></canvas>";
+                                $(".jeudiDiagDep18").append(element);
                                 var ctx = document.getElementById('jeudi-n-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1451,8 +1966,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#ff6384',
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: jeudiFinTabDatas,
                                         }],
@@ -1468,6 +1982,9 @@
                                     }
                                 });
 
+                                $("#jeudi-m8-chart").remove();
+                                var element = "<canvas id='jeudi-m8-chart'></canvas>";
+                                $(".jeudiDiagRet8").append(element);
                                 var ctx = document.getElementById('jeudi-m8-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1477,8 +1994,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#36a2eb',
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: jeudiRetardTabDatas,
                                         }],
@@ -1494,6 +2010,9 @@
                                     }
                                 });
 
+                                $("#jeudi-n14-chart").remove();
+                                var element = "<canvas id='jeudi-n14-chart'></canvas>";
+                                $(".jeudiDiagRet14").append(element);
                                 var ctx = document.getElementById('jeudi-n14-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1503,8 +2022,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#ff6384',
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: jeudiRetardPauseTabDatas,
                                         }],
@@ -1524,6 +2042,9 @@
                                 * Pour Vendredi                    |
                                 *  --------------------------------|
                                 */
+                                $("#vendredi-m-chart").remove();
+                                var element = "<canvas id='vendredi-m-chart'></canvas>";
+                                $(".vendrediDiagDep12").append(element);
                                 var ctx = document.getElementById('vendredi-m-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1533,8 +2054,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#36a2eb',
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: vendrediPauseTabDatas,
                                         }],
@@ -1550,6 +2070,9 @@
                                     }
                                 });
 
+                                $("#vendredi-n-chart").remove();
+                                var element = "<canvas id='vendredi-n-chart'></canvas>";
+                                $(".vendrediDiagDep18").append(element);
                                 var ctx = document.getElementById('vendredi-n-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1559,8 +2082,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#ff6384',
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: vendrediFinTabDatas,
                                         }],
@@ -1576,6 +2098,9 @@
                                     }
                                 });
 
+                                $("#vendredi-m8-chart").remove();
+                                var element = "<canvas id='vendredi-m8-chart'></canvas>";
+                                $(".vendrediDiagRet8").append(element);
                                 var ctx = document.getElementById('vendredi-m8-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1585,8 +2110,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#36a2eb',
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: vendrediRetardTabDatas,
                                         }],
@@ -1602,6 +2126,9 @@
                                     }
                                 });
 
+                                $("#vendredi-n14-chart").remove();
+                                var element = "<canvas id='vendredi-n14-chart'></canvas>";
+                                $(".vendrediDiagRet14").append(element);
                                 var ctx = document.getElementById('vendredi-n14-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1611,8 +2138,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#ff6384',
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: vendrediRetardPauseTabDatas,
                                         }],
@@ -1632,6 +2158,9 @@
                                 * Pour Samedi                      |
                                 *  --------------------------------|
                                 */
+                                $("#samedi-m-chart").remove();
+                                var element = "<canvas id='samedi-m-chart'></canvas>";
+                                $(".samediDiagDep12").append(element);
                                 var ctx = document.getElementById('samedi-m-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1641,8 +2170,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#36a2eb',
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: samediPauseTabDatas,
                                         }],
@@ -1658,6 +2186,9 @@
                                     }
                                 });
 
+                                $("#samedi-n-chart").remove();
+                                var element = "<canvas id='samedi-n-chart'></canvas>";
+                                $(".samediDiagDep18").append(element);
                                 var ctx = document.getElementById('samedi-n-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1667,8 +2198,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#ff6384',
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: samediFinTabDatas,
                                         }],
@@ -1684,6 +2214,9 @@
                                     }
                                 });
 
+                                $("#samedi-m8-chart").remove();
+                                var element = "<canvas id='samedi-m8-chart'></canvas>";
+                                $(".samediDiagRet8").append(element);
                                 var ctx = document.getElementById('samedi-m8-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1693,8 +2226,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#36a2eb',
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: samediRetardTabDatas,
                                         }],
@@ -1710,6 +2242,9 @@
                                     }
                                 });
 
+                                $("#samedi-n14-chart").remove();
+                                var element = "<canvas id='samedi-n14-chart'></canvas>";
+                                $(".samediDiagRet14").append(element);
                                 var ctx = document.getElementById('samedi-n14-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1719,8 +2254,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#ff6384',
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: samediRetardPauseTabDatas,
                                         }],
@@ -1740,6 +2274,9 @@
                                 * Pour Dimanche                    |
                                 *  --------------------------------|
                                 */
+                                $("#dimanche-m-chart").remove();
+                                var element = "<canvas id='dimanche-m-chart'></canvas>";
+                                $(".dimancheDiagDep12").append(element);
                                 var ctx = document.getElementById('dimanche-m-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1749,8 +2286,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#36a2eb',
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: dimanchePauseTabDatas,
                                         }],
@@ -1766,6 +2302,9 @@
                                     }
                                 });
 
+                                $("#dimanche-n-chart").remove();
+                                var element = "<canvas id='dimanche-n-chart'></canvas>";
+                                $(".dimancheDiagDep18").append(element);
                                 var ctx = document.getElementById('dimanche-n-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1775,8 +2314,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#ff6384',
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: dimancheFinTabDatas,
                                         }],
@@ -1792,6 +2330,9 @@
                                     }
                                 });
 
+                                $("#dimanche-m8-chart").remove();
+                                var element = "<canvas id='dimanche-m8-chart'></canvas>";
+                                $(".dimancheDiagRet8").append(element);
                                 var ctx = document.getElementById('dimanche-m8-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1801,8 +2342,7 @@
                                     data: {
                                         labels: [],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#36a2eb',
+                                            label: "Heure",
                                             borderColor: '#36a2eb',
                                             data: dimancheRetardTabDatas,
                                         }],
@@ -1818,6 +2358,9 @@
                                     }
                                 });
 
+                                $("#dimanche-n14-chart").remove();
+                                var element = "<canvas id='dimanche-n14-chart'></canvas>";
+                                $(".dimancheDiagRet14").append(element);
                                 var ctx = document.getElementById('dimanche-n14-chart').getContext('2d');
                                 var chart = new Chart(ctx, {
                                     // The type of chart we want to create
@@ -1827,8 +2370,7 @@
                                     data: {
                                         labels: [0, 20, 40, 60, 80,100,120],
                                         datasets: [{
-                                            label: "Minuite",
-                                            backgroundColor: '#ff6384',
+                                            label: "Heure",
                                             borderColor: '#ff6384',
                                             data: dimancheRetardPauseTabDatas,
                                         }],
@@ -2063,25 +2605,35 @@
 
                                 // For departures chart
                                 if(data.nbreAbsences == 0){
-                                    $(".myChartContainer").append("<h5>Aucune absence enregistrée</h5>");
+                                    $(".data_placeholder").remove();
+                                    $(".myChartContainer").append("<h5 style='padding:20px' class='data_placeholder'>Aucune absence enregistrée</h5>");
                                     $("#myChart").hide();
                                 }else{
                                     $("#myChart").show();
                                 }
+                                if(statValue == "2"){
+                                    $("#tabPermissions").append("" +
+                                        "<tr style='background-color:#C9C9C9;'>" +
+                                        "<td colspan='6' class='center' ><span style='font-weight:bold; '> Total des sommes à rajouter: "+totSomRaj+" FCFA </span></td>"+
+                                        "</tr>"
+                                    );
+                                }
+
 
                                 // Closing the loading box
-
                                 $('#modal_loading').modal('close');
+                                employeeID = id;
                             },
                             error: function (msg) {
                                 // Closing the loading box
                                 $('#modal_loading').modal('close');
-                                alert("Erreur : "+msg);
+                                alert("Oops! une erreur est survenue ")
+                                //$("#rowsContainer").html("");
                             }
                         });
                     },
                     error: function(msg) {
-                        alert("Erreur : "+msg);
+                        alert("Erreur 2: "+msg);
                     }
                 });
             }
@@ -2121,15 +2673,15 @@
                     if($("#empSelect").val()!=""){
                         if($("#fromDate").val()!=""){
                             if($("#toDate").val()!=""){
-                                if(dateFrom < dateTo || dateFrom == dateTo){
-                                    $('#modal_loading').modal('open');
-                                    $("#errorContainer").hide();
-                                    loadSelectedEmpData($("#empSelect").val());
-                                }else {
+                                //if(dateFrom < dateTo || dateFrom == dateTo){
+                                $('#modal_loading').modal('open');
+                                $("#errorContainer").hide();
+                                loadSelectedEmpData($("#empSelect").val());
+                                /*}else {
                                     $("#errorContainer").show();
                                     $("#errorContainer div span").text("Erreur : La date de début ne peut pas etre superieur à la date de fin");
                                     $("#containerMustBeHidden").attr("style","display:none");
-                                }
+                                }*/
                             }else {
                                 $("#errorContainer").show();
                                 $("#errorContainer div span").text("Erreur : veuillez choisir une date de fin valide");
@@ -2152,12 +2704,20 @@
                 }
             });
         });
+
+
     </script>
     <script>
         // On s'attaque aux collapsibles
         $(function () {
             $(".cl_PersStats").addClass("collapsible_element_active");
             $(".navigation_collapsible").collapsible('open',2);
+
+
+            $('.datepicker').on('mousedown',function(event){
+                event.preventDefault();
+            });
+
         });
     </script>
 {% endblock %}

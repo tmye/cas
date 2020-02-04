@@ -122,26 +122,48 @@ class ClockinRecordRepository extends EntityRepository
         }
     }
 
+    function ma_fonction($a, $b) {
+        if($a == $b){ return 0 ; }
+        return ($a < $b) ? -1 : 1;
+    }
+
     public function retard($emp,$date,$interval,$heureNormaleArrive,$bH=null){
 
         $heureNormaleArrive = $heureNormaleArrive+$date;
 
         $bHTab = explode(":",$bH);
         $maxDate = $heureNormaleArrive+$interval;
+        $minDate = $heureNormaleArrive-$interval;
 
         $queryBuilder = $this->createQueryBuilder('c');
         $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
-        $queryBuilder->andWhere('c.clockinTime > :date');
-        $queryBuilder->setParameter('date',$heureNormaleArrive);
+
+        $queryBuilder->andWhere('c.clockinTime >= :minDate');
+        $queryBuilder->setParameter('minDate',$minDate);
         $queryBuilder->andWhere('c.clockinTime <= (:maxDate)');
         $queryBuilder->setParameter('maxDate',$maxDate);
+
         $donn = $queryBuilder->getQuery()->getResult();
         if($donn != null){
-            $ct = $donn[0]->getClockinTime();
+            $new_tab = array();
+            foreach($donn as $element){
+                $new_tab[] = $element->getClockinTime();
+            }
+            usort($new_tab, array($this, 'ma_fonction'));
+            //print_r($new_tab);
+            $ct = $new_tab[0];
             $diff = ($ct-($heureNormaleArrive)); // Timestamp
-            return array($diff,$ct);
+
+            //print_r($ct."//".$heureNormaleArrive."-----".date("d-m-Y H:i:s",$ct)."//".date("d-m-Y H:i:s",$heureNormaleArrive)."\n");
+            $heureToleree = $heureNormaleArrive+60;
+            if($ct<=$heureToleree ){
+                return false;
+            }else{
+                return array($diff,$ct);
+            }
+
         }else{
-            return 0;
+            return false;
         }
     }
 
@@ -156,20 +178,105 @@ class ClockinRecordRepository extends EntityRepository
             $minutes = 0;
         }
         $maxDate = $heureNormaleArrivePause+$interval_pause;
+        $minDate = $heureNormaleArrivePause-$interval_pause;
 
         $queryBuilder = $this->createQueryBuilder('c');
         $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
-        $queryBuilder->andWhere('c.clockinTime > :date');
-        $queryBuilder->setParameter('date',$heureNormaleArrivePause);
+
+        $queryBuilder->andWhere('c.clockinTime >= :minDate');
+        $queryBuilder->setParameter('minDate',$minDate);
         $queryBuilder->andWhere('c.clockinTime <= (:maxDate)');
         $queryBuilder->setParameter('maxDate',$maxDate);
+        
         $donn = $queryBuilder->getQuery()->getResult();
         if($donn != null){
-            $ct = $donn[0]->getClockinTime();
+            $new_tab = array();
+            foreach($donn as $element){
+                $new_tab[] = $element->getClockinTime();
+            }
+            usort($new_tab, array($this, 'ma_fonction'));
+            $ct = $new_tab[sizeof($new_tab)-1];
             $diff = $ct- ($heureNormaleArrivePause); // Timestamp
+            $heureToleree = $heureNormaleArrivePause+60;
+            if($ct<=$heureToleree ){
+                return false;
+            }else{
+                return array($diff,$ct);
+            }
+        }else{
+            return false;
+        }
+    }
+
+    public function departPremature($emp,$date,$interval,$heureNormaleDepart){
+
+        $maxDate = $date+$heureNormaleDepart+$interval;
+        $minDate = $date+$heureNormaleDepart-$interval;
+
+        /*print_r("Max date : ".date('Y-m-d H:i',$maxDate));
+        print_r("Min date : ".date('Y-m-d H:i',$minDate));
+        print_r("Date : ".date('Y-m-d H:i',$date));*/
+
+        $queryBuilder = $this->createQueryBuilder('c');
+        $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
+
+        $queryBuilder->andWhere('c.clockinTime >= :minDate');
+        $queryBuilder->setParameter('minDate',$minDate);
+        $queryBuilder->andWhere('c.clockinTime <= (:maxDate)');
+        $queryBuilder->setParameter('maxDate',$maxDate);
+        
+        $donn = $queryBuilder->getQuery()->getResult();
+        if($donn != null){
+            $new_tab = array();
+            foreach($donn as $element){
+                $new_tab[] = $element->getClockinTime();
+            }
+            usort($new_tab, array($this, 'ma_fonction'));
+            $ct = $new_tab[sizeof($new_tab)-1];
+            //print_r("****".date('Y-m-d H:i',$new_tab[1]));
+            $diff = ($date+$heureNormaleDepart)-$ct; // Timestamp
+            /*if($ct>=($date+$heureNormaleDepart)){
+                return null;
+            }else{
+                return array($diff,$ct);
+            }*/
             return array($diff,$ct);
         }else{
-            return 0;
+            return false;
+        }
+    }
+
+    public function departPausePremature($emp,$date,$interval,$heureNormaleDepartPause){
+
+        $maxDate = $date+$heureNormaleDepartPause+$interval;
+        $minDate = $date+$heureNormaleDepartPause-$interval;
+
+        $queryBuilder = $this->createQueryBuilder('c');
+        $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
+
+        $queryBuilder->andWhere('c.clockinTime >= :minDate');
+        $queryBuilder->setParameter('minDate',$minDate);
+        $queryBuilder->andWhere('c.clockinTime <= (:maxDate)');
+        $queryBuilder->setParameter('maxDate',$maxDate);
+
+        $donn = $queryBuilder->getQuery()->getResult();
+        
+        if($donn != null){
+            $new_tab = array();
+            foreach($donn as $element){
+                $new_tab[] = $element->getClockinTime();
+            }
+            usort($new_tab, array($this, 'ma_fonction'));
+            $ct = $new_tab[sizeof($new_tab)-1];
+            $diff = ($date+$heureNormaleDepartPause)-$ct; // Timestamp
+            /*if($ct>=($date+$heureNormaleDepartPause)){
+                return null;
+            }else{
+                return array($diff,$ct);
+            }*/
+            return array($diff,$ct);
+        }else{
+            return false;
         }
     }
 
@@ -192,40 +299,31 @@ class ClockinRecordRepository extends EntityRepository
             return 0;
         }
     }
-
-    public function departPremature($emp,$date,$interval,$heureNormaleDepart){
-
+    
+    public function todaysClockinTimes($date){
+        $min_time = strtotime($date." 00:00:00");
+        $max_time = strtotime($date." 23:59:59");
+        
         $queryBuilder = $this->createQueryBuilder('c');
-        $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
-        $queryBuilder->andWhere('c.clockinTime < :date');
-        $queryBuilder->setParameter('date',$date+$heureNormaleDepart);
-        $queryBuilder->andWhere('c.clockinTime >= (:maxDate)');
-        $queryBuilder->setParameter('maxDate',$date+$heureNormaleDepart-$interval);
+        $queryBuilder->where('c.clockinTime >= :min_time')->setParameter('min_time',$min_time);
+        $queryBuilder->andWhere('c.clockinTime <= :max_time')->setParameter('max_time',$max_time);
+        $queryBuilder->orderBy('c.clockinTime','DESC');
+
         $donn = $queryBuilder->getQuery()->getResult();
-        if($donn != null){
-            $ct = $donn[0]->getClockinTime();
-            $diff = ($date+$heureNormaleDepart)-$ct; // Timestamp
-            return array($diff,$ct);
-        }else{
-            return false;
-        }
+        return $donn;
     }
 
-    public function departPausePremature($emp,$date,$interval,$heureNormaleDepartPause){
-
+    public function allEmployeesHistoryBrut($empId,$min,$max){
         $queryBuilder = $this->createQueryBuilder('c');
-        $queryBuilder->where('c.employe = :emp')->setParameter('emp',$emp);
-        $queryBuilder->andWhere('c.clockinTime < :date');
-        $queryBuilder->setParameter('date',$date+$heureNormaleDepartPause);
-        $queryBuilder->andWhere('c.clockinTime >= (:minDate)');
-        $queryBuilder->setParameter('minDate',$date+$heureNormaleDepartPause-$interval);
-        $donn = $queryBuilder->getQuery()->getResult();
-        if($donn != null){
-            $ct = $donn[0]->getClockinTime();
-            $diff = ($date+$heureNormaleDepartPause)-$ct; // Timestamp
-            return array($diff,$ct);
-        }else{
-            return false;
-        }
+        $queryBuilder->where('c.clockinTime BETWEEN :min AND :max');
+        $queryBuilder->setParameter('min',$min);
+        $queryBuilder->setParameter('max',$max);
+
+        $queryBuilder->andWhere('c.employe = :empId')->setParameter('empId',$empId);
+        $queryBuilder->addOrderBy('c.clockinTime','ASC');
+
+
+        return $queryBuilder->getQuery()->getResult();
     }
+
 }

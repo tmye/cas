@@ -1,45 +1,23 @@
 # This file is auto-generated during the composer install
+# php bin/console doctrine:database:create
+# php bin/console doctrine:schema:create
+
 parameters:
     database_host: 127.0.0.1
     database_port: 3306
-    database_name: cas_dbase
+    database_name: db_kaba
     database_user: root
-    database_password: root
-
-    second_database_host: 127.0.0.1
-    second_database_port: 3306
-    second_database_name: tmye
-    second_database_user: root
-    second_database_password: root
-
-    third_database_host: 127.0.0.1
-    third_database_port: 3306
-    third_database_name: jimscom
-    third_database_user: root
-    third_database_password: root
-
-    fourth_database_host: 127.0.0.1
-    fourth_database_port: 3306
-    fourth_database_name: prog
-    fourth_database_user: root
-    fourth_database_password: root
-
-    fifth_database_host: 127.0.0.1
-    fifth_database_port: 3306
-    fifth_database_name: togocel
-    fifth_database_user: root
-    fifth_database_password: root
-
-    mailer_transport: gmail
+    database_password: null
+    mailer_transport: smtp
     mailer_host: 127.0.0.1
-    mailer_user: nikaboue10@gmail.com
-    mailer_password: ebenezer0000000000
-
+    mailer_user: null
+    mailer_password: null
     secret: f77c6b73e68075dba2a6a0c24022578ec9227143
-    user_profile_pictures: user_profile_pictures
+    user_profile_pictures: user_profile_picturesyncs
     pub_covers: pub_covers
     onregisterpics: onregisterpics
     fingerprints: fingerprints
     default_password: 555
     web_dir: "%kernel.root_dir%/../web"
     conf_dir: "%kernel.root_dir%/../app/config"
+

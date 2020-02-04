@@ -2,7 +2,11 @@
 # https://symfony.com/doc/current/security.html
 security:
     encoders:
-        MultipleConnectionBundle\Entity\Admin:
+        AppBundle\Entity\Employe:
+            algorithm:   md5
+            iterations: 1
+            encode_as_base64: false
+        AppBundle\Entity\Admin:
             algorithm:   md5
             iterations: 1
             encode_as_base64: false
@@ -10,17 +14,22 @@ security:
 
     role_hierarchy:
             ROLE_SECRET: ROLE_USER
-            ROLE_ADMIN: ROLE_SECRET
+            ROLE_ADMIN_CONTROL: ROLE_SECRET
+            ROLE_ADMIN: ROLE_ADMIN_CONTROL
             ROLE_SUPER_ADMIN: ROLE_ADMIN
 
     # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
       chain_provider:
         chain:
-            providers: [main_admin]
+            providers: [main_employee,main_admin]
+      main_employee:
+        entity:
+          class:    AppBundle\Entity\Employe
+          property: username
       main_admin:
         entity:
-          class:    MultipleConnectionBundle\Entity\Admin
+          class:    AppBundle\Entity\Admin
           property: username
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs

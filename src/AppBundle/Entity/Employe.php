@@ -21,7 +21,7 @@ class Employe implements UserInterface
      * @Assert\Valid()
      */
 
-    private $departement;
+    public $departement;
 
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\WorkingHours")
@@ -39,7 +39,7 @@ class Employe implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    public $id;
 
     /**
      * @var int
@@ -92,7 +92,7 @@ class Employe implements UserInterface
      * @ORM\Column(name="surname", type="string", length=45)
      * @Assert\NotBlank()
      */
-    private $surname;
+    public $surname;
 
     /**
      * @var string
@@ -100,7 +100,16 @@ class Employe implements UserInterface
      * @ORM\Column(name="last_name", type="string", length=45)
      * @Assert\NotBlank()
      */
-    private $lastName;
+    public $lastName;
+
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="short_name", type="string", length=45, nullable=true)
+     */
+    public $shortName;
+
 
     /**
      * @var string
@@ -122,7 +131,7 @@ class Employe implements UserInterface
      * @var string
      * @ORM\Column(name="picture", type="string", nullable=true)
      */
-    private $picture;
+    public $picture;
 
     /**
      * @var string
@@ -171,7 +180,7 @@ class Employe implements UserInterface
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="last_update", type="datetime")
+     * @ORM\Column(name="last_update", type="datetime", nullable=true)
      */
     private $lastUpdate;
 
@@ -670,5 +679,29 @@ class Employe implements UserInterface
     public function getFingerprints()
     {
         return $this->fingerprints;
+    }
+
+    /**
+     * Set shortName
+     *
+     * @param string $shortName
+     *
+     * @return Employe
+     */
+    public function setShortName($shortName)
+    {
+        $this->shortName = $shortName;
+
+        return $this;
+    }
+
+    /**
+     * Get shortName
+     *
+     * @return string
+     */
+    public function getShortName()
+    {
+        return $this->shortName;
     }
 }

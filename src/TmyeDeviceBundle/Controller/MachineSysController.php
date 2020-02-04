@@ -8,7 +8,6 @@
 
 namespace TmyeDeviceBundle\Controller;
 
-use AppBundle\Controller\MachineDuplicatedController;
 use AppBundle\Entity\ClockinRecord;
 use AppBundle\Entity\Employe;
 use TmyeDeviceBundle\Entity\ConfigEntity;
@@ -20,10 +19,30 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 
 class MachineSysController extends BaseController
 {
+
+    const MAX_MEMORY_PER_CALL = 5000000;
+
+    /**
+     * @Route("/api/data/encode",name="machine_data_in_get_encode")
+     * @Method("GET")
+     */
+
+    public function encode_getAction (Request $request) {
+        $arr = array('a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5);
+        $res['status'] = 1;
+        $res['info'] = 'ok';
+        $res['data'] = [];
+        array_push($res['data'],$arr);
+        $res = $this->index_getAction($request);
+//        echo json_encode($arr);
+        return new JsonResponse($this->serialize($res));
+//        return new JsonResponse(json_encode($arr));
+    }
 
     /**
      * @Route("/api/data/get",name="machine_data_in_get")
@@ -32,35 +51,28 @@ class MachineSysController extends BaseController
     public function index_getAction (Request $request) {
 
         $sn = trim($request->query->get("sn"));
-
-        /* send new entity manager */
-        $manager = $this->getManagerFromDeviceId($this, $sn);
-
-        /* if device no exits, return */
-        if ($manager == null) {
-
-            $res['status'] = 1;
-            $res['info'] = 'ok';
-            $res['data'] = [];
-            return new Response($this->serialize($res));
-        }
-
-
-        $all = $this->UpdateEntityRepo($manager)->findBy(
+        $all = $this->UpdateEntityRepo()->findBy(
             ['deviceId' => $sn ],
             ['priority' => 'DESC', 'id' => 'ASC']
         );
 
+//        echo $this->serialize($all);
+//        var_dump($all);
+//        exit;
+
+        /*
+            group updateEntites by update types and give a priority to the type clean
+         */
         $res['status'] = 1;
         $res['info'] = 'ok';
         $res['data'] = [];
 
-//        foreach ($all as &$item) {
+
+        $start_memory = memory_get_usage();
 
         for ($z = 0; $z < sizeof($all); $z++) {
 
             $item = $all[$z];
-
             /* 1doclean - delete everything */
             switch ($item->getType()) {
                 case "1doclean":
@@ -79,68 +91,180 @@ class MachineSysController extends BaseController
                     break;
                 case "dept":
                     if ($item != null) {
-                        $tmp =  $this->manageDepartment($manager, $item);
+                        $tmp =  $this->manageDepartment($item);
                         array_push($res['data'], $tmp);
                     }
                     break;
                 case "emp":
                     /* employee has to be by employee */
                     if ($item != null) {
-                        $this->info("get all users ".$item->getId());
-                        $tmp = $this->getAllUsers($manager, $item);
+//                        $this->info("get all users ".$item->getId());
+                        $tmp = $this->getAllUsers($item);
                         array_push($res['data'], $tmp);
                     }
                     break;
                 case "pp":
                     /* profile pictures */
-                    if (sizeof($res["data"]) > 0) {
-//                        break(2);
+                    if (sizeof($res['data']) > 0) {
+                        break(2);
                     }
                     if ($item != null) {
-                        $tmp = $this->getProfilePictures($manager, $item);
+                        $tmp = $this->getProfilePictures($item);
                         array_push($res['data'], $tmp);
 //                        $this->info("GGG till the end -"."pp");
                     }
                     break;
                 case "fingerprints":
                     /* if data is too much, then break */
-                    if (sizeof($res["data"]) > 0) {
-//                        break(2);
+                    if (sizeof($res['data']) > 0) {
+                        break(2);
                     }
                     if ($item != null) {
-                        $tmp = $this->getAllFingerprints($manager, $item);
+                        $tmp = $this->getAllFingerprints($item);
                         array_push($res['data'], $tmp);
-
-                        /* get everything and exit */
-
-//                      $this->info("GGG till the end -"."fingerprints");
                     }
                     break;
                 case "pub":
                     /* if data too much break */
-                    if (sizeof($res["data"]) > 0) {
-//                        break(2);
+                    if (sizeof($res['data']) > 0) {
+                        break(2);
                     }
                     $tmp = json_decode($item->getContent(), true);
                     if ($tmp != []) {
-                        $tmp = $this->getPubSetupContent($manager, intval($tmp['index']));
+                        $tmp = $this->getPubSetupContent(intval($tmp['index']));
                         $tmp['id'] = $item->getId();
                         array_push($res['data'], $tmp);
-//                        $this->info("GGG till the end -"."pub");
                     }
                     break;
+            }
+
+            if ( (memory_get_usage() - $start_memory - PHP_INT_SIZE * 8 ) >= MachineSysController::MAX_MEMORY_PER_CALL){
+                break;
             }
         }
 
         /* this is the standard setup that doesn't move from here */
-        array_push($res['data'], $this->standardSetup($manager));
+        array_push($res['data'], $this->standardSetup());
 
         // reset return values
         if (intval(date("i", time()))%10 == 0)
-            $this->resetReturnValues($manager);
+            $this->resetReturnValues();
 
-        $this->info("GETFF   ".$this->serialize($res));
+//        $this->info("GETFF   ".$this->serialize($res));
+//        return new JsonResponse(json_encode($res));
         return new Response($this->serialize($res));
+    }
+
+    //fonction test de recup des données (api/data/get )
+    /**
+     * @Route("/api/data/gettt",name="machine_data_in_getttt")
+     * @Method("GET")
+     */
+    public function index_getActionnn (Request $request) {
+
+        $sn = trim($request->query->get("sn"));
+        $all = $this->UpdateEntityRepo()->findBy(
+            ['deviceId' => $sn ],
+            ['priority' => 'DESC', 'id' => 'ASC']
+        );
+
+//        echo $this->serialize($all);
+//        var_dump($all);
+//        exit;
+
+        /*
+            group updateEntites by update types and give a priority to the type clean
+         */
+        $res['status'] = 1;
+        $res['info'] = 'ok';
+        $res['data'] = [];
+
+
+        $start_memory = memory_get_usage();
+
+        for ($z = 0; $z < sizeof($all); $z++) {
+
+            $item = $all[$z];
+            /* 1doclean - delete everything */
+            switch ($item->getType()) {
+                case "1doclean":
+                    if ($item != null) {
+                        $resp = $this->manageDoClean($item);
+                        array_push($res['data'], $resp);
+                        break(2);
+                    }
+                    break;
+                case "reboot":
+                    if ($item != null) {
+                        $resp = $this->manageReboot($item);
+                        array_push($res['data'], $resp);
+                        break(2);
+                    }
+                    break;
+                case "dept":
+                    if ($item != null) {
+                        $tmp =  $this->manageDepartment($item);
+                        array_push($res['data'], $tmp);
+                    }
+                    break;
+                case "emp":
+                    /* employee has to be by employee */
+                    if ($item != null) {
+//                        $this->info("get all users ".$item->getId());
+                        $tmp = $this->getAllUsers($item);
+                        array_push($res['data'], $tmp);
+                    }
+                    break;
+                case "pp":
+                    /* profile pictures */
+                    if (sizeof($res['data']) > 0) {
+                        break(2);
+                    }
+                    if ($item != null) {
+                        $tmp = $this->getProfilePictures($item);
+                        array_push($res['data'], $tmp);
+//                        $this->info("GGG till the end -"."pp");
+                    }
+                    break;
+                case "fingerprints":
+                    /* if data is too much, then break */
+                    if (sizeof($res['data']) > 0) {
+                        break(2);
+                    }
+                    if ($item != null) {
+                        $tmp = $this->getAllFingerprints($item);
+                        array_push($res['data'], $tmp);
+                    }
+                    break;
+                case "pub":
+                    /* if data too much break */
+                    if (sizeof($res['data']) > 0) {
+                        break(2);
+                    }
+                    $tmp = json_decode($item->getContent(), true);
+                    if ($tmp != []) {
+                        $tmp = $this->getPubSetupContent(intval($tmp['index']));
+                        $tmp['id'] = $item->getId();
+                        array_push($res['data'], $tmp);
+                    }
+                    break;
+            }
+
+            if ( (memory_get_usage() - $start_memory - PHP_INT_SIZE * 8 ) >= MachineSysController::MAX_MEMORY_PER_CALL){
+                break;
+            }
+        }
+
+        /* this is the standard setup that doesn't move from here */
+        array_push($res['data'], $this->standardSetup());
+
+        // reset return values
+        if (intval(date("i", time()))%10 == 0)
+            $this->resetReturnValues();
+
+//        $this->info("GETFF   ".$this->serialize($res));
+//        return new JsonResponse(json_encode($res));
+        return new JsonResponse($this->serialize($res));
     }
 
 
@@ -182,32 +306,20 @@ class MachineSysController extends BaseController
 
         $responsePack = json_decode($request->getContent(), true);
 
-        $this->info("Reponse du serveur -- Reception de donnees fff");
+        $this->info("Reponse du serveur -- Reception de donnees");
         $this->info($request->getContent());
         $sn = $request->get("sn");
-
-        $manager = $this->getManagerFromDeviceId($this, $sn);
-
-        if ($manager == null) {
-
-            $res['status'] = 1;
-            $res['info'] = 'ok';
-            $res['data'] = [];
-            return new Response($this->serialize($res));
-        }
 
         // open the file here
         foreach ($responsePack as &$resp) {
             $resp['sn'] = $sn;
-            $this->manage($manager, $resp);
+            $this->manage($resp);
         }
-
-        $this->info("manager is not null");
 
         $returnresp = [
             'status' => 1,
             'info' => "ok",
-            'data' => $this->getOkStatusArray($manager)
+            'data' => $this->getOkStatusArray()
         ];
 
         $response = json_encode($returnresp);
@@ -221,34 +333,33 @@ class MachineSysController extends BaseController
      * @Route("/sys/update/timezone",name="sys_update_timezone")
      * @Method("GET")
      */
-    /*    public function systemUpdateTimezoneAction (Request $request) {
+    public function systemUpdateTimezoneAction (Request $request) {
 
+        $gmt_time_zone = $request->query->get("zone");
 
-            $gmt_time_zone = $request->query->get("zone");
+        // add in the database update requests...
+        $allMachines = $this->MachineRepo()->findAll();
 
-            // add in the database update requests...
-            $allMachines = $this->MachineRepo()->findAll();
+        $content = ["timezone" => "GMT"];
 
-            $content = ["timezone" => "GMT"];
+        if ($gmt_time_zone >= 1) {
+            $content = ["timezone" => "GMT+$gmt_time_zone"];
+        }
 
-            if ($gmt_time_zone >= 1) {
-                $content = ["timezone" => "GMT+$gmt_time_zone"];
-            }
+        $content = $this->serialize($content);
 
-            $content = $this->serialize($content);
-
-            foreach ($allMachines as &$machine) {
-                $updateEntity = new UpdateEntity();
-                $updateEntity->setContent($content);
-                $updateEntity->setCreationDate('' . time());
-                $updateEntity->setIsactive(true);
-                $updateEntity->setType("time");
-                $updateEntity->setDeviceId($machine->getDeviceId());
-                // persist
-                $this->persist($updateEntity);
-            }
-            return new Response("ok");
-        }*/
+        foreach ($allMachines as &$machine) {
+            $updateEntity = new UpdateEntity();
+            $updateEntity->setContent($content);
+            $updateEntity->setCreationDate('' . time());
+            $updateEntity->setIsactive(true);
+            $updateEntity->setType("time");
+            $updateEntity->setDeviceId($machine->getDeviceId());
+            // persist
+            $this->persist($updateEntity);
+        }
+        return new Response("ok");
+    }
 
 
     /**
@@ -273,181 +384,196 @@ class MachineSysController extends BaseController
         return new Response("ok");
     }
 
+    /**
+     * @Route("/sys/update/departements",name="sys_update_departements")
+     * @Method("GET")
+     */
+    public function updateDepartements(Request $request) {
 
+
+        $machines = $this->MachineRepo()->findAll();
+        foreach ($machines as &$machine) {
+
+            $up = new UpdateEntity();
+            $up->setType("dept");
+            $up->setDeviceId($machine->getDeviceId());
+            $up->setContent("");
+            $this->persist($up);
+        }
+        return new Response("ok");
+    }
 
     /**
      * @Route("/sys/clear/departements",name="sys_clear_departements")
      * @Method("GET")
-
+     */
     public function clearDepartements(Request $request) {
 
-    //        {id:”1006”,do:”delete”,data:[”user”,”fingerprint”,”face”,”headpic”,”clockin”,”pic”],ccid:[13245,8784,54878]}
+//        {id:”1006”,do:”delete”,data:[”user”,”fingerprint”,”face”,”headpic”,”clockin”,”pic”],ccid:[13245,8784,54878]}
 
-    //        {id:”1007”,do:”delete”,data:”dept”,deptid:[1,2,3]}
+//        {id:”1007”,do:”delete”,data:”dept”,deptid:[1,2,3]}
 
 
-    $machines = $this->MachineRepo()->findAll();
-    foreach ($machines as &$machine) {
+        $machines = $this->MachineRepo()->findAll();
+        foreach ($machines as &$machine) {
 
-    $up = new UpdateEntity();
-    $up->setType("dept");
-    $up->setDeviceId($machine->getDeviceId());
-    $up->setContent("clear");
-    $this->persist($up);
+            $up = new UpdateEntity();
+            $up->setType("dept");
+            $up->setDeviceId($machine->getDeviceId());
+            $up->setContent("clear");
+            $this->persist($up);
+        }
+        return new Response("ok");
     }
-    return new Response("ok");
-    }
-     */
 
 
 
     /**
      * @Route("/sys/update/employees",name="sys_update_employees")
      * @Method("GET")
-
+     */
     public function updateEmployees (Request $request) {
 
-    $machines = $this->MachineRepo()->findAll();
-    foreach ($machines as &$machine) {
+        $machines = $this->MachineRepo()->findAll();
+        foreach ($machines as &$machine) {
 
-    $up = new UpdateEntity();
-    $up->setType("emp");
-    $up->setDeviceId($machine->getDeviceId());
-    $up->setContent("");
-    $this->persist($up);
+            $up = new UpdateEntity();
+            $up->setType("emp");
+            $up->setDeviceId($machine->getDeviceId());
+            $up->setContent("");
+            $this->persist($up);
+        }
+        return new Response("ok");
     }
-    return new Response("ok");
-    }
-     */
+
 
     /**
      * @Route("/sys/update/fingerprints",name="sys_update_fingerprints")
      * @Method("GET")
-
+     */
     public function updateFingerPrints (Request $request) {
 
-    $machines = $this->MachineRepo()->findAll();
-    foreach ($machines as &$machine) {
+        $machines = $this->MachineRepo()->findAll();
+        foreach ($machines as &$machine) {
 
-    $up = new UpdateEntity();
-    $up->setType("fingerprints");
-    $up->setDeviceId($machine->getDeviceId());
-    $up->setContent("");
-    $this->persist($up);
+            $up = new UpdateEntity();
+            $up->setType("fingerprints");
+            $up->setDeviceId($machine->getDeviceId());
+            $up->setContent("");
+            $this->persist($up);
+        }
+        return new Response("ok");
     }
-    return new Response("ok");
-    }
-     *  */
 
     /**
      * @Route("/sys/update/profilepictures",name="sys_update_profilepictures")
      * @Method("GET")
-
+     */
     public function updateProfilePictures (Request $request) {
 
-    $machines = $this->MachineRepo()->findAll();
-    foreach ($machines as &$machine) {
+        $machines = $this->MachineRepo()->findAll();
+        foreach ($machines as &$machine) {
 
-    $up = new UpdateEntity();
-    $up->setType("pp"); // profile pictures
-    $up->setDeviceId($machine->getDeviceId());
-    $up->setContent("");
-    $this->persist($up);
+            $up = new UpdateEntity();
+            $up->setType("pp"); // profile pictures
+            $up->setDeviceId($machine->getDeviceId());
+            $up->setContent("");
+            $this->persist($up);
+        }
+        return new Response("ok");
     }
-    return new Response("ok");
-    } */
 
 
     /**
      * @Route("/sys/reboot",name="sys_reboot")
      * @Method("GET")
-
+     */
     public function sysReboot (Request $request) {
 
-    $machines = $this->MachineRepo()->findAll();
-    foreach ($machines as &$machine) {
+        $machines = $this->MachineRepo()->findAll();
+        foreach ($machines as &$machine) {
 
-    $up = new UpdateEntity();
-    $up->setType("reboot"); // profile pictures
-    $up->setDeviceId($machine->getDeviceId());
-    $up->setContent("");
-    $this->persist($up);
+            $up = new UpdateEntity();
+            $up->setType("reboot"); // profile pictures
+            $up->setDeviceId($machine->getDeviceId());
+            $up->setContent("");
+            $this->persist($up);
+        }
+        return new Response("ok");
     }
-    return new Response("ok");
-    }*/
 
 
     /**
      * @Route("/sys/update/companyname",name="sys_update_companyname")
      * @Method("GET")
-
+     */
     public function updateCompanyname (Request $request) {
 
 
-    $companyName = $request->query->get("cn"); // company name
-    if ($companyName != null)
-    {
-    $config = $this->ConfigEntityRepo()->findOneBy([]);
-    if ($config == null) {
-    $config = new ConfigEntity();
+        $companyName = $request->query->get("cn"); // company name
+        if ($companyName != null)
+        {
+            $config = $this->ConfigEntityRepo()->findOneBy([]);
+            if ($config == null) {
+                $config = new ConfigEntity();
+            }
+            $config->setCompany($companyName);
+            $this->persist($config);
+        }
+        return new Response("ok");
     }
-    $config->setCompany($companyName);
-    $this->persist($config);
-    }
-    return new Response("ok");
-    } */
 
     /**
      * @Route("/sys/doclean",name="sys_clean_all")
      * @Method("GET")
-
+     */
     public function doCleanSys (Request $request) {
 
 
-    //        /* clean all the machines on the system */
-    /*      $machines = $this->MachineRepo()->findAll();
-          foreach ($machines as &$machine) {
+        /* clean all the machines on the system */
+        $machines = $this->MachineRepo()->findAll();
+        foreach ($machines as &$machine) {
 
-              $up = new UpdateEntity();
-              $up->setType("1doclean"); // profile pictures
-              $up->setDeviceId($machine->getDeviceId());
-              $up->setContent("");
-              $this->persist($up);
-          }
-          return new Response("ok");
-      }*/
+            $up = new UpdateEntity();
+            $up->setType("1doclean"); // profile pictures
+            $up->setDeviceId($machine->getDeviceId());
+            $up->setContent("");
+            $this->persist($up);
+        }
+        return new Response("ok");
+    }
 
 
-    private function manage($manager, $resp)
+    private function manage($resp)
     {
         switch ($resp['data']) {
             case 'clockin':
-                $this->Clockin($manager, $resp);
-                $this->OkStatus($manager, $resp['sn'], $resp['id']);
+                $this->Clockin($resp);
+                $this->OkStatus($resp['sn'], $resp['id']);
                 break;
             /*   case 'user';
                    $this->OkStatus($resp['id']);
                    break;*/
             case 'fingerprint';
                 $this->info(json_encode($resp));
-                $this->EmployeeFingerPrint($manager, $resp);
-                $this->OkStatus($manager, $resp['sn'], $resp['id']);
+                $this->EmployeeFingerPrint($resp);
+                $this->OkStatus($resp['sn'], $resp['id']);
                 break;
             /*    case 'deleteface';
                 break; */
             case 'headpic';
-                $this->SetEmployeeHeadpic($manager, $resp);
-                $this->OkStatus($manager, $resp['sn'], $resp['id']);
+                $this->SetEmployeeHeadpic($resp);
+                $this->OkStatus($resp['sn'], $resp['id']);
                 break;
             /* case 'info';
                  break;*/
             case 'return';
-                $this->OkStatus($manager, $resp['sn'], $resp['id'], $resp["return"]);
+                $this->OkStatus($resp['sn'], $resp['id'], $resp["return"]);
                 break;
         }
     }
 
-    private function OkStatus ($manager, $sn, $mainId, $returnObj = null) {
+    private function OkStatus ($sn, $mainId, $returnObj = null) {
 
 
         if ($returnObj != null)
@@ -459,18 +585,18 @@ class MachineSysController extends BaseController
                     continue;
 
                 // delete the entry from the db
-                $currentEntity = $this->UpdateEntityRepo($manager)->findOneBy(
+                $currentEntity = $this->UpdateEntityRepo()->findOneBy(
                     ['id' => $id,
                         'deviceId' => $sn]);
 
                 if ($currentEntity != null) {
                     $this->info("DELETED ".$currentEntity->getId());
-                    $this->deleteEntity($manager, $currentEntity);
+                    $this->deleteEntity($currentEntity);
                 }
             }
 
         // save the ok id inside the array
-        $obj = $this->OkidRepo($manager)->findOneBy([]);
+        $obj = $this->OkidRepo()->findOneBy([]);
         if ($obj == null) {
             $obj = new OkIdEntity();
             $obj->setOkid(json_encode([]));
@@ -482,13 +608,13 @@ class MachineSysController extends BaseController
         $this->info($this->serialize($idz));
 
         $obj->setOkid(json_encode($idz));
-        $this->persist($manager, $obj);
+        $this->persist($obj);
     }
 
 
-    private function getOkStatusArray($manager)
+    private function getOkStatusArray()
     {
-        $obj = $this->OkidRepo($manager)->findOneBy([]);
+        $obj = $this->OkidRepo()->findOneBy([]);
         if ($obj == null) {
             $obj = new OkIdEntity();
             $obj->setOkid("[]");
@@ -496,7 +622,7 @@ class MachineSysController extends BaseController
         return json_decode($obj->getOkid(), true);
     }
 
-    private function Clockin($manager, $resp)
+    private function Clockin($resp)
     {
 
         /*
@@ -508,21 +634,23 @@ class MachineSysController extends BaseController
         // save that a user has actually been recorded
         $clockin = new ClockinRecord();
 
-        $tmpEmp = $this->EmployeeRepo($manager)->findOneByEmployeeCcid(intval($resp['ccid']));
-        // Ebenezer
-        $this->info("DEBUG MESSAGE 1 ::: ".$resp['ccid']);
-        $this->info("DEBUG MESSAGE 2 ::: ".$tmpEmp->getLastName());
+//        $date = (new \DateTime($resp["time"]))->getTimestamp();
+
+
+//        $clockin->setEmployeeId($resp['ccid']);
+        $tmpEmp = $this->EmployeeRepo()->findOneByEmployeeCcid(intval($resp['ccid']));
         $clockin->setEmploye($tmpEmp);
         $clockin->setClockinTime((new \DateTime($resp['time']))->getTimestamp());
         $clockin->setVerify($resp['verify']);
         $clockin->setDeviceid($resp['sn']);
 
 
-        $employee =  $this->EmployeeRepo($manager)->findOneByEmployeeCcid(intval($resp['ccid']));
+
+        $employee =  $this->EmployeeRepo()->findOneByEmployeeCcid(intval($resp['ccid']));
 
         if ($employee instanceof Employe && $employee != null) {
 
-            $tmpDepartemt = $this->DepartementRepo($manager)->findOneById($employee->getDepartement()->getId());
+            $tmpDepartemt = $this->DepartementRepo()->findOneById($employee->getDepartement()->getId());
             // get user dep id
             $clockin->setDepartement(
                 $tmpDepartemt
@@ -534,10 +662,10 @@ class MachineSysController extends BaseController
         $filename = "employee_".$clockin->getEmploye()->getEmployeeCcid()."_".time().'_'.$this->get("fingerprints.utils")->getToken(7).'.jpg';
 
         // create a new file
-        $filename = $this->base64_to_jpeg($resp['pic'], $filename, $this->getParameter('onregisterpics').DIRECTORY_SEPARATOR);
+        $filename = $this->base64_to_jpeg($resp['pic'], $filename, $this->getParameter('onregisterpics').'/');
         $clockin->setPic($filename);
 
-        $this->persist($manager, $clockin);
+        $this->persist($clockin);
     }
 
     function base64_to_jpeg($data, $output_file, $folder) {
@@ -548,17 +676,19 @@ class MachineSysController extends BaseController
         return $folder.$output_file;
     }
 
-    private function standardSetup ($manager) {
+    private function standardSetup () {
 
-        $config = $this->ConfigEntityRepo($manager)->findAll();
-
+        $config = $this->ConfigEntityRepo()->findAll();
+        //
         if ($config != null && sizeof($config) > 0) {
             $config = $config[0];
+//            var_dump($config);
         }
 
+        //var_dump($config->ge);
         $tmp['id'] = 0;
         $tmp['do'] = 'update';
-        $tmp['data'] = 'config';
+        $tmp['data'] = 'config';//var_dump($tmp);
         $tmp['name'] = $config->getSysname();
         $tmp['company'] = $config->getCompany() . ' - '. $config->getSysname(); // company name
         $tmp['max'] = $config->getMax();
@@ -569,10 +699,10 @@ class MachineSysController extends BaseController
         return $tmp;
     }
 
-    private function getPubSetupContent($manager, $id)
+    private function getPubSetupContent($id)
     {
 //        {id:”1005”,do:”update”,data:”advert”,index:1,advert:”base64”}
-        $pubsetup = $this->PubsRepo($manager)->findOneBy(array("deviceid"=>"X_X"));
+        $pubsetup = $this->PubsRepo()->findOneBy(array("deviceid"=>"X_X"));
 
         if ($pubsetup == null)
             return;
@@ -634,10 +764,10 @@ class MachineSysController extends BaseController
     /**
      * @return array of all departements
      */
-    private function getAllDepartements($manager)
+    private function getAllDepartements()
     {
         $res = [];
-        $departements = $this->DepartementRepo($manager)->findAll();
+        $departements = $this->DepartementRepo()->findAll();
         foreach ($departements as &$departement) {
             $ttmp = ['id'=>$departement->getId(), 'pid'=>0, 'name' => $departement->getName()];
             array_push($res, $ttmp);
@@ -649,10 +779,10 @@ class MachineSysController extends BaseController
     /**
      * @return array of all departements idz only
      */
-    private function getAllDepartementsIdzOnly($manager)
+    private function getAllDepartementsIdzOnly()
     {
         $res = [];
-        $departements = $this->DepartementRepo($manager)->findAll();
+        $departements = $this->DepartementRepo()->findAll();
         foreach ($departements as &$departement) {
             $ttmp = ['id'=> $departement->getId() ];
             array_push($res, $ttmp);
@@ -662,7 +792,7 @@ class MachineSysController extends BaseController
 
 
 
-    private function getAllUsers($manager, $item)
+    private function getAllUsers($item)
     {
         /*{
             "id": "1001",
@@ -677,12 +807,12 @@ class MachineSysController extends BaseController
             "faceexist": 0
         }*/
 
-        $this->info("getting user for item->id ".$item->getId());
+//        $this->info("getting user for item->id ".$item->getId());
 
         /* the id that is send has to be something else. */
 
         /* find the use when looking into content */
-        $e = $this->EmployeeRepo($manager)->find($item->getContent());
+        $e = $this->EmployeeRepo()->find($item->getContent());
 
         $tmp = [];
 
@@ -702,14 +832,14 @@ class MachineSysController extends BaseController
         return $tmp;
     }
 
-    private function resetReturnValues($manager)
+    private function resetReturnValues()
     {
-        $obj = $this->OkidRepo($manager)->findOneBy([]);
+        $obj = $this->OkidRepo()->findOneBy([]);
         if ($obj != null)
-            $this->deleteEntity($manager, $obj);
+            $this->deleteEntity($obj);
     }
 
-    private function getAllFingerprints($manager, $item)
+    private function getAllFingerprints($item)
     {
 //        $employees = $this->EmployeeRepo()->findAll();
 //
@@ -719,7 +849,7 @@ class MachineSysController extends BaseController
 
 //        foreach ($employees as &$employee) {
 
-        $employee = $this->EmployeeRepo($manager)->find($item->getContent());
+        $employee = $this->EmployeeRepo()->find($item->getContent());
 
         if ($employee == null)
             return [];
@@ -760,7 +890,7 @@ class MachineSysController extends BaseController
 
 
 
-    private function EmployeeFingerPrint($manager, $resp)
+    private function EmployeeFingerPrint($resp)
     {
 //        { id:2, data:"fingerprint",ccid:123456,fingerprint:[”base64”,”base64”]}
 
@@ -768,7 +898,7 @@ class MachineSysController extends BaseController
         $fingerprints = $resp['fingerprint'];
 
         // get employee
-        $employee = $this->EmployeeRepo($manager)->findOneByEmployeeCcid($resp['ccid']);
+        $employee = $this->EmployeeRepo()->findOneByEmployeeCcid($resp['ccid']);
 
         if ($employee == null)
             return;
@@ -782,28 +912,21 @@ class MachineSysController extends BaseController
                 continue;
             }
             // save the picture inside a file
-            // Added by Ebenezer
-            if(!file_exists($manager."/")){
-                mkdir($manager);
-            }
-            if(!file_exists($manager."/fingerprints/")){
-                mkdir($manager."/fingerprints");
-            }
             $filename = "employee_fingerprint".$resp['ccid']."_".time().'_'.$this->get("fingerprints.utils")->getToken(7).'.jpg';
-            $filename = $this->base64_to_jpeg($fingerprint, $filename, $manager."/fingerprints/");
+            $filename = $this->base64_to_jpeg($fingerprint, $filename, $this->getParameter('fingerprints').DIRECTORY_SEPARATOR);
             array_push($resultFingerprints, $filename);
         }
 
         $employee->setFingerprints(json_encode($resultFingerprints));
-        $this->persist($manager, $employee);
+        $this->persist($employee);
     }
 
-    private function getProfilePictures($manager, $item)
+    private function getProfilePictures($item)
     {
 
         //{"id":"1004","do":"update","data":"headpic","ccid":"123456","headpic":"base64"}
 
-        $employee = $this->EmployeeRepo($manager)->find($item->getContent());
+        $employee = $this->EmployeeRepo()->find($item->getContent());
 
         $tmp = [
             'id' => $item->getId(),
@@ -816,36 +939,28 @@ class MachineSysController extends BaseController
         return $tmp;
     }
 
-    private function SetEmployeeHeadpic ($manager, $resp) {
+    private function SetEmployeeHeadpic ($resp) {
 
         $profilePicture = $resp["headpic"];
         // get employee
-        $employee = $this->EmployeeRepo($manager)->findOneByEmployeeCcid($resp['ccid']);
+        $employee = $this->EmployeeRepo()->findOneByEmployeeCcid($resp['ccid']);
         if ($employee == null)
             return;
-
-        // Added by Ebenezer
-        if(!file_exists($manager."/")){
-            mkdir($manager);
-        }
-        if(!file_exists($manager.DIRECTORY_SEPARATOR.$this->getParameter('user_profile_pictures').DIRECTORY_SEPARATOR)){
-            mkdir($manager."/".$this->getParameter('user_profile_pictures'));
-        }
 
         // create a name under which to save the current profile picture
         $filename = "employee_headpic".$resp['ccid']."_".time().'_'.$this->get("fingerprints.utils")->getToken(7).'.jpg';
         // save the profile picture under the directory
-        /*$filename = */ $this->base64_to_jpeg($profilePicture, $filename, $manager.DIRECTORY_SEPARATOR.$this->getParameter('user_profile_pictures').DIRECTORY_SEPARATOR);
+        /*$filename = */ $this->base64_to_jpeg($profilePicture, $filename, $this->getParameter('user_profile_pictures').DIRECTORY_SEPARATOR);
 
         $employee->setPicture($filename);
-        $this->persist($manager, $employee);
+        $this->persist($employee);
     }
 
-    private function getAllEmployeesIdzOnly($manager)
+    private function getAllEmployeesIdzOnly()
     {
 
         $res = [];
-        $empl = $this->EmployeeRepo($manager)->findAll();
+        $empl = $this->EmployeeRepo()->findAll();
         foreach ($empl as &$e) {
             array_push($res, $e->getEmployeeCcid());
         }
@@ -890,7 +1005,7 @@ class MachineSysController extends BaseController
         return $tmp;
     }
 
-    private function manageDepartment($manager, $item)
+    private function manageDepartment($item)
     {
 
         if ($item->getFunction() == "clear") {
@@ -915,20 +1030,14 @@ class MachineSysController extends BaseController
             $tmp = [
                 'id' => $item->getId(),
                 'do' => 'update',
-                'data' => "dept",
-                'dept' =>  $this->getAllDepartements($manager)
+                'data' => 'dept',
+                'dept' =>  $this->getAllDepartements()
             ];
             return $tmp;
         }
-    }
-
-    private function getManagerFromDeviceId($context, $sn)
-    {
-        return (new MachineDuplicatedController())->returnCompanyAction($context, $sn);
     }
 
 
 }
 
 
-?>

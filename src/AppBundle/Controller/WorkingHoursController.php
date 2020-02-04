@@ -3,16 +3,21 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\WorkingHours;
+use AppBundle\Entity\Journal;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Finder\Exception\AccessDeniedException;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\HttpFoundation\Session\Session;
-
 
 class WorkingHoursController extends Controller
 {
@@ -22,14 +27,12 @@ class WorkingHoursController extends Controller
      */
     public function addWorkingHourAction(Request $request)
     {
-        $session = new Session();
-
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN_CONTROL')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
             }
-            $whList = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:WorkingHours")->safeWorkingHour();
+            $whList = $this->getDoctrine()->getManager()->getRepository("AppBundle:WorkingHours")->safeWorkingHour();
             $tab = array();
             foreach ($whList as $wh){
                 $tab[] = ['id'=>$wh->getId(),'workingHour'=>(array)json_decode($wh->getWorkingHour())];
@@ -48,17 +51,30 @@ class WorkingHoursController extends Controller
      */
     public function persistWorkingHourAction(Request $request)
     {
-        $session = new Session();
         $wh = new WorkingHours();
-        $em = $this->getDoctrine()->getManager($session->get("connection"));
+        $em = $this->getDoctrine()->getManager();
 
         $don = $request->request->get('json_s');
         $code = $request->request->get('code');
+        $taux = $request->request->get('taux');
+        $jour_travail = $request->request->get('jour_travail');
 
         $wh->setCode($code);
         $wh->setWorkingHour($don);
+        $wh->setTaux($taux);
+        $wh->setJourTravail($jour_travail);
+        $wh->setTolerance($request->request->get('tolerance'));
         $em->persist($wh);
+
+        $journal = new Journal();
+        $journal->setCrudType('C');
+        $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+        $journal->setDescription($journal->getAuthor()." a ajouté une heure de travail (Working hour)");
+        $journal->setElementConcerned($wh->getCode());
+        $em->persist($journal);
         $em->flush();
+
+        $this->get('session')->getFlashBag()->set('notice', 'Cette heure de travail a été enregistrée avec succès');
 
         return new Response(1);
     }
@@ -68,17 +84,26 @@ class WorkingHoursController extends Controller
      */
     public function updateWorkingHourAction(Request $request)
     {
-        $session = new Session();
         $don = $request->request->get('json_s');
         $code = $request->request->get('code');
         $id = $request->request->get('id');
 
-        $em = $this->getDoctrine()->getManager($session->get("connection"));
+        $em = $this->getDoctrine()->getManager();
         $wh = $em->getRepository("AppBundle:WorkingHours")->find($id);
 
         $wh->setCode($code);
         $wh->setWorkingHour($don);
+        $wh->setTolerance($request->request->get('tolerance'));
+
+        $journal = new Journal();
+        $journal->setCrudType('U');
+        $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+        $journal->setDescription($journal->getAuthor()." a modifié une heure de travail (Working hour)");
+        $journal->setElementConcerned($wh->getCode());
+        $em->persist($journal);
         $em->flush();
+
+        $this->get('session')->getFlashBag()->set('notice', 'Cette heure de travail a été modifiée');
 
         return new Response(1);
     }
@@ -86,39 +111,35 @@ class WorkingHoursController extends Controller
     /**
      * @Route("/editWorkingHour/{id}", name="editWorkingHour")
      */
+
+     /* Ebenezer This route is no more used.The one used is updateWorkingHour */
     public function editWorkingHourAction(Request $request, $id)
     {
-        $session = new Session();
-
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
-            if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
-                $expiry_service = $this->container->get('app_bundle_expired');
-                if ($expiry_service->hasExpired()) {
-                    return $this->redirectToRoute("expiryPage");
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN_CONTROL')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            if ($expiry_service->hasExpired()) {
+                return $this->redirectToRoute("expiryPage");
+            }
+            if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+                $wh = $this->getDoctrine()->getManager()->getRepository("AppBundle:WorkingHours")->find($id);
+                if($wh == null){
+                    throw new NotFoundHttpException("Ce workingHour n'a pas été trouvé");
                 }
-                if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
-                    $wh = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:WorkingHours")->find($id);
-                    if($wh == null){
-                        throw new NotFoundHttpException("Ce workingHour n'a pas été trouvé");
-                    }
-                    $tab = array();
+                $tab = array();
 
-                    $json_wh = json_decode($wh->getWorkingHour(),true);
-                    $tab[] = ['id'=>$wh->getId(),'workingHour'=>(array)json_decode($wh->getWorkingHour())];
+                $json_wh = json_decode($wh->getWorkingHour(),true);
+                $tab[] = ['id'=>$wh->getId(),'workingHour'=>(array)json_decode($wh->getWorkingHour())];
 
-                    return $this->render('cas/editWorkingHour.html.twig', array(
-                        'id'=>$id,
-                        'wh'=>$wh,
-                        'whJson'=>$json_wh
-                    ));
-                }else{
-                    return $this->redirectToRoute("login");
-                }
+                return $this->render('cas/editWorkingHour.html.twig', array(
+                    'id'=>$id,
+                    'wh'=>$wh,
+                    'whJson'=>$json_wh
+                ));
             }else{
                 return $this->redirectToRoute("login");
             }
         }else{
-            throw new AccessDeniedException("Accès réservé aux administrateurs");
+            return $this->redirectToRoute("login");
         }
     }
 
@@ -126,20 +147,26 @@ class WorkingHoursController extends Controller
      * @Route("/deleteWorkingHour/{id}", name="deleteWorkingHour")
     */
     public function deleteWorkingHourAction(Request $request, $id){
-        $session = new Session();
-
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN_CONTROL')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
             }
-            $wh = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:WorkingHours")->find($id);
+            $wh = $this->getDoctrine()->getManager()->getRepository("AppBundle:WorkingHours")->find($id);
 
             if($wh != null){
-                $em = $this->getDoctrine()->getManager($session->get("connection"));
+                $em = $this->getDoctrine()->getManager();
                 $em->remove($wh);
+                $journal = new Journal();
+                $journal->setCrudType('D');
+                $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+                $journal->setDescription($journal->getAuthor()." a supprimé une heure de travail (Working hour)");
+                $journal->setElementConcerned($wh->getCode());
+                $em->persist($journal);
                 $em->flush();
-                return new Response("Ce working hour a été supprimé");
+                
+                $this->get('session')->getFlashBag()->set('notice', 'Cette heure de travail a été supprimée');
+                return $this->redirectToRoute("addWorkingHour");
             }else{
                 throw new NotFoundHttpException("Le working hour d'id ".$id." n'existe pas");
             }

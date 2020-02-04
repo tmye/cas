@@ -9,7 +9,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
@@ -32,10 +31,10 @@ class ClockinReccordController extends EmployeController
         echo date('d-m-Y H:i:s',1522423928)."<br>";
         echo date('d-m-Y H:i:s',1522428015)."<br>";
         echo date('d-m-Y H:i:s',1522389900)."<br>";
-        $emp = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->find(26);
+        $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find(26);
         $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
         */
-        echo strtotime("13 April 2018 14:17:00")."<br>";
+        echo strtotime("07 August 2018 07:30:00")."<br>";
         //$don = $this->findHistoriqueAction($request,$departem = 4,$dat = "2018-03-29",$emplo = 26);
         //print_r($don);
         return new Response("OK");
@@ -46,16 +45,18 @@ class ClockinReccordController extends EmployeController
      */
     public function randomClockinRecordAction(Request $request)
     {
-        $session = new Session();
-        $dateFrom = "2018-07-01";
-        $dateTo = "2018-07-18";
-        $employees = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->findAll();
+        //date_default_timezone_set('Africa/Lome');
+
+        $dateFrom = "2019-11-25";
+        $dateTo = "2019-12-31";
+        $employees = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
         $timeFrom = strtotime($dateFrom." 00:00:00");
         $timeTo = strtotime($dateTo." 00:00:00");
         $timeDays = $timeTo-$timeFrom;
         $days = $timeDays/(60*60*24);
-        $em = $this->getDoctrine()->getManager($session->get("connection"));
+        $em = $this->getDoctrine()->getManager();
         foreach ($employees as $emp){
+            set_time_limit(0);
             $nowTime = $timeFrom;
             $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
             // Lundi because the are the same
@@ -191,7 +192,7 @@ class ClockinReccordController extends EmployeController
         return new Response("Ok");
     }
 
-    private function dateDayNameFrench($day){
+    public function dateDayNameFrench($day){
         switch ($day){
             case 1:
                 return "lundi";
@@ -517,9 +518,12 @@ class ClockinReccordController extends EmployeController
     }
     public function plusAncien($recTab,ClockinRecord $element){
         //if(isset($recTab[$element->getEmploye()->getId()]["time_depart"]) && $recTab[$element->getEmploye()->getId()]["time_depart"] != null){
-            if($element->getClockinTime() > $recTab[$element->getEmploye()->getId()]["time_depart"] ){
+        if($recTab[$element->getEmploye()->getId()]["time_depart"] == null){
+            return true;
+        }
+        elseif ($element->getClockinTime() > $recTab[$element->getEmploye()->getId()]["time_depart"] ){
                 return true;
-            }else{
+        }else{
                 return false;
             }
         //}
@@ -632,11 +636,46 @@ class ClockinReccordController extends EmployeController
     }
 
     /**
+     * @Route("/findHistoriqueBrute", name="findHistoriqueBrute")
+     */
+    public function findHistoriqueBruteAction(Request $request)
+    {
+        set_time_limit(0);
+
+        $_date = $request->request->get('date');
+
+        $day = date('N', strtotime($_date));
+        //$day = $this->dateDayNameFrench(intval($day));
+        $min = strtotime($_date." 00:00:00");
+        $max = strtotime($_date." 23:59:59");
+        $finalDataTab = array();
+        $empAllRecordPictureFinal = array();
+
+        $employees = $this->getDoctrine()->getRepository("AppBundle:Employe")->findAll();
+        $i=0;
+        foreach ($employees as $emp){
+            $empAllRecordPictureFinal = [];
+            set_time_limit(0);
+            $empAllRecords = [];
+            $empAllRecordsResult = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->allEmployeesHistoryBrut($emp->getId(),$min,$max);
+            foreach ($empAllRecordsResult as $clock){
+                $empAllRecords[] = date("H:i",$clock->getClockinTime());
+                $empAllRecordPictureFinal[] = $clock->getPic();
+            }
+
+            $finalDataTab[] = array($emp->getSurname()." ".$emp->getLastName(),$empAllRecords,$empAllRecordPictureFinal,$emp->getAdress(),$emp->getContact(),$emp->getDepartement()->getName(),$emp->getFunction(),$emp->getHireDate()->format("d/m/Y"),$emp->getPicture());
+            $i++;
+        }
+
+        return new JsonResponse($finalDataTab);
+    }
+
+    /**
      * @Route("/findHistorique", name="findHistorique")
      */
     public function findHistoriqueAction($departem = null,$dat = null,$emplo = null,Request $request = null)
     {
-        $session = new Session();
+        set_time_limit(0);
 
         if(($request->request->get('id') != null) && ($request->request->get('date') != null)){
             $dep = $request->request->get('id');
@@ -657,9 +696,9 @@ class ClockinReccordController extends EmployeController
 
         // check if one or many employees
         if(isset($emplo) && $emplo != null){
-            $emp = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->findOneBy(array("id"=>$emplo));
+            $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findOneBy(array("id"=>$emplo));
         }else{
-            $emp = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->employeeByDep($dep);
+            $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($dep);
         }
 
         if(isset($emp) && $emp != null){
@@ -727,18 +766,21 @@ class ClockinReccordController extends EmployeController
 
                 // On récupère les données appartenant au département sélectionné
 
-                $tempData = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:ClockinRecord")->empHistory($emp->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
+                $tempData = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empHistory($emp->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
                 $min = strtotime($_date." 00:00:00");
                 $max = strtotime($_date." 23:59:59");
 
-                $empAllRecord = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:ClockinRecord")->empAllHistory($emp->getId(),$min,$max);
+                $empAllRecord = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empAllHistory($emp->getId(),$min,$max);
                 $empAllRecordFinal = array();
+                $empAllRecordPictureFinal = array();
                 foreach ($empAllRecord as $clock){
+                    set_time_limit(0);
                     $empAllRecordFinal[] = date("H:i:s",$clock->getClockinTime());
+                    $empAllRecordPictureFinal[] = $clock->getPic();
                 }
 
                 $empTab[]=$emp->getId();
-                $empAllHistoryTab[]=array($emp->getId(),$empAllRecordFinal,$dayType);
+                $empAllHistoryTab[]=array($emp->getId(),$empAllRecordFinal,$dayType,$empAllRecordPictureFinal);
                 $empNameTab[]=$emp->getSurname()." ".$emp->getLastName();
                 $empCcidTab[]=$emp->getEmployeeCcid();
                 $empTypeTab[]=array($emp->getId(),$type);
@@ -760,6 +802,7 @@ class ClockinReccordController extends EmployeController
             }else{
                 if(sizeof($emp)>0){
                     foreach ($emp as $e){
+                        set_time_limit(0);
                         $empWH = json_decode($e->getWorkingHour()->getWorkingHour(),true);
                         $type = $empWH["lundi"][0]["type"];
                         $dayType = $empWH[$day][0]["type"];
@@ -816,21 +859,24 @@ class ClockinReccordController extends EmployeController
 
                         // On récupère les données appartenant au département sélectionné
 
-                        $tempData = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:ClockinRecord")->empHistory($e->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
+                        $tempData = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empHistory($e->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
                         /*foreach ($tempData as $cr){
                             print_r("----".$cr->getEmploye()->getId()." : ".$cr->getClockinTime()." (".date('Y-m-d H:i:s',$cr->getClockinTime()).")\n");
                         }*/
                         $min = strtotime($_date." 00:00:00");
                         $max = strtotime($_date." 23:59:59");
 
-                        $empAllRecord = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:ClockinRecord")->empAllHistory($e->getId(),$min,$max);
+                        $empAllRecord = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empAllHistory($e->getId(),$min,$max);
                         $empAllRecordFinal = array();
+                        $empAllRecordPictureFinal = array();
                         foreach ($empAllRecord as $clock){
+                            set_time_limit(0);
                             $empAllRecordFinal[] = date("H:i:s",$clock->getClockinTime());
+                            $empAllRecordPictureFinal[] = $clock->getPic();
                         }
 
                         $empTab[]=$e->getId();
-                        $empAllHistoryTab[]= array($e->getId(),$empAllRecordFinal,$dayType);
+                        $empAllHistoryTab[]= array($e->getId(),$empAllRecordFinal,$dayType,$empAllRecordPictureFinal);
                         $empNameTab[]=$e->getSurname()." ".$e->getLastName();
                         $empCcidTab[]=$e->getEmployeeCcid();
                         $empTypeTab[]=array($e->getId(),$type);
@@ -916,8 +962,6 @@ class ClockinReccordController extends EmployeController
      */
     public function returnHistoriqueAction(Request $request)
     {
-        $session = new Session();
-
         $dep = $request->request->get('id');
         $_date = $request->request->get('date');
         $day = date('N',strtotime($_date));
@@ -965,17 +1009,19 @@ class ClockinReccordController extends EmployeController
 
         // On récupère les données appartenant au département sélectionné
 
-        $don = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:ClockinRecord")->history($dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
-        $emp = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->employeeByDep($dep);
+        $don = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->history($dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
+        $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeByDep($dep);
         foreach ($emp as $e){
+            set_time_limit(0);
             //echo "\nEmployee id : ".$e->getId()."\n";
             $clockinRecordTab = 0;
             $empClockinRecordTab = array();
             //echo "\nPour l'Employee id : ".$e->getId()."\n Le tableau est : ";
             $empTab[] = $e->getSurname();
-            $clockinRecordTab = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:ClockinRecord")->empHistory($e->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
+            $clockinRecordTab = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->empHistory($e->getId(),$dep,$dIInfA,$dISupA,$dIInfPD,$dISupPD,$dIInfPF,$dISupPF,$dIInfD,$dISupD);
             //echo "\nLa taille du résultat est : ".sizeof($clockinRecordTab)."\n";
             foreach ($clockinRecordTab as $cr){
+                set_time_limit(0);
                 $empClockinRecordTab[] = $cr->getId();
             }
             // Si le tableau n'est pas vide,on peut incrémenter
@@ -990,13 +1036,11 @@ class ClockinReccordController extends EmployeController
      * @Route("/present", name="present")
      */
     public function employeePresent(Request $request){
-        $session = new Session();
-
         $date = strtotime($request->request->get('date'));
         $empId = $request->request->get('id');
-        $emp = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->find($empId);
+        $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($empId);
         if($emp != null){
-            $cr = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:ClockinRecord")->present($emp,$date);
+            $cr = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord")->present($emp,$date);
             if($cr != null){
                 return new Response("1");
             }else{

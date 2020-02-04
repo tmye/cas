@@ -1,8 +1,5 @@
 {% extends 'base.html.twig' %}
-
-
 {% block title %}C.A.S - Publicité{% endblock %}
-
 {% block body %}
 
     <!-- Modal for ajax loading -->
@@ -32,7 +29,7 @@
                 <div class="col l12">
                     <ul class="collapsible" data-collapsible="accordion">
                         <li>
-                            <div class="collapsible-header active">Images de veille</div>
+                            <div class="collapsible-header collapsible-header-title active">Images de veille</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
                                     <form class="col l12" id="main_form">
@@ -51,18 +48,31 @@
                                                     <span>Cliquez sur une image pour choisir une autre</span>
                                                 </div>
                                             </div>
+
                                             <div class="row secondOne_1">
                                                 <div class="col l4 card firstImage">
                                                     <input type="file" id="first_image_input_1" style="display: none">
-                                                    <img src="{{ asset("img/image_placeholder.jpg") }}" id="first_image_1" inputTag="first_image_input_1" class="preview preview2" alt="image">
+                                                    {% if images[0].image1 is defined and images[0].image1 is not null %}
+                                                        <img src="{{ asset("pub_covers/"~images[0].image1) }}" id="first_image_1" inputTag="first_image_input_1" class="preview preview2" alt="image">
+                                                        {% else %}
+                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="first_image_1" inputTag="first_image_input_1" class="preview preview2" alt="image">
+                                                    {% endif %}
                                                 </div>
                                                 <div class="col l4 card secondImage">
                                                     <input type="file" id="second_image_input_1" style="display: none">
-                                                    <img src="{{ asset("img/image_placeholder.jpg") }}" id="second_image_1" inputTag="second_image_input_1" class="preview preview2" alt="image">
+                                                    {% if images[0].image2 is defined and images[0].image2 is not null %}
+                                                        <img src="{{ asset("pub_covers/"~images[0].image2) }}" id="second_image_1" inputTag="second_image_input_1" class="preview preview2" alt="image">
+                                                        {% else %}
+                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="second_image_1" inputTag="second_image_input_1" class="preview preview2" alt="image">
+                                                    {% endif %}
                                                 </div>
                                                 <div class="col l4 card thirdImage">
                                                     <input type="file" id="third_image_input_1" style="display: none">
-                                                    <img src="{{ asset("img/image_placeholder.jpg") }}" id="third_image_1" inputTag="third_image_input_1" class="preview preview2" alt="image">
+                                                    {% if images[0].image3 is defined and images[0].image3 is not null %}
+                                                        <img src="{{ asset("pub_covers/"~images[0].image3) }}" id="third_image_1" inputTag="third_image_input_1" class="preview preview2" alt="image">
+                                                    {% else %}
+                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="third_image_1" inputTag="third_image_input_1" class="preview preview2" alt="image">
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                             <div class="row thirdOne">
@@ -88,15 +98,31 @@
                                             <div class="row secondOne_2">
                                                 <div class="col l4 card firstImage">
                                                     <input type="file" id="first_image_input_2" style="display: none">
-                                                    <img src="{{ asset("img/image_placeholder.jpg") }}" id="first_image_2" inputTag="first_image_input_2" class="preview preview2" alt="image">
+                                                    {% if images[0].image1 is defined and images[0].image1 is not null %}
+                                                        <img src="{{ asset("pub_covers/"~images[0].image1) }}" id="first_image_1" inputTag="first_image_input_1" class="preview preview2" alt="image">
+                                                        {% else %}
+                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="first_image_1" inputTag="first_image_input_1" class="preview preview2" alt="image">
+                                                    {% endif %}
+
+                                                    <!-- <img src="{{ asset("img/image_placeholder.jpg") }}" id="first_image_2" inputTag="first_image_input_2" class="preview preview2" alt="image">-->
                                                 </div>
                                                 <div class="col l4 card secondImage">
                                                     <input type="file" id="second_image_input_2" style="display: none">
-                                                    <img src="{{ asset("img/image_placeholder.jpg") }}" id="second_image_2" inputTag="second_image_input_2" class="preview preview2" alt="image">
+                                                    {% if images[0].image2 is defined and images[0].image2 is not null %}
+                                                        <img src="{{ asset("pub_covers/"~images[0].image2) }}" id="second_image_1" inputTag="second_image_input_1" class="preview preview2" alt="image">
+                                                        {% else %}
+                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="second_image_1" inputTag="second_image_input_1" class="preview preview2" alt="image">
+                                                    {% endif %}
+                                                    <!-- <img src="{{ asset("img/image_placeholder.jpg") }}" id="second_image_2" inputTag="second_image_input_2" class="preview preview2" alt="image"> -->
                                                 </div>
                                                 <div class="col l4 card thirdImage">
                                                     <input type="file" id="third_image_input_2" style="display: none">
-                                                    <img src="{{ asset("img/image_placeholder.jpg") }}" id="third_image_2" inputTag="third_image_input_2" class="preview preview2" alt="image">
+                                                    {% if images[0].image3 is defined and images[0].image3 is not null %}
+                                                        <img src="{{ asset("pub_covers/"~images[0].image3) }}" id="third_image_1" inputTag="third_image_input_1" class="preview preview2" alt="image">
+                                                    {% else %}
+                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="third_image_1" inputTag="third_image_input_1" class="preview preview2" alt="image">
+                                                    {% endif %}
+                                                    <!-- <img src="{{ asset("img/image_placeholder.jpg") }}" id="third_image_2" inputTag="third_image_input_2" class="preview preview2" alt="image"> -->
                                                 </div>
                                             </div>
                                             <div class="row thirdOne">
@@ -122,15 +148,30 @@
                                             <div class="row secondOne_3">
                                                 <div class="col l4 card firstImage">
                                                     <input type="file" id="first_image_input_3" style="display: none">
-                                                    <img src="{{ asset("img/image_placeholder.jpg") }}" id="first_image_3" inputTag="first_image_input_3" class="preview preview2" alt="image">
+                                                    {% if images[0].image1 is defined and images[0].image1 is not null %}
+                                                        <img src="{{ asset("pub_covers/"~images[0].image1) }}" id="first_image_1" inputTag="first_image_input_1" class="preview preview2" alt="image">
+                                                        {% else %}
+                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="first_image_1" inputTag="first_image_input_1" class="preview preview2" alt="image">
+                                                    {% endif %}
+                                                    <!-- <img src="{{ asset("img/image_placeholder.jpg") }}" id="first_image_3" inputTag="first_image_input_3" class="preview preview2" alt="image"> -->
                                                 </div>
                                                 <div class="col l4 card secondImage">
                                                     <input type="file" id="second_image_input_3" style="display: none">
-                                                    <img src="{{ asset("img/image_placeholder.jpg") }}" id="second_image_3" inputTag="second_image_input_3" class="preview preview2" alt="image">
+                                                    {% if images[0].image2 is defined and images[0].image2 is not null %}
+                                                        <img src="{{ asset("pub_covers/"~images[0].image2) }}" id="second_image_1" inputTag="second_image_input_1" class="preview preview2" alt="image">
+                                                        {% else %}
+                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="second_image_1" inputTag="second_image_input_1" class="preview preview2" alt="image">
+                                                    {% endif %}
+                                                    <!-- <img src="{{ asset("img/image_placeholder.jpg") }}" id="second_image_3" inputTag="second_image_input_3" class="preview preview2" alt="image"> -->
                                                 </div>
                                                 <div class="col l4 card thirdImage">
                                                     <input type="file" id="third_image_input_3" style="display: none">
-                                                    <img src="{{ asset("img/image_placeholder.jpg") }}" id="third_image_3" inputTag="third_image_input_3" class="preview preview2" alt="image">
+                                                    {% if images[0].image3 is defined and images[0].image3 is not null %}
+                                                        <img src="{{ asset("pub_covers/"~images[0].image3) }}" id="third_image_1" inputTag="third_image_input_1" class="preview preview2" alt="image">
+                                                    {% else %}
+                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="third_image_1" inputTag="third_image_input_1" class="preview preview2" alt="image">
+                                                    {% endif %}
+                                                    <!-- <img src="{{ asset("img/image_placeholder.jpg") }}" id="third_image_3" inputTag="third_image_input_3" class="preview preview2" alt="image"> -->
                                                 </div>
                                             </div>
                                             <div class="row thirdOne">

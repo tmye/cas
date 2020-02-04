@@ -8,12 +8,12 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Journal;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 class AdminController extends Controller
 {
@@ -31,25 +31,61 @@ class AdminController extends Controller
      */
     public function addAdminAction(Request $request)
     {
-        $session = new Session();
-
         if($this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')){
             if ($request->isMethod('POST')) {
                 $empId = $request->request->get("employe");
-                $em = $this->getDoctrine()->getManager($session->get("connection"));
-                $e = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->find($empId);
+                $em = $this->getDoctrine()->getManager();
+                $e = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($empId);
                 $e->setRoles(array("ROLE_ADMIN"));
                 $e->setAuth(14);
+
+                $journal = new Journal();
+                $journal->setCrudType('U');
+                $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+                $journal->setDescription($journal->getAuthor()." a désigné un utilisateur comme admin");
+                $journal->setElementConcerned($e->getSurname()." ".$e->getLastName());
+                $em->persist($journal);
+
                 $em->flush();
-                $emp = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->findAll();
+                $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
                 return $this->render("cas/superAdmin.html.twig",array(
                     "status"=>200,
                     "employe"=>$emp
                 ));
             }
 
-            $emp = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->findAll();
+            $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
             return $this->render("cas/superAdmin.html.twig",array(
+                "employe" => $emp
+            ));
+        }else{
+            throw new AccessDeniedException("Accès limité aux super-administrateurs");
+        }
+    }
+
+    /**
+     * @Route("/superAdmin/addNewAdmin",name="addNewAdmin")
+     */
+    public function addNewAdminAction(Request $request)
+    {
+        if($this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')){
+            if ($request->isMethod('POST')) {
+                print_r("ebenezer");
+                $empId = $request->request->get("employe");
+                $em = $this->getDoctrine()->getManager();
+                $e = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($empId);
+                $e->setRoles(array("ROLE_ADMIN"));
+                $e->setAuth(14);
+                $em->flush();
+                $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
+                return $this->render("cas/superAdmin.html.twig",array(
+                    "status"=>200,
+                    "employe"=>$emp
+                ));
+            }
+
+            $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
+            return $this->render("cas/addNewAdmin.html.twig",array(
                 "employe" => $emp
             ));
         }else{
@@ -74,8 +110,6 @@ class AdminController extends Controller
      */
     public function roleChangeAction(Request $request)
     {
-        $session = new Session();
-
         if($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')){
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
@@ -84,18 +118,27 @@ class AdminController extends Controller
             if ($request->isMethod('POST')) {
                 $empId = $request->request->get("employe");
                 $role = $request->request->get("role");
-                $em = $this->getDoctrine()->getManager($session->get("connection"));
-                $e = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->find($empId);
+                $em = $this->getDoctrine()->getManager();
+                $e = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($empId);
                 $e->setRoles(array($role));
+
+                $journal = new Journal();
+                $journal->setCrudType('U');
+                $journal->setAuthor($this->getUser()->getName().' '.$this->getUser()->getSurname());
+                $journal->setDescription($journal->getAuthor()." a changé le rôle d'un utilisateur");
+                $journal->setElementConcerned($e->getSurname()." ".$e->getLastName()." a maintenent le rôle ".$role);
+                $em->persist($journal);
                 $em->flush();
-                $emp = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->employeeSafe();
+
+                $em->flush();
+                $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeSafe();
                 return $this->render("cas/admin.html.twig",array(
                     "status"=>200,
                     "employe"=>$emp
                 ));
             }
 
-            $emp = $this->getDoctrine()->getManager($session->get("connection"))->getRepository("AppBundle:Employe")->employeeSafe();
+            $emp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeSafe();
             return $this->render("cas/admin.html.twig",array(
                 "employe" => $emp
             ));

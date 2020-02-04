@@ -1,0 +1,239 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}C.A.S - Historique brute{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        #myInput {
+            background-position: 10px 12px; /* Position the search icon */
+            background-repeat: no-repeat; /* Do not repeat the icon image */
+            width: 98%; /* Full-width */
+            font-size: 16px; /* Increase font-size */
+            padding-left: 2%; /* Add some padding */
+            border: 1px solid #ddd; /* Add a grey border */
+            margin-bottom: 12px; /* Add some space below the input */
+        }
+
+        #myTable {
+            border-collapse: collapse; /* Collapse borders */
+            width: 100%; /* Full-width */
+            border: 1px solid #ddd; /* Add a grey border */
+            font-size: 18px; /* Increase font-size */
+        }
+
+        #myTable th, #myTable td {
+            text-align: left; /* Left-align text */
+            padding: 12px; /* Add padding */
+        }
+
+        #myTable tr {
+            /* Add a bottom border to all table rows */
+            border-bottom: 1px solid #ddd;
+        }
+
+        #myTable tr.header, #myTable tr:hover {
+            /* Add a grey background color to the table header and on hover */
+            background-color: #f1f1f1;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    <!-- Modal for ajax loading -->
+    <div id="modal_loading" class="modal ajax_modals">
+        <div class="modal-content">
+            <p class="center">
+                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+            </p>
+        </div>
+    </div>
+
+    <!-- Modal for details -->
+    <div id="modal_detail" class="modal">
+        <div class="modal-content">
+            <h5>Informations de cet employé</h5>
+            <hr>
+            <br>
+            <div class="row">
+                <div class="col l3">
+                    <img src="{{ asset('img/avatar.jpg') }}" id="modalItemPicture" width="100%">
+                </div>
+                <div class="col l5">
+                    <div class="row">
+                        <div class="col l12" id="modalItemName">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col l12" id="modalItemAddress">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col l12" id="modalItemContact">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col l12" id="modalItemDep">
+                        </div>
+                    </div>
+                </div>
+                <div class="col l4">
+                    <div class="row">
+                        <div class="col l12" id="modalItemFunction">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col l12" id="modalItemHD">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col l12">
+            <h5 class="page-title">
+                <span class="fa fa-clock"></span>
+                Activités de ce jour
+            </h5>
+            <div class="row">
+                <br><br>
+                <p class="description_message">Choisissez une date et affichez l'historique des présences de cette période</p>
+                <div class="col l6">
+                    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Recherche par nom..">
+                </div>
+                <div class="col l4">
+                    <input type="text" class="datepicker input-customized" id="selectedDate"
+                           style="width: 98%;height: 3rem !important;" placeholder="Choisissez une date">
+                </div>
+                <div class="col l2">
+                    <button class="btn-perso-historique" id="searchButton">
+                        <span class="fa fa-search" style=""></span>
+                        <span style="">Rechercher</span>
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col l12">
+                    <table id="myTable">
+                        <tr class="header">
+                            <th style="width:40%;">Employé</th>
+                            <th style="width:20%;">Département</th>
+                            <th style="width:40%;" id="historyTh">Historique de badges</th>
+                        </tr>
+                        <tbody id="tableContent">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="preview-section" style="position: fixed;right: 70px;top: 250px">
+        <p>Proof picture</p>
+        <img src="{{ asset('img/avatar.jpg') }}" id="previewImage" width="100"/>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+
+    <script>
+        function imageShowFunction(imgSrc) {
+            imgSrc = imgSrc.replace('employee', '/employee');
+            $("#previewImage").attr("src", "{{ asset('/') }}" + imgSrc);
+        }
+        ;
+
+        function populateModal(obj) {
+            console.log("Value : ");
+            console.log(obj);
+            $("#modalItemName").text(obj[0]);
+            $("#modalItemAddress").text(obj[3]);
+            $("#modalItemContact").text(obj[4]);
+            $("#modalItemDep").text("Département : " + obj[5]);
+            $("#modalItemFunction").text("Fonction : " + obj[6]);
+            $("#modalItemHD").text("Date d'embauche : " + obj[7]);
+
+            if ((obj[8] != null) && (obj[8] != "null") && (obj[8] != "")) {
+                $("#modalItemPicture").attr("src", "{{ asset('') }}/user_profile_pictures/" + obj[8]);
+            }
+
+            $("#modal_detail").modal('open');
+        }
+        ;
+
+        $("#searchButton").click(function () {
+            $("#tableContent").html("");
+            $.ajax({
+                type: 'POST',
+                url: "findHistoriqueBrute",
+                data: {date: $("#selectedDate").val()},
+                timeout: 0,
+                success: function (data) {
+                    console.log(data);
+                    var max = 0;
+                    var k = 0;
+
+                    $.each(data,function (i,el) {
+                        k=0;
+                        console.log("debug-------")
+                        console.log(data)
+                        console.log("debug-------")
+                        var element = "<tr><td style='cursor: pointer' onclick='populateModal([\""+el[0]+"\",\""+el[1]+"\",\""+el[2]+"\",\""+el[3]+"\",\""+el[4]+"\",\""+el[5]+"\",\""+el[6]+"\",\""+el[7]+"\",\""+el[8]+"\"])'>"+el[0]+"</td><td>"+el[5]+"</td>";
+                        $.each(el[1],function (j,subEl) {
+                            element+= "<td>"+subEl+"<span class='fas fa-eye' style='opacity: 0.5;position:relative;left: 3px' onmouseover='imageShowFunction(\""+String(el[2][j])+"\")'></td>";
+                            k++;
+                        });
+                        if (k > max) {
+                            max = k;
+                        }
+                        element += "</tr>";
+                        $("#tableContent").append(element);
+                        $("#historyTh").attr("colspan", max);
+                        console.log(element);
+                        console.log("Max : " + max)
+                    });
+                }
+            })
+        });
+    </script>
+
+    <script>
+        // Script for sorting the table
+        function myFunction() {
+            // Declare variables
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+
+            // Loop through all table rows, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script>
+        // On s'attaque aux collapsibles
+        $(function () {
+            $(".cl_history_brut").addClass("collapsible_element_active");
+            $(".navigation_collapsible").collapsible('open', 1);
+
+            $('.datepicker').on('mousedown',function(event){
+                event.preventDefault();
+            });
+        });
+    </script>
+{% endblock %}

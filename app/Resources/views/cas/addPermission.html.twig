@@ -6,25 +6,34 @@
 {% block body %}
     <div class="row">
         <div class="col l12">
-            <h5 class="page-title">Nouvelle permission</h5>
-
+            <h5 class="page-title"><span class="fa fa-calendar-plus"></span> Nouvelle permission</h5>
+            <p class="description_message">Vous pouvez enregistrer une nouvelle permission grâce à ce formulaire</p>
             <div class="row">
                 <div class="col l12">
                     <ul class="collapsible" data-collapsible="accordion">
                         <li>
-                            <div class="collapsible-header active">Formulaire d'ajout d'une nouvelle permission </div>
+                            <div class="collapsible-header active collapsible-header-title">Formulaire d'ajout d'une nouvelle permission </div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
                                     <div class="col l12">
-                                        <div class="row">
-                                            <div class="col l12">
-                                                {%  if message is defined and message is not null %}
+                                        {% for message in  app.session.flashbag.get('notice') %}
+                                            <div class="row">
+                                                <div class="col l12">
                                                     <div class="operation_message">
                                                         {{ message }}
                                                     </div>
-                                                {% endif %}
+                                                </div>
                                             </div>
-                                        </div>
+                                        {% endfor %}
+                                        {% for message in  app.session.flashbag.get('error_notice') %}
+                                            <div class="row">
+                                                <div class="col l12">
+                                                    <div class="operation_error_message">
+                                                        {{ message }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
                                         {{ form_start(form) }}
                                             <div class="row">
                                                 <div class="input-field col s6">
@@ -43,7 +52,7 @@
                                                 </div>
                                                 <div class="input-field col s3">
                                                     <span>Heure de début</span>
-                                                    {{ form_row(form.timeFrom, {'attr': {'class': 'input-customized timepicker','placeholder':'Date de début'}}) }}
+                                                    {{ form_row(form.timeFrom, {'attr': {'class': 'input-customized timepicker','placeholder':'Heure de début'}}) }}
                                                 </div>
                                                 <div class="input-field col s3">
                                                     <span>Date de fin</span>
@@ -51,7 +60,7 @@
                                                 </div>
                                                 <div class="input-field col s3">
                                                     <span>Heure de fin</span>
-                                                    {{ form_row(form.timeTo, {'attr': {'class': 'input-customized timepicker','placeholder':'Date de début'}}) }}
+                                                    {{ form_row(form.timeTo, {'attr': {'class': 'input-customized timepicker','placeholder':'Heure de fin'}}) }}
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -60,6 +69,7 @@
                                                     {{ form_row(form.employee) }}
                                                 </div>
                                             </div>
+                                            {{ form_widget(form.creer, { 'label': 'Créer','attr': {'class':'btn'} }) }}
                                             {{ form_rest(form) }}
                                         {{ form_end(form) }}
                                     </div>
@@ -79,6 +89,15 @@
         $(function () {
             $(".cl_Perm").addClass("collapsible_element_active");
             $(".navigation_collapsible").collapsible('open',3);
+
+            $('.datepicker').on('mousedown',function(event){
+                event.preventDefault();
+            });
+
+            $('.timepicker').on('mousedown',function(event){
+                event.preventDefault();
+            });
+
         });
     </script>
 {% endblock %}

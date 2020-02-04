@@ -20,7 +20,7 @@ class Permission
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    public $id;
 
 
     /**
@@ -29,7 +29,7 @@ class Permission
      * @Assert\Valid()
      */
 
-    private $employee;
+    public $employee;
 
 
     /**
@@ -37,7 +37,7 @@ class Permission
      *
      * @ORM\Column(name="asker_id", type="integer")
      */
-    private $askerId;
+    public $askerId;
 
     /**
      * @var string
@@ -45,57 +45,57 @@ class Permission
      * @ORM\Column(name="title", type="string", length=45)
      * @Assert\NotBlank()
      */
-    private $title;
+    public $title;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="description", type="string", length=45)
+     * @ORM\Column(name="description", type="text")
      * @Assert\NotBlank()
      */
-    private $description;
+    public $description;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="create_time", type="datetime")
      */
-    private $createTime;
+    public $createTime;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="update_time", type="datetime")
      */
-    private $updateTime;
+    public $updateTime;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="date_from", type="datetime")
      */
-    private $dateFrom;
+    public $dateFrom;
 
     /**
      * @var string
      *
      * @ORM\Column(name="time_from", type="string", nullable=true)
      */
-    private $timeFrom;
+    public $timeFrom;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="date_to", type="datetime", nullable=true)
      */
-    private $dateTo;
+    public $dateTo;
 
     /**
      * @var string
      *
      * @ORM\Column(name="time_to", type="string", nullable=true)
      */
-    private $timeTo;
+    public $timeTo;
 
     /**
      * @var int
@@ -104,13 +104,13 @@ class Permission
      * @Assert\NotBlank()
      * @Assert\Range(min=0,max=2)
      */
-    private $state;
+    public $state;
 
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -133,7 +133,7 @@ class Permission
     /**
      * Get askerId
      *
-     * @return integer 
+     * @return integer
      */
     public function getAskerId()
     {
@@ -156,7 +156,7 @@ class Permission
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -179,7 +179,7 @@ class Permission
     /**
      * Get description
      *
-     * @return string 
+     * @return string
      */
     public function getDescription()
     {
@@ -202,7 +202,7 @@ class Permission
     /**
      * Get updateTime
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getUpdateTime()
     {
@@ -225,7 +225,7 @@ class Permission
     /**
      * Get dateFrom
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDateFrom()
     {
@@ -248,7 +248,7 @@ class Permission
     /**
      * Get dateTo
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDateTo()
     {
@@ -271,7 +271,7 @@ class Permission
     /**
      * Get state
      *
-     * @return integer 
+     * @return integer
      */
     public function getState()
     {
@@ -294,7 +294,7 @@ class Permission
     /**
      * Get createTime
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreateTime()
     {
@@ -317,7 +317,7 @@ class Permission
     /**
      * Get employee
      *
-     * @return \AppBundle\Entity\Employe 
+     * @return \AppBundle\Entity\Employe
      */
     public function getEmployee()
     {

@@ -7,12 +7,12 @@
     <div class="row">
         <div class="col l12">
             <h5>Gestion des heures de travail</h5>
-
+            <p class="description_message">Modifiez une heure de travail</p>
             <div class="row">
                 <div class="col l12">
                     <ul class="collapsible" data-collapsible="accordion">
                         <li>
-                            <div class="collapsible-header active">Modification d'une heure de travail de travail ({{ wh.code }})</div>
+                            <div class="collapsible-header active collapsible-header-title">Modification d'une heure de travail de travail ({{ wh.code }})</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
                                     <div class="col l12">
@@ -20,11 +20,11 @@
 
                                         <h5 class="permissionsSeparator whH5">Lundi</h5>
                                         <div class="row">
-                                            <div class="input-field col s6">
+                                            <div class="input-field col s4">
                                                 <span>Nom de code</span>
                                                 <input type="text" value="{{ wh.code }}" id="code" class="input-customized">
                                             </div>
-                                            <div class="input-field col s6">
+                                            <div class="input-field col s4">
                                                 <span>Type</span>
                                                 <select id="form_type_all" name="form[type]">
                                                     <option value="1">Heures figées</option>
@@ -32,6 +32,10 @@
                                                     <option value="3">Présence</option>
                                                     <option value="4">Heures figées sans pause</option>
                                                 </select>
+                                            </div>
+                                            <div class="input-field col s4">
+                                                <span>Tolérance (en minutes)</span>
+                                                <input type="number" min="60" value="{{ wh.tolerance }}" id="tolerance" class="input-customized">
                                             </div>
                                         </div>
                                         <div class="row">
@@ -253,62 +257,8 @@
 {% block javascripts %}
     <script>
         $(function(){
-            function desactive(jour){
-                $('#'+jour+'PBH').val('');
-                $('#'+jour+'PEH').val('');
-                $('#'+jour+'PBH').attr('disabled','disabled');
-                $('#'+jour+'PBH').css('background-color','#ccc');
-                $('#'+jour+'PEH').attr('disabled','disabled');
-                $('#'+jour+'PEH').css('background-color','#ccc');
-            }
-            function desactiveTout(jour){
-                $('#'+jour+'BH').val('');
-                $('#'+jour+'EH').val('');
-                $('#'+jour+'BH').attr('disabled','disabled');
-                $('#'+jour+'BH').css('background-color','#ccc');
-                $('#'+jour+'EH').attr('disabled','disabled');
-                $('#'+jour+'EH').css('background-color','#ccc');
-                desactive(jour);
-
-            }
-            function reactive(jour){
-                $('#'+jour+'PBH').removeAttr('disabled');
-                $('#'+jour+'PBH').css('background-color','#fff');
-                $('#'+jour+'PEH').removeAttr('disabled');
-                $('#'+jour+'PEH').css('background-color','#fff');
-            }
-            function reactiveHeure(jour){
-                $('#'+jour+'BH').removeAttr('disabled');
-                $('#'+jour+'BH').css('background-color','#fff');
-                $('#'+jour+'EH').removeAttr('disabled');
-                $('#'+jour+'EH').css('background-color','#fff');
-            }
-
-            // Lundi
-            $('.quotaSectionLundi input').val('');
-            $('.quotaSectionLundi input').attr('disabled','disabled');
-            $('.quotaSectionLundi input').css('background-color','#ccc');
-            $('.quotaSectionMardi input').val('');
-            $('.quotaSectionMardi input').attr('disabled','disabled');
-            $('.quotaSectionMardi input').css('background-color','#ccc');
-            $('.quotaSectionMercredi input').val('');
-            $('.quotaSectionMercredi input').attr('disabled','disabled');
-            $('.quotaSectionMercredi input').css('background-color','#ccc');
-            $('.quotaSectionJeudi input').val('');
-            $('.quotaSectionJeudi input').attr('disabled','disabled');
-            $('.quotaSectionJeudi input').css('background-color','#ccc');
-            $('.quotaSectionVendredi input').val('');
-            $('.quotaSectionVendredi input').attr('disabled','disabled');
-            $('.quotaSectionVendredi input').css('background-color','#ccc');
-            $('.quotaSectionSamedi input').val('');
-            $('.quotaSectionSamedi input').attr('disabled','disabled');
-            $('.quotaSectionSamedi input').css('background-color','#ccc');
-            $('.quotaSectionDimanche input').val('');
-            $('.quotaSectionDimanche input').attr('disabled','disabled');
-            $('.quotaSectionDimanche input').css('background-color','#ccc');
-
-            $("#form_type_all").change(function(){
-                switch($('#form_type_all').val()){
+            function changeInputStates(theType){
+                switch(theType){
                     case "1":
                         $('.quotaSectionLundi input').val('');
                         $('.quotaSectionLundi input').attr('disabled','disabled');
@@ -448,6 +398,58 @@
                         reactiveHeure("dimanche");
                         break;
                 }
+            }
+
+            function desactive(jour){
+                $('#'+jour+'PBH').val('');
+                $('#'+jour+'PEH').val('');
+                $('#'+jour+'PBH').attr('disabled','disabled');
+                $('#'+jour+'PBH').css('background-color','#ccc');
+                $('#'+jour+'PEH').attr('disabled','disabled');
+                $('#'+jour+'PEH').css('background-color','#ccc');
+            }
+            function desactiveTout(jour){
+                $('#'+jour+'BH').val('');
+                $('#'+jour+'EH').val('');
+                $('#'+jour+'BH').attr('disabled','disabled');
+                $('#'+jour+'BH').css('background-color','#ccc');
+                $('#'+jour+'EH').attr('disabled','disabled');
+                $('#'+jour+'EH').css('background-color','#ccc');
+                desactive(jour);
+
+            }
+            function reactive(jour){
+                $('#'+jour+'PBH').removeAttr('disabled');
+                $('#'+jour+'PBH').css('background-color','#fff');
+                $('#'+jour+'PEH').removeAttr('disabled');
+                $('#'+jour+'PEH').css('background-color','#fff');
+            }
+            function reactiveHeure(jour){
+                $('#'+jour+'BH').removeAttr('disabled');
+                $('#'+jour+'BH').css('background-color','#fff');
+                $('#'+jour+'EH').removeAttr('disabled');
+                $('#'+jour+'EH').css('background-color','#fff');
+            }
+
+            // Lundi seul suffit pour déterminer le type de l'employé
+            var theType = '{{ whJson["lundi"][0]["type"] }}';
+            switch (theType){
+                case "1":
+                    $(".select-dropdown").val("Heures figées");
+                    break;
+                case "2":
+                    $(".select-dropdown").val("Quota horraire");
+                    break;
+                case "3":
+                    $(".select-dropdown").val("Présence");
+                    break;
+                case "4":
+                    $(".select-dropdown").val("Heures figées sans pause");
+                    break;
+            }
+            changeInputStates(theType);
+            $("#form_type_all").change(function(){
+                changeInputStates($('#form_type_all').val());
             });
         });
     </script>
@@ -455,6 +457,11 @@
     <script>
         var saturdayType = '{{ whJson["samedi"][0]["type"] }}';
         var sundayType = '{{ whJson["dimanche"][0]["type"] }}';
+        if(saturdayType == null || saturdayType == "null"){
+            $(".checkItSamedi").click();
+        }if(sundayType == null || sundayType == "null"){
+            $(".checkItDimanche").click();
+        }
         $(function(){
             $(".checkItSamedi").change(function() {
                 if(this.checked) {
@@ -462,7 +469,7 @@
                     $('.maybeHiddenSamedi').hide();
                     $('.quotaSectionSamedi input').val("");
                 }else{
-                    saturdayType = $('#form_type_all').val("");
+                    saturdayType = $('#form_type_all').val();
                     $('.maybeHiddenSamedi').show();
                 }
             });
@@ -473,7 +480,7 @@
                     $('.maybeHiddenDimanche').hide();
                     $('.quotaSectionDianche input').val("");
                 }else{
-                    sundayType = $('#form_type_all').val("");
+                    sundayType = $('#form_type_all').val();
                     $('.maybeHiddenDimanche').show();
                 }
             });
@@ -483,19 +490,18 @@
             var obj = {"code":$("#code").val(),"lundi":[{"type":$("#form_type_all").val(),"quota":$("#lundiQuota").val(),"beginHour":$("#lundiBH").val(),"pauseBeginHour":$("#lundiPBH").val(),"pauseEndHour":$("#lundiPEH").val(),"endHour":$("#lundiEH").val()}],"mardi":[{"type":$("#form_type_all").val(),"quota":$("#mardiQuota").val(),"beginHour":$("#mardiBH").val(),"pauseBeginHour":$("#mardiPBH").val(),"pauseEndHour":$("#mardiPEH").val(),"endHour":$("#mardiEH").val()}],"mercredi":[{"type":$("#form_type_all").val(),"quota":$("#mercrediQuota").val(),"beginHour":$("#mercrediBH").val(),"pauseBeginHour":$("#mercrediPBH").val(),"pauseEndHour":$("#mercrediPEH").val(),"endHour":$("#mercrediEH").val()}],"jeudi":[{"type":$("#form_type_all").val(),"quota":$("#jeudiQuota").val(),"beginHour":$("#jeudiBH").val(),"pauseBeginHour":$("#jeudiPBH").val(),"pauseEndHour":$("#jeudiPEH").val(),"endHour":$("#jeudiEH").val()}],"vendredi":[{"type":$("#form_type_all").val(),"quota":$("#vendrediQuota").val(),"beginHour":$("#vendrediBH").val(),"pauseBeginHour":$("#vendrediPBH").val(),"pauseEndHour":$("#vendrediPEH").val(),"endHour":$("#vendrediEH").val()}],"samedi":[{"type":saturdayType,"quota":$("#samediQuota").val(),"beginHour":$("#samediBH").val(),"pauseBeginHour":$("#samediPBH").val(),"pauseEndHour":$("#samediPEH").val(),"endHour":$("#samediEH").val()}],"dimanche":[{"type":sundayType,"quota":$("#dimancheQuota").val(),"beginHour":$("#dimancheBH").val(),"pauseBeginHour":$("#dimanchePBH").val(),"pauseEndHour":$("#dimanchePEH").val(),"endHour":$("#dimancheEH").val()}]};
             var id = {{ id }};
             console.log("Identity : "+id);
-            alert(obj);
-            alert("apres");
             console.log(obj);
             var json_string = JSON.stringify(obj);
             $.ajax({
                 type: 'POST',
                 url: "{{ path('updateWorkingHour') }}",
-                data: { json_s:json_string,code:$("#code").val(),id:id },
+                data: { json_s:json_string,code:$("#code").val(),tolerance:$("#tolerance").val(),id:id },
                 timeout: 0,
                 success:
                     function (data) {
                         if(data==1){
                             alert("Modification effectué avec succès");
+                            window.location.href = "{{ path('addWorkingHour') }}";
                         }else{
                             alert("Erreur inconnue");
                         }
@@ -505,7 +511,6 @@
                         alert('La requête n\'a pas abouti');
                     }
             });
-            alert(json_string);
         });
     </script>
 

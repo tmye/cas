@@ -6,15 +6,25 @@
 {% block body %}
     <div class="row">
         <div class="col l12">
-            <h5 class="page-title">Informations sur un employé</h5>
+            <h5 class="page-title"><span class="fa fa-user"></span> Informations sur un employé</h5>
+            <p class="description_message">Vous avez accès à la liste des employés.Vous pouvez aussi modifier les informations relatives à ces employés.Choisissez un département pour voir la liste des employés de ce département</p>
             <div class="row">
                 <div class="col l12">
                     <ul class="collapsible popout" data-collapsible="">
                         <li>
-                            <div class="collapsible-header active">
+                            <div class="collapsible-header collapsible-header-title active">
                                 Choix du département
                             </div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
+                                {% for message in  app.session.flashbag.get('notice') %}
+                                    <div class="row">
+                                        <div class="col l12">
+                                            <div class="operation_message">
+                                                {{ message }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
                                 <div class="row">
                                     <div class="col l6">
                                         <span>Veuillez choisir le département <span class="red-text">*</span></span>
@@ -122,7 +132,7 @@
                                     $("#rowsContainer").append("" +
                                         "<tr>" +
                                         "<td>"+data[i].id+"</td>" +
-                                        "<td><img src="+img+" alt=\" profil_picture\" style=\"width:50px;height:50px\"></td>" +
+                                        "<td><img src="+img+" alt=\" profil_picture\" style=\"width:50px;height:auto;\"></td>" +
                                         "<td>"+data[i].surname+" "+data[i].lastName+"</td>" +
                                         "<td>"+data[i].function+"</td>" +
                                         "<td>"+data[i].salary+"</td>" +
@@ -137,10 +147,10 @@
                                         var id = this.getAttribute("id");
                                         switch (this.getAttribute("tag")){
                                             case "1":
-                                                $("#"+id).html("<span class='material-icons'></span>");
+                                                $("#"+id).html(" <img src=\"{{ asset('img/touch.svg') }}\" class=\"material-icons\" style=\"height: 30px; width:auto;position: relative;top: 6px;\">");
                                                 break;
                                             case "2":
-                                                $("#"+id).html("<span class='material-icons'></span><span class='material-icons'></span>");
+                                                $("#"+id).html(" <img src=\"{{ asset('img/touch.svg') }}\" class=\"material-icons\" style=\"height: 30px; width:auto;position: relative;top: 6px;\">");
                                                 break;
                                             default:
                                                 $("#"+id).html("<span class=''>No fingerprint</span>");

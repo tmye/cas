@@ -14,17 +14,62 @@
         </div>
     </div>
 
+{#    modal for permission details#}
+
+    <div class="modal " id = "myModal">
+         <div  class=" " style="text-align:center;" >
+            <div class="modal-content" style="padding: 5px; text-align:center;">
+                <div class="" style="margin-top: 5px; line-height: 15%;">
+                    <h5  style=" margin: -0.19rem 0 .656rem 0;">Détails de la permission</h5>
+
+                    <span class="fa fa-user" style="margin-top: 5px;">
+                        <br>
+                        <br>
+                        <h3 id="fullName" style=" font-size: 15px;"></h3>
+                    </span>
+                </div>
+                <div class="modal-body" style="line-height: 170%;">
+                    <span id = "deptName"> </span>
+                    <p id="lengthPerm" style="line-height:5px; font-size: 17px;  "></p>
+                    <p id="typePerm"></p>
+                    <div  id="motif" style="font-size: 12px; min-height:8em; padding:0.7em; text-align: left; max-width:70%; margin-left:18%; background-color: #767b7b29; ">
+
+                    </div>
+                    <p>
+                        <span id="durPerm" style="font-size: 13px;"></span>
+                    </p>
+                    <p>
+                       <div id="permState" style=" font-size:1em; float:none; min-height:30px; max-width: 150px; background-color:darkgrey; padding:0.4em; color : white; border-radius:4px; margin-left:39.7%; ">
+
+                       </div>
+                   </p>
+              </div>
+
+                  <div class="modal-header">
+                      <div style="align-content: center;">
+                          <span id="attente"></span>
+                      </div>
+                  </div>
+                  <div class="modal-close">
+                      <br>
+                     <input id="myBtn" type="button" class="btn btn-sm"   value="fermer">
+                  </div>
+              </div>
+        </div>
+    </div>
+
+
     <!-- Modal for details -->
     <div id="modal_detail" class="modal">
         <div class="modal-content">
-            <h5>Historique de cet employé</h5>
+            <h5 id="modTitle">Historique de cet employé</h5>
             <hr>
             <br>
             <div class="row">
                 <div class="col s12">
                     <table class="table table-striped table-condensed">
                         <tbody>
-                            <tr id="modal_element"></tr>
+                        <tr id="modal_element"></tr>
                         </tbody>
                     </table>
                 </div>
@@ -34,13 +79,13 @@
 
     <div class="row">
         <div class="col l12">
-            <h5 class="page-title">Historiques des présences</h5>
-
+            <h5 class="page-title"><span class="fa fa-archive"></span> Historiques des présences</h5>
+            <p class="description_message">Choisissez un département, choisissez une date et affichez l'historique des présences de cette période</p>
             <div class="row">
                 <div class="col l12">
                     <ul class="collapsible" data-collapsible="accordion">
                         <li>
-                            <div class="collapsible-header active">Historique de présences</div>
+                            <div class="collapsible-header collapsible-header-title active">Historique de présences</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
                                     <form class="col l12">
@@ -101,6 +146,9 @@
                 <div class="col l12">
                     <h5 class="table-title">Résultats de votre recherche</h5>
                     <br>
+                    <span class="fa fa-circle" style="color: red"></span>
+                    <span style="color: red">Retards ou départs prématurés</span>
+                    <br><br>
                     <table class="bordered striped">
                         <thead>
                         <tr>
@@ -118,20 +166,15 @@
                         </thead>
 
                         <tbody id="rowsContainer">
-                            <tr>
-                                <td colspan="10">
-                                    <h5 class="center">Aucun résultat</h5>
-                                </td>
-                            </tr>
+                        <tr>
+                            <td colspan="10">
+                                <h5 class="center">Aucun résultat</h5>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-            <span class="fa fa-circle" style="color: red"></span>
-            <span style="color: red">Retards ou départs prématurés</span>
-            <br>
-            <span class="fa fa-circle" style="color: black"></span>
-            <span style="color: black">Heures conformes</span>
         </div>
     </div>
 {% endblock %}
@@ -151,6 +194,16 @@
             $('#modal_detail').modal('open');
         }
 
+        function test() {
+
+            $("#modal_element").html("");
+            $("#modal_element")
+
+            $("#modal_element").append("<h5>Détails de la Permission<h5>");
+
+            $('#modal_detail').modal('open');
+        }
+
         function precisionRound(number, precision) {
             var factor = Math.pow(10, precision);
             return Math.round(number * factor) / factor;
@@ -159,16 +212,20 @@
         function convertType(type) {
             switch (type){
                 case "1":
-                    return "Heures figées";
+//                    return "Heures figées";
+                    return "HF";
                     break;
                 case "2":
-                    return "Quota horraire";
+//                    return "Quota horraire";
+                    return "QH";
                     break;
                 case "3":
-                    return "Présence";
+//                    return "Présence";
+                    return "P";
                     break;
                 case "4":
-                    return "Heures figées sans pause";
+//                    return "Heures figées sans pause";
+                    return "HFSP";
                     break;
             }
         }
@@ -176,6 +233,7 @@
         function returnEmployeeId(tabIndex,empTab) {
             return empTab[tabIndex];
         }
+
         $(function () {
             $("#historySearchButton").click(function () {
                 //alert($("#selectedDate").val());
@@ -185,164 +243,253 @@
                         $('#modal_loading').modal('open');
                         $("#errorContainer").hide();
                         $("#rowsContainer").html("");
+                        var permList =null;
+
                         $.ajax({
-                            type: 'POST',
-                            url: "findHistorique",
-                            data: {id:$("#selectedDep").val(),date:$("#selectedDate").val()},
-                            timeout: 0,
-                            success: function(data) {
-                                console.log(data);
-                                // S'il n'y a aucun employé
-                                if(data == "null"){
-                                    $("#rowsContainer").append("" +
-                                        "<tr>" +
-                                        "<td colspan='9' class='center'><span>Aucun employé pour ce département</span></td>" +
-                                        "</tr>"
-                                    );
-                                }
-                                var res = JSON.parse(data.content);
-                                console.log(res);
-                                dat = data.allRecords;
-                                var employees = [];
-                                $.each(res.clockinRecord,function (id) {
-                                    employees.push(res.clockinRecord[id].id);
-                                });
+                            url:"{{ path("viewPermissionData") }}",
+                            method: "GET",
+                            success:function (dataPerm) {
+                                permList  = dataPerm;
+                                //console.log(permList);
+                                $.ajax({
+                                    type: 'POST',
+                                    url: "findHistorique",
+                                    data: {id:$("#selectedDep").val(),date:$("#selectedDate").val()},
+                                    timeout: 0,
+                                    success: function(data) {
 
-                                console.log(data.emp);
-
-                                var i=0;
-                                $.each(data.emp,function (arrayID) {
-                                    i++;
-                                    var empId = returnEmployeeId(arrayID,data.emp);
-                                    if(typeof (res.clockinRecord[arrayID][empId]) != "undefined"){
-                                        //alert(data.empType[arrayID][1]);
-                                        switch (res.clockinRecord[arrayID][empId].type){
-                                            case "1":
-                                                $("#rowsContainer").append("" +
-                                                    "<tr>" +
-                                                    "<td>" + res.clockinRecord[arrayID][empId].id + "</td>" +
-                                                    "<td>" + res.clockinRecord[arrayID][empId].nom + " " + res.clockinRecord[arrayID][empId].prenom + "</td>" +
-                                                    "<td>" + res.clockinRecord[arrayID][empId].function + "</td>" +
-                                                    "<td>" + convertType(res.clockinRecord[arrayID][empId].type) + "</td>" +
-                                                    "<td>" + res.clockinRecord[arrayID][empId].quota + "</td>" +
-                                                    "<td><span class='redSpan_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].bH+"</span></td>" +
-                                                    "<td><span class='redSpanPauseBegin_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].pause +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].pBH+"</span></td>" +
-                                                    "<td><span class='redSpanPauseEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].finPause +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].pEH+"</span></td>" +
-                                                    "<td><span class='redSpanEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].eH+"</span></td>" +
-                                                    "<td><button data-target='modal1' class='detail_button modal-trigger' onclick='demander("+(i-1)+")' tag='"+(i-1)+"' style=''>Détails</button></td>" +
-                                                    "</tr>"
-                                                );
-                                                if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
-                                                    $(".redSpan_1_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
-                                                    $(".redSpanPauseBegin_1_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
-                                                    $(".redSpanPauseEnd_1_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
-                                                    $(".redSpanEnd_1_"+i).css("color","red");
-                                                }
-                                                break;
-                                            case "2":
-                                                $("#rowsContainer").append("" +
-                                                    "<tr>" +
-                                                    "<td>" + res.clockinRecord[arrayID][empId].id + "</td>" +
-                                                    "<td>" + res.clockinRecord[arrayID][empId].nom + " " + res.clockinRecord[arrayID][empId].prenom + "</td>" +
-                                                    "<td>" + res.clockinRecord[arrayID][empId].function + "</td>" +
-                                                    "<td>" + convertType(res.clockinRecord[arrayID][empId].type) + "</td>" +
-                                                    "<td>" + precisionRound(res.clockinRecord[arrayID][empId].quota_fait/60,2) + "/" +res.clockinRecord[arrayID][empId].quota + "</td>" +
-                                                    "<td><span class='redSpan_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].bH+"</span></td>" +
-                                                    "<td><span class='redSpanPauseBegin_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
-                                                    "<td><span class='redSpanPauseEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
-                                                    "<td><span class='redSpanEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].eH+"</span></td>" +
-                                                    "<td><button data-target='modal1' class='detail_button modal-trigger' onclick='demander("+(i-1)+")' tag='"+(i-1)+"' style=''>Détails</button></td>" +
-                                                    "</tr>"
-                                                );
-                                                if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
-                                                    $(".redSpan_2_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
-                                                    $(".redSpanPauseBegin_2_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
-                                                    $(".redSpanPauseEnd_2_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
-                                                    $(".redSpanEnd_2_"+i).css("color","red");
-                                                }
-                                                break;
-                                            case "3":
-                                                $("#rowsContainer").append("" +
-                                                    "<tr>" +
-                                                    "<td>" + res.clockinRecord[arrayID][empId].id + "</td>" +
-                                                    "<td>" + res.clockinRecord[arrayID][empId].nom + " " + res.clockinRecord[arrayID][empId].prenom + "</td>" +
-                                                    "<td>" + res.clockinRecord[arrayID][empId].function + "</td>" +
-                                                    "<td>" + convertType(res.clockinRecord[arrayID][empId].type) + "</td>" +
-                                                    "<td colspan='6' class='green lighten-2 white-text center'> Présent </td>" +
-                                                    "</tr>"
-                                                );
-                                                break;
-                                            case "4":
-                                                $("#rowsContainer").append("" +
-                                                    "<tr>" +
-                                                    "<td>" + res.clockinRecord[arrayID][empId].id + "</td>" +
-                                                    "<td>" + res.clockinRecord[arrayID][empId].nom + " " + res.clockinRecord[arrayID][empId].prenom + "</td>" +
-                                                    "<td>" + res.clockinRecord[arrayID][empId].function + "</td>" +
-                                                    "<td>" + convertType(res.clockinRecord[arrayID][empId].type) + "</td>" +
-                                                    "<td>" + res.clockinRecord[arrayID][empId].quota + "</td>" +
-                                                    "<td><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].bH+"</span></td>" +
-                                                    "<td><span class='redSpanPauseBegin_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
-                                                    "<td><span class='redSpanPauseEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
-                                                    "<td><span class='redSpanEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].eH+"</span></td>" +
-                                                    "<td><button data-target='modal1' class='detail_button modal-trigger' onclick='demander("+(i-1)+")' tag='"+(i-1)+"' style=''>Détails</button></td>" +
-                                                    "</tr>"
-                                                );
-                                                if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
-                                                    $(".redSpan_3_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
-                                                    $(".redSpanPauseBegin_3_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
-                                                    $(".redSpanPauseEnd_3_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
-                                                    $(".redSpanEnd_3_"+i).css("color","red");
-                                                }
-                                                break;
-
+                                        console.log("Begin data");
+                                        console.log(data);
+                                        console.log("End data");
+                                        // S'il n'y a aucun employé
+                                        if(data == "null"){
+                                            $("#rowsContainer").append("" +
+                                                "<tr>" +
+                                                "<td colspan='9' class='center'><span>Aucun employé pour ce département</span></td>" +
+                                                "</tr>"
+                                            );
+                                            $('#modal_loading').modal('close');
                                         }
-                                    }else if(data.allRecords[arrayID][2] == "null" || data.empType[arrayID][1] == null){
-                                        $("#rowsContainer").append("" +
-                                            "<tr>" +
-                                            "<td colspan='10' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:green'> Présence non requise </span></td>" +
-                                            "</tr>"
-                                        );
-                                    }else{
+                                        var res = JSON.parse(data.content);
+                                        console.log(res);
+                                        dat = data.allRecords;
+                                        var employees = [];
+                                        $.each(res.clockinRecord,function (id) {
+                                            employees.push(res.clockinRecord[id].id);
+                                        });
+
                                         console.log(data.emp);
-                                        //alert("nexiste pas");
-                                        $("#rowsContainer").append("" +
-                                            "<tr>" +
-                                            "<td colspan='10' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence : </span><span style='font-weight: bold;color:black;'>" + data.empNames[arrayID] + " ("+ data.empCcid[arrayID] +")</span></td>" +
-                                            "</tr>"
-                                        );
+
+                                        var i=0;
+                                        $.each(data.emp,function (arrayID) {
+                                            i++;
+                                            var empId = returnEmployeeId(arrayID,data.emp);
+                                            if(typeof (res.clockinRecord[arrayID][empId]) != "undefined"){
+                                                //alert(data.empType[arrayID][1]);
+
+                                                if ((res.clockinRecord[arrayID][empId]).arrive == 0) {
+                                                    (res.clockinRecord[arrayID][empId]).arrive = "<span style='color:red'>X</span>";
+                                                }
+                                                if ((res.clockinRecord[arrayID][empId]).pause == 0) {
+                                                    (res.clockinRecord[arrayID][empId]).pause = "<span style='color:red'>X</span>";
+                                                }
+                                                if ((res.clockinRecord[arrayID][empId]).finPause == 0) {
+                                                    (res.clockinRecord[arrayID][empId]).finPause = "<span style='color:red'>X</span>";
+                                                }
+                                                if ((res.clockinRecord[arrayID][empId]).arrive == 0) {
+                                                    (res.clockinRecord[arrayID][empId]).arrive = "<span style='color:red'>X</span>";
+                                                }
+                                                if ((res.clockinRecord[arrayID][empId]).depart == 0) {
+                                                    (res.clockinRecord[arrayID][empId]).depart = "<span style='color:red'>X</span>";
+                                                }
+
+
+
+                                                switch (res.clockinRecord[arrayID][empId].type){
+                                                    case "1":
+                                                        $("#rowsContainer").append("" +
+                                                            "<tr>" +
+                                                            "<td>" + res.clockinRecord[arrayID][empId].id + "</td>" +
+                                                            "<td>" + res.clockinRecord[arrayID][empId].nom + " " + res.clockinRecord[arrayID][empId].prenom + "</td>" +
+                                                            "<td>" + res.clockinRecord[arrayID][empId].function + "</td>" +
+                                                            "<td>" + convertType(res.clockinRecord[arrayID][empId].type) + "</td>" +
+                                                            "<td>" + res.clockinRecord[arrayID][empId].quota + "</td>" +
+                                                            "<td><span class='redSpan_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].bH+"</span></td>" +
+                                                            "<td><span class='redSpanPauseBegin_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].pause +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].pBH+"</span></td>" +
+                                                            "<td><span class='redSpanPauseEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].finPause +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].pEH+"</span></td>" +
+                                                            "<td><span class='redSpanEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].eH+"</span></td>" +
+                                                            "<td><button data-target='modal1' class='detail_button modal-trigger' onclick='demander("+(i-1)+")' tag='"+(i-1)+"' style=''>Détails</button></td>" +
+                                                            "</tr>"
+                                                        );
+                                                        if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
+                                                            $(".redSpan_1_"+i).css("color","red");
+                                                        }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
+                                                        $(".redSpanPauseBegin_1_"+i).css("color","red");
+                                                    }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
+                                                        $(".redSpanPauseEnd_1_"+i).css("color","red");
+                                                    }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
+                                                        $(".redSpanEnd_1_"+i).css("color","red");
+                                                    }
+                                                        break;
+                                                    case "2":
+                                                        $("#rowsContainer").append("" +
+                                                            "<tr>" +
+                                                            "<td>" + res.clockinRecord[arrayID][empId].id + "</td>" +
+                                                            "<td>" + res.clockinRecord[arrayID][empId].nom + " " + res.clockinRecord[arrayID][empId].prenom + "</td>" +
+                                                            "<td>" + res.clockinRecord[arrayID][empId].function + "</td>" +
+                                                            "<td>" + convertType(res.clockinRecord[arrayID][empId].type) + "</td>" +
+                                                            "<td>" + precisionRound(res.clockinRecord[arrayID][empId].quota_fait/60,2) + "/" +res.clockinRecord[arrayID][empId].quota + "</td>" +
+                                                            "<td><span class='redSpan_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].bH+"</span></td>" +
+                                                            "<td><span class='redSpanPauseBegin_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                            "<td><span class='redSpanPauseEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                            "<td><span class='redSpanEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].eH+"</span></td>" +
+                                                            "<td><button data-target='modal1' class='detail_button modal-trigger' onclick='demander("+(i-1)+")' tag='"+(i-1)+"' style=''>Détails</button></td>" +
+                                                            "</tr>"
+                                                        );
+                                                        if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
+                                                            $(".redSpan_2_"+i).css("color","red");
+                                                        }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
+                                                        $(".redSpanPauseBegin_2_"+i).css("color","red");
+                                                    }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
+                                                        $(".redSpanPauseEnd_2_"+i).css("color","red");
+                                                    }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
+                                                        $(".redSpanEnd_2_"+i).css("color","red");
+                                                    }
+                                                        break;
+
+                                                    case "3":
+                                                        $("#rowsContainer").append("" +
+                                                            "<tr>" +
+                                                            "<td>" + res.clockinRecord[arrayID][empId].id + "</td>" +
+                                                            "<td>" + res.clockinRecord[arrayID][empId].nom + " " + res.clockinRecord[arrayID][empId].prenom + "</td>" +
+                                                            "<td>" + res.clockinRecord[arrayID][empId].function + "</td>" +
+                                                            "<td>" + convertType(res.clockinRecord[arrayID][empId].type) + "</td>" +
+                                                            "<td colspan='5' class='green lighten-2 white-text center'> Présent </td>" +
+                                                            "</tr>"
+                                                        );
+                                                        break;
+                                                    case "4":
+                                                        $("#rowsContainer").append("" +
+                                                            "<tr>" +
+                                                            "<td>" + res.clockinRecord[arrayID][empId].id + "</td>" +
+                                                            "<td>" + res.clockinRecord[arrayID][empId].nom + " " + res.clockinRecord[arrayID][empId].prenom + "</td>" +
+                                                            "<td>" + res.clockinRecord[arrayID][empId].function + "</td>" +
+                                                            "<td>" + convertType(res.clockinRecord[arrayID][empId].type) + "</td>" +
+                                                            "<td>" + res.clockinRecord[arrayID][empId].quota + "</td>" +
+                                                            "<td><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].bH+"</span></td>" +
+                                                            "<td><span class='redSpanPauseBegin_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                            "<td><span class='redSpanPauseEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
+                                                            "<td><span class='redSpanEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].eH+"</span></td>" +
+                                                            "<td><button data-target='modal1' class='detail_button right btn-perso-historique modal-trigger' onclick='demander("+(i-1)+")' tag='"+(i-1)+"' style='min-width: 7.35em;background-color:#1e363a9e; margin: 0.1em;'>Détails</button>" +
+                                                            "</td>" +
+                                                            "</tr>"
+                                                        );
+                                                        if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
+                                                            $(".redSpan_3_"+i).css("color","red");
+                                                        }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
+                                                        $(".redSpanPauseBegin_3_"+i).css("color","red");
+                                                    }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
+                                                        $(".redSpanPauseEnd_3_"+i).css("color","red");
+                                                    }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
+                                                        $(".redSpanEnd_3_"+i).css("color","red");
+                                                    }
+                                                        break;
+                                                    case "null":
+                                                        $("#rowsContainer").append("" +
+                                                            "<tr>" +
+                                                            "<td colspan='10' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:green'> Présence non requise </span></td>" +
+                                                            "</tr>"
+                                                        );
+                                                        break;
+
+                                                }
+                                            }else if(data.allRecords[arrayID][2] == "null" || data.empType[arrayID][1] == null){
+                                                $("#rowsContainer").append("" +
+                                                    "<tr>" +
+                                                    "<td colspan='10' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:green'> Présence non requise </span></td>" +
+                                                    "</tr>"
+                                                );
+                                            }else{
+                                                console.log("data emp");
+                                                console.log(data.emp);
+                                                //alert("nexiste pas");
+
+                                                $("#rowsContainer").append("" +
+                                                    "<tr>" +
+                                                    "<td colspan='10' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence : </span><span  style='font-weight: bold;color:black;'>" + data.empNames[arrayID] + " ("+ data.empCcid[arrayID] +") <span id=\"infoAbs"+data.emp[arrayID] +"\"> </span>  </span> \"\\     </td>" +
+                                                    "</tr>"
+                                                );
+
+                                                var idPerm= data.emp[arrayID] ;
+
+                                                $.each(permList, function (i, item) {
+
+                                                    var permis = item;
+                                                    var date = new Date(permis.dateFrom.date);
+                                                    var date2 = new Date(permis.dateTo.date);
+                                                    var hourConvert1 = new Date((date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear() + " " + permis.timeFrom + "");
+                                                    var hourConvert2 = new Date((date2.getMonth() + 1) + "/" + date2.getDate() + "/" + date2.getFullYear() + " " + permis.timeTo + "");
+                                                    var today = new Date($.now());
+                                                    var todayConvert = new Date((today.getMonth() + 1) + "/" + today.getDate() + "/" + today.getFullYear() + " " +today.getHours() +":"+today.getMinutes()+ "");
+                                                    var selDte = new Date($("#selectedDate").val().split("-").reverse().join("/"));
+                                                    var selDteConvert = new Date((selDte.getMonth() + 1) + "/" + selDte.getDate() + "/" + selDte.getFullYear() + " 17:00");
+
+                                                    // console.log("h1: "+ hourConvert1 );
+                                                    // console.log("h2: "+  selDteConvert );
+                                                    // console.log("h3: "+  hourConvert2 );
+                                                    // console.log("h4: "+  todayConvert );
+                                                    // console.log("h5: "+ (hourConvert1 <= selDteConvert && selDteConvert <= hourConvert2) && todayConvert > hourConvert2);
+                                                    // alert(idPerm+" --> "+permis.employee.id);
+                                                    if ((idPerm+"").localeCompare(permis.employee.id+"")==0 && (hourConvert1 <= todayConvert && todayConvert <= hourConvert2) ) {
+                                                        //<span id=\"permLab"+data.emp[arrayID]+" \" class='right btn-perso-historique '  style='border-radius: 4px;background-color:#28a745'> Permission </span>
+                                                        $("#infoAbs"+data.emp[arrayID] ).empty();
+                                                        $("#infoAbs"+data.emp[arrayID] ).append("<span id=\"permLab"+permis.employee.id+"\" class='right btn-perso-historique '  style='border-radius: 4px;background-color:#28a745'> Permission </span>");
+                                                        $("#permLab"+permis.employee.id).click(function () {
+                                                            CreateModal(permis);
+                                                        });
+
+                                                    }
+                                                    else if ((idPerm+"").localeCompare(permis.employee.id+"") ==0 && ( (hourConvert1 <= selDteConvert && selDteConvert <= hourConvert2) && todayConvert > hourConvert2) ) {
+                                                        //<span id=\"permLab"+data.emp[arrayID]+" \" class='right btn-perso-historique '  style='border-radius: 4px;background-color:#28a745'> Permission </span>
+
+                                                        $("#infoAbs"+data.emp[arrayID] ).empty();
+                                                        $("#infoAbs"+data.emp[arrayID] ).append("<span id=\"permLab"+permis.employee.id+"\" class='right btn-perso-historique '  style='border-radius: 4px;background-color:#28a745'> Permission </span>");
+                                                        $("#permLab"+permis.employee.id).click(function () {
+                                                            CreateModal(permis);
+                                                        });
+
+                                                    }
+                                                });
+                                            }
+                                        });
+
+                                        // Closing the loading box
+                                        $('#modal_loading').modal('close');
+                                    },
+                                    error: function(msg) {
+                                        // Closing the loading box
+                                        $('#modal_loading').modal('close');
+                                        alert("erreur");
                                     }
                                 });
-
-                                // Closing the loading box
-                                $('#modal_loading').modal('close');
                             },
-                            error: function(msg) {
-                                // Closing the loading box
-                                $('#modal_loading').modal('close');
-                                alert("erreur");
+                            error:function () {
+                                alert(" list perm not found");
                             }
                         });
+
+
                     }else {
                         $("#errorContainer").show();
                         $("#errorContainer div span").text("Erreur : veuillez choisir un département");
-                        $("#rowsContainer").html("<tr><td colspan='10'><h5 class='center'>Aucun résultat</h5></td></tr>");
+                        $("#rowsContainer").html("<tr><td colspan='9'><h5 class='center'>Aucun résultat</h5></td></tr>");
                     }
                 }else {
                     $("#errorContainer").show();
                     $("#errorContainer div span").text("Erreur : veuillez choisir une date valide");
-                    $("#rowsContainer").html("<tr><td colspan='10'><h5 class='center'>Aucun résultat</h5></td></tr>");
+                    $("#rowsContainer").html("<tr><td colspan='9'><h5 class='center'>Aucun résultat</h5></td></tr>");
                 }
             });
-
         });
     </script>
     <script>
@@ -350,9 +497,95 @@
         $(function () {
             $(".cl_history").addClass("collapsible_element_active");
             $(".navigation_collapsible").collapsible('open',1);
+
+            $('.datepicker').on('mousedown',function(event){
+                event.preventDefault();
+            });
         });
     </script>
+
+    <script>
+
+    </script>
+
+    <script>
+        function  CreateModal(permission) {
+
+            $("#fullName").empty();
+            $("#fullName").append(" " + permission.employee.surname + " " + permission.employee.lastName);
+            $("#deptName").empty();
+            $("#deptName").append("Dept: " + permission.employee.departement.name);
+            var date = new Date(permission.dateFrom.date);
+            var date2 = new Date(permission.dateTo.date);
+            $("#lengthPerm").empty();
+            $("#lengthPerm").append("Permission du " + date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear() + " à " +
+                "" + permission.timeFrom + " au " + date2.getDate() + "/" + (date2.getMonth() + 1) + "/" + date2.getFullYear() + " à " +
+                "" + permission.timeTo);
+            $("#typePerm").empty();
+            $("#typePerm").append("Type de permission: " + permission.title);
+            $("#motif").empty();
+            $("#motif").append(permission.description);
+            var diffDate = new Date(date - date2);
+            $("#durPerm").empty();
+
+            var hourConvert1 = new Date((date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear() + " " + permission.timeFrom + "");
+            var hourConvert2 = new Date((date2.getMonth() + 1) + "/" + date2.getDate() + "/" + date2.getFullYear() + " " + permission.timeTo + "");
+
+            var nbHour = Math.abs(hourConvert1 - hourConvert2) / 36e5;
+            //alert(nbHour);
+            var diffDays = Math.trunc(nbHour / 24);
+            var diffHours = Math.trunc(nbHour % 24);
+
+            $("#durPerm").append("Durée: " + diffDays + " Jours " + diffHours + " Heures");
+
+            var url3 = "{{ path('generatePDFPermission',{'id':"perm_id"}) }}";
+            url3 = url3.replace("perm_id", permission.id);
+
+            var createBtn1 =  "<a href=" + url3 + "><button class=\"simple-button-decoration btn btn-primary green darken-3 white-text\"><span class=\"fa fa-print\"></span></button></a>"
+            // $("#attente").empty();
+            var today = new Date($.now());
+            var todayConvert = new Date((today.getMonth() + 1) + "/" + today.getDate() + "/" + today.getFullYear() + " " +today.getHours() +":"+today.getMinutes()+ "");
+
+            if(hourConvert1 <= todayConvert && todayConvert <= hourConvert2){
+                $("#permState").empty();
+                $("#permState").text("En Cours");
+            }
+            else if( todayConvert >= hourConvert2){
+                $("#permState").empty();
+                $("#permState").text("Terminée ");
+            }
+
+            //console.log("okiiii");
+            $("#attente").empty();
+            $("#attente").append(createBtn1);
+
+           // $("#modal_detail").css("text-align: center; ")
+           // $("#myModal").modal('open');
+            $("#myModal").modal('open');
+
+             //$("#modTitle").empty();
+            // $("#modTitle").text("Historique de cet employé");
+            //console.log("val "+ $("#modTitle").text());
+            // $("#myBtn").click(function () {
+            //     console.log("clicked!!!");
+            //     $("#myModal").hide("#myModal") ;
+            // });
+            //
+            // console.log($("#myModal").hidden)
+            // $(window).click(function(ev){
+            //     console.log(" "+ev.target.nodeType );
+            //     //if(ev.target == $(this))
+            //    // $("#myModal").hide();
+            // });
+        }
+    </script>
+
 {% endblock %}
 
 {% block stylesheets %}
+    <style>
+
+    </style>
+    <link rel="stylesheet" src="{{ asset('materialize/css/bootstrap.css') }}">
+    <link rel="stylesheet" src="{{ asset('materialize/css/bootstrap.min.css') }}">
 {% endblock %}

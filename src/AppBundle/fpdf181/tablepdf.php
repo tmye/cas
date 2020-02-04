@@ -28,6 +28,18 @@ class tablepdf extends fpdf
         }
     }
 
+    function Footer()
+    {
+        // Positionnement à 1,5 cm du bas
+        $this->SetY(-30);
+        // Police Arial italique 8
+        $this->SetFont('Arial','I',8);
+        // Numéro de page
+        $this->Cell(0,10,'* Salaire de l\'employe sur la duree choisie',0,0,'L');
+        $this->Ln();
+        $this->Cell(0,10,'Rapport genere par le '.date('d').'/'.date('m').'/'.date('Y'),0,0,'C');
+    }
+
     public function convertInHour($value){
 
         $value = (int)$value;
@@ -58,70 +70,169 @@ class tablepdf extends fpdf
         }
     }
 
-    public function FancyTable($header, $data, $data2,$data3,$data4){
+    public function FancyTable($user_info_header,$user_info_data,$header, $data, $data2,$data3,$data4,$data5=null){
         // Couleurs, épaisseur du trait et police grasse
         $this->SetFillColor(100,100,100);
         $this->SetTextColor(255);
         $this->SetDrawColor(60,60,60);
         $this->SetLineWidth(.3);
         $this->SetFont('helvetica','','11');
+        $fill = false;
         // En-tête
         $w = array(30, 35, 25, 25,25,25,25);
-        for($i=0;$i<count($header);$i++)
-            $this->Cell($w[$i],7,$header[$i],1,0,'C',true);
+        
+        if($data5 != null){
+            $w2 = array(23.8, 23.8, 23.8, 23.8,23.8,23.8,23.8,23.8);
+        }else{
+            $w2 = array(27.2, 27.2, 27.2, 27.2,27.2,27.2,27.2);
+        }
+
+        for($i=0;$i<count($user_info_header);$i++){
+            $this->Cell($w[$i],7,$user_info_header[$i],1,0,'C',true);
+        }
+        $this->Ln();
+        // Restauration des couleurs et de la police
+        $this->SetFillColor(224,235,255);
+        $this->SetTextColor(0);
+        $this->SetFont('');
+        foreach($user_info_data as $row)
+        {
+            $this->Cell($w[0],6,$row[0],'LTB',0,'C',$fill);
+            $this->Cell($w[1],6,$row[1],'LTRB',0,'C',$fill);
+            $this->Cell($w[2],6,$row[2],'LRB',0,'C',$fill);
+            $this->Cell($w[3],6,$row[3],'LRB',0,'C',$fill);
+            $this->Cell($w[4],6,$row[4],'LRB',0,'C',$fill);
+            $this->Cell($w[5],6,$row[5],'LRB',0,'C',$fill);
+            $this->Cell($w[5],6,$row[6],'LRB',0,'C',$fill);
+            $this->Ln();
+            $fill = !$fill;
+        }
+        
+        // Couleurs, épaisseur du trait et police grasse
+        $this->SetFillColor(100,100,100);
+        $this->SetTextColor(255);
+        $this->SetDrawColor(60,60,60);
+        $this->SetLineWidth(.3);
+        $this->SetFont('helvetica','','11');
+        $this->Ln(5);
+        
+        for($i=0;$i<count($header);$i++){
+            $this->Cell($w2[$i],7,$header[$i],1,0,'C',true);
+        }
         $this->Ln();
         // Restauration des couleurs et de la police
         $this->SetFillColor(224,235,255);
         $this->SetTextColor(0);
         $this->SetFont('');
         // Données
-        $fill = false;
         foreach($data as $row)
         {
-            $this->Cell($w[0],6,$row[0],'LR',0,'L',$fill);
-            $this->Cell($w[1],6,$row[1],'LR',0,'L',$fill);
-            $this->Cell($w[2],6,$row[2],'LR',0,'R',$fill);
-            $this->Cell($w[3],6,$this->convertInHour($row[3]),'LR',0,'R',$fill);
-            $this->Cell($w[4],6,$this->convertInHour($row[4]),'LR',0,'L',$fill);
-            $this->Cell($w[5],6,$row[5],'LR',0,'L',$fill);
-            $this->Cell($w[5],6,$row[6],'LR',0,'L',$fill);
+            $this->Cell($w2[0],6,$row[0],'LR',0,'C',$fill);
+            $this->Cell($w2[0],6,$row[1],'LR',0,'C',$fill);
+            $this->Cell($w2[1],6,$row[2],'LR',0,'C',$fill);
+            $this->Cell($w2[2],6,$row[3],'LRB',0,'C',$fill);
+            $this->Cell($w2[3],6,$row[4],'LRB',0,'C',$fill);
+            $this->Cell($w2[4],6,$row[5],'LRB',0,'C',$fill);
+            $this->Cell($w2[5],6,$row[6],'LRB',0,'C',$fill);
+            if($data5 != null){
+                $this->Cell($w2[5],6,$row[7],'LRB',0,'C',$fill);
+            }
             $this->Ln();
             $fill = !$fill;
         }
         foreach($data2 as $row)
         {
-            $this->Cell($w[0],6,$row[0],'LT',0,'L',$fill);
-            $this->Cell($w[1],6,$row[1],'TR',0,'L',$fill);
-            $this->Cell($w[2],6,$row[2].' H','LR',0,'R',$fill);
-            $this->Cell($w[3],6,"-",'LR',0,'R',$fill);
-            $this->Cell($w[4],6,$this->convertHour($row[4]),'LR',0,'L',$fill);
-            $this->Cell($w[5],6,$this->convertHour($row[5]),'LR',0,'L',$fill);
-            $this->Cell($w[5],6,$row[6],'LR',0,'L',$fill);
+            $this->Cell($w2[0],6,$row[0],'LT',0,'C',$fill);
+            $this->Cell($w2[0],6,$row[1],'LT',0,'C',$fill);
+            $this->Cell($w2[1],6,$row[2],'TLR',0,'C',$fill);
+            $this->Cell($w2[2],6,$row[3].' H','LRB',0,'C',$fill);
+            $this->Cell($w2[3],6,$row[4],'LRB',0,'C',$fill);
+            $this->Cell($w2[4],6,$row[5],'LRB',0,'C',$fill);
+            $this->Cell($w2[5],6,$row[6],'LRB',0,'C',$fill);
+            if($data5 != null){
+                $this->Cell($w2[5],6,$row[7],'LRB',0,'C',$fill);
+            }
             $this->Ln();
             $fill = !$fill;
         }
         foreach($data3 as $row)
         {
-            $this->Cell($w[0],6,$row[0],'LT',0,'L',$fill);
-            $this->Cell($w[1],6,$row[1],'TR',0,'L',$fill);
-            $this->Cell($w[2],6,$this->formatInt(ceil($row[2])),'LRB',0,'R',$fill);
-            $this->Cell($w[3],6,'-','LRB',0,'R',$fill);
-            $this->Cell($w[4],6,$this->formatInt(ceil($row[4])),'LRB',0,'L',$fill);
-            $this->Cell($w[5],6,$this->formatInt(ceil($row[5])),'LRB',0,'L',$fill);
-            $this->Cell($w[5],6,$this->formatInt(ceil($row[6])),'LRB',0,'L',$fill);
+            $this->Cell($w2[0],6,$row[0],'LT',0,'C',$fill);
+            $this->Cell($w2[0],6,$row[1],'LT',0,'C',$fill);
+            $this->Cell($w2[1],6,$row[2],'TRL',0,'C',$fill);
+            $this->Cell($w2[2],6,$row[3],'LRB',0,'C',$fill);
+            $this->Cell($w2[3],6,$row[4],'LRB',0,'C',$fill);
+            $this->Cell($w2[4],6,$row[5],'LRB',0,'C',$fill);
+            $this->Cell($w2[5],6,$row[6],'LRB',0,'C',$fill);
+            if($data5 != null){
+                $this->Cell($w2[5],6,$row[7],'LRB',0,'C',$fill);
+            }
             $this->Ln();
             $fill = !$fill;
         }
         foreach($data4 as $row)
         {
-            $this->Cell($w[0],6,$row[0],'LT',0,'L',$fill);
-            $this->Cell($w[1],6,$row[1],'TR',0,'L',$fill);
-            $this->Cell(125,6,$this->formatInt(ceil($row[2])),'LRT',0,'R',$fill);
+            $this->Cell(142.8,6,$row[0],'LTB',0,'L',$fill);
+            $this->Cell(47.6,6,$row[1],'TRB',0,'R',$fill);
             $this->Ln();
             $fill = !$fill;
         }
+        if($data5 != null){
+            foreach($data5 as $row){
+                $this->Cell(142.8,6,$row[0],'LTB',0,'L',$fill);
+                $this->Cell(47.6,6,$row[1],'TRB',0,'R',$fill);
+                $this->Ln();
+                $fill = !$fill;
+            }
+        }
+        $this->Ln(8);
         // Trait de terminaison
-        $this->Cell(array_sum($w),0,'','T');
+        //$this->Cell(array_sum($w),0,'','T');
+    }
+
+    public function PermissionFancyTable($user_info_header,$user_info_data){
+        // Couleurs, épaisseur du trait et police grasse
+        $this->SetFillColor(100,100,100);
+        $this->SetTextColor(255);
+        $this->SetDrawColor(60,60,60);
+        $this->SetLineWidth(.3);
+        $this->SetFont('helvetica','','11');
+        $fill = false;
+        // En-tête
+        $w = array(35, 35, 30, 30,30,30);
+
+        for($i=0;$i<count($user_info_header);$i++){
+            $this->Cell($w[$i],7,$user_info_header[$i],1,0,'C',true);
+        }
+        $this->Ln();
+        // Restauration des couleurs et de la police
+        $this->SetFillColor(224,235,255);
+        $this->SetTextColor(0);
+        $this->SetFont('');
+        foreach($user_info_data as $row)
+        {
+            $this->Cell($w[0],6,$row[0],'LTB',0,'C',$fill);
+            $this->Cell($w[1],6,$row[1],'LTRB',0,'C',$fill);
+            $this->Cell($w[2],6,$row[2],'LRB',0,'C',$fill);
+            $this->Cell($w[3],6,$row[3],'LRB',0,'C',$fill);
+            $this->Cell($w[4],6,$row[4],'LRB',0,'C',$fill);
+            $this->Cell($w[5],6,$row[5],'LRB',0,'C',$fill);
+            $this->Ln();
+            $fill = !$fill;
+        }
+
+        // Couleurs, épaisseur du trait et police grasse
+        $this->SetFillColor(100,100,100);
+        $this->SetTextColor(255);
+        $this->SetDrawColor(60,60,60);
+        $this->SetLineWidth(.3);
+        $this->SetFont('helvetica','','11');
+        $this->Ln(5);
+
+        $this->Ln(8);
+
+        // Trait de terminaison
+        //$this->Cell(array_sum($w),0,'','T');
     }
 
 }

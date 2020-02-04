@@ -1,0 +1,159 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}C.A.S - Historique{% endblock %}
+
+{% block body %}
+
+    <!-- Modal for ajax loading -->
+    <div id="modal_loading" class="modal ajax_modals">
+        <div class="modal-content">
+            <p class="center">
+                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+            </p>
+        </div>
+    </div>
+
+    <!-- Modal for details -->
+    <div id="modal_detail" class="modal">
+        <div class="modal-content">
+            <h5>Historique de cet employé</h5>
+            <hr>
+            <br>
+            <div class="row">
+                <div class="col s12">
+                    <table class="table table-striped table-condensed">
+                        <tbody>
+                        <tr id="modal_element"></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form method="POST" action="{{ path('generateTodayPDF') }}" target="_blank" id="form_pdf" style="display:none">
+    </form>
+    
+    <form method="POST" action="{{ path('generateTodayExcel') }}" target="_blank" id="form_excel" style="display:none">
+    </form>
+
+    <div class="row">
+        <div class="col l12">
+            <h5 class="page-title">
+                <span class="fa fa-clock"></span>
+                Activités de ce jour
+            </h5>
+            <span class="right" style="margin-top:-35px">
+                <button class="btn-perso-historique export_pdf_btn" style="display: none;" id="submitPDF"><span class="fa fa-file-pdf"></span> Exporter vers PDF</button>
+                <button class="btn-perso-historique export_excel_btn" id="submitExcel"><span class="fa fa-file-excel"></span> Exporter vers Excel</button>
+            </span>
+            <div class="row">
+                    <div class="col l12">
+                        <br><br>
+                        <div class="row">
+                            <div class="col l6">
+                                <span style="position: relative;top: 20px;" class="description_message">Filtrez les resultats en choisissant un département</span>
+                            </div>
+                            <div class="col l6">
+                                <select id="depSelect">
+                                    <option value="">Département</option>
+                                    {% for dep in listDep %}
+                                        <option value="{{ dep.name }}">{{ dep.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <table class="bordered striped">
+                            <thead>
+                            <tr>
+                                <th>Heure</th>
+                                <th>Employé</th>
+                                <th>Fonction</th>
+                                <th>Type</th>
+                            </tr>
+                            </thead>
+
+                            <tbody id="rowsContainer">
+                            {% for cr in listCR %}
+                                    <tr>
+                                        <td>
+                                            {{ cr[0].ClockinTime | date('H:i') }}
+                                        </td>
+                                        <td>
+                                            {{ cr[0].employe.surname~" "~cr[0].employe.lastName }}
+                                        </td>
+                                        <td>
+                                            {{ cr[0].employe.function }}
+                                        </td>
+                                        <td>
+                                            {{ cr[1] }}
+                                        </td>
+                                    </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function () {
+
+            // We load datas
+            var savedData = null;
+            var link = '{{ path("returnTodayClockinRecords") }}';
+            $.ajax({
+                type: 'GET',
+                url: link,
+                success: function(data) {
+                    console.log(data);
+                    savedData = data;
+                }
+            });
+
+            $("#depSelect").change(function(){
+                /* On vide le contenu de la table */
+                $("#rowsContainer").html("");
+                /* On récupère le département sélectionné */
+                var selectedDep = $("#depSelect").val();
+                for(var i=0;i<savedData.length;i++){
+                    if(savedData[i].departement == selectedDep){
+
+                        $("#rowsContainer").append("" +
+                            "<tr>" +
+                            "<td>"+savedData[i].hour+"</td>" +
+                            "<td>"+savedData[i].employe+"</td>" +
+                            "<td>"+savedData[i].function+"</td>" +
+                            "<td>"+savedData[i].type+"</td>" +
+                            "</tr>"
+                        );
+                    }
+                }
+            });
+        });
+    </script>
+    <script>
+        $(function(){
+            $("#submitPDF").click(function(){
+                $("#form_pdf").submit();
+            });
+            $("#submitExcel").click(function(){
+                $("#form_excel").submit();
+            });
+        });
+    </script>
+    <script>
+        // On s'attaque aux collapsibles
+        $(function () {
+            $(".cl_today").addClass("collapsible_element_active");
+            $(".navigation_collapsible").collapsible('open',1);
+        });
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}

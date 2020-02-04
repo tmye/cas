@@ -38,6 +38,12 @@ class Admin implements UserInterface
 
     /**
      * @var string
+     * @ORM\Column(name="picture", type="string", nullable=true)
+     */
+    private $picture;
+
+    /**
+     * @var string
      *
      * @ORM\Column(name="phonenumber", type="string", length=255)
      */
@@ -77,13 +83,6 @@ class Admin implements UserInterface
      * @ORM\Column(name="roles", type="array")
      */
     private $roles;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="society", type="string", length=255, unique=false)
-     */
-    private $society;
 
 
     // Getters ad setters

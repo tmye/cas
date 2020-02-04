@@ -100,28 +100,4 @@ class CompanyConfig
     {
         return $this->companyLogo;
     }
-
-    /**
-     * Set expirationDate
-     *
-     * @param string $expirationDate
-     *
-     * @return CompanyConfig
-     */
-    public function setExpirationDate($expirationDate)
-    {
-        $this->expirationDate = $expirationDate;
-
-        return $this;
-    }
-
-    /**
-     * Get expirationDate
-     *
-     * @return string
-     */
-    public function getExpirationDate()
-    {
-        return $this->expirationDate;
-    }
 }

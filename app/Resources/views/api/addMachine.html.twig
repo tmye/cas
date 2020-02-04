@@ -7,7 +7,8 @@
 {% block body %}
     <div class="row">
         <div class="col l12">
-            <h5 class="page-title">Machines enregistrées</h5>
+            <h5 class="page-title"><span class="fa fa-laptop"></span> Machines enregistrées</h5>
+            <p class="description_message">Enrégistrez une nouvelle machine ou modifier une existante et attribuez la à des départements auparavent créés</p>
             <div class="row">
                 <div class="col l12">
                     <ul class="collapsible" data-collapsible="accordion">
@@ -143,6 +144,15 @@
 
 {% block javascripts %}
     <script>
+        $(function () {
+            $('#form_Ajouter').click(function () {
+                if($('.select_dropdown').val() == undefined){
+                    //alert("Aucun département n'a été sélectionné");
+                }
+            });
+        });
+    </script>
+    <script>
         $(function(){
             $(".deleteMachine").click(function(){
                 var rep = confirm("Etes-vous sur de vouloir supprimer cette machine?");
@@ -150,7 +160,7 @@
                 var path = "deleteMachine/";
                 path += id;
                 if(rep==true){
-                    alert("inside true block");
+                    //alert("inside true block");
                     window.location.href = path;
                 }
             });

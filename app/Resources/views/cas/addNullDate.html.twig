@@ -1,16 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}C.A.S - Département{% endblock %}
+{% block title %}C.A.S - Jours nuls{% endblock %}
 
 {% block body %}
     <div class="row">
         <div class="col l12">
             <h5 class="h5_title page-title"><span class="fa fa-calendar-alt"></span> Gestion des jours perdus</h5>
+            <p class="description_message">Ajoutez ou modifiez un jour non travaillé</p>
             <div class="row">
                 <div class="col l12">
                     <ul class="collapsible" data-collapsible="accordion">
                         <li>
-                            <div class="collapsible-header active">Définissez un jour null</div>
+                            <div class="collapsible-header active collapsible-header-title">Définissez un jour null</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 {% for message in  app.session.flashbag.get('notice') %}
                                     <div class="row">
@@ -23,7 +24,7 @@
                                 {% endfor %}
                                 <div class="row">
                                     <div class="col l12">
-                                        Les jours null sont des jours qui ont été perdus dû à des coupures de courants et les jours férés.
+                                        Les jours nuls sont des jours qui ont été perdus dû à des coupures de courants et les jours fériés.
                                     </div>
                                 </div>
                                 <div class="row">
@@ -58,7 +59,7 @@
                 <div class="col l12">
                     <ul class="collapsible" data-collapsible="accordion">
                         <li>
-                            <div class="collapsible-header active">Liste des jours null</div>
+                            <div class="collapsible-header active collapsible-header-title">Liste des jours nuls</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
                                     <div class="col l12">
@@ -112,6 +113,12 @@
                     window.location.href = id;
                 }
             });
+
+
+            $('.datepicker').on('mousedown',function(event){
+                event.preventDefault();
+            });
+
         });
     </script>
 {% endblock %}

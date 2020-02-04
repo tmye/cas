@@ -2,11 +2,6 @@ app:
     resource: "@AppBundle/Controller/"
     type:     annotation
 
-multiple_connection:
-    resource: "@MultipleConnectionBundle/Controller/"
-    type:     annotation
-    prefix:   /
-
 #tmye_device:
 #    resource: "@TmyeDeviceBundle/Resources/config/routing.yml"
 #    prefix:   /

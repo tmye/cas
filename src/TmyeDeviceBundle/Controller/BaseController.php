@@ -2,7 +2,6 @@
 
 namespace TmyeDeviceBundle\Controller;
 
-use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGenerator;
@@ -28,17 +27,17 @@ class BaseController extends Controller
         }
     }
 
-    protected function persist($manager, $obj) {
-
-        $em = $this->getDoctrine()->getManager($manager);
+    protected function persist($obj)
+    {
+        $em = $this->getDoctrine()->getManager();
         $em->persist($obj);
         $em->flush();
     }
 
-    protected function deleteEntity($manager, $entity)
+    protected function deleteEntity($entity)
     {
-        $this->getDoctrine()->getManager($manager)->remove($entity);
-        $this->getDoctrine()->getManager($manager)->flush();
+        $this->getManager()->remove($entity);
+        $this->getManager()->flush();
     }
 
     protected function serialize($data)
@@ -67,13 +66,13 @@ class BaseController extends Controller
     }
 
 
-   /* protected function getUserNameFromToken($manager, $token)
+    protected function getUserNameFromToken($token)
     {
         // check if the token is still valid, if no redirect to login page.
-        $token = $this->TokenRepo($manager)->findOneByTokenkey($token);
+        $token = $this->TokenRepo()->findOneByTokenkey($token);
         $user = $this->AdminRepo()->find($token->getUserId());
         return $user;
-    }*/
+    }
 
 
     protected function base64__($pathtopic, $type = "")
@@ -104,21 +103,21 @@ class BaseController extends Controller
     }
 
     /* done */
-    protected function WorkingHourRepo ($manager) {
-        return $this->getDoctrine()->getManager($manager)->getRepository("AppBundle:WorkingHours");
+    protected function WorkingHourRepo () {
+        return $this->getDoctrine()->getRepository("AppBundle:WorkingHours");
     }
 
     /* done */
-    protected function DepartementRepo ($manager) {
-        return $this->getDoctrine()->getManager($manager)->getRepository("AppBundle:Departement");
+    protected function DepartementRepo () {
+        return $this->getDoctrine()->getRepository("AppBundle:Departement");
     }
 
-    protected function RequestBlobRepo ($manager) {
-        return $this->getDoctrine()->getManager($manager)->getRepository("TmyeDeviceBundle:RequestBlob");
+    protected function RequestBlobRepo () {
+        return $this->getDoctrine()->getRepository("TmyeDeviceBundle:RequestBlob");
     }
 
-    protected function PubsRepo ($manager) {
-        return $this->getDoctrine()->getManager($manager)->getRepository("TmyeDeviceBundle:DevicePubPic");
+    protected function PubsRepo () {
+        return $this->getDoctrine()->getRepository("TmyeDeviceBundle:DevicePubPic");
     }
 
     /* protected function AdminRepo () {
@@ -129,40 +128,44 @@ class BaseController extends Controller
           return $this->getDoctrine()->getRepository("AppBundle:Token");
       }*/
 
-    protected function EmployeeRepo ($manager) {
-        return $this->getDoctrine()->getManager($manager)->getRepository("AppBundle:Employe");
+    protected function EmployeeRepo () {
+        return $this->getDoctrine()->getRepository("AppBundle:Employe");
     }
 
-    protected function ClockinRecordRepo ($manager) {
-        return $this->getDoctrine()->getManager($manager)->getRepository("AppBundle:ClockinRecord");
+    protected function ClockinRecordRepo () {
+        return $this->getDoctrine()->getRepository("AppBundle:ClockinRecord");
     }
 
-    /* protected function PermissionRepo () {
+     protected function PermissionRepo () {
          return $this->getDoctrine()->getRepository("AppBundle:Permission");
-     }*/
+     }
 
-    protected function MachineRepo ($manager) {
-        return $this->getDoctrine()->getManager($manager)->getRepository("TmyeDeviceBundle:Machine");
+    protected function MachineRepo () {
+        return $this->getDoctrine()->getRepository("TmyeDeviceBundle:Machine");
     }
 
-    protected function UpdateEntityRepo ($manager) {
-        return $this->getDoctrine()->getManager($manager)->getRepository("TmyeDeviceBundle:UpdateEntity");
+    protected function UpdateEntityRepo () {
+        return $this->getDoctrine()->getRepository("TmyeDeviceBundle:UpdateEntity");
     }
 
-    protected function OkidRepo ($manager) {
-        return $this->getDoctrine()->getManager($manager)->getRepository("TmyeDeviceBundle:OkIdEntity");
+    protected function OkidRepo () {
+        return $this->getDoctrine()->getRepository("TmyeDeviceBundle:OkIdEntity");
     }
 
-    protected function ConfigEntityRepo ($manager) {
-        return $this->getDoctrine()->getManager($manager)->getRepository("TmyeDeviceBundle:ConfigEntity");
+    protected function JourNullRepo () {
+        return $this->getDoctrine()->getRepository("AppBundle:NullDate");
     }
 
-  /*  protected function getManager () {
+    protected function ConfigEntityRepo () {
+        return $this->getDoctrine()->getRepository("TmyeDeviceBundle:ConfigEntity");
+    }
+
+    protected function getManager () {
         return $this->getDoctrine()->getManager();
-    }*/
+    }
 
-    protected function flush ($manager) {
-        $this->getDoctrine()->getManager($manager)->getManager()->flush();
+    protected function flush (){
+        $this->getDoctrine()->getManager()->flush();
     }
 
     protected function info($message) {
