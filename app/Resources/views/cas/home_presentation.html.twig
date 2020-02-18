@@ -3,7 +3,7 @@
 <div>
     <div style="position: absolute;right: 30px;">
         {%  if app.session.get('companyLogo') is defined and app.session.get('companyLogo') is not null %}
-            <img src="{{ asset("company_images/"~app.session.get('companyLogo')) }}" style="display:inline-block;vertical-align:middle;height: 60px;width: auto;border-radius: 0%">
+            <img src="{{ asset("company_images/"~app.session.get('companyLogo')) }}" style="display:inline-block;vertical-align:middle;height: 60px;width: 350px;border-radius: 0%">
         {% endif %}
     </div>
 

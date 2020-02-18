@@ -79,7 +79,7 @@
                                                 <div class="input-field col s4 center">
                                                     <span>Photo de profil</span>
                                                     {{ form_row(form.picture, {'attr': {'class':'fileInput','placeholder':'Le titre de la permission','style':'display:none'}}) }}
-                                                    <button id="previewButton" type="button" style="width: 180px;height: 30px;border: solid 1px rgba(0,0,0,0.2);margin-top: 20px">Choisir une image</button>
+                                                    <button id="previewButton" class="btn-perso-historique" type="button" >Choisir une image</button>
                                                 </div>
                                                 <div class="input-field col s4 center">
                                                     {% if employe is defined and employe.picture is not null %}

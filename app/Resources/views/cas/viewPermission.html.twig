@@ -6,7 +6,7 @@
     <div class="row">
         <div class="col l12">
             <h5 class="page-title"><span class="fa fa-plus-circle"></span> Gestion des Permissions</h5>
-            <p class="description_message" style="background-color: rgba(1, 1, 2, 0.27) !important; color: white !important;">Vous avez accès à la liste des permissions.Vous pouvez choisir de les accorder ou de les annuler si vous avez les droits nécéssaires</p>
+            <p class="description_message" >Vous avez accès à la liste des permissions.Vous pouvez choisir de les accorder ou de les annuler si vous avez les droits nécéssaires</p>
             {% for message in  app.session.flashbag.get('error_notice') %}
                 <div class="row">
                     <div class="col l12">
@@ -287,11 +287,13 @@
                     console.log(elt);
                     //var taille = json.length;
 
+                    // code pour afficher les infos de la permission
                     $(".card").click(function () {
                         // console.log("clicked!!! ")
                         var idPerm= $(this).attr("id");
 
                         //alert(idPerm);
+
                         $.each(elt, function (i, item) {
                             var permis = item;
                             // console.log("(idPerm).localeCompare(permis.id) "+(idPerm).localeCompare("a-"+permis.id));
@@ -302,6 +304,7 @@
                         });
                     });
 
+                    //code de recherche
                     $("#searchInput").on( "keyup", function (e) {
 
                         var searchTextUp = e.target.value;
@@ -407,7 +410,7 @@
             //data: {"empId":employeeId,"fromeDate":fromDate,"toDate":toDate,"selectedOption":$('select[name=statType]').val()},
             //url: "userStatsPDF",
             //type: "POST",
-            $.ajax({
+           /* $.ajax({
 
                 type: "POST",
                 url: "generatePDF",
@@ -417,7 +420,7 @@
                 success: function (data) {
                     console.log(data);
                 }
-            });
+            });*/
 
          });
     </script>
@@ -518,8 +521,8 @@
             var today = new Date($.now());
             var todayConvert = new Date((today.getMonth() + 1) + "/" + today.getDate() + "/" + today.getFullYear() + " " +today.getHours() +":"+today.getMinutes()+ "");
 
-            {#var url3 = "{{ path('generatePDFPermission',{'id':"perm_id"}) }}";#}
-           // url3 = url3.replace("perm_id", permission.id);
+            var url3 = "{{ path('generatePDFPermission',{'id':"perm_id"}) }}";
+            url3 = url3.replace("perm_id", permission.id);
 
             var createBtn1 = "<a href=" + url3 + "><button class=\"simple-button-decoration btn btn-primary green darken-3 white-text\"><span class=\"fa fa-print\"></span></button></a>"
 
@@ -589,6 +592,7 @@
                         " <div id=\"temp\">   <div id=\"temp-"+i+"\"></div> </div> </div> ");
                     $( "#temp-"+i).append(createCard+"");
             }
+            console.log("comp: "+dateFromConvert>todayConvert);
             if(dateFromConvert > todayConvert ){
                 var rearrangeRej ="<div id=\"rearrangeRej\" class=\"col l4  \"> " +
                     "               <div id=\"searchResultRej\" > </div>" +
