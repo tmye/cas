@@ -365,6 +365,10 @@ class StatsController extends ClockinReccordController
         $lost_time = 0;
         $sommePerduAuth = 0;
         $tabType = array();
+        $nbreHeureSup = 0;
+        $tpsHeureSup = 0;
+        $smeHeureSup = 0;
+
 
 
         for ($cpt=0;$cpt<=$days;$cpt++){
@@ -1044,7 +1048,8 @@ class StatsController extends ClockinReccordController
                                 }
                             }
 
-                        } else {
+                        }
+                        else {
                             /* Must check if the clockinTime isn't null this date (0 in the history)
                             *  Because if it is null that day we should not count it as a bonus
                             */
@@ -1790,7 +1795,13 @@ class StatsController extends ClockinReccordController
                                     $bonusTempsGagneRetards += (float)($departDiff[0]/(60))/60;
                                     $bonus_gain_temps = (float)($departDiff[0]/(60))/60;
                                     $ct = date('H:i',$departDiff[1]);
-                                    if($taux > 0){
+
+                                    $nbreHeureSup++;
+                                    $tpsHeureSup += $bonus_gain_temps;
+
+
+
+                                     if($taux > 0){
                                         for($cpt3 =0; $cpt3<sizeof($nbreJrTravailTab["month"]);$cpt3++){
                                             if((strcmp(date("m",$nowTime)."",$nbreJrTravailTab["month"][$cpt3]."")  == 0 )){
                                                 $nbreJrTravail = $nbreJrTravailTab["nbJrT"][$cpt3];
@@ -1798,6 +1809,7 @@ class StatsController extends ClockinReccordController
                                         }
                                         if( $nbreJrTravail> 0){
                                             $bonusSommeGagneRetard += ($salaire/$nbreJrTravail/$dailyTime)*round($bonus_gain_temps,2);
+                                            $smeHeureSup += ($salaire/$nbreJrTravail/$dailyTime)*round($bonus_gain_temps*(-1),2);
                                             $salPerHour = ( $salaire/$nbreJrTravail/$dailyTime);
                                         }
 
@@ -1805,6 +1817,8 @@ class StatsController extends ClockinReccordController
                                     }else{
                                         $bonusSommeGagneRetard = 0;
                                     }
+
+                                    $controlTaux[] =  "bonus: ".$nbreHeureSup." compteur ".$cpt." sme heure sup ".$smeHeureSup." tpsHeuresup ".$tpsHeureSup  ;
 
                                     /*print_r("retard diff : ".$departDiff[0]."\n");
                                     print_r("somme totale : ".$bonusSommeRetards."\n");
@@ -2139,6 +2153,7 @@ class StatsController extends ClockinReccordController
                 }
 
                 if( $nbreJrTravail> 0){
+//                    $somTotTravaille +=  ( $salaire/$nbreJrTravail);
                     $somTotTravaille +=  ( $salaire/$nbreJrTravail/$dailyTime)*$dailyTime;
                     //$salPerHour = ( $salaire/$nbreJrTravail/$dailyTime);
                 }
@@ -2344,7 +2359,7 @@ class StatsController extends ClockinReccordController
                 "retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType,"permissionData"=>$donneesPermission,"lost_time"=>$lost_time,"inc_auth"=>$inc_auth, "incAuthLostTime"=>$tpsIncAuth,
                 "historique"=>$historiques,"sommePerduQuota"=>$sommePerduQuota,"quota_1_4"=>$quota_emp_1_4,"spd"=>$sommePerduDepart,"spr"=>$sommePerduRetard,"spa"=>$sommePerduAbsence,"nbreJourTravail"=>$j,"spAuth"=>$sommePerduAuth,"nbreBonus"=>$bonus_retards,
                 "sommeBonus"=>$bonusSommeRetards,"tempsBonus"=>$bonusTempsGagneRetards,"sommeArgentBonus"=>$bonusSommeGagneRetard,"nbrePermission"=>$nbrePermission,"jourFeries"=>$jourFeries,"message"=>$mes,"salMin"=>$salaire_en_minuite,  "taux"=>$taux
-                , "nowDte"=>date('Y-m-d',$nowTime), "pipipi"=>$pipipi, "controlTaux"=>$controlTaux,"days"=>$nbreJrTravail,"tabJT"=>$tabNbJrT,"jrPerMonth"=>$nbreJrTravailTab,"salPerHour"=>$salPerHour,"salTotal"=>$somTotTravaille, "tabFerie"=>$tabFerieTrouve
+                , "nowDte"=>date('Y-m-d',$nowTime), "pipipi"=>$pipipi, "controlTaux"=>$controlTaux,"days"=>$nbreJrTravail,"tabJT"=>$tabNbJrT,"jrPerMonth"=>$nbreJrTravailTab,"salPerHour"=>$salPerHour,"salTotal"=>$somTotTravaille, "tabFerie"=>$tabFerieTrouve,"tpBonus"=>$tpsHeureSup * (-1),"nbreeBonus" => $nbreHeureSup,"smeBonus"=>$smeHeureSup
             );
 
             $nowTime = $nowTime+86400;
@@ -2516,6 +2531,10 @@ class StatsController extends ClockinReccordController
         $lost_time = 0;
         $sommePerduAuth = 0;
         $tabType = array();
+        $nbreHeureSup = 0;
+        $tpsHeureSup = 0;
+        $smeHeureSup = 0;
+
 
 
         for ($cpt=0;$cpt<=$days;$cpt++){
@@ -2711,7 +2730,7 @@ class StatsController extends ClockinReccordController
                                     }
 
                                     //                                $sommePerduAbsence = ((($salaire*12)/52)/$taux)*$sommeAbsences;
-                                    $controlTaux[] = "taux: ".$taux." passé ".$cpt." rgent  absence ".$sommePerduAbsence." tpsPerAbs ".$timePerdusAbsences  ;
+                                    $controlTaux[] = "tauxregre: ".$taux." passé ".$cpt." rgent  absence ".$sommePerduAbsence." tpsPerAbs ".$timePerdusAbsences  ;
                                 }else{
                                     $sommePerduAbsence = 0;
                                 }
@@ -2755,9 +2774,9 @@ class StatsController extends ClockinReccordController
                                 }
 
                                 //                                $sommePerduAbsence = ((($salaire*12)/52)/$taux)*$sommeAbsences;
-                                $controlTaux[] = "taux: ".$taux." passé ".$cpt." somme  absence ".$sommeAbsences." tpsPerAbs ".$timePerdusAbsences  ;
+                                $controlTaux[] = "ttttauxu: ".$taux." passéeabs ".$cpt." somme  absence ".$sommeAbsences." tpsPerAbs ".$timePerdusAbsences  ;
                             }else{
-                                $sommePerduAbsence = 0;
+                                $sommePerduAbsence = $sommePerduAbsence;
                             }
                             $tempPP = $timePerdusAbsences; // Hour
                             $tempsTPP = $sommeAbsences;
@@ -2765,8 +2784,12 @@ class StatsController extends ClockinReccordController
 
                         }
 
-                    }else{
-                        $jourFeries ++;
+                    }
+                    else{
+
+                        $jourFeries++;
+                        $ndt = date('d-m-Y', $nowTime);
+                        $tabFerieTrouve [] = array("date"=>$ndt);
                     }
 
                 }
@@ -2832,6 +2855,51 @@ class StatsController extends ClockinReccordController
                             $tempPP = $timePP/60/60; // Hour
                             $tempsTPP += $tempPP;
                             $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Permission","tempsPerdu"=>$tempPP);
+                        }else {
+                            //statistisques avec deduction
+
+                            $absences++;
+                            //                                $absences+=$absences*2+1;
+
+                            $ici1++;
+                            $iciDate1 = $iciDate1." - ".$cpt. " - " .$ici1." - ".$permDate." | ";
+                            $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
+                            $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
+
+                            $timePerdusAbsences = $timeFin - $timeDebut;
+                            $timePerdusAbsences /= 3600;
+                            $timeD = strtotime($empWH[$theDay][0]["beginHour"]);
+                            $timeF = strtotime($empWH[$theDay][0]["endHour"]);
+
+                            $timeDP = strtotime($empWH[$theDay][0]["pauseBeginHour"]);
+                            $timeFP = strtotime($empWH[$theDay][0]["pauseEndHour"]);
+
+                            $dailyTime = $timeF - $timeD - ($timeFP-$timeDP);
+                            $dailyTime /= 3600;
+                            $timePerdusAbsences = $dailyTime;
+                            //$tempsPerdusAbsences += $tempPerdu;
+                            //$sommeAbsences +=$tempsPerdusAbsences;
+                            //                                $tpsAbsPer = $timePerdusAbsences;
+                            $sommeAbsences +=$timePerdusAbsences;
+                            if($taux > 0){
+                                for($cpt3 =0; $cpt3<sizeof($nbreJrTravailTab["month"]);$cpt3++){
+                                    if((strcmp(date("m",$nowTime)."",$nbreJrTravailTab["month"][$cpt3]."")  == 0 )){
+                                        $nbreJrTravail = $nbreJrTravailTab["nbJrT"][$cpt3];
+                                    }
+                                }
+                                if( $nbreJrTravail> 0){
+                                    $sommePerduAbsence += ( $salaire/$nbreJrTravail/$dailyTime)*  round($timePerdusAbsences,2);
+                                    $salPerHour = ( $salaire/$nbreJrTravail/$dailyTime);
+                                }
+
+                                //                                $sommePerduAbsence = ((($salaire*12)/52)/$taux)*$sommeAbsences;
+                                $controlTaux[] = "taux8888: ".$taux." passé ".$cpt." rgent  absence ".$sommePerduAbsence." tpsPerAbs ".$timePerdusAbsences  ;
+                            }else{
+                                $sommePerduAbsence = 0;
+                            }
+                            $tempPP = $timePerdusAbsences; // Hour
+                            $tempsTPP = $sommeAbsences;
+                            $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Permission","tempsPerdu"=>$tempPP);
                         }
 
                     }
@@ -2843,7 +2911,7 @@ class StatsController extends ClockinReccordController
                         if($retardDiff == false){
                             //                        if($cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
 
-                            // il n'est pas en retard
+                            // il n'est pas en retard, a-t-il badgé???
                             $nowDate = date('d/m/Y',$nowTime);
                             $ct = date('H:i',$retardDiff[1]);
 
@@ -2875,6 +2943,7 @@ class StatsController extends ClockinReccordController
                                     }else{
                                         $sommePerduAuth = 0;
                                     }
+                                    $controlTaux[] = "taux9999: ".$taux."auth: retarddiff false ".date('d-m-Y',$nowTime)." passé ".$cpt." somme perdu auth ".$sommePerduAuth ;
                                 }
                             }elseif (($type == 2 || $type == "2")) {
                                 if( ($_arr == 0 || $_arr == null) || ($_dep == 0 || $_dep == null) || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
@@ -2908,7 +2977,7 @@ class StatsController extends ClockinReccordController
                                 }
                                 # code...
                             }elseif(($type == 4 || $type == "4")){
-                                if( ($_arr == 0 || $_arr == null) || ($_dep == 0 || $_dep == null) || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
+                                if( ($_arr == 0 || $_arr == null)  || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
                                     $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
                                     $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
                                     $timeDP = strtotime($empWH[$theDay][0]["pauseBeginHour"]);
@@ -2932,14 +3001,15 @@ class StatsController extends ClockinReccordController
                                             $sommePerduAuth += ($salaire/$nbreJrTravail/$dailyTime)*round($lost_time_jour,2);
                                         }
 
-                                        $controlTaux[] = "taux: ".$taux." passé ".$cpt ." somme perdu auth ".$sommePerduAuth ;
+                                        $controlTaux[] = "tauxxxx: ".$taux." passé ".$cpt ." somme perdu auth ".$sommePerduAuth ;
                                     }else{
                                         $sommePerduAuth = 0;
                                     }
                                 }
                             }
 
-                        }elseif($retardDiff[0] > 0){
+                        }
+                        elseif($retardDiff[0] > 0) {
                             //print_r("\n Passage 1 TRUE condition retard diff\n");
                             $retardDiffArray[]=$retardDiff;
                             $retardDiffArray[]=$cpt;
@@ -3035,7 +3105,7 @@ class StatsController extends ClockinReccordController
                                             }
 
                                             //                                $sommePerduAbsence = ((($salaire*12)/52)/$taux)*$sommeAbsences;
-                                            $controlTaux[] = "taux: ".$taux." passé ".$cpt." somme  absence ".$sommeAbsences." tpsPerAbs ".$timePerdusAbsences  ;
+                                            $controlTaux[] = "taux:0000 ".$taux." passé ".$cpt." somme  absence ".$sommeAbsences." tpsPerAbs ".$timePerdusAbsences  ;
                                         }else{
                                             $sommePerduAbsence = 0;
                                         }
@@ -3135,7 +3205,7 @@ class StatsController extends ClockinReccordController
                                             }
 
                                             //                                        $sommePerduRetard += ((($salaire*12)/52)/$taux)*$perte_temps;
-                                            $controlTaux[] = "taux: ".$taux." passé ".$cpt." somme perdu retard ".$sommePerduRetard." perte temps ".$perte_temps." salaire ".$salaire." nbrejrT ".$nbreJrTravail." dailytime ".$dailyTime  ;
+                                            $controlTaux[] = "taux66666: ".$taux." passé ".$cpt." somme perdu retard ".$sommePerduRetard." perte temps ".$perte_temps." salaire ".$salaire." nbrejrT ".$nbreJrTravail." dailytime ".$dailyTime  ;
                                         }else{
                                             $sommePerduRetard = 0;
                                         }
@@ -3144,7 +3214,8 @@ class StatsController extends ClockinReccordController
                                 }
                             }
 
-                        } else {
+                        }
+                        else {
                             /* Must check if the clockinTime isn't null this date (0 in the history)
                             *  Because if it is null that day we should not count it as a bonus
                             */
@@ -3213,7 +3284,7 @@ class StatsController extends ClockinReccordController
                                             $salPerHour = ( $salaire/$nbreJrTravail/$dailyTime);
                                         }
 
-                                        $controlTaux[] = "taux: ".$taux." passé ".$cpt." somme gagne retard bonus ".$bonusSommeGagneRetard  ;
+                                        $controlTaux[] = "taux7878: ".$taux." passé ".$cpt." somme gagne retard bonus ".$bonusSommeGagneRetard  ;
                                     }else{
                                         $bonusSommeGagneRetard = 0;
                                     }
@@ -3239,6 +3310,7 @@ class StatsController extends ClockinReccordController
                                         $lost_time += $lost_time_jour;
                                         $tpsIncAuth += $lost_time_jour;
 
+
                                         $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
                                         $timeFin = strtotime($empWH[$theDay][0]["endHour"]);
                                         $timeDP = strtotime($empWH[$theDay][0]["pauseBeginHour"]);
@@ -3249,12 +3321,13 @@ class StatsController extends ClockinReccordController
                                         if($taux > 0){
                                             $sommePerduAuth += ($salaire/$nbreJrTravail/$dailyTime)*round($lost_time_jour,2);
 
-                                            $controlTaux[] = "taux: ".$taux." passé ".$cpt." somme perdu auth ".$sommePerduAuth ;
+                                            $controlTaux[] = "tauxpppp: ".$taux."auth: ".date('d-m-Y',$nowTime)." passée retardif pause ".$cpt." somme perdu auth ".$sommePerduAuth ;
                                         }else{
                                             $sommePerduAuth = 0;
                                         }
                                     }
-                                }elseif (($type == 2 || $type == "2") || ($type == 4 || $type == "4")) {
+                                }
+                                elseif (($type == 2 || $type == "2") || ($type == 4 || $type == "4")) {
                                     # code...
 //                                    if( ($_fpa == 0 || $_fpa == null) || ($_dep == 0 || $_dep == null) || (($_fpa == 0 || $_fpa == null) && ($_dep == 0 || $_dep == null)) ){
 //                                        $controlNowTime2 = $nowTime;
@@ -3265,7 +3338,7 @@ class StatsController extends ClockinReccordController
 //                                        if($taux > 0){
 //                                            $sommePerduAuth += ((($salaire*12)/52)/$taux)*round($lost_time_jour,2);
 //
-//                                            $controlTaux[] = "taux: ".$taux." passé ".$cpt." somme perdu auth ".$sommePerduAuth ;
+//                                            $controlTaux[] = "taux9898: ".$taux." passé ".$cpt." somme retard pause perdu auth ".$sommePerduAuth ;
 //                                        }else{
 //                                            $sommePerduAuth = 0;
 //                                        }
@@ -3274,7 +3347,8 @@ class StatsController extends ClockinReccordController
                                 }
 
                             }
-                        } elseif($retardPauseDiff[0] > 0){
+                        }
+                        elseif($retardPauseDiff[0] > 0){
                             //retard pause
 
                             //print_r("\n Passage 2 one condition retardPause diff\n");
@@ -3370,7 +3444,7 @@ class StatsController extends ClockinReccordController
                                             }
 
                                             //                                $sommePerduAbsence = ((($salaire*12)/52)/$taux)*$sommeAbsences;
-                                            $controlTaux[] = "taux: ".$taux." passé ".$cpt." somme  absence ".$sommeAbsences." tpsPerAbs ".$timePerdusAbsences  ;
+                                            $controlTaux[] = "taux5858: ".$taux." passé ".$cpt." somme  absence ".$sommeAbsences." tpsPerAbs ".$timePerdusAbsences  ;
                                         }else{
                                             $sommePerduAbsence = 0;
                                         }
@@ -3464,7 +3538,7 @@ class StatsController extends ClockinReccordController
                                                 $salPerHour = ( $salaire/$nbreJrTravail/$dailyTime);
                                             }
 
-                                            $controlTaux[] = "taux: ".$taux." passé ".$cpt ." somme perdu retard ".$sommePerduRetard ;
+                                            $controlTaux[] = "tau4848: ".$taux." passé ".$cpt ." somme perdu retard ".$sommePerduRetard ;
                                         }else{
                                             $sommePerduRetard = 0;
                                         }
@@ -3472,7 +3546,8 @@ class StatsController extends ClockinReccordController
                                     }
                                 }
                             }
-                        } else {
+                        }
+                        else {
                             /* Must check if the clockinTime isn't null this date (0 in the history)
                             *  Because if it is null that day we should not count it as a bonus
                             */
@@ -3551,9 +3626,11 @@ class StatsController extends ClockinReccordController
                                                 $sommePerduAuth = 0;
                                             }
                                         }
+                                        $controlTaux[] = "taux: ".$taux."auth: departdiff false ".date('d-m-Y',$nowTime)." passé ".$cpt." somme perdu auth ".$sommePerduAuth ;
+
                                     }
                                 }elseif (($type == 2 || $type == "2")) {
-                                    if( ($_arr == 0 || $_arr == null) || ($_dep == 0 || $_dep == null) || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
+                                    if(  ($_dep == 0 || $_dep == null) || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
 
                                         if($controlNowTimeForOtheType != $nowTime){
                                             $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
@@ -3586,7 +3663,7 @@ class StatsController extends ClockinReccordController
                                         }
                                     }
                                 }elseif(($type == 4 || $type == "4")){
-                                    if( ($_arr == 0 || $_arr == null) || ($_dep == 0 || $_dep == null) || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
+                                    if( ($_dep == 0 || $_dep == null) || (($_arr == 0 || $_arr == null) && ($_dep == 0 || $_dep == null)) ){
 
                                         if($controlNowTimeForOtheType != $nowTime){
                                             $timeDebut = strtotime($empWH[$theDay][0]["beginHour"]);
@@ -3612,7 +3689,7 @@ class StatsController extends ClockinReccordController
                                                     $salPerHour = ( $salaire/$nbreJrTravail/$dailyTime);
                                                 }
 
-                                                $controlTaux[] = "taux: ".$taux." passé ".$cpt ." somme perdu Auth ".$sommePerduAuth ;
+                                                $controlTaux[] = "tauxzzz: ".$taux." passé ".$cpt ." somme perdu Auth ".$sommePerduAuth ;
                                             }else{
                                                 $sommePerduAuth = 0;
                                             }
@@ -3829,9 +3906,9 @@ class StatsController extends ClockinReccordController
                                     }
                                 }
                             }
-                            // Now we deal with the permissions calculations
 
-                        } else {
+                        }
+                        else {
                             /* Must check if the clockinTime isn't null this date (0 in the history)
                             *  Because if it is null that day we should not count it as a bonus
                             */
@@ -3884,6 +3961,12 @@ class StatsController extends ClockinReccordController
                                     $bonusTempsGagneRetards += (float)($departDiff[0]/(60))/60;
                                     $bonus_gain_temps = (float)($departDiff[0]/(60))/60;
                                     $ct = date('H:i',$departDiff[1]);
+
+                                    $nbreHeureSup++;
+                                    $tpsHeureSup += $bonus_gain_temps;
+
+
+
                                     if($taux > 0){
                                         for($cpt3 =0; $cpt3<sizeof($nbreJrTravailTab["month"]);$cpt3++){
                                             if((strcmp(date("m",$nowTime)."",$nbreJrTravailTab["month"][$cpt3]."")  == 0 )){
@@ -3892,6 +3975,7 @@ class StatsController extends ClockinReccordController
                                         }
                                         if( $nbreJrTravail> 0){
                                             $bonusSommeGagneRetard += ($salaire/$nbreJrTravail/$dailyTime)*round($bonus_gain_temps,2);
+                                            $smeHeureSup += ($salaire/$nbreJrTravail/$dailyTime)*round($bonus_gain_temps*(-1),2);
                                             $salPerHour = ( $salaire/$nbreJrTravail/$dailyTime);
                                         }
 
@@ -3899,6 +3983,8 @@ class StatsController extends ClockinReccordController
                                     }else{
                                         $bonusSommeGagneRetard = 0;
                                     }
+
+                                    $controlTaux[] =  "bonus: ".$nbreHeureSup." compteur ".$cpt." sme heure sup ".$smeHeureSup." tpsHeuresup ".$tpsHeureSup  ;
 
                                     /*print_r("retard diff : ".$departDiff[0]."\n");
                                     print_r("somme totale : ".$bonusSommeRetards."\n");
@@ -3939,6 +4025,7 @@ class StatsController extends ClockinReccordController
                                                     $sommePerduAuth += ($salaire/$nbreJrTravail/$dailyTime)*round($lost_time_jour,2);
                                                     $salPerHour = ( $salaire/$nbreJrTravail/$dailyTime);
                                                 }
+                                                $controlTaux[] = "tauxjjj: ".$taux."auth: deparddiff false ".date('d-m-Y',$nowTime)." passé ".$cpt." somme perdu auth ".$sommePerduAuth ;
 
 //                                                    $controlTaux[] = "taux: ".$taux." passé ".$cpt ." somme perdu  auth ".$sommePerduAuth ;
                                             }else{
@@ -3950,7 +4037,8 @@ class StatsController extends ClockinReccordController
 
                             }
 
-                        } elseif($departPauseDiff[0] > 0){
+                        }
+                        elseif($departPauseDiff[0] > 0){
                             //print_r("\n Passage 4 one condition departPause diff\n");
                             $nowDate = date('d/m/Y',$nowTime);
                             $lPermCours = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")-> findPermEnCours() ;
@@ -4000,7 +4088,7 @@ class StatsController extends ClockinReccordController
                                             }
 
                                             //                                $sommePerduAbsence = ((($salaire*12)/52)/$taux)*$sommeAbsences;
-                                            $controlTaux[] = "taux: ".$taux." passé ".$cpt." rgent  absence ".$sommePerduAbsence." tpsPerAbs ".$timePerdusAbsences  ;
+                                            $controlTaux[] = "taux7777: ".$taux." passé ".$cpt." rgent  absence ".$sommePerduAbsence." tpsPerAbs ".$timePerdusAbsences  ;
                                         }
                                         $tempPP = $timePP/60/60; // Hour
                                         $tempsTPP += $tempPP;
@@ -4236,7 +4324,8 @@ class StatsController extends ClockinReccordController
                 }
 
 
-            }else if($type == "3"){
+            }
+            else if($type == "3"){
 
                 $j++;
                 // Si son workingHour est de type 3
@@ -4412,6 +4501,7 @@ class StatsController extends ClockinReccordController
                     $somTotTravaille +=  ( $salaire/$nbreJrTravail/$dailyTime)*$dailyTime;
                     //$salPerHour = ( $salaire/$nbreJrTravail/$dailyTime);
                 }
+
                 $salaire_quota_en_minuite = ($salaire/$nbreJrTravail/$dailyTime)/60;
                 $salaire_en_minuite = $salaire_quota_en_minuite ;
             }else if($type == null || $type == "null"){
@@ -4420,6 +4510,10 @@ class StatsController extends ClockinReccordController
             }
 
             $historiques[] = $his;
+//            $permDate = date('d-m-Y',$nowTime);
+//            if($nD->dayIsNull($permDate)){
+//                $jourFeries++;
+//            }
 
             $donneesPermission = array("retardStats"=>$tabRetardsPermission,"retardPauseStats"=>$tabRetardsPausePermission,"pauseStats"=>$tabDepartsPausePermission,"finStats"=> $tabDepartsPermission,"absenceStats"=>$tabAbsencesPermission);
             //            $donnees = array("request"=> json_decode($request->getContent(),true), "req_content"=> $request->getContent() , "empId"=>$empId,"fromDate"=>$dateFrom,"toDate"=>$dateTo,"nbrePerm"=>$nbrePermission,"message"=>$mes);
@@ -4430,7 +4524,7 @@ class StatsController extends ClockinReccordController
                 "retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType,"permissionData"=>$donneesPermission,"lost_time"=>$lost_time,"inc_auth"=>$inc_auth, "incAuthLostTime"=>$tpsIncAuth,
                 "historique"=>$historiques,"sommePerduQuota"=>$sommePerduQuota,"quota_1_4"=>$quota_emp_1_4,"spd"=>$sommePerduDepart,"spr"=>$sommePerduRetard,"spa"=>$sommePerduAbsence,"nbreJourTravail"=>$j,"spAuth"=>$sommePerduAuth,"nbreBonus"=>$bonus_retards,
                 "sommeBonus"=>$bonusSommeRetards,"tempsBonus"=>$bonusTempsGagneRetards,"sommeArgentBonus"=>$bonusSommeGagneRetard,"nbrePermission"=>$nbrePermission,"jourFeries"=>$jourFeries,"message"=>$mes,"salMin"=>$salaire_en_minuite,  "taux"=>$taux
-            , "nowDte"=>date('Y-m-d',$nowTime), "pipipi"=>$pipipi, "controlTaux"=>$controlTaux,"days"=>$nbreJrTravail,"tabJT"=>$tabNbJrT,"jrPerMonth"=>$nbreJrTravailTab,"salPerHour"=>$salPerHour,"salTotal"=>$somTotTravaille,"dailyTime"=>$dailyTime
+            , "nowDte"=>date('Y-m-d',$nowTime), "pipipi"=>$pipipi, "controlTaux"=>$controlTaux,"days"=>$nbreJrTravail,"tabJT"=>$tabNbJrT,"jrPerMonth"=>$nbreJrTravailTab,"salPerHour"=>$salPerHour,"salTotal"=>$somTotTravaille, "tpBonus"=>$tpsHeureSup * (-1),"nbreeBonus" => $nbreHeureSup,"smeBonus"=>$smeHeureSup
             );
 
             $nowTime = $nowTime+86400;

@@ -1421,8 +1421,11 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
             $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 10))->applyFromArray($boldStyle);
             $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 11))->applyFromArray($boldStyle);
 
-            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 13))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 12))->applyFromArray($boldStyle);
             $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 14))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 15))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 17))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 18))->applyFromArray($boldStyle);
             $spreadsheet->getActiveSheet()->getStyle('B' . ($nextNameCellNumber - 1))->applyFromArray($boldStyle);
 
             $sheet->setCellValue('A' . ($nextNameCellNumber - 1), "NOM");
@@ -1436,9 +1439,13 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
             $sheet->setCellValue('A' . ($nextNameCellNumber + 9), "NOMBRE DE DEPARTS : " . $donnees["departs"]);
             $sheet->setCellValue('A' . ($nextNameCellNumber + 10), "NOMBRE D'AUTH INC : " . $donnees["inc_auth"]);
             $sheet->setCellValue('A' . ($nextNameCellNumber + 11), "NOMBRE DE PERM: " . $donnees["nbrePermission"]);
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 12), "NOMBRE DE BONUS: " . $donnees["nbreeBonus"]);
 
-            $sheet->setCellValue('A' . ($nextNameCellNumber + 13), "TOTAL DES PERTES EN TEMPS : " . round($donnees["tpa"] + $donnees["tpr"] + $donnees["tpd"] + $donnees["lost_time"], 4) . " H");
-            $sheet->setCellValue('A' . ($nextNameCellNumber + 14), "TOTAL DES PERTES EN ARGENT : " . round($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"], 4) . " FCFA");
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 14), "TOTAL DES PERTES EN TEMPS : " . round($donnees["tpa"] + $donnees["tpr"] + $donnees["tpd"] + $donnees["lost_time"], 4) . " H");
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 15), "TOTAL DES HEURES SUPLEMENTAIRES : " . round($donnees["tpBonus"] , 4) . " H");
+
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 17), "TOTAL DES PERTES EN ARGENT : " . round($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"], 4) . " FCFA");
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 18), "TOTAL DES HEURES SUP. EN ARGENT : " . round($donnees["smeBonus"], 4) . " FCFA");
 
             $sheet->setCellValue('B' . ($nextNameCellNumber - 1), "PRENOMS");
             $sheet->setCellValue('A' . $nextNameCellNumber, $employe->getSurname());
@@ -1457,8 +1464,8 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
 
 
                 foreach ($newTab as $el) {
-                    $spreadsheet->getActiveSheet()->getStyle($el . "" . ($nextNameCellNumber + 16))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-                    $spreadsheet->getActiveSheet()->getStyle($el . "" . ($nextNameCellNumber + 16))->getFill()->getStartColor()->setARGB('bdbdbd');
+                    $spreadsheet->getActiveSheet()->getStyle($el . "" . ($nextNameCellNumber + 20))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+                    $spreadsheet->getActiveSheet()->getStyle($el . "" . ($nextNameCellNumber + 20))->getFill()->getStartColor()->setARGB('bdbdbd');
                 }
 
                 /* if you are not supposed to come on this day*/

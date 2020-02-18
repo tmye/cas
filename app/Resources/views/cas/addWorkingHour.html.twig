@@ -673,7 +673,11 @@
                         //alert("case 2 : "+taux);
                         break;
                     case "3":
-                        taux = 0;
+                        taux =  hoursDiff($("#lundiBH").val(),$("#lundiEH").val())
+                            +hoursDiff($("#mardiBH").val(),$("#mardiEH").val())
+                            +hoursDiff($("#mercrediBH").val(),$("#mercrediEH").val())
+                            +hoursDiff($("#jeudiBH").val(),$("#jeudiEH").val())
+                            +hoursDiff($("#vendrediBH").val(),$("#vendrediEH").val());
                         if(saturdayType != "null" && saturdayType != null){
                             jour_travail++;
                         }
@@ -713,8 +717,8 @@
                                 alert("Enregistrement effectué avec succès");
                                 window.location.href = "addWorkingHour";
                             }else{
-                                alert("Erreur inconnue");
-                                alert(data);
+                                alert("Erreur ");
+                                //alert(data);
                             }
                         },
                     error:

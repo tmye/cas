@@ -115,7 +115,8 @@
                                 <th class="center">Date :</th>
                                 <th class="center">Jours à travailler :</th>
                                 <th class="center">Nombre de permission :</th>
-                                <th colspan="3" class="center">Salaire équivalant : <span id="salarySpan"></span></th>
+                                <th colspan="3" class="center">Salaire équivalant (sans bonus) : <span id="salarySpan"></span></th>
+
                             </tr>
                             <tr>
                                 <td>
@@ -137,41 +138,49 @@
                                     <span id="totalSalarySpan"></span>
                                 </td>
 
+
                             </tr>
                             <tr>
                                 <th class="center">Absences</th>
                                 <th class="center">Retards</th>
                                 <th class="center">Départs prématurés</th>
-                                <th class="center" colspan="3">Authentifications incomplètes</th>
+                                <th class="center" colspan="2">Authentifications incomplètes</th>
+                                <th class="center" colspan="1">Bonus</th>
                             </tr>
                             <tr>
                                 <td><span id="absenceSpan"></span></td>
                                 <td><span id="retardSpan"></span></td>
                                 <td><span id="departSpan"></span></td>
-                                <td colspan="3"><span id="nbreAuthInc"></span></td>
+                                <td colspan="2"><span id="nbreAuthInc"></span></td>
+                                <td colspan="2"><span id="nbreBonus">gk</span></td>
 
                             </tr>
                             <tr>
-                                <th colspan="6" class="center">Total Temps Perdu (En Heures)</th>
+                                <th colspan="5" class="center">Total Temps Perdu (En Heures)</th>
+                                <th colspan="1" class="center">Heure Sup. </th>
                             </tr>
                             <tr>
                                 <td><span id="tpaSpan">-</span></td>
                                 <td><span id="tprSpan"></span></td>
                                 <td><span id="tpdSpan"></span></td>
-                                <td colspan="3"><span id="tpAuthSpan">-</span></td>
+                                <td colspan="2"><span id="tpAuthSpan">-</span></td>
+                                <td colspan="2"><span id="tpBonus"></span></td>
                             </tr>
                             <tr>
-                                <th colspan="6" class="center">Total d'argent Perdu</th>
+                                <th colspan="5" class="center">Total d'argent Perdu</th>
+                                <th colspan="1" class="center">Total Gagné</th>
                             </tr>
                             <tr>
                                 <td><span id="spaSpan"></span> FCFA</td>
                                 <td><span id="sprSpan"></span> FCFA</td>
                                 <td><span id="spdSpan"></span> FCFA</td>
-                                <td colspan="3"><span id="spAuthSpan">-</span></td>
+                                <td colspan="2"><span id="spAuthSpan">-</span></td>
+                                <td colspan="2"><span id="spBonus"></span></td>
                             </tr>
                             <tr class="red lighten-2 white-text">
                                 <td colspan="2">Total temps perdu : <span id="ttpSpan"></span> H</td>
-                                <td colspan="4">Total d'argent perdu : <span id="tapSpan"></span> FCFA (<span id="papSpan"></span>%)</td>
+                                <td colspan="3">Total d'argent perdu : <span id="tapSpan"></span> FCFA (<span id="papSpan"></span>%)</td>
+                                <td colspan="1" class="blue lighten-2 white-text">Salaire équivalent (avec Bonus): <span id="tBonusSpan"></span> FCFA </td>
                             </tr>
                         </table>
                     </div>
@@ -687,37 +696,51 @@
                                 $("#quotaTotalSpan").text(precisionRound(data.quota_fait/60,1)+"/"+data.quota_total/60);
                                 var stp = 0;
                                 var ttp = 0;
+                                var sal_bonus = 0;
 
                                 if(type == 2 || type == "2"){
                                     $("#nbreAuthInc").text(data.inc_auth);
+                                    $("#nbreBonus").text(data.nbreeBonus);
                                     $("#tpaSpan").text(precisionRound(data.tpa,2)+" H");
                                     $("#tprSpan").text(precisionRound(data.tpr,2)+" H");
                                     $("#tpdSpan").text(precisionRound(data.tpd,2));
+                                    $("#tpBonus").text(precisionRound(data.tpBonus,2)+ "H");
                                     $("#sprSpan").text(precisionRound(data.spr,2));
                                     $("#spdSpan").text(precisionRound(data.spd,2));
                                     $("#spaSpan").text(precisionRound(data.spa,2));
+                                    $("#spBonus").text(precisionRound(data.smeBonus,2));
+
                                     stp = data.spa+data.spr+data.spd+data.spAuth;
                                     ttp = data.tpa+data.tpr+data.tpd+data.lost_time;
+                                    sal_bonus = data["salTotal"] - stp + precisionRound(data.smeBonus,2);
                                 }else if(type == 3 || type == "3"){
                                     $("#nbreAuthInc").text(data.inc_auth);
+                                    $("#nbreBonus").text(data.nbreeBonus);
                                     $("#tpaSpan").text("-");
                                     $("#tprSpan").text(precisionRound(data.tpr,2)+" H");
                                     $("#tpdSpan").text(precisionRound(data.tpd,2)+" H");
+                                    $("#tpBonus").text(precisionRound(data.tpBonus,2)+ "H");
                                     $("#sprSpan").text(precisionRound(data.spr,2));
                                     $("#spdSpan").text(precisionRound(data.spd,2));
                                     $("#spaSpan").text(precisionRound(data.spa,2));
+                                    $("#spBonus").text(precisionRound(data.smeBonus,2));
                                     stp = data.spa+data.spr+data.spd+data.spAuth;
                                     ttp = data.tpa+data.tpr+data.tpd+data.lost_time;
+                                    sal_bonus = data["salTotal"] - stp + precisionRound(data.smeBonus,2);
                                 }else{
                                     $("#nbreAuthInc").text(data.inc_auth);
+                                    $("#nbreBonus").text(data.nbreeBonus);
                                     $("#tpaSpan").text(precisionRound(data.tpa,2)+" H");
                                     $("#tprSpan").text(precisionRound(data.tpr,2)+" H");
                                     $("#tpdSpan").text(precisionRound(data.tpd,2)+" H");
+                                    $("#tpBonus").text(precisionRound(data.tpBonus,2) + "H");
                                     $("#sprSpan").text(precisionRound(data.spr,2));
                                     $("#spdSpan").text(precisionRound(data.spd,2));
                                     $("#spaSpan").text(precisionRound(data.spa,2));
+                                    $("#spBonus").text(precisionRound(data.smeBonus,2));
                                     stp = data.spa+data.spr+data.spd+data.spAuth;
                                     ttp = data.tpa+data.tpr+data.tpd+data.lost_time;
+                                    sal_bonus = data["salTotal"] - stp + precisionRound(data.smeBonus,2);
                                 }
                                 $("#nbreAuthInc").text(data.inc_auth);
                                 $("#tpAuthSpan").text(precisionRound(data.lost_time,2)+" H");
@@ -725,7 +748,11 @@
                                 $("#spaSpan").text(precisionRound(data.spa,2));
                                 $("#tapSpan").text(precisionRound(stp,2));
                                 $("#ttpSpan").text(precisionRound(ttp,2));
+                                $("#tBonusSpan").text(precisionRound(sal_bonus,2));
                                 $("#papSpan").text(precisionRound(((stp/salary)*100),2));
+
+
+
 
 
                                 //var res = JSON.parse(data.test);
@@ -1079,7 +1106,7 @@
                                                  $("#rowsContainer").append("" +
                                                      "<tr>" +
                                                      "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
-                                                     "<td colspan='4' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence2</span></td>" +
+                                                     "<td colspan='4' class='center gray lighten-3 white-text'><span style='font-weight:bold;color:red'> Absence</span></td>" +
                                                      "</tr>"
                                                  );
                                              }
@@ -1460,14 +1487,16 @@
                                                 totSomRaj += precisionRound((data.permissionData[id][el].tempsPerdu*(salary/nbt/losedTime)),0);
                                             }
 
-                                            $("#tabPermissions").append("" +
-                                                "<tr>" +
-                                                "<td>"+data.permissionData[id][el].date+"</td>" +
-                                                "<td>"+data.permissionData[id][el].type+"</td>" +
-                                                "<td>"+losedTime+" H </td>"+
-                                                "<td>"+precisionRound((data.permissionData[id][el].tempsPerdu * (salary/nbt/losedTime)),0)+"</td>" +
-                                                "</tr>"
-                                            );
+                                            if(((data.permissionData[id][el].type)+"").includes("Permission") ){
+                                                $("#tabPermissions").append("" +
+                                                    "<tr>" +
+                                                    "<td>"+data.permissionData[id][el].date+"</td>" +
+                                                    "<td>"+data.permissionData[id][el].type+"</td>" +
+                                                    "<td>"+losedTime+" H </td>"+
+                                                    "<td>"+precisionRound((data.permissionData[id][el].tempsPerdu * (salary/nbt/losedTime)),0)+"</td>" +
+                                                    "</tr>"
+                                                );
+                                            }
 
                                             $("#tblePerm").show();
                                         } else {

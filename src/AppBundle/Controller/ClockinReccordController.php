@@ -518,14 +518,15 @@ class ClockinReccordController extends EmployeController
     }
     public function plusAncien($recTab,ClockinRecord $element){
         //if(isset($recTab[$element->getEmploye()->getId()]["time_depart"]) && $recTab[$element->getEmploye()->getId()]["time_depart"] != null){
-        if($recTab[$element->getEmploye()->getId()]["time_depart"] == null){
+//        if($recTab[$element->getEmploye()->getId()]["time_depart"] == null ){
+//            return true;
+//        }
+//        else
+            if ($element->getClockinTime() > $recTab[$element->getEmploye()->getId()]["time_depart"] ){
             return true;
-        }
-        elseif ($element->getClockinTime() > $recTab[$element->getEmploye()->getId()]["time_depart"] ){
-                return true;
         }else{
-                return false;
-            }
+            return false;
+        }
         //}
     }
 
