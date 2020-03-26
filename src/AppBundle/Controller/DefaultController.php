@@ -876,7 +876,11 @@ class DefaultController extends StatsController
                 ->add('headoffice', TextType::class, array('label' => ' '))
                 ->add('employees', IntegerType::class, array('required' => false, 'label' => ' ',))
                 ->add('director', TextType::class, array('label' => ' '))
+<<<<<<< HEAD
                 ->add(utf8_decode("creer"), SubmitType::class);
+=======
+                ->add("creer", SubmitType::class);
+>>>>>>> parent of 0490b61... ÂMon Aug 26 17:07:49 GMT 2019
             // À partir du formBuilder, on génère le formulaire
 
             $form = $formBuilder->getForm();
@@ -1296,16 +1300,22 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
 
         set_time_limit(0);
 
+<<<<<<< HEAD
         /* not obliged to come - cell fill*/
         $not_supposed_to_come_styleArray =  [
+=======
+        /* not obliged to come - cell fill */
+        $styleArray =  [
+>>>>>>> parent of 0490b61... ÂMon Aug 26 17:07:49 GMT 2019
             'fill' => [
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                 'color' => [
-                    'argb' => 'FF03a9f4',
+                    'argb' => '03a9f4',
                 ]
             ],
         ];
 
+<<<<<<< HEAD
         $perm_date =  [
             'fill' => [
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
@@ -1324,6 +1334,8 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
             ],
         ];
 
+=======
+>>>>>>> parent of 0490b61... ÂMon Aug 26 17:07:49 GMT 2019
 
 //
 
@@ -1459,6 +1471,7 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
                     $spreadsheet->getActiveSheet()->getStyle($el . "" . ($nextNameCellNumber + 16))->getFill()->getStartColor()->setARGB('bdbdbd');
                 }
 
+<<<<<<< HEAD
                 /* if you are not supposed to come on this day*/
                 if ($this->checkIfEmployeePresenceIsNecessaryToday($emp, $nowTime)) {
                     $sheet->getStyle($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber -1).':'.$verticalCellsTab[$cpt] . '' . ($nextNameCellNumber + 5))
@@ -1479,6 +1492,14 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
 
 
 
+=======
+                /* get a function that check if this day is a normal coming day */
+                if ($this->checkIfEmployeePresenceIsNecessaryToday($emp, $nowTime)) {
+                    $sheet->getStyle($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber -1).':'.$verticalCellsTab[$cpt] . '' . ($nextNameCellNumber + 5))
+                        ->applyFromArray($styleArray);
+                }
+
+>>>>>>> parent of 0490b61... ÂMon Aug 26 17:07:49 GMT 2019
                 if ($his["arrive"] != null && $his["arrive"] != "") {
                     $sheet->setCellValue($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber + 2), $his["arrive"]);
                 } else {
@@ -1674,6 +1695,7 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
         return $res;
     }
 
+<<<<<<< HEAD
     private function checkIfDayIsNull($nowTime)
     {
 
@@ -1696,4 +1718,6 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
 //        return false;
     }
 
+=======
+>>>>>>> parent of 0490b61... ÂMon Aug 26 17:07:49 GMT 2019
 }

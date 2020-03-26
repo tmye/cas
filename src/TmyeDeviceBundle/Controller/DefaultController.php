@@ -13,9 +13,9 @@ class DefaultController extends BaseController
      */
     public function indexAction()
     {
-
         $dateTime = new \DateTime();
         print_r($dateTime);
         exit;
     }
+
 }
