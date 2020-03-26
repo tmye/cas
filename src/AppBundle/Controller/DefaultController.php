@@ -1300,7 +1300,7 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
             'fill' => [
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                 'color' => [
-                    'argb' => 'FF03a9f4',
+                    'argb' => '03a9f4',
                 ]
             ],
         ];
