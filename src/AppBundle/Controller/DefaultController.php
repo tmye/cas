@@ -877,7 +877,11 @@ class DefaultController extends StatsController
                 ->add('employees', IntegerType::class, array('required' => false, 'label' => ' ',))
                 ->add('director', TextType::class, array('label' => ' '))
 <<<<<<< HEAD
+<<<<<<< HEAD
                 ->add(utf8_decode("creer"), SubmitType::class);
+=======
+                ->add("creer", SubmitType::class);
+>>>>>>> parent of 0490b61... ÂMon Aug 26 17:07:49 GMT 2019
 =======
                 ->add("creer", SubmitType::class);
 >>>>>>> parent of 0490b61... ÂMon Aug 26 17:07:49 GMT 2019
@@ -1301,8 +1305,13 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
         set_time_limit(0);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         /* not obliged to come - cell fill*/
         $not_supposed_to_come_styleArray =  [
+=======
+        /* not obliged to come - cell fill */
+        $styleArray =  [
+>>>>>>> parent of 0490b61... ÂMon Aug 26 17:07:49 GMT 2019
 =======
         /* not obliged to come - cell fill */
         $styleArray =  [
@@ -1311,6 +1320,7 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                 'color' => [
                     'argb' => '03a9f4',
+<<<<<<< HEAD
                 ]
             ],
         ];
@@ -1321,10 +1331,13 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                 'color' => [
                     'argb' => '81C784',
+=======
+>>>>>>> parent of 0490b61... ÂMon Aug 26 17:07:49 GMT 2019
                 ]
             ],
         ];
 
+<<<<<<< HEAD
         $nullDayStyleArray =  $styleArray = [
             'borders' => [
                 'outline' => [
@@ -1334,6 +1347,8 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
             ],
         ];
 
+=======
+>>>>>>> parent of 0490b61... ÂMon Aug 26 17:07:49 GMT 2019
 =======
 >>>>>>> parent of 0490b61... ÂMon Aug 26 17:07:49 GMT 2019
 
@@ -1472,6 +1487,7 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
                 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
                 /* if you are not supposed to come on this day*/
                 if ($this->checkIfEmployeePresenceIsNecessaryToday($emp, $nowTime)) {
                     $sheet->getStyle($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber -1).':'.$verticalCellsTab[$cpt] . '' . ($nextNameCellNumber + 5))
@@ -1492,6 +1508,14 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
 
 
 
+=======
+                /* get a function that check if this day is a normal coming day */
+                if ($this->checkIfEmployeePresenceIsNecessaryToday($emp, $nowTime)) {
+                    $sheet->getStyle($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber -1).':'.$verticalCellsTab[$cpt] . '' . ($nextNameCellNumber + 5))
+                        ->applyFromArray($styleArray);
+                }
+
+>>>>>>> parent of 0490b61... ÂMon Aug 26 17:07:49 GMT 2019
 =======
                 /* get a function that check if this day is a normal coming day */
                 if ($this->checkIfEmployeePresenceIsNecessaryToday($emp, $nowTime)) {
@@ -1696,6 +1720,7 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     private function checkIfDayIsNull($nowTime)
     {
 
@@ -1718,6 +1743,8 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
 //        return false;
     }
 
+=======
+>>>>>>> parent of 0490b61... ÂMon Aug 26 17:07:49 GMT 2019
 =======
 >>>>>>> parent of 0490b61... ÂMon Aug 26 17:07:49 GMT 2019
 }

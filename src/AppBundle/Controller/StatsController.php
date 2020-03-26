@@ -2087,10 +2087,13 @@ class StatsController extends ClockinReccordController
 
     /**
 <<<<<<< HEAD
+<<<<<<< HEAD
      * @Route("/userStatsPDF",name="userStatsPDF")
      */
     public function userStatsActionPDF(Request $request,$empId=null,$fromeDate=null,$toDate=null,$sel=null){
 =======
+=======
+>>>>>>> parent of 0490b61... ÂMon Aug 26 17:07:49 GMT 2019
      * @Route("/userStats",name="userStats")ge
     */
     public function userStatsAction(Request $request,$empId=null,$fromeDate=null,$toDate=null){
