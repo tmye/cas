@@ -528,6 +528,7 @@ class StatsController extends ClockinReccordController
                                 $tabAbsencesPermission[]= array("date"=>$nowDate,"heureDepart"=>null,"tempsTotal"=>$tempsTPP,"type"=>"Permission","tempsPerdu"=>$tempPP);
                             }
 
+
                         } else {
                             ///sil n'est pas en permission => absence
                             $absences++;
@@ -2086,21 +2087,9 @@ class StatsController extends ClockinReccordController
     }
 
     /**
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
      * @Route("/userStatsPDF",name="userStatsPDF")
      */
     public function userStatsActionPDF(Request $request,$empId=null,$fromeDate=null,$toDate=null,$sel=null){
-=======
-=======
->>>>>>> parent of 0490b61... ÂMon Aug 26 17:07:49 GMT 2019
-=======
->>>>>>> parent of 0490b61... ÂMon Aug 26 17:07:49 GMT 2019
-     * @Route("/userStats",name="userStats")ge
-    */
-    public function userStatsAction(Request $request,$empId=null,$fromeDate=null,$toDate=null){
->>>>>>> parent of 0490b61... ÂMon Aug 26 17:07:49 GMT 2019
 
         set_time_limit(0);
 
@@ -4328,7 +4317,6 @@ class StatsController extends ClockinReccordController
                 $stats = $this->userStatsActionPDF($request,$e->getId(),$dateFrom,$dateTo);
 
                 $stats = json_decode($stats->getContent(),true);
-
 
                 // Cette variable doit contenir les stats de l'employé courant
                 //$stats = $this->_userStatsAction($e, $dateFrom, $dateTo, $interval);
