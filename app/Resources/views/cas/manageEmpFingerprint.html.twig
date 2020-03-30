@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}C.A.S - Empreintes{% endblock %}
+
+{% block body %}
+
+    <!-- Modal for ajax loading -->
+    <div id="modal_loading" class="modal ajax_modals">
+        <div class="modal-content">
+            <p class="center">
+                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+            </p>
+        </div>
+    </div>
+
+    <!-- hidden input -->
+    <div style="display: none">
+        <select id="depSelected">
+            {% for dep in departements %}
+                <option value="{{ dep.id }}">{{ dep.id }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="row">
+        <div class="col l12">
+            <h5>Synchronisation des informations des employés</h5>
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header collapsible-header-title active">
+                                <span class="fa fa-hand-pointer fa-2x" style="color: #757575"></span>
+                                <span class="middle" style="position: relative;top: 8px;left: 25px">Mise à jour des empreintes</span>
+                            </div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <div class="col l12" id="main_form">
+                                        <span id="type1">
+                                            <div class="row firstOne">
+                                                <div class="col l12">
+                                                    <p>Mettre à jour les empreintes de tous les employés</p>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col l3">
+                                                    <div id="updateForAll" class="btn-floating btn-large waves-effect waves-light center green white-text thirdImage" style="padding: ">
+                                                        <span class="fa fa-sync"></span>
+                                                    </div>
+                                                    <span>Synchronisation</span>
+                                                </div>
+                                                <div class="col l4">
+                                                    <div id="cancelForAll" class="btn-floating btn-large waves-effect waves-light center red darken-4 white-text thirdImage" style="padding: ">
+                                                        <span class="fa fa-times-circle"></span>
+                                                    </div>
+                                                    <span>Annuler la synchronisation</span>
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function () {
+            $('.dropdown-button').dropdown({
+                    inDuration: 300,
+                    outDuration: 225,
+                    constrainWidth: false, // Does not change width of dropdown to that of the activator
+                    hover: true, // Activate on hover
+                    gutter: 0, // Spacing from edge
+                    belowOrigin: false, // Displays dropdown below the button
+                    alignment: 'left', // Displays dropdown with edge aligned to the left of button
+                    stopPropagation: false // Stops event propagation
+                }
+            );
+        });
+    </script>
+    <!-- Script pour les évenements de mise à jour -->
+    <script>
+        $(function () {
+            var tab = [];
+            $.each($("#depSelected").children(),function (arrayID) {
+                var el = $(this).attr("value");
+                tab.push(el);
+            });
+            console.log(tab);
+            $("#updateForAll").click(function () {
+                $('#modal_loading').modal('open');
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('syncEmpF') }}",
+                    data: {"deps":tab},
+                    success: function (data) {
+                        console.log(data);
+
+                        // Closing the loading box
+                        $('#modal_loading').modal('close');
+                    },
+                    error: function (msg) {
+                        // Closing the loading box
+                        $('#modal_loading').modal('close');
+                        alert("erreur");
+                        console.log(msg);
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

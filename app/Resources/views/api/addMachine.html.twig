@@ -1,0 +1,197 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent()~"Machine" }}
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col l12">
+            <h5 class="page-title"><span class="fa fa-laptop"></span> Machines enregistrées</h5>
+            <p class="description_message">Enrégistrez une nouvelle machine ou modifier une existante et attribuez la à des départements auparavent créés</p>
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Ajouter une nouvelle machine à la base de données</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                {% for message in  app.session.flashbag.get('notice') %}
+                                    <div class="row">
+                                        <div class="col l12">
+                                            <div class="operation_message">
+                                                {{ message }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                <div class="row">
+                                    <div class="col l12">
+                                        {{ form_start(form) }}
+                                        <div class="row">
+                                            <div class="input-field col s6">
+                                                <spn>Nom de la machine</spn>
+                                                {{ form_row(form.name, {'attr': {'class': 'input-customized','placeholder':'Nom de la machine'}}) }}
+                                            </div>
+                                            <div class="input-field col s6">
+                                                <spn>Identifiant de la machine</spn>
+                                                {{ form_row(form.machineId, {'attr': {'class': 'input-customized','placeholder':'Identifiant de la machine'}}) }}
+                                            </div>
+                                        </div>
+                                        <div class="row" style="position: relative;top: -40px">
+                                            <div class="input-field col s12">
+                                                <span>Description</span>
+                                                {{ form_row(form.description, {'attr': {'class': 'materialize-textarea','placeholder':'Description de la machine'}}) }}
+                                                <br>
+                                            </div>
+                                        </div>
+                                        <p style="margin-top: -50px">
+                                            <input type="checkbox" class="checkIt" id="filled-in-box" />
+                                            <label for="filled-in-box">Tous les départements</label>
+                                        </p>
+                                        <br><br>
+                                        <div class="row" style="position: relative;top: -40px">
+                                            <div class="input-field col s12">
+                                                {{ form_row(form.departements, {'attr': {'class': ''}}) }}
+                                            </div>
+                                        </div>
+                                        <div class="row" style="position: relative;top: -40px">
+                                            <div class="input-field col s12">
+                                                {{ form_widget(form.Ajouter, { 'label': 'Ajouter','attr': {'class':'btn'} }) }}
+                                            </div>
+                                        </div>
+                                        <div class="row" style="position: relative;top: -40px">
+                                            <div class="input-field col s12">
+                                                {{ form_rest(form) }}
+                                            </div>
+                                        </div>
+                                        {{ form_end(form) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Liste des machines présentes en base de données</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <div class="col l12">
+                                        <table class="centered striped bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Nom</th>
+                                                    <th>Machine Id</th>
+                                                    <th>Description</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            {% for machine in machines %}
+                                                <tr>
+                                                    <td>{{ machine.id }}</td>
+                                                    <td>{{ machine.name }}</td>
+                                                    <td>{{ machine.machineId }}</td>
+                                                    <td>{{ machine.description }}</td>
+                                                    <td>
+                                                        <a href="editMachine/{{ machine.id }}">
+                                                            <button class="simple-button-decoration blue"><span class="fa fa-pencil-alt white-text"></span></button>
+                                                        </a>
+                                                        <button class="simple-button-decoration red deleteMachine" identify="{{ machine.id }}"><span class="fa fa-trash white-text"></span></button>
+                                                        {% set deps ="" %}
+
+                                                        {% for mac in machine.departements %}
+                                                            {% set deps = deps~mac.name %}
+
+                                                            {% if not loop.last %}
+                                                                {% set deps = deps~"," %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        <button data-target="modal-formulaire{{ machine.id }}" class="simple-button-decoration green lighten-2 machineDep modal-trigger" deps="{{ deps }}" identify="{{ machine.id }}"><span class="fa fa-eye white-text"></span></button>
+                                                    </td>
+                                                </tr>
+                                                <div id="modal-formulaire{{ machine.id }}" class="modal modal-fixed-footer">
+                                                    <div class="modal-content">
+                                                        <h5>Liste des départements</h5>
+                                                        <hr>
+                                                        <p>Liste des départements en relation avec cette machine</p>
+                                                        <div class="row">
+                                                            <div class="col s12">
+                                                                <ol>
+                                                                    {% for m in machine.departements %}
+                                                                        <li>{{ m.name }}</li>
+                                                                    {% endfor %}
+                                                                </ol>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function () {
+            $('#form_Ajouter').click(function () {
+                if($('.select_dropdown').val() == undefined){
+                    //alert("Aucun département n'a été sélectionné");
+                }
+            });
+        });
+    </script>
+    <script>
+        $(function(){
+            $(".deleteMachine").click(function(){
+                var rep = confirm("Etes-vous sur de vouloir supprimer cette machine?");
+                var id = this.getAttribute('identify');
+                var path = "deleteMachine/";
+                path += id;
+                if(rep==true){
+                    //alert("inside true block");
+                    window.location.href = path;
+                }
+            });
+
+            /*$(".machineDep").click(function(){
+                var deps = this.getAttribute('deps');
+                alert("Liste des départements\n\n\t"+deps);
+            });*/
+        });
+    </script>
+    <script>
+        $(function(){
+            $(".checkIt").change(function() {
+                if(this.checked) {
+                    $('.select-wrapper').hide();
+                    $(".multiple-select-dropdown li span input:checkbox:not(:checked)").click();
+                }else{
+                    $('.select-wrapper').show();
+                    $(".multiple-select-dropdown li span").click();
+                }
+            });
+        });
+    </script>
+    <script>
+        // On s'attaque aux collapsibles
+        $(function () {
+            $(".cl_Mac").addClass("collapsible_element_active");
+            $(".navigation_collapsible").collapsible('open',6);
+        });
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}

@@ -1,0 +1,294 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}C.A.S - Accueil{% endblock %}
+
+{% block body %}
+    <!-- Modal for ajax loading -->
+    <div id="modal_loading" class="modal ajax_modals">
+        <div class="modal-content">
+            <p class="center">
+                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col l12">
+            <h5>Accueil</h5>
+            <a href="{{ path('historique_brute') }}" class="badge teal white-text right" style="padding: 2px 10px">
+                <span>Aujourd'hui</span>
+            </a>
+
+            <!-- Petites sections carrées -->
+
+            <div class="row">
+                <div class="col l12">
+                    <div class="card" style="padding: 20px;word-break: break-all;word-wrap: break-word">
+                        <div>
+                            {#   {%  if app.session.get('companyLogo') is defined and app.session.get('companyLogo') is not null %}
+                                   <img src="{{ asset("company_images/"~app.session.get('companyLogo')) }}" style="display:inline-block;vertical-align:middle;height: 100px;width: auto;border-radius: 0%">
+                               {% endif %}#}
+                            {#<h5 style="display: inline;vertical-align: middle;margin-left: 200px">TOGOCEL</h5>#}
+                            {#<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non massa nec dolor iaculis dapibus vitae at erat. Maecenas pretium vehicula aliquet. Nam tempor erat arcu, ac fringilla ligula ornare nec. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce sit amet purus in enim consectetur finibus. Ut tempus orci a libero porttitor pellentesque ac sit amet quam. Ut porttitor orci sit amet risus interdum, ut viverra felis accumsan. Morbi at commodo sem, eu feugiat magna. Aliquam sem tellus, rhoncus faucibus odio ut, blandit congue est. In malesuada, enim vel vehicula pellentesque, sem purus dignissim nibh, ut venenatis risus nibh at ex. Nullam hendrerit ligula ante, cursus suscipit arcu commodo sed. Praesent ultrices neque metus, ut accumsan sem.</p>#}
+
+                            {% include 'cas/home_presentation.html.twig' %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col l3 m6 s12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header collapsible-header-title active">Retards<span class="badge teal lighten-2 white-text spanRetard"></span></div>
+                            <div class="collapsible-body center">
+                                <a href="{{ path("depStat") }}" class="fa fa-th-list fa-4x red-text text-lighten-3"></a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col l3 m6 s12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Départs<span class="badge teal lighten-2 white-text spanDepart"></span></div>
+                            <div class="collapsible-body center">
+                                <a href="{{ path("depStat") }}" class="fa fa-paper-plane fa-4x teal-text text-lighten-3"></a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col l3 m6 s12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Permissions<span class="badge teal lighten-2 white-text spanPermission"></span></div>
+                            <div class="collapsible-body center">
+                                <a href="{{ path("viewPermission") }}" class="fa fa-th-list fa-4x grey-text text-lighten-3"></a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col l3 m6 s12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header active">Absences<span class="badge teal lighten-2 white-text spanAbsence"></span></div>
+                            <div class="collapsible-body center">
+                                <a href="{{ path("depStat") }}" class="fa fa-th-list fa-4x blue-text text-lighten-3"></a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Section du classement des tops -->
+
+            <div class="row">
+                <div class="col l6 m6 s12">
+                    <h5>Top retardataires</h5>
+                    <br>
+                    <span class="info_container_retards">
+                    </span>
+                </div>
+                <div class="col l6 m6 s12">
+                    <h5>Top départs prématurés</h5>
+                    <br>
+                    <span class="info_container_departs">
+                    </span>
+                </div>
+            </div>
+            <div class="fixed-action-btn" style="margin-bottom: 30px">
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path("manage") }}" class="btn-floating tooltipped pulse green btn-large" id="btnVerify" data-position="top" data-tooltip="Vérifier les mises à jours">
+                        <span class="fa fa-sync"></span>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $('.slider').slider({
+            indicators:true
+        });
+    </script>
+    <script>
+        function convertInHour(minutes) {
+            if(minutes>=60){
+                var hours = Math.trunc(minutes/60);
+                var min = minutes-(hours*60);
+                return hours+"H "+min;
+            }else{
+                return minutes;
+            }
+        }
+
+        function precisionRound(number, precision) {
+            var factor = Math.pow(10, precision);
+            return Math.round(number * factor) / factor;
+        }
+
+        // Recuperation des autres informations
+        $.ajax({
+            type: 'POST',
+            url: "{{ path('homeStats') }}",
+            success: function (data) {
+                console.log(data);
+                //console.log(data);
+                $(".spanRetard").text(data.retards);
+                $(".spanDepart").text(data.departs);
+                $(".spanPermission").text(data.permissions);
+                $(".spanAbsence").text(data.absences);
+
+                var tailleClassRet = Object.keys(data.classementRetard).length;
+                var tailleClassDep = Object.keys(data.classementDepart).length;
+                console.log(data.classementDepart);
+
+                var cpt =0;
+
+                console.log("taille du tableau de retards : "+tailleClassRet);
+                console.log("taille du tableau de departs : "+tailleClassDep);
+
+                // First of all we must convert the json object to an array
+                var tabR = [];
+                $.each(data.classementRetard,function (arrayID) {
+                    tabR.push([data.classementRetard[arrayID]["name"],data.classementRetard[arrayID]["cumul"],data.classementRetard[arrayID]["dep"],data.classementRetard[arrayID]["picture"]]);
+                });
+                var tabD = [];
+                $.each(data.classementDepart,function (arrayID) {
+                    tabD.push([data.classementDepart[arrayID]["name"],data.classementDepart[arrayID]["cumul"],data.classementDepart[arrayID]["dep"],data.classementDepart[arrayID]["picture"]]);
+                });
+
+                // Sorting the data to obtain just three entries
+                var tempTab = [];
+                for(var i=0;i<(tabR.length-1);i++){
+                    for(var j=0;j<(tabR.length-1);j++){
+                        if(tabR[j+1][1] > tabR[j][1]){
+                            tempTab = [tabR[j+1][0],tabR[j+1][1],tabR[j+1][2]];
+                            tabR[j+1] = [tabR[j][0],tabR[j][1],tabR[j][2]];
+                            tabR[j] = tempTab;
+                        }
+                    }
+
+                }
+                var tempTab = [];
+                for(var i=0;i<(tabD.length-1);i++){
+                    for(var j=0;j<(tabD.length-1);j++){
+                        if(tabD[j+1][1] > tabD[j][1]){
+                            tempTab = [tabD[j+1][0],tabD[j+1][1],tabD[j+1][2]];
+                            tabD[j+1] = [tabD[j][0],tabD[j][1],tabD[j][2]];
+                            tabD[j] = tempTab;
+                        }
+                    }
+
+                }
+
+                // Now that we have all tabs sorted,we can now show datas
+                // But before that we must verify if datas >= 3
+
+                console.log("Testing");
+                console.log("Testing End");
+
+                if(tabR.length >= 3){
+                    for (var i=0;i<3;i++){
+                        var image = null;
+                        if(tabR[i][3]==null || tabR[1][3]=="null"){
+                            image = "{{ asset('img/avatar.jpg') }}";
+                        }else{
+                            image = "user_profile_pictures/"+tabR[i][3];
+                        }
+                        $(".info_container_retards").append("" +
+                            "<div class='card' style='padding: 20px'>\n" +
+                            "    <img src='"+image+"' class='circle' width='50' height='50'/>\n" +
+                            "    <span class='top user-info-home'>\n" +
+                            "        <span class='grey-text text-darken-2'><b>"+tabR[i][0]+"</b></span>\n" +
+                            "        <br>\n" +
+                            "        <span>"+convertInHour(precisionRound(tabR[i][1],0))+"</span> min\n" +
+                            "        <br>\n" +
+                            "        <span><b>"+tabR[i][2]+"</b></span>\n" +
+                            "    </span>\n" +
+                            "</div>"
+                        );
+                    }
+                }else {
+                    $.each(tabR,function (arrayID) {
+                        var image = null;
+                        if(tabR[arrayID][3]==null || tabR[arrayID][3]=="null"){
+                            image = "{{ asset('img/avatar.jpg') }}";
+                        }else{
+                            image = "user_profile_pictures/"+tabR[arrayID][3];
+                        }
+                        $(".info_container_retards").append("" +
+                            "<div class='card' style='padding: 20px'>\n" +
+                            "    <img src='"+image+"' class='circle' width='50' height='50'/>\n" +
+                            "    <span class='top user-info-home'>\n" +
+                            "        <span class='grey-text text-darken-2'><b>"+tabR[arrayID][0]+"</b></span>\n" +
+                            "        <br>\n" +
+                            "        <span>"+convertInHour(precisionRound(tabR[arrayID][1],0))+"</span> min\n" +
+                            "        <br>\n" +
+                            "        <span><b>"+tabR[arrayID][2]+"</b></span>\n" +
+                            "    </span>\n" +
+                            "</div>"
+                        );
+                        console.log("Index : "+arrayID);
+                        cpt++;
+                    });
+                }
+
+                if(tabD.length >= 3){
+                    for (var i=0;i<3;i++){
+                        var image = null;
+                        if(tabD[i][3]==null || tabD[1][3]=="null"){
+                            image = "{{ asset('img/avatar.jpg') }}";
+                        }else{
+                            image = "user_profile_pictures/"+tabD[i][3];
+                        }
+                        $(".info_container_departs").append("" +
+                            "<div class='card' style='padding: 20px'>\n" +
+                            "    <img src='"+image+"' class='circle' width='50' height='50'/>\n" +
+                            "    <span class='top user-info-home'>\n" +
+                            "        <span class='grey-text text-darken-2'><b>"+tabD[i][0]+"</b></span>\n" +
+                            "        <br>\n" +
+                            "        <span>"+convertInHour(precisionRound(tabD[i][1],0))+"</span> min\n" +
+                            "        <br>\n" +
+                            "        <span><b>"+tabD[i][2]+"</b></span>\n" +
+                            "    </span>\n" +
+                            "</div>"
+                        );
+                    }
+                }else {
+                    $.each(tabD,function (arrayID) {
+                        var image = null;
+                        if(tabD[arrayID][3]==null || tabD[arrayID][3]=="null"){
+                            image = "{{ asset('img/avatar.jpg') }}";
+                        }else{
+                            image = "user_profile_pictures/"+tabD[arrayID][3];
+                        }
+                        $(".info_container_departs").append("" +
+                            "<div class='card' style='padding: 20px'>\n" +
+                            "    <img src='"+image+"' class='circle' width='50' height='50'/>\n" +
+                            "    <span class='top user-info-home'>\n" +
+                            "        <span class='grey-text text-darken-2'><b>"+tabD[arrayID][0]+"</b></span>\n" +
+                            "        <br>\n" +
+                            "        <span>"+convertInHour(precisionRound(tabD[arrayID][1],0))+"</span> min\n" +
+                            "        <br>\n" +
+                            "        <span><b>"+tabD[arrayID][2]+"</b></span>\n" +
+                            "    </span>\n" +
+                            "</div>");
+                        console.log("Index : "+arrayID);
+                        cpt++;
+                    });
+                }
+            },
+            error: function(msg) {
+                alert(msg);
+                console.log(msg);
+            }
+        });
+    </script>
+
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}

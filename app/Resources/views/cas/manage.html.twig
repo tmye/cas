@@ -1,0 +1,192 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}C.A.S - Gestion{% endblock %}
+
+{% block body %}
+
+    <!-- Modal for ajax loading -->
+    <div id="modal_loading" class="modal ajax_modals">
+        <div class="modal-content">
+            <p class="center">
+                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col l12">
+            <h5 class="page-title"><span class="fa fa-cogs"></span> Gestion globale du système</h5>
+
+            <div class="row">
+                <div class="col l12">
+                    <ul class="collapsible" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header collapsible-header-title active">Gestion du système</div>
+                            <div class="collapsible-body" style="padding-bottom: 0px">
+                                <div class="row">
+                                    <form class="col l12" id="main_form">
+                                        <span id="type1">
+                                            <div class="row firstOne">
+                                                <div class="col l12">
+                                                    <span>Choisissez une action à effectuer</span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col l6">
+                                                    <a href="{{ path("manageEmployee") }}" style="color: inherit">
+                                                        <p class="manageActions">
+                                                            <span class="fa fa-user left" style="position: relative;top: 2px"></span>
+                                                            Mise à jour des employés
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                                <div class="col l6">
+                                                    <a href="{{ path("manageEmpFingerprint") }}" style="color: inherit">
+                                                        <p class="manageActions">
+                                                            <span class="fa fa-hand-pointer left" style="position: relative;top: 2px"></span>
+                                                            Mise à jour des empreintes des employés
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col l6">
+                                                    <a href="{{ path("manageEmpProfilePicture") }}" style="color: inherit">
+                                                        <p class="manageActions">
+                                                            <span class="fa fa-images left" style="position: relative;top: 2px"></span>
+                                                            Mise à jour des photos de profil des employés
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                                <div class="col l6">
+                                                    <a href="{{ path("pubCovers") }}" style="color: inherit">
+                                                        <p class="manageActions">
+                                                            <span class="fa fa-images left" style="position: relative;top: 2px"></span>
+                                                            Mise à jour des images publicitaires
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col l6">
+                                                    <a href="{{ path("manageDepartement") }}" style="color: inherit">
+                                                        <p class="manageActions">
+                                                            <span class="fa fa-laptop left" style="position: relative;top: 2px"></span>
+                                                            Synchroniser les departements
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                                <div class="col l6">
+                                                    <a href="{{ path("manageSocietyName") }}" style="color: inherit">
+                                                        <p class="manageActions">
+                                                            <span class="fa fa-edit left" style="position: relative;top: 2px"></span>
+                                                            Modifier le nom de la société
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col l6">
+                                                    <a href="{{ path("expiry") }}" style="color: inherit">
+                                                        <p class="manageActions">
+                                                            <span class="fa fa-calendar-alt left" style="position: relative;top: 2px"></span>
+                                                            Gérer la date d'expiration
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                                <div class="col l3">
+                                                    <a href="{{ path("addAdmin") }}" style="color: inherit">
+                                                        <p class="manageActions">
+                                                            <span class="fa fa-user-circle left" style="position: relative;top: 2px"></span>
+                                                            Désigner un admin
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                                <div class="col l3">
+                                                    <a href="{{ path("roleChange") }}" style="color: inherit">
+                                                        <p class="manageActions">
+                                                            <span class="fa fa-user-circle left" style="position: relative;top: 2px"></span>
+                                                            Role de l'employé
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col l3">
+                                                    <a href="{{ path("manageDeleteData") }}" style="color: inherit">
+                                                        <p class="manageActions red">
+                                                            <span class="fa fa-trash left" style="position: relative;top: 2px"></span>
+                                                            Suppression
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                                <div class="col l3">
+                                                    <a href="{{ path("switch") }}" style="color: inherit">
+                                                        <p class="manageActions red">
+                                                            <span class="fa fa-laptop left" style="position: relative;top: 2px"></span>
+                                                            Gestion machines
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                                <div class="col l6">
+                                                    <a href="{{ path("addNewAdmin") }}" style="color: inherit">
+                                                        <p class="manageActions">
+                                                            <span class="fa fa-user-circle left" style="position: relative;top: 2px"></span>
+                                                            Ajouter un admin
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="fixed-action-btn" style="margin-bottom: 30px">
+                                              <a class="btn-floating tooltipped pulse green btn-large" id="btnSyncAll" data-position="top" data-tooltip="Tout mettre à jour">
+                                                <span class="fa fa-sync"></span>
+                                              </a>
+                                            </div>
+                                        </span>
+                                    </form>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function () {
+            $("#btnSyncAll").click(function () {
+                $('#modal_loading').modal('open');
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('syncAll') }}",
+                    success: function (data) {
+                        console.log(data);
+                        alert("Données mise à jour");
+                        // Closing the loading box
+                        $('#modal_loading').modal('close');
+                    },
+                    error: function (msg) {
+                        // Closing the loading box
+                        $('#modal_loading').modal('close');
+                        alert("erreur");
+                        console.log(msg);
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        // On s'attaque aux collapsibles
+        $(function () {
+            $(".cl_Manage").addClass("collapsible_element_active");
+            $(".navigation_collapsible").collapsible('open',6);
+        });
+    </script>
+{% endblock %}

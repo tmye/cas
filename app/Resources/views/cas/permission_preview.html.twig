@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}C.A.S - Test{% endblock %}
+
+{% block body %}
+    <div class="row permission_card" >
+        <div class="card col l5" style="background-color: #00b0ff;padding: 0px;">
+            <div  style="margin-left: 5px;background-color: white;">
+            <div  style="padding:10px">
+                <span><span class="fa fa-user"></span> <b style="font-weight: bold;font-size: 1em;text-transform: uppercase;">Adebayo Abiodoun</b></span>
+                <table class="permission_inner_table" style="padding: 0;border: none;width: 90%;">
+                    <tr>
+                        <td><span style="font-size: 0.8em;">Raison : Repos maladie</span></td>
+                        <td><span>Durée : </span><span style="font-size: 1em;color: red;font-weight: bold">01 Jours 03 heures</span></td>
+                    </tr>
+                    <tr>
+                        <td><span style="font-size: 0.8em;">Début: </span><span style="font-size: 1em;" class="blue-text">XX:XX:XX</span></td>
+                        <td><span style="font-size: 0.8em;">Fini: </span><span style="font-size: 1em;" class="blue-text">XX:XX:XX</span></td>
+                    </tr>
+                </table>
+
+
+                <p style="font-size: 0.8em;"><span>Description : </span><span style="font-size: 1em;color: grey ;font-weight: bold">We hope you have enjoyed using Materialize and if you feel like it has helped you out and want to support the team you.
+</span></p>
+                <p> <span style="font-size: 0.8em;">Permission demandée le : </span><span class="blue-text">XX:XX:XX</span></p>
+                {#<a href="{{ path('grantPermision',{'id':9}) }}"><button class="simple-button-decoration green lighten-1 white-text"><span class="fa fa-check"></span> Accorder</button></a>#}
+                {#<a href="{{ path('rejectPermision',{'id':9}) }}"><button class="deleteDep simple-button-decoration red lighten-1 white-text"><span class="fa fa-times"></span> Refuser</button></a>#}
+                {#<a href="{{ path('generatePDFPermission',{'id':9}) }}"><button class="simple-button-decoration green darken-3 white-text"><span class="fa fa-print"></span></button></a>#}
+
+                <a href="{{ path('grantPermision',{'id':9}) }}" class="btn-floating btn-small waves-effect waves-light green"><i class="fa fa-check"></i></a>
+                <a href="{{ path('rejectPermision',{'id':9}) }}" class="deleteDep btn-floating btn-small waves-effect waves-light red"><i class="fa fa-times"></i></a>
+
+
+                <a style="position: absolute;right: 10px;bottom: 10px;" href="{{ path('generatePDFPermission',{'id':9}) }}" class="btn-floating btn-small waves-effect waves-light teal"><i class="fa fa-print"></i></a>
+
+                <p style="font-size: 0.7em;color: teal;"><span class="fa fa-calendar-alt"></span>XX::XX:XX</p>
+            </div>
+        </div>
+    </div>
+    </div>
+
+{% endblock %}
+
