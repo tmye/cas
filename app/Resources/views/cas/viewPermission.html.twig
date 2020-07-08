@@ -86,7 +86,7 @@
                                                                 <table class="permission_inner_table" style="padding: 0;border: none;width: 90%;">
                                                                     <tr>
                                                                         <td><span style="font-size: 0.8em;">Raison : {{ permissions_type[perm.type] }}</span></td>
-                                                                        <td><span>Durée : </span><span style="font-size: 1em;color: red;font-weight: bold"> {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days %}
+                                                                        <td><span>Durée : </span><span style="font-size: 1em;color: red;font-weight: bold"> {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days + 1 %}
                                                                                 {% set nbreHeures = date(perm.DateTo | date).diff(perm.DateFrom)|date('%h') %}
                                                                                 {{ nbreJours~" Jours "~nbreHeures~" Heures" }}</span></td>
                                                                     </tr>
@@ -138,7 +138,7 @@
                                                                 <table class="permission_inner_table" style="padding: 0;border: none;width: 90%;">
                                                                     <tr>
                                                                         <td><span style="font-size: 0.8em;">Raison : {{ permissions_type[perm.type] }}</span></td>
-                                                                        <td><span>Durée : </span><span style="font-size: 1em;color: red;font-weight: bold"> {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days %}
+                                                                        <td><span>Durée : </span><span style="font-size: 1em;color: red;font-weight: bold"> {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days + 1 %}
                                                                                 {% set nbreHeures = date(perm.DateTo | date).diff(perm.DateFrom)|date('%h') %}
                                                                                 {{ nbreJours~" Jours "~nbreHeures~" Heures" }}</span></td>
                                                                     </tr>
@@ -151,10 +151,9 @@
 
                                                                 <p style="font-size: 0.8em;"><span>Description : </span><span style="font-size: 1em;color: grey ;font-weight: bold">{{ perm.description }}</span></p>
                                                                 {#<p> <span style="font-size: 0.8em;">Permission demandée le : </span><span class="blue-text">XX:XX:XX</span></p>#}
-
-                                                                <a href="{{ path('grantPermision',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light green"><i class="fa fa-check"></i></a>
-                                                                <a href="{{ path('rejectPermision',{'id':perm.id})}}" class="deleteDep btn-floating btn-small waves-effect waves-light red"><i class="fa fa-times"></i></a>
-
+                                                                {% if perm.state == 0 or perm.state == 2 %}
+                                                                    <a href="{{ path('grantPermision',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light green"><i class="fa fa-check"></i></a>
+                                                                {% endif %}
 
                                                                 <a style="position:absolute;right: 10px;bottom: 10px;" href="{{ path('generatePDFPermission',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light teal"><i class="fa fa-print"></i></a>
 
@@ -189,7 +188,7 @@
                                                                 <table class="permission_inner_table" style="padding: 0;border: none;width: 90%;">
                                                                     <tr>
                                                                         <td><span style="font-size: 0.8em;">Raison : {{ permissions_type[perm.type] }}</span></td>
-                                                                        <td><span>Durée : </span><span style="font-size: 1em;color: red;font-weight: bold"> {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days %}
+                                                                        <td><span>Durée : </span><span style="font-size: 1em;color: red;font-weight: bold"> {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days +1 %}
                                                                                 {% set nbreHeures = date(perm.DateTo | date).diff(perm.DateFrom)|date('%h') %}
                                                                                 {{ nbreJours~" Jours "~nbreHeures~" Heures" }}</span></td>
                                                                     </tr>
@@ -203,9 +202,14 @@
                                                                 <p style="font-size: 0.8em;"><span>Description : </span><span style="font-size: 1em;color: grey ;font-weight: bold">{{ perm.description }}</span></p>
                                                                 {#<p> <span style="font-size: 0.8em;">Permission demandée le : </span><span class="blue-text">XX:XX:XX</span></p>#}
 
-                                                                <a href="{{ path('grantPermision',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light green"><i class="fa fa-check"></i></a>
-                                                                <a href="{{ path('rejectPermision',{'id':perm.id})}}" class="deleteDep btn-floating btn-small waves-effect waves-light red"><i class="fa fa-times"></i></a>
+                                                                {# if the stat is not waiting, then we have nothing to do here #}
+                                                                {% if perm.state == 0 %}
+                                                                    <a href="{{ path('grantPermision',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light green"><i class="fa fa-check"></i></a>
+                                                                {% endif %}
 
+                                                                {% if perm.state == 0 or perm.state == 2 %}
+                                                                    <a href="{{ path('rejectPermision',{'id':perm.id})}}" class="deleteDep btn-floating btn-small waves-effect waves-light red"><i class="fa fa-times"></i></a>
+                                                                {% endif %}
 
                                                                 <a style="position:absolute;right: 10px;bottom: 10px;" href="{{ path('generatePDFPermission',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light teal"><i class="fa fa-print"></i></a>
 

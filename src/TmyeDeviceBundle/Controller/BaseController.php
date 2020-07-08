@@ -115,9 +115,29 @@ class BaseController extends Controller
                     $dayLibelle = "samedi";
                 }
 
+                // check if the employee is supposed to work on this day
                 if (($wh_array[$dayLibelle][0]["type"] != "null"))  {
                     $totalPermissionsDays++;
                 }
+            }
+        }
+        return $totalPermissionsDays;
+
+    }
+
+    public function permissionsDaysWithoutCheckWorkingTime ($permissions){
+
+        $totalPermissionsDays = 0;
+        foreach ($permissions as $permission) {
+
+            // day that starts the time stamp
+            $permissionDayStart =  strtotime(date('Y-m-d',$permission->getDateFrom()->getTimestamp()));
+            $permissionDayEnd =  strtotime(date('Y-m-d',$permission->getDateTo()->getTimestamp())) + 86400-1;
+
+            // we can move one day at the time until the permission is ended
+            for ($dayTimeStamp = $permissionDayStart; $dayTimeStamp < $permissionDayEnd; $dayTimeStamp+=86400) {
+
+                $totalPermissionsDays++;
             }
         }
         return $totalPermissionsDays;

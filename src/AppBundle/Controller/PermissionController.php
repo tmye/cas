@@ -62,9 +62,9 @@ class PermissionController extends BaseController {
                     return $typeChoices[$choice];
                 } ))
                 ->add('description', TextType::class,array('label'=>' '))
-                ->add('dateFrom', DateTimeType::class,array('widget'=>'single_text','label'=>' '))
+                ->add('dateFrom', TextType::class,array('label'=>' '))
                 ->add('timeFrom', TextType::class,array('label'=>' '))
-                ->add('dateTo', DateTimeType::class,array('widget'=>'single_text','label'=>' '))
+                ->add('dateTo', TextType::class,array('label'=>' '))
                 ->add('timeTo', TextType::class,array('label'=>' '))
                 ->add('employee',EntityType::class,array(
                     'label'=>' ',
@@ -460,7 +460,7 @@ class PermissionController extends BaseController {
 
             // compute the quantity of time that its make
             $permissionInTimePeriodz[$emp]["time"] = $this->permissionsTime($myPermissions);
-            $permissionInTimePeriodz[$emp]["daysCount"] = $this->permissionsDays($myPermissions);
+            $permissionInTimePeriodz[$emp]["daysCount"] = $this->permissionsDaysWithoutCheckWorkingTime($myPermissions);
 
             $type1Permission = [];
             $type2Permission = [];
@@ -489,9 +489,9 @@ class PermissionController extends BaseController {
             $permissionInTimePeriodz[$emp]["type_2_time"] = $this->permissionsTime($type2Permission);
             $permissionInTimePeriodz[$emp]["type_3_time"] = $this->permissionsTime($type3Permission);
 
-            $permissionInTimePeriodz[$emp]["type_1_days"] = $this->permissionsDays($type1Permission);
-            $permissionInTimePeriodz[$emp]["type_2_days"] = $this->permissionsDays($type2Permission);
-            $permissionInTimePeriodz[$emp]["type_3_days"] = $this->permissionsDays($type3Permission);
+            $permissionInTimePeriodz[$emp]["type_1_days"] = $this->permissionsDaysWithoutCheckWorkingTime($type1Permission);
+            $permissionInTimePeriodz[$emp]["type_2_days"] = $this->permissionsDaysWithoutCheckWorkingTime($type2Permission);
+            $permissionInTimePeriodz[$emp]["type_3_days"] = $this->permissionsDaysWithoutCheckWorkingTime($type3Permission);
         }
 
         $tmp = [];
@@ -567,7 +567,7 @@ class PermissionController extends BaseController {
             $sheet->setCellValue('A' . ($nextNameCellNumber - 1), "TYPE");
             $sheet->setCellValue('B' . ($nextNameCellNumber - 1), "DEBUT");
             $sheet->setCellValue('C' . ($nextNameCellNumber - 1), "FIN");
-            $sheet->setCellValue('D' . ($nextNameCellNumber - 1), "DUREE (H)");
+            $sheet->setCellValue('D' . ($nextNameCellNumber - 1), "DUREE (H) / Heures de travail");
             $sheet->setCellValue('E' . ($nextNameCellNumber - 1), "NOMBRE DE JOURS");
             $sheet->setCellValue('F' . ($nextNameCellNumber - 1), "DESCRIPTION");
             $sheet->setCellValue('G' . ($nextNameCellNumber - 1), "DATE DE DEMANDE");
@@ -584,7 +584,7 @@ class PermissionController extends BaseController {
                 $sheet->setCellValue('B' . ($nextNameCellNumber - 1), date('Y-m-d',$permission->getDateFrom()->getTimestamp()).' '.$permission->getTimeFrom());
                 $sheet->setCellValue('C' . ($nextNameCellNumber - 1), date('Y-m-d',$permission->getDateTo()->getTimestamp()).' '.$permission->getTimeTo());
                 $sheet->setCellValue('D' . ($nextNameCellNumber - 1), $this->permissionsTime([$permission]));
-                $sheet->setCellValue('E' . ($nextNameCellNumber - 1), $this->permissionsDays([$permission]));
+                $sheet->setCellValue('E' . ($nextNameCellNumber - 1), $this->permissionsDaysWithoutCheckWorkingTime([$permission]));
                 $sheet->setCellValue('F' . ($nextNameCellNumber - 1), $permission->getDescription());
                 $sheet->setCellValue('G' . ($nextNameCellNumber - 1), date('Y-m-d H:i',$permission->getCreateTime()->getTimestamp()));
             }
@@ -595,7 +595,7 @@ class PermissionController extends BaseController {
             $sheet->setCellValue('A' . ($nextNameCellNumber), "CUMULÉS TOTAL HEURES");
             $sheet->setCellValue('B' . ($nextNameCellNumber), $this->permissionsTime($permissionInTimePeriod["permissions"]));
             $sheet->setCellValue('A' . ($nextNameCellNumber+1 ), "NOMBRE TOTAL JOURS");
-            $sheet->setCellValue('B' . ($nextNameCellNumber+1 ), $this->permissionsDays($permissionInTimePeriod["permissions"]));
+            $sheet->setCellValue('B' . ($nextNameCellNumber+1 ), $this->permissionsDaysWithoutCheckWorkingTime($permissionInTimePeriod["permissions"]));
 
             // these final cells must be in orange
             $sheet->getStyle('A' . ($nextNameCellNumber - 1).':'.'B' . ($nextNameCellNumber +1))
