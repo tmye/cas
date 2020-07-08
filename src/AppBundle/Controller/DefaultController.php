@@ -1232,40 +1232,38 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
     public function returnVerticalCells($numberOfDays)
     {
         $result_array = array();
-        $arrayOfAlphabet = array('C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'A', 'B');
+        $arrayOfAlphabet = array( 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'A', 'B','C');
         $normalArrayOfAlphabet = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
-        //$restOfDivision = $numberOfDays%26;
-        $numberOfPossibleDivision = (int)($numberOfDays / 26);
-        $tour = $numberOfPossibleDivision + 1;
-        $currentTour = 1;
-        $j = 0;
-        $i = 0;
-        for ($cpt = 0; $cpt < $tour; $cpt++) {
-            while ($i <= $numberOfDays) {
-                if ($currentTour == 1) {
-                    if ($i < 23) {
-                        $result_array [] = $arrayOfAlphabet[$i];
-                    } else if ($i == 23) {
-                        $result_array [] = $arrayOfAlphabet[$i];
-                        $numberOfDays -= 24;
-                        $currentTour++;
-                        $i = 0;
-                    }
+
+$done = false;
+
+//echo "nombre of days $numberOfDays<br/>";
+
+        for ($i = 0; $i < count($arrayOfAlphabet) && !$done; $i++) {
+
+            for ($j = 0; $j < count($normalArrayOfAlphabet) && !$done; $j++) {
+
+                // first round is relax
+                if ($i == 0) {
+                    array_push($result_array, $normalArrayOfAlphabet[$j]);
                 } else {
-                    if ($i < 26) {
-                        $result_array [] = $normalArrayOfAlphabet[$j] . "" . $normalArrayOfAlphabet[$i - 1];
-                    } else if ($i == 26) {
-                        $result_array [] = $normalArrayOfAlphabet[$j] . "" . $normalArrayOfAlphabet[$i - 1];
-                        $numberOfDays -= 26;
-                        $currentTour++;
-                        $i = 0;
-                        $j++;
-                    }
+
+                    array_push($result_array, $normalArrayOfAlphabet[$i-1].$normalArrayOfAlphabet[$j]);
                 }
-                $i++;
+
+                if ($numberOfDays <= $i*26+$j) {
+                    $done = true;
+                    break;
+                }
             }
-            //$j++;
+            if ($numberOfDays <= $i*26+$j) {
+                $done = true;
+                break;
+            }
         }
+
+//        echo "res array  ".count($result_array)."<br/>";
+
         return $result_array;
     }
 
@@ -1347,7 +1345,6 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
             ],
         ];
 
-        $this->returnVerticalCells(80);
         $t = $request->request->get('type');
         $empId = $request->request->get('destination');
         $dateType = $request->request->get('dateType');
@@ -1413,6 +1410,8 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
         array_push($newTab, "A");
         array_push($newTab, "B");
 
+
+
         foreach ($empId as $emp) {
             set_time_limit(0);
             $nowTime = $timeFrom;
@@ -1443,39 +1442,46 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
                 $permission_lost_time += $row["tempsPerdu"];
             }
 
-            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber - 1))->applyFromArray($boldStyle);
-            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 2))->applyFromArray($boldStyle);
-            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 3))->applyFromArray($boldStyle);
-            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 4))->applyFromArray($boldStyle);
-            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 5))->applyFromArray($boldStyle);
-
-            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 7))->applyFromArray($boldStyle);
-            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 8))->applyFromArray($boldStyle);
-            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 9))->applyFromArray($boldStyle);
-            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 10))->applyFromArray($boldStyle);
-            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 12))->applyFromArray($boldStyle);
-            $spreadsheet->getActiveSheet()->getStyle('A' . ($nextNameCellNumber + 13))->applyFromArray($boldStyle);
             $spreadsheet->getActiveSheet()->getStyle('B' . ($nextNameCellNumber - 1))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('B' . ($nextNameCellNumber + 2))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('B' . ($nextNameCellNumber + 3))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('B' . ($nextNameCellNumber + 4))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('B' . ($nextNameCellNumber + 5))->applyFromArray($boldStyle);
+
+            $spreadsheet->getActiveSheet()->getStyle('B' . ($nextNameCellNumber + 7))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('B' . ($nextNameCellNumber + 8))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('B' . ($nextNameCellNumber + 9))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('B' . ($nextNameCellNumber + 10))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('B' . ($nextNameCellNumber + 12))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('B' . ($nextNameCellNumber + 13))->applyFromArray($boldStyle);
+            $spreadsheet->getActiveSheet()->getStyle('C' . ($nextNameCellNumber - 1))->applyFromArray($boldStyle);
 
             $sheet->getColumnDimension("A")->setWidth(16);
             $sheet->getColumnDimension("B")->setWidth(16);
+            $sheet->getColumnDimension("C")->setWidth(16);
 
-            $sheet->setCellValue('A' . ($nextNameCellNumber - 1), "NOM");
-            $sheet->setCellValue('A' . ($nextNameCellNumber + 2), "Arrivée");
-            $sheet->setCellValue('A' . ($nextNameCellNumber + 3), "Pause");
-            $sheet->setCellValue('A' . ($nextNameCellNumber + 4), "Reprise");
-            $sheet->setCellValue('A' . ($nextNameCellNumber + 5), "Départ");
+            $sheet->setCellValue('B' . ($nextNameCellNumber - 1), "NOM");
+            $sheet->setCellValue('B' . ($nextNameCellNumber + 2), "Arrivée");
+            $sheet->setCellValue('B' . ($nextNameCellNumber + 3), "Pause");
+            $sheet->setCellValue('B' . ($nextNameCellNumber + 4), "Reprise");
+            $sheet->setCellValue('B' . ($nextNameCellNumber + 5), "Départ");
 
-            $sheet->setCellValue('A' . ($nextNameCellNumber + 7), "NOMBRE D'ABSENCES : " . $donnees["absences"]);
-            $sheet->setCellValue('A' . ($nextNameCellNumber + 8), "NOMBRE DE RETARDS : " . $donnees["retards"]);
-            $sheet->setCellValue('A' . ($nextNameCellNumber + 9), "NOMBRE DE DEPARTS : " . $donnees["departs"]);
-            $sheet->setCellValue('A' . ($nextNameCellNumber + 10), "NOMBRE D'AUTH INC : " . $donnees["inc_auth"]);
-            $sheet->setCellValue('A' . ($nextNameCellNumber + 12), "TOTAL DES PERTES EN TEMPS : " . round($donnees["tpa"] + $donnees["tpr"] + $donnees["tpd"] + $donnees["lost_time"], 4) . " H");
-            $sheet->setCellValue('A' . ($nextNameCellNumber + 13), "TOTAL DES PERTES EN ARGENT : " . round($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"], 4) . " FCFA");
+            // request DAF SODIGAZ
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 2), $nextNameCellNumber, "MASCA");
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 3), $nextNameCellNumber, $employe->getSurname()." ".$employe->getLastName());
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 4), $nextNameCellNumber, $employe->getSurname()." ".$employe->getLastName());
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 5), $nextNameCellNumber, $employe->getSurname()." ".$employe->getLastName());
 
-            $sheet->setCellValue('B' . ($nextNameCellNumber - 1), "PRENOMS");
-            $sheet->setCellValue('A' . $nextNameCellNumber, $employe->getSurname());
-            $sheet->setCellValue('B' . $nextNameCellNumber, $employe->getLastName());
+            $sheet->setCellValue('B' . ($nextNameCellNumber + 7), "NOMBRE D'ABSENCES : " . $donnees["absences"]);
+            $sheet->setCellValue('B' . ($nextNameCellNumber + 8), "NOMBRE DE RETARDS : " . $donnees["retards"]);
+            $sheet->setCellValue('B' . ($nextNameCellNumber + 9), "NOMBRE DE DEPARTS : " . $donnees["departs"]);
+            $sheet->setCellValue('B' . ($nextNameCellNumber + 10), "NOMBRE D'AUTH INC : " . $donnees["inc_auth"]);
+            $sheet->setCellValue('B' . ($nextNameCellNumber + 12), "TOTAL DES PERTES EN TEMPS : " . round($donnees["tpa"] + $donnees["tpr"] + $donnees["tpd"] + $donnees["lost_time"], 4) . " H");
+            $sheet->setCellValue('B' . ($nextNameCellNumber + 13), "TOTAL DES PERTES EN ARGENT : " . round($donnees["spa"] + $donnees["spr"] + $donnees["spd"] + $donnees["spAuth"], 4) . " FCFA");
+
+            $sheet->setCellValue('C' . ($nextNameCellNumber - 1), "PRENOMS");
+            $sheet->setCellValue('B' . $nextNameCellNumber, $employe->getSurname());
+            $sheet->setCellValue('C' . $nextNameCellNumber, $employe->getLastName());
 
             for ($cpt = 0; $cpt <= $days; $cpt++) {
 
@@ -1489,6 +1495,7 @@ Dans l'attente d'une réponse favorable, Veuillez recevoir mes salutations les p
                 $spreadsheet->getActiveSheet()->getStyle($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber - 1))->applyFromArray($boldStyle);
                 $sheet->setCellValue($verticalCellsTab[$cpt] . '' . ($nextNameCellNumber - 1), date("d", $nowTime) . '/' . date("m", $nowTime));
 
+                $this->info("verticalTab $verticalCellsTab[$cpt] "."nextnamecell $nextNameCellNumber");
 
                 foreach ($newTab as $el) {
                     $spreadsheet->getActiveSheet()->getStyle($el . "" . ($nextNameCellNumber + 16))->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
