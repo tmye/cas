@@ -126,10 +126,11 @@ class StatsController extends ClockinReccordController
                 'listDep'=>$dep,
                 'listEmployee'=>$listEmployee
             ));
-        }else{
+        } else {
             return $this->redirectToRoute("login");
         }
     }
+
 
     /**
      * @Route("/userStats",name="userStats")

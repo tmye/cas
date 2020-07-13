@@ -1467,10 +1467,11 @@ $done = false;
             $sheet->setCellValue('B' . ($nextNameCellNumber + 5), "Départ");
 
             // request DAF SODIGAZ
-            $sheet->setCellValue('A' . ($nextNameCellNumber + 2), $nextNameCellNumber, "MASCA");
-            $sheet->setCellValue('A' . ($nextNameCellNumber + 3), $nextNameCellNumber, $employe->getSurname()." ".$employe->getLastName());
-            $sheet->setCellValue('A' . ($nextNameCellNumber + 4), $nextNameCellNumber, $employe->getSurname()." ".$employe->getLastName());
-            $sheet->setCellValue('A' . ($nextNameCellNumber + 5), $nextNameCellNumber, $employe->getSurname()." ".$employe->getLastName());
+//            $sheet->setCellValue('A' . ($nextNameCellNumber + 2),  "MASCA");
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 2),   $employe->getSurname()." ".$employe->getLastName());
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 3),   $employe->getSurname()." ".$employe->getLastName());
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 4),   $employe->getSurname()." ".$employe->getLastName());
+            $sheet->setCellValue('A' . ($nextNameCellNumber + 5),   $employe->getSurname()." ".$employe->getLastName());
 
             $sheet->setCellValue('B' . ($nextNameCellNumber + 7), "NOMBRE D'ABSENCES : " . $donnees["absences"]);
             $sheet->setCellValue('B' . ($nextNameCellNumber + 8), "NOMBRE DE RETARDS : " . $donnees["retards"]);
@@ -1483,8 +1484,7 @@ $done = false;
             $sheet->setCellValue('B' . $nextNameCellNumber, $employe->getSurname());
             $sheet->setCellValue('C' . $nextNameCellNumber, $employe->getLastName());
 
-            for ($cpt = 0; $cpt <= $days; $cpt++) {
-
+            for ($cpt = 3; $cpt <= $days; $cpt++) {
                 set_time_limit(0);
                 $his = $this->findHistoriqueAction($employe->getDepartement()->getId(), date('d-m-Y', $nowTime), $employe->getId(), $request);
                 $his = json_decode($his->getContent(), true);
