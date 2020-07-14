@@ -62,6 +62,8 @@ class Departement
     private $lastUpdate;
 
 
+    public $depEmployeeCount;
+
     /**
      * Get id
      *
@@ -84,6 +86,28 @@ class Departement
 
         return $this;
     }
+
+
+
+    /**
+     * Set depEmployeeCount
+     *
+     */
+    public function setEmployeeCount($value)
+    {
+        $this->depEmployeeCount = $value;
+    }
+
+    /**
+     * Get depEmployeeCount
+     *
+     * @return integer
+     */
+    public function getEmployeeCount()
+    {
+        return $this->depEmployeeCount;
+    }
+
 
     /**
      * Get name

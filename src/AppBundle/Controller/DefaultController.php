@@ -884,7 +884,7 @@ class DefaultController extends StatsController
                 ->add('headoffice', TextType::class, array('label' => ' '))
                 ->add('employees', IntegerType::class, array('required' => false, 'label' => ' ',))
                 ->add('director', TextType::class, array('label' => ' '))
-                ->add(utf8_decode("Créer"), SubmitType::class);
+                ->add('creer', SubmitType::class);
             // À partir du formBuilder, on génère le formulaire
 
             $form = $formBuilder->getForm();

@@ -20,8 +20,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use TmyeDeviceBundle\Controller\BaseController;
 
-class DepartementController extends Controller
+class DepartementController extends BaseController
 {
 
     /**
@@ -38,6 +39,14 @@ class DepartementController extends Controller
             // Recuperation des departements existants
             $depRep = $this->getDoctrine()->getManager()->getRepository("AppBundle:Departement");
             $listDep = $depRep->findAll();
+
+            for ($i = 0; $i < sizeof($listDep); $i++) {
+
+                $count = $this->EmployeeRepo()->findBy(['departement' => $listDep[$i]]);
+                $listDep[$i]->setEmployeeCount(
+                    sizeof($count)
+                );
+            }
 
             $departement = new Departement();
             $departement->setLastUpdate(new \DateTime());
