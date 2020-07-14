@@ -180,10 +180,11 @@ class MachineSysController extends BaseController
         $sn = $request->get("sn");
 
         // open the file here
-        foreach ($responsePack as &$resp) {
-            $resp['sn'] = $sn;
-            $this->manage($resp);
-        }
+        if ($responsePack != null)
+            foreach ($responsePack as &$resp) {
+                $resp['sn'] = $sn;
+                $this->manage($resp);
+            }
 
         $returnresp = [
             'status' => 1,
