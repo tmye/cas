@@ -175,7 +175,7 @@ class MachineSysController extends BaseController
 
         $responsePack = json_decode($request->getContent(), true);
 
-        $this->info("Reponse du serveur -- Reception de donnees");
+//        $this->info("Reponse du serveur -- Reception de donnees");
         $this->info($request->getContent());
         $sn = $request->get("sn");
 
