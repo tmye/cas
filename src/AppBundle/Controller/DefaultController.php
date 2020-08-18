@@ -1,5 +1,5 @@
 <?php
-
+//Todo begin refonte, set layout and at least 10pages
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Admin;
@@ -143,6 +143,10 @@ class DefaultController extends StatsController
             $cc = new CompanyConfig();
             $em = $this->getDoctrine()->getManager();
             if (isset($_FILES["image"]["name"]) && !empty($_FILES["image"]["name"])) {
+                //TODO create directory if it not exist
+                if (!file_exists('company_images')) {
+                    mkdir('company_images', 0777, true);
+                }
                 $resultat = move_uploaded_file($_FILES['image']['tmp_name'], "company_images/" . basename($_FILES["image"]["name"]));
                 $cc->setCompanyName($request->request->get("compName"));
                 $cc->setCompanyLogo($_FILES["image"]["name"]);

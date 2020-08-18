@@ -14,68 +14,84 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col l12">
-            <h5 class="h5_title"><span class="fa fa-database"></span> Initialisation de l'application</h5>
-            <div class="row">
-                <div class="col l12">
-                    <ul class="collapsible" data-collapsible="accordion">
-                        <li>
-                            <div class="collapsible-header collapsible-header-title active">Formulaire d'ajout d'informations</div>
-                            <div class="collapsible-body" style="padding-bottom: 0px">
-                                <div class="row">
-                                    <div class="col l12">
-                                        <input type="text" id="compName" placeholder="Le nom de votre société">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col l3 center">
-                                        <img src="" id="preview" alt="preview" style="width: 100%">
-                                    </div>
-                                    <div class="col l9">
-                                        <input type="file" class="fileInput" id="fileInput" placeholder="Votre logo">
-                                    </div>
-                                </div>
-                                <h6>Ajoutez un administrateur global</h6>
-                                <div class="row">
-                                    <div class="col l4">
-                                        <input type="text" id="adminSurname" placeholder="Nom">
-                                    </div>
-                                    <div class="col l4">
-                                        <input type="text" id="adminName" placeholder="Prénom(s)">
-                                    </div>
-                                    <div class="col l4">
-                                        <input type="text" id="adminAdress" placeholder="Adresse">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col l4">
-                                        <input type="number" min="1" id="adminPhoneNumber" placeholder="Numéro de téléphone">
-                                    </div>
-                                    <div class="col l4">
-                                        <input type="text" id="adminUsername" placeholder="Choisissez un pseudo">
-                                    </div>
-                                    <div class="col l4">
-                                        <input type="password" id="adminFirstPassword" placeholder="Mot de passe">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col l4">
-                                        <input type="password" id="adminSecondPassword" placeholder="Confirmation du mot de passe">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col l12">
-                                        <input type="button" value="Initialiser" class="btn" id="submitButton">
+<div class="container-fluid">
+
+    <div class="wrapper">
+
+        <div class="content-page">
+            <div class="content">
+                <div class="row">
+
+            <div class="" style="">
+                <h3 class="text-center ml-4 mt-2 mb-2"><span class="fa fa-database"></span> Initialisation de l'application</h3>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div>
+                                <div>
+                                    <h4 class="">Formulaire d'ajout d'informations</h4>
+                                    <div class="" style="">
+
+                                        <div class="row form-group">
+                                            <div class="col-lg-12">
+                                                <input type="text" id="compName" placeholder="Le nom de votre société" class="form-control" >
+                                            </div>
+                                        </div>
+
+                                        <div class="row form-group">
+                                            <div class="col-lg-3 ">
+                                                <img src="" id="preview" alt="preview" style="width:100%">
+                                            </div>
+                                            <div class="col-lg-9">
+                                                <input type="file" class="form-control-file form-control-lg" id="fileInput" placeholder="Votre logo">
+                                            </div>
+                                        </div>
+                                        <h4>Ajoutez un administrateur global</h4>
+                                        <div class="row form-group">
+                                            <div class="col-lg-4">
+                                                <input class='form-control mb-1' type="text" id="adminSurname" placeholder="Nom">
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <input class='form-control mb-1' type="text" id="adminName" placeholder="Prénom(s)">
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <input class='form-control mb-1' type="text" id="adminAdress" placeholder="Adresse">
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <div class="col-lg-4">
+                                                <input class="form-control mb-1" type="number" min="1" id="adminPhoneNumber" placeholder="Numéro de téléphone">
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <input class="form-control mb-1" type="text" id="adminUsername" placeholder="Choisissez un pseudo">
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <input class="form-control mb-1" type="password" id="adminFirstPassword" placeholder="Mot de passe">
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <div class="col-lg-4">
+                                                <input class="form-control mb-1" type="password" id="adminSecondPassword" placeholder="Confirmation du mot de passe">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <input type="button" value="Initialiser" class="btn btn-lg btn-primary float-right" id="submitButton">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
+            </div>
+        </div>
     </div>
+</div>
 {% endblock %}
 
 {% block javascripts %}

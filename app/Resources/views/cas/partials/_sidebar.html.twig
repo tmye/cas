@@ -1,0 +1,172 @@
+<div class="left-side-menu left-side-menu-detached">
+
+    {% if app.user is defined and app.user is not null %}
+
+        <div class="leftbar-user">
+
+
+            <a href="javascript: void(0);">
+                {% if app.user.picture is defined and app.user.picture is not null %}
+                    <img src="{{ asset('/')~user_profile_pictures~'/'~app.user.picture }}" alt="user-image" height="42" class="rounded-circle shadow-sm">
+                {% else %}
+                    <img src="{{ asset('assets/images/users/avatar.png') }}" alt="user-image" width="50%" height="50%" class="rounded-circle">
+                {% endif %}
+                <span class="leftbar-user-name"> {{ app.user.surname  }} {{ app.user.name }}</span>
+            </a>
+
+
+        </div>
+
+    {% endif %}
+
+
+
+    <!--- Sidemenu -->
+    <ul class="metismenu side-nav">
+
+        <li class="side-nav-item">
+            <a href="javascript: void(0);" class="side-nav-link">
+                <i class="uil-dashboard"></i>
+                <span> Tabeau de board </span>
+            </a>
+        </li>
+
+        {% if is_granted('ROLE_ADMIN_CONTROL') %}
+            <li class="side-nav-item">
+            <a href="javascript: void(0);" class="side-nav-link">
+                <i class="uil-file-alt"></i>
+                <span> Présences </span>
+                <span class="menu-arrow"></span>
+            </a>
+            <ul class="side-nav-second-level" aria-expanded="false">
+                <li>
+                    <a href="{{ path("today") }}" id="todayLink">Aujourd'hui</a>
+                </li>
+                <li>
+                    <a href="{{ path("historique") }}">Historiques</a>
+                </li>
+                <li>
+                    <a href="{{ path("historique_brute") }}">Historique brute</a>
+                </li>
+            </ul>
+        </li>
+            <li class="side-nav-item">
+                <a href="javascript: void(0);" class="side-nav-link">
+                    <i class="uil-chart-bar"></i>
+                    <span> Statistiques </span>
+                    <span class="menu-arrow"></span>
+                </a>
+                <ul class="side-nav-second-level" aria-expanded="false">
+                    <li>
+                        <a href="{{ path("depStat") }}">Départements</a>
+                    </li>
+                    <li>
+                        <a href="{{ path("persStat") }}">Personnelles</a>
+                    </li>
+                    <li>
+                        <a href="{{ path("rapports") }}" >Rapports (PDF)</a>
+                    </li>
+                    <li>
+                        <a href="{{ path("rapports_excel") }}">Rapports (Excel)</a>
+                    </li>
+                </ul>
+            </li>
+        {% endif %}
+
+        {% if is_granted('ROLE_SECRET') %}
+            <li class="side-nav-item">
+                <a href="javascript: void(0);" class="side-nav-link">
+                <i class="uil-building"></i>
+                <span> Permissions </span>
+                <span class="menu-arrow"></span>
+            </a>
+                <ul class="side-nav-second-level" aria-expanded="false">
+                <li>
+                    <a href="{{ path('viewPermission') }}">Liste</a>
+                </li>
+                <li>
+                    <a href="{{ path('addPermission') }}">Demander</a>
+                </li>
+                <li>
+                    <a href="{{ path('statistiquesPermissions') }}">Demander</a>
+                </li>
+            </ul>
+            </li>
+
+            <li class="side-nav-item">
+                <a href="{{ path('departement') }}" class="side-nav-link">
+                    <i class="uil-building"></i>
+                    <span> Départements </span>
+                </a>
+            </li>
+
+            <li class="side-nav-item">
+                <a href="javascript: void(0);" class="side-nav-link">
+                    <i class="uil-users-alt"></i>
+                    <span> Employés </span>
+                    <span class="menu-arrow"></span>
+                </a>
+                <ul class="side-nav-second-level" aria-expanded="false">
+                    <li>
+                        <a href="{{ path("addEmployee") }}">Ajouter</a>
+                    </li>
+                    <li>
+                        <a href="{{ path("viewEmployee") }}">Informations</a>
+                    </li>
+                    <li>
+                        <a href="{{ path("viewEmployee") }}" >Importation</a>
+                    </li>
+                    <li>
+                        <a href="{{ path("exportEmployees") }}">Exportation</a>
+                    </li>
+                </ul>
+            </li>
+        {% endif %}
+
+        {% if is_granted('ROLE_ADMIN_CONTROL') %}
+
+            <li class="side-nav-item">
+                <a href="javascript: void(0);" class="side-nav-link">
+                    <i class="uil-users-alt"></i>
+                    <span> Réglages </span>
+                    <span class="menu-arrow"></span>
+                </a>
+                <ul class="side-nav-second-level" aria-expanded="false">
+                    <li>
+                        <a href="{{ path("addWorkingHour") }}">Ajouter heure de travail</a>
+                    </li>
+                    <li>
+                        <a href="{{ path("addMachine") }}">Machines enrégistrées</a>
+                    </li>
+                    <li>
+                        <a href="{{ path("addNullDate") }}" >Jour null</a>
+                    </li>
+                    <li>
+                        <a href="{{ path("manage") }}">Gestion du système</a>
+                    </li>
+                </ul>
+            </li>
+        {% endif %}
+
+        {% if is_granted('ROLE_SECRET') %}
+            <li class="side-nav-item">
+                <a href="javascript: void(0);" class="side-nav-link">
+                    <i class="uil-wrench"></i>
+                    <span> Personnalisation </span>
+                    <span class="menu-arrow"></span>
+                </a>
+                <ul class="side-nav-second-level" aria-expanded="false">
+                    <li>
+                        <a href="{{ path("customizeCompanyInfos") }}" class="">Informations</a>
+                    </li>
+                </ul>
+            </li>
+        {% endif %}
+
+    </ul>
+    <!-- End Sidebar -->
+
+    <div class="clearfix"></div>
+    <!-- Sidebar -left -->
+
+</div>
