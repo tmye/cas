@@ -161,6 +161,11 @@ class AlertController extends ClockinReccordController
 
         $writer = new Xlsx($spreadsheet);
         $now_date = date('d')."-".date('m').'-'.date('Y').'_'.date('H').':'.date('i').':'.date('s');
+
+        if ( !file_exists($this->getParameter("web_dir")."/cache/") ) {
+            mkdir ($this->getParameter("web_dir")."/cache/", 0744);
+        }
+        $writer->setOffice2003Compatibility(true);
         $writer->save('cache/'.$this->getUser()->getUsername().'_presences_'.$now_date.'.xlsx');
 
         //sleep(10);

@@ -7,47 +7,6 @@
 {% endblock %}
 
 {% block fos_user_content %}
-{#
-<div class="row">
-    <div class="col l6 offset-l3">
-        <div class="container">
-            <p class="center"><img src="{{ asset('img/logo.png') }}" alt="cas_logo" class="" style="width: 60px"></p>
-            <h1 class="login_h1_text">Connexion à C.A.S</h1>
-            {% if error %}
-                <div class="login_error_message_container alert alert-danger">{{ error.getMessage }}</div>
-            {% endif %}
-            <form action="{{ path("login_check") }}" method="post" class="login_container">
-                <p class="center">Bienvenue sur C.A.S.Veuillez-vous authentifier pour continuer</p>
-
-                <div class="row form-group">
-                    <label for="username">Nom d'utilisateur</label>
-                    <input type="text" id="username" name="_username" value="{{ last_username }}" required="required" class="form-control" placeholder="Votre employe CCID"/>
-                </div>
-
-
-                <br>
-                <br>
-
-                <div class="row form-group">
-                    <label for="password">Mot de passe</label>
-                    <input type="password" id="password" name="_password" required="required" class="input-customized-login" placeholder="Votre mot de passe"/>
-                </div>
-
-                <br>
-                <br>
-
-                <input type="checkbox" id="remember_me" name="_remember_me" value="on" />
-                <label for="remember_me">Se souvenir de moi</label>
-
-                <br>
-                <br>
-                <input type="submit" id="_submit" name="_submit" value="Se connecter" class="btn-perso-historique green white-text" style="width: 100%"/>
-            </form>
-            <p class="center" style="color: #0366d6;font-size: 13px">&copy; Copyrights 2018 C.A.S.Tous droits réservés</p>
-        </div>
-    </div>
-</div>
-#}
 
     <div class="account-pages mt-5 mb-5">
         <div class="container">

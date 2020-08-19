@@ -21,16 +21,16 @@
             <div class="content">
 
                 <div class="row">
-                    <div class="col l12">
-                        <h5>Accueil</h5>
+                    <div class="col-lg-12">
+                        <h2>Accueil</h2>
                         <a href="{{ path('historique_brute') }}" class="badge teal white-text right" style="padding: 2px 10px">
-                            <span>Aujourd'hui</span>
+                            <h4>Aujourd'hui</h4>
                         </a>
 
                         <!-- Petites sections carrées -->
 
                         <div class="row">
-                            <div class="col l12">
+                            <div class="col-lg-12">
                                 <div class="card" style="padding: 20px;word-break: break-all;word-wrap: break-word">
                                     <div>
                                         {#   {%  if app.session.get('companyLogo') is defined and app.session.get('companyLogo') is not null %}
@@ -46,8 +46,9 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col l3 m6 s12">
-                                <ul class="collapsible" data-collapsible="accordion">
+
+                            <div class="col-lg-3 col-md-6 col-sm-12">
+                                <ul class="card" style="min-height: 100px" data-collapsible="">
                                     <li>
                                         <div class="collapsible-header collapsible-header-title active">Retards<span class="badge teal lighten-2 white-text spanRetard"></span></div>
                                         <div class="collapsible-body center">
@@ -57,7 +58,7 @@
                                 </ul>
                             </div>
                             <div class="col l3 m6 s12">
-                                <ul class="collapsible" data-collapsible="accordion">
+                                <ul class="card" style="min-height: 100px" data-collapsible="accordion">
                                     <li>
                                         <div class="collapsible-header active">Départs<span class="badge teal lighten-2 white-text spanDepart"></span></div>
                                         <div class="collapsible-body center">
@@ -67,7 +68,7 @@
                                 </ul>
                             </div>
                             <div class="col l3 m6 s12">
-                                <ul class="collapsible" data-collapsible="accordion">
+                                <ul class="card" style="min-height: 100px" data-collapsible="accordion">
                                     <li>
                                         <div class="collapsible-header active">Permissions<span class="badge teal lighten-2 white-text spanPermission"></span></div>
                                         <div class="collapsible-body center">
@@ -77,7 +78,7 @@
                                 </ul>
                             </div>
                             <div class="col l3 m6 s12">
-                                <ul class="collapsible" data-collapsible="accordion">
+                                <ul class="card" style="min-height: 100px" data-collapsible="accordion">
                                     <li>
                                         <div class="collapsible-header active">Absences<span class="badge teal lighten-2 white-text spanAbsence"></span></div>
                                         <div class="collapsible-body center">
@@ -90,18 +91,16 @@
 
                         <!-- Section du classement des tops -->
 
-                        <div class="row">
+                        <div class="row card">
                             <div class="col l6 m6 s12">
                                 <h5>Top retardataires</h5>
                                 <br>
-                                <span class="info_container_retards">
-                    </span>
+                                <span class="info_container_retards"></span>
                             </div>
                             <div class="col l6 m6 s12">
                                 <h5>Top départs prématurés</h5>
                                 <br>
-                                <span class="info_container_departs">
-                    </span>
+                                <span class="info_container_departs"></span>
                             </div>
                         </div>
                         <div class="fixed-action-btn" style="margin-bottom: 30px">

@@ -14,9 +14,29 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col l12">
-            <h5 class="page-title"><span class="fa fa-chart-line"></span> Statistiques</h5>
+<div class="container-fluid">
+    <div class="wrapper">
+
+        {% include('cas/partials/_sidebar.html.twig') %}
+
+        <!-- Modal for ajax loading -->
+        <div id="modal_loading" class="modal ajax_modals">
+            <div class="modal-content">
+                <p class="center">
+                    <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+                </p>
+            </div>
+        </div>
+
+        <div class="content-page">
+            <div class="content">
+
+                <div class="col-lg-12">
+                    <h2 class="page-title"><span class="uil-chart-bar"></span> Statistiques</h2>
+                </div>
+
+                <div class="row card">
+        <div class="col-lg-12 card-body">
             <p class="description_message">Affichez les statistiques individuelles d'un employé précis.Vous verrez les pertes en temps et en argent occasionnées par ses absences ou ses retards</p>
 
             <!-- <div id="modal1" class="modal modal-loading" style="overflow: hidden">
@@ -26,58 +46,58 @@
             </div> -->
 
             <div class="row">
-                <div class="col l12">
+                <div class="col-lg-12">
                     <ul class="collapsible" data-collapsible="accordion">
                         <li>
                             <div class="collapsible-header collapsible-header-title active">Choisissez les paramètres</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
-                                    <form method="post" action="{{ path('generatePDF') }}" target="_blank" id="form" class="col l12">
+                                    <form method="post" action="{{ path('generatePDF') }}" target="_blank" id="form" class="col-lg-12">
                                         <div class="row row-no-margin">
                                             <div class="input-field col s12">
                                                 <div class="row" id="errorContainer">
-                                                    <div class="col l12">
+                                                    <div class="col-lg-12">
                                                         <span class="red-text"></span>
                                                     </div>
                                                 </div>
                                                 <div class="row row-no-margin">
-                                                    <div class="col l6">
+                                                    <div class="col-lg-6">
                                                         <span>Veuillez sélectionner le département de votre choix</span>
                                                         <br>
-                                                        <select id="depSelect" class="input-customized browser-default">
+                                                        <select id="depSelect" class="form-control input-customized browser-default">
                                                             <option value="" selected>Département</option>
                                                             {% for dep in listDep %}
                                                                 <option value="{{ dep.id }}">{{ dep.name }}</option>
                                                             {% endfor %}
                                                         </select>
                                                     </div>
-                                                    <div class="col l6">
+                                                    <div class="col-lg-6">
                                                         <span>Veuillez sélectionner l'employé</span>
                                                         <br>
-                                                        <select name="destination[]" id="empSelect" class="input-customized browser-default">
+                                                        <select name="destination[]" id="empSelect" class="form-control input-customized browser-default">
                                                             <option value='' selected>Employé</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <br>
+                                                <span>Veuillez sélectionner la durée de votre choix</span>
+
                                                 <div class="row row-no-margin">
-                                                    <div class="col l6">
-                                                        <span>Veuillez sélectionner la durée de votre choix</span>
-                                                        <br>
-                                                        <input id="fromDate" name="fromDate" type="text" class="datepicker input-customized" placeholder="DU">
+                                                    <div class="col-lg-6">
+                                                        <h4>Du</h4>
+                                                        <input id="fromDate" name="fromDate" type="date" class="form-control datepicker input-customized" placeholder="DU">
                                                     </div>
-                                                    <span> - </span>
-                                                    <div class="col l6">
-                                                        <input id="toDate" name="toDate" type="text" class="datepicker input-customized" placeholder="AU">
+
+                                                    <div class="col-lg-6">
+                                                        <h4>Au</h4>
+                                                        <input id="toDate" name="toDate" type="date" class="form-control datepicker input-customized" placeholder="AU">
                                                     </div>
                                                 </div>
-                                                <div class="row row-no-margin">
-                                                    <div class="col l6">
+                                                <div class="row" style="width: 100%">
+                                                    <div class="col-lg-6">
                                                     </div>
-                                                    <div class="col l6">
-                                                        <span class="right" style="margin-top: 20px">
-                                                            <input type="button" id="submitButton" value="Valider" class="btn-perso-historique">
-                                                        </span>
+                                                    <div class="col-lg-6 ">
+                                                        <input type="button" id="submitButton" value="Valider" class="float-right mt-2 btn-lg btn btn-success btn-perso-historique">
                                                     </div>
                                                 </div>
                                             </div>
@@ -92,7 +112,7 @@
             <div id="containerMustBeHidden" style="display: none">
             <h5 class="table-title">Statistiques de l'employé</h5>
                 <div class="row">
-                    <div class="col l12">
+                    <div class="col-lg-12">
                         <table class="card table bordered striped condensed centered">
                             <tr class="blue lighten-2 white-text">
                                 <td colspan="2">Nom : <span id="nameSpan"></span></td>
@@ -163,7 +183,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col l12">
+                    <div class="col-lg-12">
                         <h5 class="table-title">Historique des présences</h5>
                         <br><br>
                         <table class="bordered striped">
@@ -187,10 +207,10 @@
                             </tbody>
                         </table>
                         <br>
-                        <span class="fa fa-circle" style="color: red"></span>
+                        <span class="uil-circle" style="color: red"></span>
                         <span style="color: red">Retards ou départs prématurés</span>
                         <br>
-                        <span class="fa fa-circle" style="color: black"></span>
+                        <span class="uil-circle" style="color: black"></span>
                         <span style="color: black">Heures conformes</span>
                     </div>
                 </div>
@@ -214,14 +234,14 @@
                     </table>
                 </div>
                 <div class="row delaysPieChart">
-                    <div class="col l6">
+                    <div class="col-lg-6">
                         <span>Diagramme cumulé des absences</span>
                         <div class="myPieChartContainer">
                             <canvas id="myPieChart" class="card" style="cursor: pointer">
                             </canvas>
                         </div>
                     </div>
-                    <div class="col l6 departuresChart">
+                    <div class="col-lg-6 departuresChart">
                         <span>Diagramme des absences</span>
                         <div class="myChartContainer">
                             <h5 style="padding:20px" class="data_placeholder">Aucune absence enregistrée</h5>
@@ -231,7 +251,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col l6">
+                    <div class="col-lg-6">
                         <span>Retards début de journée</span>
                         <table class="card table bordered centered striped highlight responsive-table">
                             <thead>
@@ -248,7 +268,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="col l6">
+                    <div class="col-lg-6">
                         <span>Départs prématurés de fin d'après-midi</span>
                         <table class="card table bordered centered striped highlight responsive-table">
                             <thead>
@@ -267,7 +287,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col l6">
+                    <div class="col-lg-6">
                         <span>Départs prématurés de midi</span>
                         <table class="card table bordered centered striped highlight responsive-table">
                             <thead>
@@ -284,7 +304,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="col l6">
+                    <div class="col-lg-6">
                         <span>Retards début d'après-midi</span>
                         <table class="card table bordered centered striped highlight responsive-table">
                             <thead>
@@ -308,19 +328,19 @@
                 <span class="CContainer lundiCContainer">
                     <p class="legend">Lundi</p>
                     <div class="row chartsContainer">
-                        <div class="col l6 lundiDiagDep12">
+                        <div class="col-lg-6 lundiDiagDep12">
                             <span>Diagramme des départs prématurés de 12H00</span>
                             <canvas id="lundi-m-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 lundiDiagDep18">
+                        <div class="col-lg-6 lundiDiagDep18">
                             <span>Diagramme des départs prématurés de 18H00</span>
                             <canvas id="lundi-n-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 lundiDiagRet8">
+                        <div class="col-lg-6 lundiDiagRet8">
                             <span>Diagramme des retards de 8H00</span>
                             <canvas id="lundi-m8-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 lundiDiagRet14">
+                        <div class="col-lg-6 lundiDiagRet14">
                             <span>Diagramme des retards de 14H00</span>
                             <canvas id="lundi-n14-chart" class="card"></canvas>
                         </div>
@@ -329,19 +349,19 @@
                 <span class="CContainer mardiCContainer">
                     <p class="legend">Mardi</p>
                     <div class="row chartsContainer" id="chartsContainer">
-                        <div class="col l6 mardiDiagDep12">
+                        <div class="col-lg-6 mardiDiagDep12">
                             <span>Diagramme des départs prématurés de 12H00</span>
                             <canvas id="mardi-m-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 mardiDiagDep18">
+                        <div class="col-lg-6 mardiDiagDep18">
                             <span>Diagramme des départs prématurés de 18H00</span>
                             <canvas id="mardi-n-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 mardiDiagRet8">
+                        <div class="col-lg-6 mardiDiagRet8">
                             <span>Diagramme des retards de 8H00</span>
                             <canvas id="mardi-m8-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 mardiDiagRet14">
+                        <div class="col-lg-6 mardiDiagRet14">
                             <span>Diagramme des retards de 14H00</span>
                             <canvas id="mardi-n14-chart" class="card"></canvas>
                         </div>
@@ -350,19 +370,19 @@
                 <span class="CContainer mercrediCContainer">
                     <p class="legend">Mercredi</p>
                     <div class="row chartsContainer" id="chartsContainer">
-                        <div class="col l6 mercrediDiagDep12">
+                        <div class="col-lg-6 mercrediDiagDep12">
                             <span>Diagramme des départs prématurés de 12H00</span>
                             <canvas id="mercredi-m-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 mercrediDiagDep18">
+                        <div class="col-lg-6 mercrediDiagDep18">
                             <span>Diagramme des départs prématurés de 18H00</span>
                             <canvas id="mercredi-n-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 mercrediDiagRet8">
+                        <div class="col-lg-6 mercrediDiagRet8">
                             <span>Diagramme des retards de 8H00</span>
                             <canvas id="mercredi-m8-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 mercrediDiagRet14">
+                        <div class="col-lg-6 mercrediDiagRet14">
                             <span>Diagramme des retards de 14H00</span>
                             <canvas id="mercredi-n14-chart" class="card"></canvas>
                         </div>
@@ -371,19 +391,19 @@
                 <span class="CContainer jeudiCContainer">
                     <p class="legend">Jeudi</p>
                     <div class="row chartsContainer" id="chartsContainer">
-                        <div class="col l6 jeudiDiagDep12">
+                        <div class="col-lg-6 jeudiDiagDep12">
                             <span>Diagramme des départs prématurés de 12H00</span>
                             <canvas id="jeudi-m-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 jeudiDiagDep18">
+                        <div class="col-lg-6 jeudiDiagDep18">
                             <span>Diagramme des départs prématurés de 18H00</span>
                             <canvas id="jeudi-n-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 jeudiDiagRet8">
+                        <div class="col-lg-6 jeudiDiagRet8">
                             <span>Diagramme des retards de 8H00</span>
                             <canvas id="jeudi-m8-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 jeudiDiagRet14">
+                        <div class="col-lg-6 jeudiDiagRet14">
                             <span>Diagramme des retards de 14H00</span>
                             <canvas id="jeudi-n14-chart" class="card"></canvas>
                         </div>
@@ -392,19 +412,19 @@
                 <span class="CContainer vendrediCContainer">
                     <p class="legend">Vendredi</p>
                     <div class="row chartsContainer" id="chartsContainer">
-                        <div class="col l6 vendrediDiagDep12">
+                        <div class="col-lg-6 vendrediDiagDep12">
                             <span>Diagramme des départs prématurés de 12H00</span>
                             <canvas id="vendredi-m-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 vendrediDiagDep18">
+                        <div class="col-lg-6 vendrediDiagDep18">
                             <span>Diagramme des départs prématurés de 18H00</span>
                             <canvas id="vendredi-n-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 vendrediDiagRet8">
+                        <div class="col-lg-6 vendrediDiagRet8">
                             <span>Diagramme des retards de 8H00</span>
                             <canvas id="vendredi-m8-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 vendrediDiagRet14">
+                        <div class="col-lg-6 vendrediDiagRet14">
                             <span>Diagramme des retards de 14H00</span>
                             <canvas id="vendredi-n14-chart" class="card"></canvas>
                         </div>
@@ -413,19 +433,19 @@
                 <span class="CContainer samediCContainer">
                     <p class="legend">Samedi</p>
                     <div class="row chartsContainer" id="chartsContainer">
-                        <div class="col l6 samediDiagDep12">
+                        <div class="col-lg-6 samediDiagDep12">
                             <span>Diagramme des départs prématurés de 12H00</span>
                             <canvas id="samedi-m-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 samediDiagDep18">
+                        <div class="col-lg-6 samediDiagDep18">
                             <span>Diagramme des départs prématurés de 18H00</span>
                             <canvas id="samedi-n-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 samediDiagRet8">
+                        <div class="col-lg-6 samediDiagRet8">
                             <span>Diagramme des retards de 8H00</span>
                             <canvas id="samedi-m8-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 samediDiagRet14">
+                        <div class="col-lg-6 samediDiagRet14">
                             <span>Diagramme des retards de 14H00</span>
                             <canvas id="samedi-n14-chart" class="card"></canvas>
                         </div>
@@ -434,26 +454,26 @@
                 <span class="CContainer dimancheCContainer">
                     <p class="legend">Dimanche</p>
                     <div class="row chartsContainer" id="chartsContainer">
-                        <div class="col l6 dimancheDiagDep12">
+                        <div class="col-lg-6 dimancheDiagDep12">
                             <span>Diagramme des départs prématurés de 12H00</span>
                             <canvas id="dimanche-m-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 dimancheDiagDep18">
+                        <div class="col-lg-6 dimancheDiagDep18">
                             <span>Diagramme des départs prématurés de 18H00</span>
                             <canvas id="dimanche-n-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 dimancheDiagRet8">
+                        <div class="col-lg-6 dimancheDiagRet8">
                             <span>Diagramme des retards de 8H00</span>
                             <canvas id="dimanche-m8-chart" class="card"></canvas>
                         </div>
-                        <div class="col l6 dimancheDiagRet14">
+                        <div class="col-lg-6 dimancheDiagRet14">
                             <span>Diagramme des retards de 14H00</span>
                             <canvas id="dimanche-n14-chart" class="card"></canvas>
                         </div>
                     </div>
                 </span>
                 <div class="row quotaPieDiagram">
-                    <div class="col l12">
+                    <div class="col-lg-12">
                         <span>Diagramme comparatif des quotas horraires</span>
                         <canvas id="quotaPieChart" class="card" style="cursor: pointer">
                         </canvas>
@@ -461,12 +481,17 @@
                 </div>
                 <div class="fixed-action-btn" style="margin-bottom: 30px">
                     <a class="btn-floating tooltipped pulse green btn-large" id="btnPrint" data-position="top" data-tooltip="Imprimer">
-                        <span class="fa fa-print"></span>
+                        <span class="uil-print"></span>
                     </a>
                 </div>
             </div>
         </div>
     </div>
+
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block javascripts %}
@@ -2244,7 +2269,7 @@
                         if($("#fromDate").val()!=""){
                             if($("#toDate").val()!=""){
                                 //if(dateFrom < dateTo || dateFrom == dateTo){
-                                    $('#modal_loading').modal('open');
+                                    $('#modal_loading').modal('show');
                                     $("#errorContainer").hide();
                                     loadSelectedEmpData($("#empSelect").val());
                                 /*}else {

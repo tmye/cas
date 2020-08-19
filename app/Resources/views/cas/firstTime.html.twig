@@ -14,7 +14,7 @@
         </div>
     </div>
 
-<div class="container-fluid">
+<div class="container">
 
     <div class="wrapper">
 
@@ -22,7 +22,7 @@
             <div class="content">
                 <div class="row">
 
-            <div class="" style="">
+            <div class="card col-lg-12" style="min-width: 500px">
                 <h3 class="text-center ml-4 mt-2 mb-2"><span class="fa fa-database"></span> Initialisation de l'application</h3>
                 <div class="card-body">
                     <div class="row">
@@ -43,7 +43,7 @@
                                                 <img src="" id="preview" alt="preview" style="width:100%">
                                             </div>
                                             <div class="col-lg-9">
-                                                <input type="file" class="form-control-file form-control-lg" id="fileInput" placeholder="Votre logo">
+                                                <input type="file" class="form-control-file form-control-lg fileInput" id="fileInput" placeholder="Votre logo">
                                             </div>
                                         </div>
                                         <h4>Ajoutez un administrateur global</h4>
@@ -123,7 +123,7 @@
                                         if($("#adminFirstPassword").val()){
                                             if($("#adminFirstPassword").val().length >= 6){
                                                 if($("#adminFirstPassword").val() == $("#adminSecondPassword").val()){
-                                                    $('#modal_loading').modal('open');
+                                                    // $('#modal_loading').modal('open');
                                                     // After the verifications we can deal with the ajax queries
                                                     var formdata = new FormData();
                                                     var fInput = document.getElementById("fileInput");
