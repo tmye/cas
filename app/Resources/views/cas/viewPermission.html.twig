@@ -93,7 +93,7 @@
                                                                 <div  style="margin-left: 5px;background-color: white;">
                                                                     <div  style="padding:10px">
                                                                         <span><span class="uil-user"></span> <b style="font-weight: bold;font-size: 1em;text-transform: uppercase;">{{ perm.employee.surname ~" "~ perm.employee.lastName }}</b></span>
-                                                                        <table class="permission_inner_table" style="padding: 0;border: none;width: 90%;">
+                                                                        <table class="permission_inner_table  table-striped" style="padding: 0;border: none;width: 90%;">
                                                                             <tr>
                                                                                 <td><span style="font-size: 0.8em;">Raison : {{ permissions_type[perm.type] }}</span></td>
                                                                                 <td><span>Durée : </span><span style="font-size: 1em;color: red;font-weight: bold"> {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days + 1 %}
@@ -145,7 +145,7 @@
                                                                 <div  style="margin-left: 5px;background-color: white;">
                                                                     <div  style="padding:10px">
                                                                         <span><span class="uil-user"></span> <b style="font-weight: bold;font-size: 1em;text-transform: uppercase;">{{ perm.employee.surname ~" "~ perm.employee.lastName }}</b></span>
-                                                                        <table class="permission_inner_table" style="padding: 0;border: none;width: 90%;">
+                                                                        <table class="permission_inner_table  table-striped" style="padding: 0;border: none;width: 90%;">
                                                                             <tr>
                                                                                 <td><span style="font-size: 0.8em;">Raison : {{ permissions_type[perm.type] }}</span></td>
                                                                                 <td><span>Durée : </span><span style="font-size: 1em;color: red;font-weight: bold"> {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days + 1 %}

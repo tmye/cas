@@ -118,7 +118,7 @@
                                 <span class="fa fa-circle" style="color: red"></span>
                                 <span style="color: red">Retards ou départs prématurés</span>
                                 <br><br>
-                                <table class="table bordered striped">
+                                <table class="table table-striped bordered striped">
                                     <thead>
                                     <tr>
                                         <th>ID</th>
@@ -272,7 +272,7 @@
                                                     "<td><span class='redSpanPauseBegin_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].pause +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].pBH+"</span></td>" +
                                                     "<td><span class='redSpanPauseEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].finPause +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].pEH+"</span></td>" +
                                                     "<td><span class='redSpanEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].eH+"</span></td>" +
-                                                    "<td><button data-target='modal1' class='detail_button modal-trigger' onclick='demander("+(i-1)+")' tag='"+(i-1)+"' style=''>Détails</button></td>" +
+                                                    "<td><button data-target='modal1' class='btn btn-primary detail_button modal-trigger' onclick='demander("+(i-1)+")' tag='"+(i-1)+"' style=''>Détails</button></td>" +
                                                     "</tr>"
                                                 );
                                                 if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
