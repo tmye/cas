@@ -1075,11 +1075,11 @@ class MachinesController extends Controller
 
             foreach ($finalTab as $mac){
                 $found = 0;
-                echo "\n J'arrive meme ici et le found est : ".$found;
+//                echo "\n J'arrive meme ici et le found est : ".$found;
                 while($found == 0 && $i < sizeof($donnees)){
-                    echo "\n size of donnees =: ".sizeof($donnees);
-                    echo "\n isActive =: ".$donnees[$i]->getIsactive();
-                    echo ("Comparaison : ".$donnees[$i]->getDeviceId()." vs ".$mac);
+//                    echo "\n size of donnees =: ".sizeof($donnees);
+//                    echo "\n isActive =: ".$donnees[$i]->getIsactive();
+//                    echo ("Comparaison : ".$donnees[$i]->getDeviceId()." vs ".$mac);
                     if($donnees[$i]->getDeviceId() == $mac && $donnees[$i]->getType()=="pub" && $donnees[$i]->getIsactive()==1){
                         $found = 1;
                     }else{
@@ -1088,7 +1088,7 @@ class MachinesController extends Controller
                     //$session->getFlashBag()->add('passage : ',$donnees[$i]->getDeviceId());
                     $i++;
                 }
-                echo "\n Found = :".$found;
+//                echo "\n Found = :".$found;
                 if ($found == 0){
                     $updateE = new UpdateEntity();
                     $updateE->setDeviceId($mac);
@@ -1103,7 +1103,7 @@ class MachinesController extends Controller
             //return new Response(json_encode($finalTab));
             return new Response("OK");
         }elseif($len == 1){
-            echo "Je suis dans le dernier cas";
+//            echo "Je suis dans le dernier cas";
             // On persiste les éléments en fonction du cas
             foreach ($tab[0] as $mac){
                 while($found == 0 && $i < sizeof($donnees)){
@@ -1129,7 +1129,7 @@ class MachinesController extends Controller
             //return new Response(json_encode($tab));
             return new Response("OK pour le second cas");
         }else{
-            echo "Je ne rentre jamais dedans";
+//            echo "Je ne rentre jamais dedans";
         }
     }
 
