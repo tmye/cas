@@ -42,12 +42,6 @@ class UpdateEntity
      */
     private $creationDate;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="function", type="text")
-     */
-    private $function;
 
     /**
      * @var string
@@ -113,30 +107,6 @@ class UpdateEntity
     public function getCreationDate()
     {
         return $this->creationDate;
-    }
-
-    /**
-     * Set function
-     *
-     * @param string $function
-     *
-     * @return UpdateEntity
-     */
-    public function setFunction($function)
-    {
-        $this->function = $function;
-
-        return $this;
-    }
-
-    /**
-     * Get function
-     *
-     * @return string
-     */
-    public function getFunction()
-    {
-        return $this->function;
     }
 
 
