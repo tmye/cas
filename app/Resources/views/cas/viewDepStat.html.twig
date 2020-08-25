@@ -10,14 +10,18 @@
 
         {% include('cas/partials/_sidebar.html.twig') %}
 
-        <!-- Modal for ajax loading -->
-        <div id="modal_loading" class="modal ajax_modals">
-            <div class="modal-content">
-                <p class="center">
-                    <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
-                </p>
+        <div class="card mx-0 float-none" >
+            <!-- Modal for ajax loading -->
+            <div id="modal_loading" class="modal ajax_modals">
+                <div class="modal-content">
+                    <p class="center">
+                        <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+                    </p>
+                </div>
             </div>
         </div>
+
+
 
         <div class="content-page">
             <div class="content">

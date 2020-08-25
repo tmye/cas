@@ -163,7 +163,7 @@ class AlertController extends ClockinReccordController
         $now_date = date('d')."-".date('m').'-'.date('Y').'_'.date('H').':'.date('i').':'.date('s');
 
         if ( !file_exists($this->getParameter("web_dir")."/cache/") ) {
-            mkdir ($this->getParameter("web_dir")."/cache/", 0744);
+            mkdir ($this->getParameter("web_dir")."/cache/", 0777, true);
         }
         $writer->setOffice2003Compatibility(true);
         $writer->save('cache/'.$this->getUser()->getUsername().'_presences_'.$now_date.'.xlsx');
@@ -173,6 +173,7 @@ class AlertController extends ClockinReccordController
         $filePath = $this->getParameter("web_dir")."/cache/".$this->getUser()->getUsername()."_presences_".$now_date.".xlsx";
 
         $response = new BinaryFileResponse($filePath);
+
         $response->trustXSendfileTypeHeader();
         $response->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_INLINE,
