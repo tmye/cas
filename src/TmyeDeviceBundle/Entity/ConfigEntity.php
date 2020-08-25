@@ -43,13 +43,6 @@ class ConfigEntity
     private $max;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="function", type="string", length=255)
-     */
-    private $function;
-
-    /**
      * @var int
      *
      * @ORM\Column(name="delay", type="integer")
