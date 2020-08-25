@@ -1064,7 +1064,7 @@ class MachinesController extends Controller
                 }
             }
 
-            print_r($finalTab);
+//            print_r($finalTab);
 
             /*
              * On persiste les éléments en fonction du cas
