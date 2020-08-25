@@ -22,12 +22,101 @@
 
                 <div class="row">
                     <div class="col-lg-12">
-                        <h2>Accueil</h2>
-                        <a href="{{ path('historique_brute') }}" class="badge teal white-text right" style="padding: 2px 10px">
-                            <h4>Aujourd'hui</h4>
-                        </a>
+                        <h2><i class="fa fa-home"></i> Accueil</h2>
+
+{#                        <a href="{{ path('historique_brute') }}" class="badge" style="padding: 2px 10px">#}
+{#                            <h4>Aujourd'hui</h4>#}
+{#                        </a>#}
 
                         <!-- Petites sections carrées -->
+
+
+                        <!-- Section du classement des tops -->
+
+                        <div class="row">
+                            <div class="col-lg-5 card">
+                                <h4>Top retardataires</h4>
+                                <br>
+                                <span class="info_container_retards"></span>
+                            </div>
+                            <div class="offset-2 col-lg-5 card">
+                                <h4>Top départs prématurés</h4>
+                                <br>
+                                <span class="info_container_departs"></span>
+                            </div>
+                        </div>
+
+                        <div class="fixed-action-btn" style="margin-bottom: 30px">
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <a href="{{ path("manage") }}" class="text-center btn-circle btn-md btn-success btn-lg float" id="btnVerify" data-position="top" data-toggle="Vérifier les mises à jours">
+                                    <i class="fa fa-sync fa-2x"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 col-sm-12">
+                                        <a href="{{ path("depStat") }}">
+                                            <div class="card widget-flat">
+                                                <div class="card-body">
+                                                    <div class="float-right">
+                                                        <i class="text-info fa fa-list-alt fa-2x"></i>
+                                                    </div>
+                                                    <h3 class="text-info text-muted font-weight-normal mt-0" title="Number of Customers">Retards</h3>
+                                                    <h1 class="mt-3 mb-3 spanRetard"></h1>
+                                                </div> <!-- end card-body-->
+                                            </div> <!-- end card-->
+                                        </a>
+                                    </div>
+
+                                    <div class="col-lg-3 m6 s12">
+                                        <a href="{{ path("depStat") }}">
+                                            <div class="card widget-flat">
+                                                <div class="card-body">
+                                                    <div class="float-right">
+                                                        <i class="text-warning fa fa-paper-plane fa-2x"></i>
+                                                    </div>
+                                                    <h3 class=" text-muted font-weight-normal mt-0" title="Number of Customers">Départs</h3>
+                                                    <h1 class="mt-3 mb-3 spanDepart"></h1>
+                                                </div> <!-- end card-body-->
+                                            </div> <!-- end card-->
+                                        </a>
+                                    </div>
+
+                                    <div class="col-lg-3 m6 s12">
+                                        <a href="{{ path("viewPermission") }}">
+                                            <div class="card widget-flat">
+                                                <div class="card-body">
+                                                    <div class="float-right">
+                                                        <i class="text-success fa fa-check fa-2x"></i>
+                                                    </div>
+                                                    <h3 class=" text-muted font-weight-normal mt-0" title="Number of Customers">Permissions</h3>
+                                                    <h1 class="mt-3 mb-3 spanPermission"></h1>
+                                                </div> <!-- end card-body-->
+                                            </div> <!-- end card-->
+                                        </a>
+                                    </div>
+
+                                    <div class="col-lg-3 m6 s12">
+                                        <a href="{{ path("depStat") }}">
+                                            <div class="card widget-flat">
+                                                <div class="card-body">
+                                                    <div class="float-right">
+                                                        <i class="text-danger fa fa-window-close fa-2x"></i>
+                                                    </div>
+                                                    <h3 class=" text-muted font-weight-normal mt-0" title="Number of Customers">Absences</h3>
+                                                    <h1 class="mt-3 mb-3 spanAbsence"></h1>
+                                                </div> <!-- end card-body-->
+                                            </div> <!-- end card-->
+                                        </a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
 
                         <div class="row">
                             <div class="col-lg-12">
@@ -44,82 +133,9 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
 
-                            <div class="col-lg-3 col-md-6 col-sm-12">
-                                <ul class="card" style="min-height: 100px" data-collapsible="">
-                                    <li>
-                                        <div class="collapsible-header collapsible-header-title active">Retards<span class="badge teal lighten-2 white-text spanRetard"></span></div>
-                                        <div class="collapsible-body center">
-                                            <a href="{{ path("depStat") }}" >
-                                                <h1 class="font-weight-bold"><i class=" uil-list-ul text-danger "></i></h1>
-                                            </a>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="col l3 m6 s12">
-                                <ul class="card" style="min-height: 100px" data-collapsible="accordion">
-                                    <li>
-                                        <div class="collapsible-header active">Départs<span class="badge teal lighten-2 white-text spanDepart"></span></div>
-                                        <div class="collapsible-body center">
-                                            <a href="{{ path("depStat") }}">
-                                                <h1>
-                                                    <i class="uil-plane-departure text-warning"></i>
-                                                </h1>
-                                            </a>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="col l3 m6 s12">
-                                <ul class="card" style="min-height: 100px" data-collapsible="accordion">
-                                    <li>
-                                        <div class="collapsible-header active">Permissions<span class="badge teal lighten-2 white-text spanPermission"></span></div>
-                                        <div class="collapsible-body center">
-                                            <a href="{{ path("viewPermission") }}">
-                                                <h1><i class="uil-list-ui-alt text-success"></i></h1>
-                                            </a>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="col l3 m6 s12">
-                                <ul class="card" style="min-height: 100px" data-collapsible="accordion">
-                                    <li>
-                                        <div class="collapsible-header active">Absences<span class="badge teal lighten-2 white-text spanAbsence"></span></div>
-                                        <div class="collapsible-body center">
-                                            <a href="{{ path("depStat") }}">
-                                                <h1><i class="uil-list-ul text-primary"></i></h1>
-                                            </a>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
 
-                        <!-- Section du classement des tops -->
-
-                        <div class="row card">
-                            <div class="col l6 m6 s12">
-                                <h5>Top retardataires</h5>
-                                <br>
-                                <span class="info_container_retards"></span>
-                            </div>
-                            <div class="col l6 m6 s12">
-                                <h5>Top départs prématurés</h5>
-                                <br>
-                                <span class="info_container_departs"></span>
-                            </div>
-                        </div>
-                        <div class="fixed-action-btn" style="margin-bottom: 30px">
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <a href="{{ path("manage") }}" class="btn-floating tooltipped pulse green btn-large" id="btnVerify" data-position="top" data-tooltip="Vérifier les mises à jours">
-                                    <span class="fa fa-sync"></span>
-                                </a>
-                            {% endif %}
-                        </div>
                     </div>
                 </div>
             </div>

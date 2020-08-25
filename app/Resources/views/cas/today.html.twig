@@ -52,7 +52,7 @@
                         <form method="POST" action="{{ path('generateTodayPDF') }}" target="_blank" id="form_pdf" style="display:none">
                         </form>
 
-                        <form method="POST" action="{{ path('generateTodayExcel') }}" target="_blank" id="form_excel" style="display:none">
+                        <form method="POST" enctype="multipart/form-data" action="{{ path('generateTodayExcel') }}" target="_blank" id="form_excel" style="display:none">
                         </form>
 
                         <div class="row">
@@ -60,7 +60,7 @@
 
                                 <span class="right" style="margin-top:-35px">
                                     <button class="btn-perso-historique export_pdf_btn" style="display: none;" id="submitPDF"><span class="fa fa-file-pdf"></span> Exporter vers PDF</button>
-                                    <button class="btn-perso-historique export_excel_btn" id="submitExcel"><span class="fa fa-file-excel"></span> Exporter vers Excel</button>
+                                    <button class="btn-perso-historique btn btn-lg btn-success export_excel_btn" id="submitExcel"><span class="fa fa-file-excel"></span> Exporter vers Excel</button>
                                 </span>
                                 <div class="row">
                                     <div class="col-lg-12">
@@ -69,7 +69,7 @@
                                             <div class="col-lg-12">
                                                 <span style="position: relative;top: 20px;" class="description_message">Filtrez les resultats en choisissant un département</span>
                                             </div>
-                                            <div class="col-lg-6 mb-5">
+                                            <div class="col-lg-12 mb-3">
                                                 <select class="form-control" id="depSelect">
                                                     <option value="">Département</option>
                                                     {% for dep in listDep %}
@@ -78,7 +78,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <table class="table bordered striped mt-5">
+                                        <table class="table table-bordered table-striped table-centered mt-5">
                                             <thead>
                                             <tr>
                                                 <th>Heure</th>
