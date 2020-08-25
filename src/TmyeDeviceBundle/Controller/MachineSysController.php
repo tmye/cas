@@ -508,12 +508,15 @@ class MachineSysController extends BaseController
 
 
 //        $clockin->setEmployeeId($resp['ccid']);
+
         $tmpEmp = $this->EmployeeRepo()->findOneByEmployeeCcid(intval($resp['ccid']));
+        if ($tmpEmp == null)
+            return;
+
         $clockin->setEmploye($tmpEmp);
         $clockin->setClockinTime((new \DateTime($resp['time']))->getTimestamp());
         $clockin->setVerify($resp['verify']);
         $clockin->setDeviceid($resp['sn']);
-
 
 
         $employee =  $this->EmployeeRepo()->findOneByEmployeeCcid(intval($resp['ccid']));
