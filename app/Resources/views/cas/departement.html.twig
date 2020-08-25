@@ -3,19 +3,27 @@
 {% block title %}C.A.S - Département{% endblock %}
 
 {% block body %}
-    <div class="row">
-        <div class="col l12">
-            <h5 class="h5_title page-title"><span class="fa fa-link"></span> Gestion des Départements</h5>
+
+<div class="container-fluid">
+    <div class="wrapper">
+
+        {% include('cas/partials/_sidebar.html.twig') %}
+
+        <div class="content-page">
+            <div class="content">    
+                <div class="row">
+        <div class="col-lg-12">
+            <h2 class="h5_title page-title"><span class="uil-link"></span> Gestion des Départements</h2>
             <p class="description_message">Créez de nouveaux départements ou modifiez ceux existants</p>
             <div class="row">
-                <div class="col l12">
+                <div class="col-lg-12">
                     <ul class="collapsible" data-collapsible="accordion">
                         <li>
                             <div class="collapsible-header active collapsible-header-title">Formulaire d'ajout d'un nouveau département</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 {% for message in  app.session.flashbag.get('notice') %}
                                     <div class="row">
-                                        <div class="col l12">
+                                        <div class="col-lg-12">
                                             <div class="operation_message">
                                                 {{ message }}
                                             </div>
@@ -23,7 +31,7 @@
                                     </div>
                                 {% endfor %}
                                 <div class="row">
-                                    <div class="col l12">
+                                    <div class="col-lg-12">
                                         {%  if message is defined and message is not null %}
                                             <div class="operation_message">
                                                 {{ message }}
@@ -31,21 +39,21 @@
                                         {% endif %}
                                     </div>
                                 </div>
-                                <div class="row">
-                                    {{ form_start(form) }}
-                                    <div class="input-field col s5">
-                                        {{ form_row(form.name, {'attr': {'class': 'input-customized','placeholder':'Nom du département'}}) }}
+                                <div class="row" style="width: 100%">
+
+                                    <div class="col-lg-12">
+                                        {{ form_start(form) }}
+                                            {{ form_row(form.name, {'attr': {'class': 'form-control input-customized','placeholder':'Nom du département'}}) }}
+                                            {{ form_row(form.maxCount, {'attr': {'class': 'mb-3 form-control input-customized','placeholder':'Nombre maximum d\'employés'}}) }}
+                                            {{ form_rest(form) }}
+                                        {{ form_widget(form.creer, { 'label': 'Créer','attr': {'class':'mt-5 btn btn-lg btn-success'} }) }}
+                                        {{ form_end(form) }}
                                     </div>
-                                    <div class="input-field col s5">
-                                        {{ form_row(form.maxCount, {'attr': {'class': 'input-customized','placeholder':'Nombre maximum d\'employés'}}) }}
-                                    </div>
-                                    <div class="input-field col l2">
-                                        {{ form_rest(form) }}
+                                    <div class="col-lg-12 ">
+
                                     </div>
 
-                                    {{ form_widget(form.creer, { 'label': 'Créer','attr': {'class':'btn'} }) }}
-
-                                    {{ form_end(form) }}
+                                    </div>
                                 </div>
                             </div>
                         </li>
@@ -53,13 +61,13 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col l12">
+                <div class="col-lg-12">
                     <ul class="collapsible" data-collapsible="accordion">
                         <li>
                             <div class="collapsible-header active collapsible-header-title">Liste des départements</div>
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 <div class="row">
-                                    <table class="col l12 centered striped bordered condensed">
+                                    <table class="table table-striped col-lg-12 centered striped bordered condensed">
                                         <tr>
                                             <th>#</th>
                                             <th>Nom</th>
@@ -79,9 +87,9 @@
                                                 <td>{{ dep.author }}</td>
                                                 <td>
                                                     <a href="{{ path("editDepartement",{'id':dep.id}) }}">
-                                                        <button class="simple-button-decoration blue"><span class="fa fa-pencil-alt white-text"></span></button>
+                                                        <button class="btn btn-primary simple-button-decoration blue"><span class="uil-pen white-text"></span></button>
                                                     </a>
-                                                    <button class="simple-button-decoration red deleteDep" identify="{{ path('deleteDepartement',{'id':dep.id}) }}"><span class="fa fa-trash white-text"></span></button>
+                                                    <button class="btn btn-danger simple-button-decoration red deleteDep" identify="{{ path('deleteDepartement',{'id':dep.id}) }}"><span class="uil-trash white-text"></span></button>
                                                 </td>
                                             </tr>
                                         {% endfor %}
@@ -94,6 +102,10 @@
             </div>
         </div>
     </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block javascripts %}

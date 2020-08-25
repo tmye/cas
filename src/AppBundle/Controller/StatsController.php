@@ -390,7 +390,7 @@ class StatsController extends ClockinReccordController
 
                         //print_r("\n Passage 1 FALSE condition retard diff\n");
 
-                        $ct = date('H:i',$retardDiff[1]);
+//                        $ct = date('H:i',$retardDiff[1]); Todo uncomment and fix
                         if($type == 1 || $type == "1"){
                             if( ($_arr == 0 || $_arr == null) || ($_pau == 0 || $_pau == null) || (($_arr == 0 || $_arr == null) && ($_pau == 0 || $_pau == null)) ){
                                 $controlNowTime = $nowTime;
@@ -548,7 +548,7 @@ class StatsController extends ClockinReccordController
                 if($retardPauseDiff == false){
                     if($cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
 
-                        $ct = date('H:i',$retardPauseDiff[1]);
+                        //$ct = date('H:i',$retardPauseDiff[1]); Todo uncomment and fix
                         if($type == 1 || $type == "1") {
                             if (($_fpa == 0 || $_fpa == null) || ($_dep == 0 || $_dep == null) || (($_fpa == 0 || $_fpa == null) && ($_dep == 0 || $_dep == null))) {
 
@@ -840,7 +840,7 @@ class StatsController extends ClockinReccordController
                 if($departPauseDiff == false){
                     if($cr->present($employe,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
 
-                        $ct = date('H:i',$departPauseDiff[1]);
+                        //$ct = date('H:i',$departPauseDiff[1]); Todo uncomment and fix
                         if($type == 1 || $type == "1"){
                             if( ($_arr == 0 || $_arr == null) || ($_pau == 0 || $_pau == null) || (($_arr == 0 || $_arr == null) && ($_pau == 0 || $_pau == null)) ){
                                 // Last verification

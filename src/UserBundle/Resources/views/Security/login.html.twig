@@ -1,42 +1,91 @@
 {% extends "UserBundle::layout.html.twig" %}
 
 {% block style %}
-
+    {{ parent() }}
+    <link href="{{ asset('assets/css/app-modern.min.css') }}" rel="stylesheet" type="text/css" id="light-style" />
+    <link href="{{ asset('assets/css/app-modern-light.min.css') }}" rel="stylesheet"/>
 {% endblock %}
 
 {% block fos_user_content %}
-<div class="row">
-    <div class="col l6 offset-l3">
+
+    <div class="account-pages mt-5 mb-5">
         <div class="container">
-            <p class="center"><img src="{{ asset('img/logo.png') }}" alt="cas_logo" class="" style="width: 60px"></p>
-            <h1 class="login_h1_text">Connexion à C.A.S</h1>
-            {% if error %}
-                <div class="login_error_message_container alert alert-danger">{{ error.getMessage }}</div>
-            {% endif %}
-            <form action="{{ path("login_check") }}" method="post" class="login_container">
-                <p class="center">Bienvenue sur C.A.S.Veuillez-vous authentifier pour continuer</p>
+            <div class="row justify-content-center">
+                <div class="col-lg-5">
+                    <div class="card">
 
-                <label for="username">Nom d'utilisateur</label>
-                <input type="text" id="username" name="_username" value="{{ last_username }}" required="required" class="input-customized-login" placeholder="Votre employe CCID"/>
+                        <!-- Logo -->
+                        <div class="card-header pt-4 pb-4 text-center bg-primary">
+                            <a href="/">
+                                <span><img src="{{ asset('img/logo.png') }}" alt="" height="18"></span>
+                                <h3 class="text-white">Connexion à C.A.S</h3>
+                            </a>
+                        </div>
 
-                <br>
-                <br>
+                        {% if error %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ error.getMessage }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endif %}
 
-                <label for="password">Mot de passe</label>
-                <input type="password" id="password" name="_password" required="required" class="input-customized-login" placeholder="Votre mot de passe"/>
 
-                <br>
-                <br>
 
-                <input type="checkbox" id="remember_me" name="_remember_me" value="on" />
-                <label for="remember_me">Se souvenir de moi</label>
+                        <div class="card-body p-4">
 
-                <br>
-                <br>
-                <input type="submit" id="_submit" name="_submit" value="Se connecter" class="btn-perso-historique green white-text" style="width: 100%"/>
-            </form>
-            <p class="center" style="color: #0366d6;font-size: 13px">&copy; Copyrights 2018 C.A.S.Tous droits réservés</p>
+                            <div class="text-center w-75 m-auto">
+                                <p class="text-muted mb-4">Bienvenue sur C.A.S.Veuillez-vous authentifier pour continuer</p>
+                            </div>
+
+                            <form action="{{ path("login_check") }}" method="post" class="login_container">
+
+                                <div class="form-group">
+                                    <label for="username">Nom d'utilisateur</label>
+                                    <input type="text" id="username" name="_username" value="{{ last_username }}" required="required" class="form-control" placeholder="Votre employe CCID"/>
+                                </div>
+
+                                <div class="form-group">
+                                    <a href="pages-recoverpw.html" class="text-muted float-right"><small>Forgot your password?</small></a>
+                                    <label for="password">Password</label>
+                                    <div class="input-group input-group-merge">
+                                        <input type="password" id="password" name="_password" required="required" class="form-control" placeholder="Votre mot de passe"/>
+                                        <div class="input-group-append" data-password="false">
+                                            <div class="input-group-text">
+                                                <span class="password-eye"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" name="_remember_me" id="remember_me" checked>
+                                        <label class="custom-control-label" for="remember_me">Se souvenir de moi</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-0 text-center">
+                                    <button name="_submit" id="_submit" class="btn btn-primary" type="submit"> Se connecter </button>
+                                </div>
+
+                            </form>
+                        </div> <!-- end card-body -->
+                    </div>
+                    <!-- end card -->
+
+                    <div class="row mt-3">
+                        <div class="col-12 text-center">
+                            <p class="center" style="color: #0366d6;font-size: 13px">&copy; Copyrights 2020 C.A.S. Tous droits réservés</p>
+                        </div> <!-- end col -->
+                    </div>
+                    <!-- end row -->
+
+                </div> <!-- end col -->
+            </div>
+            <!-- end row -->
         </div>
+        <!-- end container -->
     </div>
-</div>
 {% endblock fos_user_content %}

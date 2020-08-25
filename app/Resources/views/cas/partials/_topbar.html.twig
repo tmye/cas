@@ -1,0 +1,136 @@
+<div class="navbar-custom topnav-navbar topnav-navbar-dark">
+    <div class="container-fluid">
+
+        <!-- LOGO -->
+        <a href="/" class="topnav-logo">
+            {%  if app.session.get('companyLogo') is defined and app.session.get('companyLogo') is not null %}
+                <span class="topnav-logo-lg">
+                    <img src="{{ asset("company_images/"~app.session.get('companyLogo')) }}" alt="{{ app.session.get('companyName') }}" height="16">
+                </span>
+                <span class="topnav-logo-sm">
+                    <img src="{{ asset("company_images/"~app.session.get('companyLogo')) }}" alt="{{ app.session.get('companyName') }}" height="16">
+                </span>
+            {% endif %}
+        </a>
+
+
+        <ul class="list-unstyled topbar-right-menu float-right mb-0">
+
+            {% if app.user is defined and app.user is not null %}
+
+                <li class="notification-list">
+                    <a class="nav-link right-bar-toggle mt-3" href="javascript: void(0);">
+                        <li class="notification-list">
+                            <a class="nav-link right-bar-toggle" href="javascript: void(0);">
+                                <h5><span class="uil-calendar-alt"></span>
+                                {{ 'now' | date("d/m/Y") }}</h5>
+                            </a>
+                        </li>
+                    </a>
+                </li>
+
+                <li class="notification-list">
+                    <a class="nav-link right-bar-toggle" href="javascript: void(0);">
+                        <li class="notification-list">
+                            <a class="nav-link right-bar-toggle mt-3" href="javascript: void(0);">
+                                <h5><span class="uil-clock" style="padding-left: 20px"></span>
+                                <span id="currentTime"></span></h5>
+                            </a>
+                        </li>
+                    </a>
+                </li>
+
+                <li class="notification-list">
+                    <a class="nav-link right-bar-toggle" href="javascript: void(0);">
+                        {% if ("now" |date("H")) >=12 %}
+
+                            <li class="notification-list">
+                                <a class="nav-link right-bar-toggle" href="javascript: void(0);">
+                                    <h5 class="text-overflow m-0 mt-3">{{ "Bonsoir, " }} </h5>
+                                </a>
+                            </li>
+
+                        {% else %}
+                            <li class="notification-list">
+                                <a class="nav-link right-bar-toggle" href="javascript: void(0);">
+                                    <h5 class="text-overflow m-0 mt-3">{{ "Bonjour, " }} </h5>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </a>
+                </li>
+
+                <li class="dropdown notification-list">
+
+                {% if app.user.picture is defined and app.user.picture is not null %}
+
+                    <a class="nav-link dropdown-toggle nav-user arrow-none mr-0" data-toggle="dropdown" id="topbar-userdrop" href="#" role="button" aria-haspopup="true"
+                       aria-expanded="false">
+                        <span class="account-user-avatar">
+                            <img src="{{ asset('/')~user_profile_pictures~'/'~app.user.picture }}" alt="user-image" class="rounded-circle">
+                        </span>
+                        <span class="mt-3">
+                            {% if app.user.roles[0] == "ROLE_SUPER_ADMIN" %}
+                                Administrateur
+                            {%  elseif app.user.roles[0] == "ROLE_ADMIN_CONTROL" %}
+                                Sécurité
+                            {%  elseif app.user.roles[0] == "ROLE_SECRET" %}
+                                Sécrétaire
+                            {%  elseif app.user.roles[0] == "ROLE_ADMIN" %}
+                                Utilisateur
+                            {% endif %}
+                        </span>
+                    </a>
+
+                {% else %}
+                    <a class="nav-link dropdown-toggle nav-user arrow-none mr-0" data-toggle="dropdown" id="topbar-userdrop" href="#" role="button" aria-haspopup="true"
+                       aria-expanded="false">
+                        <span class="account-user-avatar">
+                            <img src="{{ asset('assets/images/users/avatar.png') }}" alt="user-image" class="rounded-circle">
+                        </span>
+                        <span class="account-user-name">
+                            {{ app.user.username }}
+                        </span>
+                        <span class="account-position">
+                            {% if app.user.roles[0] == "ROLE_SUPER_ADMIN" %}
+                                Administrateur
+                            {%  elseif app.user.roles[0] == "ROLE_ADMIN_CONTROL" %}
+                                Sécurité
+                            {%  elseif app.user.roles[0] == "ROLE_SECRET" %}
+                                Sécrétaire
+                            {%  elseif app.user.roles[0] == "ROLE_ADMIN" %}
+                                Utilisateur
+                            {% endif %}
+                        </span>
+
+                    </a>
+                {% endif %}
+
+                <div class="dropdown-menu dropdown-menu-right dropdown-menu-animated topbar-dropdown-menu profile-dropdown" aria-labelledby="topbar-userdrop">
+                    <!-- item-->
+                    <a href="{{ path('logout') }}" class="dropdown-item notify-item">
+                        <i class="mdi mdi-logout mr-1"></i>
+                        <span>DÉCONNEXION</span>
+                    </a>
+                </div>
+            </li>
+
+            {% endif %}
+
+        </ul>
+
+
+
+
+
+        <a class="button-menu-mobile disable-btn">
+            <div class="lines">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </a>
+
+
+    </div>
+</div>

@@ -4,399 +4,411 @@
 {% block title %}C.A.S - Heure de Travail{% endblock %}
 
 {% block body %}
-    <div class="row">
-        <div class="col l12">
-            <h5 class="page-title"><span class="fa fa-calendar-plus"></span> Gestion des heures de travail</h5>
-            <p class="description_message">Sur ce formulaire vous pouvez définir les heures de travail. Faites attention à entrer les informations correctement car une erreur dans l'heure de travail peut affecter le calcul de vos statistiques.</p>
-            <div class="row">
-                <div class="col l12">
-                    <ul class="collapsible" data-collapsible="accordion">
-                        {% for message in  app.session.flashbag.get('notice') %}
-                            <div class="row">
-                                <div class="col l12">
-                                    <div class="operation_message">
-                                        {{ message }}
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                        <br/>
-                        <li>
-                            <div class="collapsible-header" style="padding-top: 0px;"><span class="collapsible-header-title">Ajouter une nouvelle heure de travail</span></div>
-                            <div class="collapsible-body" style="padding-bottom: 0px">
-                                <div class="row">
-                                    <div class="col l12">
 
-                                        <!-- Formulaire pour lundi -->
+<div class="container-fluid">
+    <div class="wrapper">
 
+        {% include('cas/partials/_sidebar.html.twig') %}
+
+        <div class="content-page">
+            <div class="content">
+                <div class="col-lg-12"><h2 class="page-title"><span class="uil-calendar-alt"></span> Gestion des heures de travail</h2></div>
+                <div class="row card">
+                    <div class="col-lg-12 card-body">
+                        <p class="description_message">Sur ce formulaire vous pouvez définir les heures de travail. Faites attention à entrer les informations correctement car une erreur dans l'heure de travail peut affecter le calcul de vos statistiques.</p>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <ul class="collapsible" data-collapsible="accordion">
+                                    {% for message in  app.session.flashbag.get('notice') %}
                                         <div class="row">
-                                            <div class="input-field col s4">
-                                                <span>Nom de code</span>
-                                                <input type="text" id="code" class="input-customized">
-                                            </div>
-                                            <div class="input-field col s4">
-                                                <span>Type</span>
-                                                <select id="form_type_all" name="form[type]">
-                                                    <option value="1">Heures figées</option>
-                                                    <option value="2">Quota horraire</option>
-                                                    <option value="3">Présence</option>
-                                                    <option value="4">Heures figées sans pause</option>
-                                                </select>
-                                            </div>
-                                            <div class="input-field col s4">
-                                                <span>Tolérance (en minutes)</span>
-                                                <input type="number" min="60" value="60" id="tolerance" class="input-customized">
+                                            <div class="col-lg-12">
+                                                <div class="operation_message">
+                                                    {{ message }}
+                                                </div>
                                             </div>
                                         </div>
-                                        <h5 class="permissionsSeparator whH5">Lundi</h5>
-                                        <div class="row">
-                                            <div class="collapseSectionLundi">
-                                                <div class="input-field col l3">
-                                                    <span>Début</span>
-                                                    <input type="text" id="lundiBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l3">
-                                                    <span>Fin</span>
-                                                    <input type="text" id="lundiEH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Début pause</span>
-                                                    <input type="text" id="lundiPBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Fin pause</span>
-                                                    <input type="text" id="lundiPEH" class="input-customized timepicker">
-                                                </div>
-                                            </div>
-                                            <div class="input-field col l2 quotaSectionLundi">
-                                                <span>Quota horraire</span>
-                                                <input type="number" id="lundiQuota" min="1" max="24" class="input-customized">
-                                            </div>
-                                        </div>
+                                    {% endfor %}
+                                    <br/>
+                                    <li>
+                                        <div class="collapsible-header" style="padding-top: 0px;"><span class="collapsible-header-title">Ajouter une nouvelle heure de travail</span></div>
+                                        <div class="collapsible-body" style="padding-bottom: 0px">
+                                            <div class="row">
+                                                <div class="col-lg-12">
 
-                                        <!-- Formulaire pour mardi -->
+                                                    <!-- Formulaire pour lundi -->
 
-                                        <h5 class="permissionsSeparator whH5">Mardi</h5>
-                                        <div class="row">
-                                            <div class="collapseSectionMardi">
-                                                <div class="input-field col l3">
-                                                    <span>Début</span>
-                                                    <input type="text" id="mardiBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l3">
-                                                    <span>Fin</span>
-                                                    <input type="text" id="mardiEH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Début pause</span>
-                                                    <input type="text" id="mardiPBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Fin pause</span>
-                                                    <input type="text" id="mardiPEH" class="input-customized timepicker">
-                                                </div>
-                                            </div>
-                                            <div class="input-field col l2 quotaSectionMardi">
-                                                <span>Quota horraire</span>
-                                                <input type="number" id="mardiQuota" min="1" max="24" class="input-customized">
-                                            </div>
-                                        </div>
-
-                                        <!-- Formulaire pour mercredi -->
-
-                                        <h5 class="permissionsSeparator whH5">Mercredi</h5>
-                                        <div class="row">
-                                            <div class="collapseSectionMercredi">
-                                                <div class="input-field col l3">
-                                                    <span>Début</span>
-                                                    <input type="text" id="mercrediBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l3">
-                                                    <span>Fin</span>
-                                                    <input type="text" id="mercrediEH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Début pause</span>
-                                                    <input type="text" id="mercrediPBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Fin pause</span>
-                                                    <input type="text" id="mercrediPEH" class="input-customized timepicker">
-                                                </div>
-                                            </div>
-                                            <div class="input-field col s2 quotaSectionMercredi">
-                                                <span>Quota horraire</span>
-                                                <input type="number" id="mercrediQuota" min="1" max="24" class="input-customized">
-                                            </div>
-                                        </div>
-
-                                        <!-- Formulaire pour jeudi -->
-
-                                        <h5 class="permissionsSeparator whH5">Jeudi</h5>
-                                        <div class="row">
-                                            <div class="collapseSectionJeudi">
-                                                <div class="input-field col l3">
-                                                    <span>Début</span>
-                                                    <input type="text" id="jeudiBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l3">
-                                                    <span>Fin</span>
-                                                    <input type="text" id="jeudiEH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Début pause</span>
-                                                    <input type="text" id="jeudiPBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Fin pause</span>
-                                                    <input type="text" id="jeudiPEH" class="input-customized timepicker">
-                                                </div>
-                                            </div>
-                                            <div class="input-field col s2 quotaSectionJeudi">
-                                                <span>Quota horraire</span>
-                                                <input type="number" id="jeudiQuota" min="1" max="24" class="input-customized">
-                                            </div>
-                                        </div>
-
-                                        <!-- Formulaire pour Vendredi -->
-
-                                        <h5 class="permissionsSeparator whH5">Vendredi</h5>
-                                        <div class="row">
-                                            <div class="collapseSectionVendredi">
-                                                <div class="input-field col l3">
-                                                    <span>Début</span>
-                                                    <input type="text" id="vendrediBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l3">
-                                                    <span>Fin</span>
-                                                    <input type="text" id="vendrediEH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Début pause</span>
-                                                    <input type="text" id="vendrediPBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Fin pause</span>
-                                                    <input type="text" id="vendrediPEH" class="input-customized timepicker">
-                                                </div>
-                                            </div>
-                                            <div class="input-field col s2 quotaSectionVendredi">
-                                                <span>Quota horraire</span>
-                                                <input type="number" id="vendrediQuota" min="1" max="24" class="input-customized">
-                                            </div>
-                                        </div>
-
-                                        <!-- Formulaire pour Samedi -->
-
-                                        <h5 class="permissionsSeparator whH5">Samedi</h5>
-                                        <p style="margin-top: 0px">
-                                            <input type="checkbox" class="checkItSamedi" id="filled-in-box-samedi" />
-                                            <label for="filled-in-box-samedi">Présence non requise</label>
-                                        </p>
-                                        <div class="row maybeHiddenSamedi">
-                                            <div class="collapseSectionSamedi">
-                                                <div class="input-field col l3">
-                                                    <span>Début</span>
-                                                    <input type="text" id="samediBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l3">
-                                                    <span>Fin</span>
-                                                    <input type="text" id="samediEH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Début pause</span>
-                                                    <input type="text" id="samediPBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Fin pause</span>
-                                                    <input type="text" id="samediPEH" class="input-customized timepicker">
-                                                </div>
-                                            </div>
-                                            <div class="input-field col s2 quotaSectionSamedi">
-                                                <span>Quota horraire</span>
-                                                <input type="number" id="samediQuota" min="1" max="24" class="input-customized">
-                                            </div>
-                                        </div>
-
-                                        <!-- Formulaire pour Dimanche -->
-
-                                        <h5 class="permissionsSeparator whH5">Dimanche</h5>
-                                        <p style="margin-top: 0px">
-                                            <input type="checkbox" class="checkItDimanche" id="filled-in-box-dimanche" />
-                                            <label for="filled-in-box-dimanche">Présence non requise</label>
-                                        </p>
-                                        <div class="row maybeHiddenDimanche">
-                                            <div class="collapseSectionDimanche">
-                                                <div class="input-field col l3">
-                                                    <span>Début</span>
-                                                    <input type="text" id="dimancheBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l3">
-                                                    <span>Fin</span>
-                                                    <input type="text" id="dimancheEH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Début pause</span>
-                                                    <input type="text" id="dimanchePBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Fin pause</span>
-                                                    <input type="text" id="dimanchePEH" class="input-customized timepicker">
-                                                </div>
-                                            </div>
-                                            <div class="input-field col s2 quotaSectionDimanche">
-                                                <span>Quota horraire</span>
-                                                <input type="number" id="dimancheQuota" min="1" max="24" class="input-customized">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col l12">
-                                        <button id="btnSave">Enregistrer</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="collapsible-header active "><span class="collapsible-header-title">Liste des heures de travail</span></div>
-                            <div class="collapsible-body" style="padding-bottom: 0px">
-                                <div class="row">
-                                    <div class="col l12">
-                                        <table class="bordered striped centered">
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Nom de code</th>
-                                                    <th>Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-
-                                            {% for wh in whList %}
-                                                <tr>
-                                                    <td>{{ wh.id }}</td>
-                                                    <td>{{ wh.workingHour.code }}</td>
-                                                    {#<td>{% if wh.pauseBeginHour is not null %}{{ wh.pauseBeginHour | date("H:i") }}{% else %}{{ "-" }}{% endif %}</td>#}
-                                                    <td>
-                                                        <a href="{{ path("editWorkingHour",{'id':wh.id}) }}">
-                                                            <button class="simple-button-decoration blue"><span class="fa fa-pencil-alt white-text"></span></button>
-                                                        </a>
-                                                        <button data-target="modal-formulaire{{ wh.id }}" class="simple-button-decoration green lighten-2 machineDep modal-trigger" identify="{{ wh.id }}"><span class="fa fa-eye white-text"></span></button>
-                                                        <button class="simple-button-decoration red deleteWh" identify="{{ wh.id }}"><span class="fa fa-trash white-text"></span></button>
-                                                    </td>
-                                                </tr>
-                                                <div id="modal-formulaire{{ wh.id }}" class="modal modal-fixed-footer">
-                                                    <div class="modal-content">
-                                                        <h5>Détails de cette heure de travail</h5>
-                                                        <hr>
-                                                        <p>Détails supplémentaires</p>
-                                                        <div class="row">
-                                                            <div class="col s12">
-                                                                <ol>
-                                                                    <div class="row">
-                                                                        <div class="col l4">
-                                                                            <li>
-                                                                                Lundi
-                                                                                <ul>
-                                                                                    <li>Type : {{ wh.workingHour.lundi[0].type }}</li>
-                                                                                    {% if wh.workingHour.lundi[0].type == "2" %}
-                                                                                        <li>Quota horraire : {{ wh.workingHour.lundi[0].quota }}</li>
-                                                                                    {% endif %}
-                                                                                </ul>
-                                                                            </li>
-                                                                        </div>
-                                                                        <div class="col l4">
-                                                                            <li>
-                                                                                Mardi
-                                                                                <ul>
-                                                                                    <li>Type : {{ wh.workingHour.mardi[0].type }}</li>
-                                                                                    {% if wh.workingHour.mardi[0].type == "2" %}
-                                                                                        <li>Quota horraire : {{ wh.workingHour.mardi[0].quota }}</li>
-                                                                                    {% endif %}
-                                                                                </ul>
-                                                                            </li>
-                                                                        </div>
-                                                                        <div class="col l4">
-                                                                            <li>
-                                                                                Mercredi
-                                                                                <ul>
-                                                                                    <li>Type : {{ wh.workingHour.mercredi[0].type }}</li>
-                                                                                    {% if wh.workingHour.mercredi[0].type == "2" %}
-                                                                                        <li>Quota horraire : {{ wh.workingHour.mercredi[0].quota }}</li>
-                                                                                    {% endif %}
-                                                                                </ul>
-                                                                            </li>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row">
-                                                                        <div class="col l4">
-                                                                            <li>
-                                                                                Jeudi
-                                                                                <ul>
-                                                                                    <li>Type : {{ wh.workingHour.jeudi[0].type }}</li>
-                                                                                    {% if wh.workingHour.jeudi[0].type == "2" %}
-                                                                                        <li>Quota horraire : {{ wh.workingHour.jeudi[0].quota }}</li>
-                                                                                    {% endif %}
-                                                                                </ul>
-                                                                            </li>
-                                                                        </div>
-                                                                        <div class="col l4">
-                                                                            <li>
-                                                                                Vendredi
-                                                                                <ul>
-                                                                                    <li>Type : {{ wh.workingHour.vendredi[0].type }}</li>
-                                                                                    {% if wh.workingHour.vendredi[0].type == "2" %}
-                                                                                        <li>Quota horraire : {{ wh.workingHour.vendredi[0].quota }}</li>
-                                                                                    {% endif %}
-                                                                                </ul>
-                                                                            </li>
-                                                                        </div>
-                                                                        <div class="col l4">
-                                                                            <li>
-                                                                                Samedi
-                                                                                <ul>
-                                                                                    <li>Type : {{ wh.workingHour.samedi[0].type }}</li>
-                                                                                    {% if wh.workingHour.samedi[0].type == "2" %}
-                                                                                        <li>Quota horraire : {{ wh.workingHour.samedi[0].quota }}</li>
-                                                                                    {% endif %}
-                                                                                </ul>
-                                                                            </li>
-                                                                        </div>
-                                                                        <div class="col l4">
-                                                                            <li>
-                                                                                Dimanche
-                                                                                <ul>
-                                                                                    <li>Type : {{ wh.workingHour.dimanche[0].type }}</li>
-                                                                                    {% if wh.workingHour.dimanche[0].type == "2" %}
-                                                                                        <li>Quota horraire : {{ wh.workingHour.dimanche[0].quota }}</li>
-                                                                                    {% endif %}
-                                                                                </ul>
-                                                                            </li>
-                                                                        </div>
-                                                                    </div>
-                                                                </ol>
+                                                    <div class="row">
+                                                        <div class="input-field col s4">
+                                                            <span>Nom de code</span>
+                                                            <input type="text" id="code" class="form-control input-customized">
+                                                        </div>
+                                                        <div class="input-field col s4">
+                                                            <span>Type</span>
+                                                            <select class="form-control" id="form_type_all" name="form[type]">
+                                                                <option value="1">Heures figées</option>
+                                                                <option value="2">Quota horraire</option>
+                                                                <option value="3">Présence</option>
+                                                                <option value="4">Heures figées sans pause</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="input-field ">
+                                                            <span>Tolérance (en minutes)</span>
+                                                            <input type="number" min="60" value="60" id="tolerance" class="form-control input-customized">
+                                                        </div>
+                                                    </div>
+                                                    <h5 class="permissionsSeparator whH5">Lundi</h5>
+                                                    <div class="row">
+                                                        <div class="collapseSectionLundi">
+                                                            <div class="input-field">
+                                                                <span>Début</span>
+                                                                <input type="text" id="lundiBH" class="form-control input-customized timepicker">
                                                             </div>
+                                                            <div class="input-field">
+                                                                <span>Fin</span>
+                                                                <input type="text" id="lundiEH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                            <div class="input-field ">
+                                                                <span>Début pause</span>
+                                                                <input type="text" id="lundiPBH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                            <div class="input-field ">
+                                                                <span>Fin pause</span>
+                                                                <input type="text" id="lundiPEH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                        </div>
+                                                        <div class="input-field quotaSectionLundi">
+                                                            <span>Quota horraire</span>
+                                                            <input type="number" id="lundiQuota" min="1" max="24" class="form-control input-customized">
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Formulaire pour mardi -->
+
+                                                    <h5 class="permissionsSeparator whH5">Mardi</h5>
+                                                    <div class="row">
+                                                        <div class="collapseSectionMardi">
+                                                            <div class="input-field ">
+                                                                <span>Début</span>
+                                                                <input type="text" id="mardiBH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                            <div class="input-field ">
+                                                                <span>Fin</span>
+                                                                <input type="text" id="mardiEH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                            <div class="input-field ">
+                                                                <span>Début pause</span>
+                                                                <input type="text" id="mardiPBH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                            <div class="input-field ">
+                                                                <span>Fin pause</span>
+                                                                <input type="text" id="mardiPEH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                        </div>
+                                                        <div class="input-field  quotaSectionMardi">
+                                                            <span>Quota horraire</span>
+                                                            <input type="number" id="mardiQuota" min="1" max="24" class="form-control input-customized">
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Formulaire pour mercredi -->
+
+                                                    <h5 class="permissionsSeparator whH5">Mercredi</h5>
+                                                    <div class="row">
+                                                        <div class="collapseSectionMercredi">
+                                                            <div class="input-field">
+                                                                <span>Début</span>
+                                                                <input type="text" id="mercrediBH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                            <div class="input-field">
+                                                                <span>Fin</span>
+                                                                <input type="text" id="mercrediEH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                            <div class="input-field">
+                                                                <span>Début pause</span>
+                                                                <input type="text" id="mercrediPBH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                            <div class="input-field">
+                                                                <span>Fin pause</span>
+                                                                <input type="text" id="mercrediPEH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                        </div>
+                                                        <div class="input-field col s2 quotaSectionMercredi">
+                                                            <span>Quota horraire</span>
+                                                            <input type="number" id="mercrediQuota" min="1" max="24" class="form-control input-customized">
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Formulaire pour jeudi -->
+
+                                                    <h5 class="permissionsSeparator whH5">Jeudi</h5>
+                                                    <div class="row">
+                                                        <div class="collapseSectionJeudi">
+                                                            <div class="input-field">
+                                                                <span>Début</span>
+                                                                <input type="text" id="jeudiBH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                            <div class="input-field ">
+                                                                <span>Fin</span>
+                                                                <input type="text" id="jeudiEH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                            <div class="input-field ">
+                                                                <span>Début pause</span>
+                                                                <input type="text" id="jeudiPBH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                            <div class="input-field">
+                                                                <span>Fin pause</span>
+                                                                <input type="text" id="jeudiPEH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                        </div>
+                                                        <div class="input-field col s2 quotaSectionJeudi">
+                                                            <span>Quota horraire</span>
+                                                            <input type="number" id="jeudiQuota" min="1" max="24" class="form-control input-customized">
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Formulaire pour Vendredi -->
+
+                                                    <h5 class="permissionsSeparator whH5">Vendredi</h5>
+                                                    <div class="row">
+                                                        <div class="collapseSectionVendredi">
+                                                            <div class="input-field">
+                                                                <span>Début</span>
+                                                                <input type="text" id="vendrediBH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                            <div class="input-field">
+                                                                <span>Fin</span>
+                                                                <input type="text" id="vendrediEH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                            <div class="input-field">
+                                                                <span>Début pause</span>
+                                                                <input type="text" id="vendrediPBH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                            <div class="input-field">
+                                                                <span>Fin pause</span>
+                                                                <input type="text" id="vendrediPEH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                        </div>
+                                                        <div class="input-field col s2 quotaSectionVendredi">
+                                                            <span>Quota horraire</span>
+                                                            <input type="number" id="vendrediQuota" min="1" max="24" class="form-control input-customized">
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Formulaire pour Samedi -->
+
+                                                    <h5 class="permissionsSeparator whH5">Samedi</h5>
+                                                    <p style="margin-top: 0px">
+                                                        <input type="checkbox" class="checkItSamedi" id="filled-in-box-samedi" />
+                                                        <label for="filled-in-box-samedi">Présence non requise</label>
+                                                    </p>
+                                                    <div class="row maybeHiddenSamedi">
+                                                        <div class="collapseSectionSamedi">
+                                                            <div class="input-field">
+                                                                <span>Début</span>
+                                                                <input type="text" id="samediBH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                            <div class="input-field">
+                                                                <span>Fin</span>
+                                                                <input type="text" id="samediEH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                            <div class="input-field">
+                                                                <span>Début pause</span>
+                                                                <input type="text" id="samediPBH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                            <div class="input-field">
+                                                                <span>Fin pause</span>
+                                                                <input type="text" id="samediPEH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                        </div>
+                                                        <div class="input-field col s2 quotaSectionSamedi">
+                                                            <span>Quota horraire</span>
+                                                            <input type="number" id="samediQuota" min="1" max="24" class="form-control input-customized">
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Formulaire pour Dimanche -->
+
+                                                    <h5 class="permissionsSeparator whH5">Dimanche</h5>
+                                                    <p style="margin-top: 0px">
+                                                        <input type="checkbox" class="checkItDimanche" id="filled-in-box-dimanche" />
+                                                        <label for="filled-in-box-dimanche">Présence non requise</label>
+                                                    </p>
+                                                    <div class="row maybeHiddenDimanche">
+                                                        <div class="collapseSectionDimanche">
+                                                            <div class="input-field">
+                                                                <span>Début</span>
+                                                                <input type="text" id="dimancheBH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                            <div class="input-field">
+                                                                <span>Fin</span>
+                                                                <input type="text" id="dimancheEH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                            <div class="input-field">
+                                                                <span>Début pause</span>
+                                                                <input type="text" id="dimanchePBH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                            <div class="input-field">
+                                                                <span>Fin pause</span>
+                                                                <input type="text" id="dimanchePEH" class="form-control input-customized timepicker">
+                                                            </div>
+                                                        </div>
+                                                        <div class="input-field col s2 quotaSectionDimanche">
+                                                            <span>Quota horraire</span>
+                                                            <input type="number" id="dimancheQuota" min="1" max="24" class="form-control input-customized">
                                                         </div>
                                                     </div>
                                                 </div>
-                                            {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-12 " >
+                                                    <button class="mt-3 btn btn-success" id="btnSave">Enregistrer</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="collapsible-header active "><span class="collapsible-header-title">Liste des heures de travail</span></div>
+                                        <div class="collapsible-body" style="padding-bottom: 0px">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <table class="table table-striped centered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>#</th>
+                                                                <th>Nom de code</th>
+                                                                <th>Actions</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+
+                                                        {% for wh in whList %}
+                                                            <tr>
+                                                                <td>{{ wh.id }}</td>
+                                                                <td>{{ wh.workingHour.code }}</td>
+                                                                {#<td>{% if wh.pauseBeginHour is not null %}{{ wh.pauseBeginHour | date("H:i") }}{% else %}{{ "-" }}{% endif %}</td>#}
+                                                                <td>
+                                                                    <a href="{{ path("editWorkingHour",{'id':wh.id}) }}">
+                                                                        <button class="btn btn-outline-primary simple-button-decoration blue"><span class="uil-pen white-text"></span></button>
+                                                                    </a>
+                                                                    <button data-target="modal-formulaire{{ wh.id }}" class="btn btn-primary simple-button-decoration green lighten-2 machineDep modal-trigger" identify="{{ wh.id }}"><span class="uil-eye white-text"></span></button>
+                                                                    <button class="btn btn-danger simple-button-decoration red deleteWh" identify="{{ wh.id }}"><span class="uil-trash white-text"></span></button>
+                                                                </td>
+                                                            </tr>
+                                                            <div id="modal-formulaire{{ wh.id }}" class="modal modal-fixed-footer">
+                                                                <div class="modal-content">
+                                                                    <h5>Détails de cette heure de travail</h5>
+                                                                    <hr>
+                                                                    <p>Détails supplémentaires</p>
+                                                                    <div class="row">
+                                                                        <div class="col s12">
+                                                                            <ol>
+                                                                                <div class="row">
+                                                                                    <div class="col-lg-4">
+                                                                                        <li>
+                                                                                            Lundi
+                                                                                            <ul>
+                                                                                                <li>Type : {{ wh.workingHour.lundi[0].type }}</li>
+                                                                                                {% if wh.workingHour.lundi[0].type == "2" %}
+                                                                                                    <li>Quota horraire : {{ wh.workingHour.lundi[0].quota }}</li>
+                                                                                                {% endif %}
+                                                                                            </ul>
+                                                                                        </li>
+                                                                                    </div>
+                                                                                    <div class="col-lg-4">
+                                                                                        <li>
+                                                                                            Mardi
+                                                                                            <ul>
+                                                                                                <li>Type : {{ wh.workingHour.mardi[0].type }}</li>
+                                                                                                {% if wh.workingHour.mardi[0].type == "2" %}
+                                                                                                    <li>Quota horraire : {{ wh.workingHour.mardi[0].quota }}</li>
+                                                                                                {% endif %}
+                                                                                            </ul>
+                                                                                        </li>
+                                                                                    </div>
+                                                                                    <div class="col-lg-4">
+                                                                                        <li>
+                                                                                            Mercredi
+                                                                                            <ul>
+                                                                                                <li>Type : {{ wh.workingHour.mercredi[0].type }}</li>
+                                                                                                {% if wh.workingHour.mercredi[0].type == "2" %}
+                                                                                                    <li>Quota horraire : {{ wh.workingHour.mercredi[0].quota }}</li>
+                                                                                                {% endif %}
+                                                                                            </ul>
+                                                                                        </li>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row">
+                                                                                    <div class="col-lg-4">
+                                                                                        <li>
+                                                                                            Jeudi
+                                                                                            <ul>
+                                                                                                <li>Type : {{ wh.workingHour.jeudi[0].type }}</li>
+                                                                                                {% if wh.workingHour.jeudi[0].type == "2" %}
+                                                                                                    <li>Quota horraire : {{ wh.workingHour.jeudi[0].quota }}</li>
+                                                                                                {% endif %}
+                                                                                            </ul>
+                                                                                        </li>
+                                                                                    </div>
+                                                                                    <div class="col-lg-4">
+                                                                                        <li>
+                                                                                            Vendredi
+                                                                                            <ul>
+                                                                                                <li>Type : {{ wh.workingHour.vendredi[0].type }}</li>
+                                                                                                {% if wh.workingHour.vendredi[0].type == "2" %}
+                                                                                                    <li>Quota horraire : {{ wh.workingHour.vendredi[0].quota }}</li>
+                                                                                                {% endif %}
+                                                                                            </ul>
+                                                                                        </li>
+                                                                                    </div>
+                                                                                    <div class="col-lg-4">
+                                                                                        <li>
+                                                                                            Samedi
+                                                                                            <ul>
+                                                                                                <li>Type : {{ wh.workingHour.samedi[0].type }}</li>
+                                                                                                {% if wh.workingHour.samedi[0].type == "2" %}
+                                                                                                    <li>Quota horraire : {{ wh.workingHour.samedi[0].quota }}</li>
+                                                                                                {% endif %}
+                                                                                            </ul>
+                                                                                        </li>
+                                                                                    </div>
+                                                                                    <div class="col-lg-4">
+                                                                                        <li>
+                                                                                            Dimanche
+                                                                                            <ul>
+                                                                                                <li>Type : {{ wh.workingHour.dimanche[0].type }}</li>
+                                                                                                {% if wh.workingHour.dimanche[0].type == "2" %}
+                                                                                                    <li>Quota horraire : {{ wh.workingHour.dimanche[0].quota }}</li>
+                                                                                                {% endif %}
+                                                                                            </ul>
+                                                                                        </li>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </ol>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
                             </div>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
+                    <div class="fixed-action-btn" style="margin-bottom: 30px">
+                        <a class="btn-floating tooltipped pulse blue btn-large" id="btnDuplicate" data-position="top" data-tooltip="Dupliquer">
+                            <span class="uil-copy"></span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="fixed-action-btn" style="margin-bottom: 30px">
-            <a class="btn-floating tooltipped pulse blue btn-large" id="btnDuplicate" data-position="top" data-tooltip="Dupliquer">
-                <span class="fa fa-copy"></span>
-            </a>
-        </div>
     </div>
+</div>
 {% endblock %}
 
 {% block javascripts %}

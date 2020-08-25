@@ -5,75 +5,87 @@
 
 {% block body %}
 
-    <!-- Modal for ajax loading -->
-    <div id="modal_loading" class="modal ajax_modals">
-        <div class="modal-content">
-            <p class="center">
-                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
-            </p>
+<div class="container-fluid">
+    <div class="wrapper">
+
+        {% include('cas/partials/_sidebar.html.twig') %}
+
+        <!-- Modal for ajax loading -->
+        <div id="modal_loading" class="modal ajax_modals">
+            <div class="modal-content">
+                <p class="center">
+                    <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+                </p>
+            </div>
         </div>
-    </div>
 
-    <div class="row">
-        <div class="col l12">
-            <h5 class="h5_title"><span class="fa fa-info-circle"></span> Informations relatives à votre société</h5>
-            <div class="row">
-                <div class="col l12">
-                    <ul class="collapsible" data-collapsible="accordion">
-                        <li>
-                            <div class="collapsible-header active collapsible-header-title">Formulaire d'ajout d'informations</div>
-                            <div class="collapsible-body" style="padding-bottom: 0px">
-                                {% for message in  app.session.flashbag.get('notice') %}
-                                    <div class="row">
-                                        <div class="col l12">
-                                            <div class="operation_message">
-                                                {{ message }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                                
-                                {% if form is defined and form is not null %}
-                                    {{ form_start(form) }}
-                                    <div class="row">
-                                        <div class="input-field col s4">
-                                            <span>Vision</span>
-                                            {{ form_row(form.vision, {'attr': {'class': 'input-customized','placeholder':'Vision    '}}) }}
-                                        </div>
-                                        <div class="input-field col s8">
-                                            <span>Mission</span>
-                                            {{ form_row(form.mission, {'attr': {'class': 'input-customized','placeholder':'Mission'}}) }}
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="input-field col s4">
-                                            <span>Fondation</span>
-                                            {{ form_row(form.foundation, {'attr': {'class': 'input-customized','placeholder':'Fondation'}}) }}
-                                        </div>
-                                        <div class="input-field col s4">
-                                            <span>Siège</span>
-                                            {{ form_row(form.headoffice, {'attr': {'min':'1','class':'input-customized contact_field','placeholder':'Siège'}}) }}
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="input-field col s4">
-                                            <span>Directeur</span>
-                                            {{ form_row(form.director, {'attr': {'min':'1','class':'input-customized','placeholder':'Directeur'}}) }}
-                                        </div>
-                                    </div>
+        <div class="content-page">
+            <div class="content">
+                <div class="col-lg-12"><h2 class="h5_title"><span class="uil-info-circle"></span> Informations relatives à votre société</h2></div>
+                <div class="row card">
+                    <div class="col-lg-12 card-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <ul class="collapsible" data-collapsible="accordion">
+                                    <li>
+                                        <div class="collapsible-header active collapsible-header-title">Formulaire d'ajout d'informations</div>
+                                        <div class="collapsible-body" style="padding-bottom: 0px">
+                                            {% for message in  app.session.flashbag.get('notice') %}
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="operation_message">
+                                                            {{ message }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
 
-                                    {{ form_widget(form.creer, { 'label': 'Créer','attr': {'class':'btn'} }) }}
-                                    <br/><br/>
-                                    {{ form_rest(form) }}
-                                    {{ form_end(form) }}
-                                {% endif %}
+                                            {% if form is defined and form is not null %}
+                                                {{ form_start(form) }}
+                                                <div class="row" >
+                                                    <div class="form-group mt-2 col s4">
+                                                        <label>Vision</label>
+                                                        {{ form_row(form.vision, {'attr': {'class': 'form-control input-customized','placeholder':'Vision    '}}) }}
+                                                    </div>
+                                                    <div class="form-group mt-2 col s8">
+                                                        <span>Mission</span>
+                                                        {{ form_row(form.mission, {'attr': {'class': 'form-control input-customized','placeholder':'Mission'}}) }}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group mt-2 col s4">
+                                                        <span>Fondation</span>
+                                                        {{ form_row(form.foundation, {'attr': {'class': 'form-control input-customized','placeholder':'Fondation'}}) }}
+                                                    </div>
+                                                    <div class="form-group mt-2 col s4">
+                                                        <span>Siège</span>
+                                                        {{ form_row(form.headoffice, {'attr': {'min':'1','class':'form-control input-customized contact_field','placeholder':'Siège'}}) }}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group mt-2 col s4">
+                                                        <span>Directeur</span>
+                                                        {{ form_row(form.director, {'attr': {'min':'1','class':'form-control input-customized','placeholder':'Directeur'}}) }}
+                                                    </div>
+                                                </div>
+
+                                                {{ form_widget(form.creer, { 'label': 'Créer','attr': {'class':'mt-3 btn btn-success'} }) }}
+                                                <br/><br/>
+                                                {{ form_rest(form) }}
+                                                {{ form_end(form) }}
+                                            {% endif %}
+                                        </div>
+                                    </li>
+                                </ul>
                             </div>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
                 </div>
+                
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
 
 {% block javascripts %}

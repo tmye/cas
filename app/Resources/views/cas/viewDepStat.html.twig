@@ -5,120 +5,143 @@
 
 {% block body %}
 
-    <!-- Modal for ajax loading -->
-    <div id="modal_loading" class="modal ajax_modals">
-        <div class="modal-content">
-            <p class="center">
-                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
-            </p>
-        </div>
-    </div>
+<div class="container-fluid">
+    <div class="wrapper">
 
-    <div class="row">
-        <div class="col l12">
-            <h5 class="page-title"><span class="fa fa-chart-bar"></span> Statistiques</h5>
-            <p class="description_message">Choisissez des départements, choisissez une durée de votre choix et analysez les statistiques de ces départements</p>
-            <div class="row">
-                <div class="col l12">
-                    <ul class="collapsible" data-collapsible="accordion">
-                        <li>
-                            <div class="collapsible-header collapsible-header-title active">Choisissez les paramètres</div>
-                            <div class="collapsible-body" style="padding-bottom: 0px">
-                                <div class="row">
-                                    <form class="col l12">
-                                        <div class="row row-no-margin">
-                                            <div class="row row-no-margin" id="errorContainer">
-                                                <div class="col l12">
-                                                    <span class="red-text"></span>
-                                                </div>
-                                            </div>
-                                            <div class="row row-no-margin">
-                                                <div class="col l12">
-                                                    <p>Veuillez sélectionner les départements</p>
-                                                    <br>
-                                                    {% for dep in listDep %}
-                                                        <span class="checkboxes" tag="{{ dep.id }}" id="depSpan{{ dep.id }}" style="padding-right: 20px">
-                                                            <input type="checkbox" id="checkbox{{ dep.id }}" />
-                                                            <label for="checkbox{{ dep.id }}">{{ dep.name }}</label>
-                                                        </span>
-                                                    {% endfor %}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <br>
-                                            <div class="row row-no-margin">
-                                                <div class="col l6">
-                                                    <span>Veuillez sélectionner la durée de votre choix</span>
-                                                    <br>
-                                                    <input type="text" id="fromDate" class="datepicker input-customized" placeholder="DU">
-                                                </div>
-                                                <span> - </span>
-                                                <div class="col l6">
-                                                    <input type="text" id="toDate" class="datepicker input-customized" placeholder="AU">
-                                                </div>
-                                            </div>
-                                            <div class="row row-no-margin">
-                                                <div class="col l6">
-                                                </div>
-                                                <div class="col l6">
-                                                    <span class="right" style="margin-top: 20px">
-                                                        <input type="button" id="submitButton" value="Valider" class="btn-perso-historique">
-                                                    </span>
-                                                </div>
+        {% include('cas/partials/_sidebar.html.twig') %}
+
+        <div class="card mx-0 float-none" >
+            <!-- Modal for ajax loading -->
+            <div id="modal_loading" class="modal ajax_modals">
+                <div class="modal-content">
+                    <p class="center">
+                        <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+                    </p>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="content-page">
+            <div class="content">
+
+                <div class="col-lg-12">
+                    <h2 class="page-title"><span class="uil-chart-bar"></span> Statistiques</h2>
+                </div>
+
+                <div class="row card">
+                    <div class="col-lg-12 card-body">
+                        <p class="description_message">Choisissez des départements, choisissez une durée de votre choix et analysez les statistiques de ces départements</p>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <ul class="collapsible" data-collapsible="accordion">
+                                    <li>
+                                        <div class="collapsible-header collapsible-header-title active">Choisissez les paramètres</div>
+                                        <div class="collapsible-body" style="padding-bottom: 0px">
+                                            <div class="row">
+                                                <form class="col-lg-12">
+                                                    <div class="row">
+                                                        <div class="row " id="errorContainer">
+                                                            <div class="col-lg-12">
+                                                                <span class="red-text"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2">
+                                                            <div class="col-lg-12">
+                                                                <p>Veuillez sélectionner les départements</p>
+                                                                <br>
+                                                                {% for dep in listDep %}
+                                                                    <span class="checkboxes" tag="{{ dep.id }}" id="depSpan{{ dep.id }}" style="padding-right: 20px">
+                                                                        <input type="checkbox" id="checkbox{{ dep.id }}" />
+                                                                        <label for="checkbox{{ dep.id }}">{{ dep.name }}</label>
+                                                                    </span>
+                                                                {% endfor %}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="row" style="width: 100%" >
+                                                            <h4>Du</h4>
+                                                            <div class="col-lg-5">
+
+                                                                <input type="date" id="fromDate" class="form-control datepicker input-customized" placeholder="DU">
+                                                            </div>
+                                                            <h4>Au</h4>
+                                                            <div class="col-lg-5">
+                                                                <input type="date" id="toDate" class="form-control datepicker input-customized" placeholder="AU">
+                                                            </div>
+                                                            <div class="col-sm-12 mt-sm-3">
+                                                                <input type="button" id="submitButton" value="Valider" class="btn btn-success btn-perso-historique">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-lg-6">
+                                                                <span class="right" style="margin-top: 20px">
+
+                                                                </span>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </form>
                                             </div>
                                         </div>
-                                    </form>
-                                </div>
+                                    </li>
+                                </ul>
                             </div>
-                        </li>
-                    </ul>
+                        </div>
+
+                        <br/>
+                        <h5 style="display: none" class="center-align separationText"><u>Statistiques des pertes par département</u></h5>
+                        <br/>
+
+                        <div class="row">
+                            <div class="col-lg-6 appendCanvas">
+                                <canvas id="myChart"></canvas>
+                            </div>
+                            <div class="col-lg-6 appendCanvas2">
+                                <canvas id="myChart2"></canvas>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 appendCanvas3">
+                                <canvas id="myChart3"></canvas>
+                            </div>
+                            <div class="col-lg-6 appendCanvas4">
+                                <canvas id="myChart4"></canvas>
+                            </div>
+                        </div>
+
+                        <br/>
+                        <h5 style="display: none" class="center-align separationText"><u>Statistiques des pertes en moyenne par département</u></h5>
+                        <br/>
+
+                        <div class="row">
+                            <div class="col-lg-6 appendCanvasMoy">
+                                <canvas id="myChartMoy"></canvas>
+                            </div>
+                            <div class="col-lg-6 appendCanvasMoy2">
+                                <canvas id="myChartMoy2"></canvas>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 appendCanvasMoy3">
+                                <canvas id="myChartMoy3"></canvas>
+                            </div>
+                            <div class="col-lg-6 appendCanvasMoy4">
+                                <canvas id="myChartMoy4"></canvas>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
-
-            <br/>
-            <h5 style="display: none" class="center-align separationText"><u>Statistiques des pertes par département</u></h5>
-            <br/>
-
-            <div class="row">
-                <div class="col l6 appendCanvas">
-                    <canvas id="myChart"></canvas>
-                </div>
-                <div class="col l6 appendCanvas2">
-                    <canvas id="myChart2"></canvas>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col l6 appendCanvas3">
-                    <canvas id="myChart3"></canvas>
-                </div>
-                <div class="col l6 appendCanvas4">
-                    <canvas id="myChart4"></canvas>
-                </div>
-            </div>
-
-            <br/>
-            <h5 style="display: none" class="center-align separationText"><u>Statistiques des pertes en moyenne par département</u></h5>
-            <br/>
-
-            <div class="row">
-                <div class="col l6 appendCanvasMoy">
-                    <canvas id="myChartMoy"></canvas>
-                </div>
-                <div class="col l6 appendCanvasMoy2">
-                    <canvas id="myChartMoy2"></canvas>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col l6 appendCanvasMoy3">
-                    <canvas id="myChartMoy3"></canvas>
-                </div>
-                <div class="col l6 appendCanvasMoy4">
-                    <canvas id="myChartMoy4"></canvas>
-                </div>
-            </div>
-
         </div>
     </div>
+</div>
 {% endblock %}
 
 {% block javascripts %}
@@ -170,7 +193,7 @@
                             if($("#toDate").val()!=""){
                                 //alert("condition : "+(dateFrom == dateTo));
                                 if(dateFrom < dateTo || dateFrom == dateTo){
-                                    $('#modal_loading').modal('open');
+                                    $('#modal_loading').modal('show');
                                     $("#errorContainer").hide();
                                     console.log(checkB);
                                     console.log(dateFrom);
@@ -401,11 +424,11 @@
                     });
 
                     // Closing the loading box
-                    $('#modal_loading').modal('close');
+                    $('#modal_loading').modal('hide');
                 },
                 error: function (msg) {
                     // Closing the loading box
-                    $('#modal_loading').modal('close');
+                    $('#modal_loading').modal('hide');
                     alert("Erreur :"+msg);
                 }
             });

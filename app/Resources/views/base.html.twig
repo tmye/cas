@@ -5,254 +5,45 @@
     <title>{% block title %}C.A.S - {% endblock %}</title>
     <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
     <link rel="icon" type="image/x-icon" href="{{ asset('img/page_logo.png') }}" />
-    <link rel="stylesheet" href="{{ asset('materialize/css/materialize.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('web-fonts-with-css/css/fontawesome-all.min.css') }}">
+
+    <!-- third party css -->
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+    <link href="{{ asset('assets/css/vendor/jquery-jvectormap-1.2.2.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/main.css') }}" rel="stylesheet" type="text/css" />
+    <!-- third party css end -->
+    <!-- App css -->
+    <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/app-modern.min.css') }}" rel="stylesheet" type="text/css" id="light-style" />
+    <link href="{{ asset('assets/css/app-modern-dark.min.css') }}" rel="stylesheet" type="text/css" id="dark-style" />
+
     {% block stylesheets %}{% endblock %}
 </head>
-<body>
-<div class="row">
-    <div class="col l2">
-        <ul id="slide-out" class="side-nav" style="background-color: rgba(49,59,70,1)">
-            <li>
+<body data-layout="detached" >
 
-            </li>
-            <div class="row">
-                <div class="col l10">
-                    <br>
-                    <ul class="collapsible navigation_collapsible" style="font-weight: 100 !important" data-collapsible="accordion">
-                        <li>
-                            <div class="user">
-                                {% if app.user is defined and app.user is not null %}
-                                    {% if app.user.picture is defined and app.user.picture is not null %}
-                                        <div class="center-align">
-                                            <img src="{{ asset('/')~user_profile_pictures~'/'~app.user.picture }}" alt="user_image" class="circle user_extra_small_picture" style="margin-left: 16px">
-                                            <a href="{{ path('editProfile') }}">
-                                                <i class="fa fa-edit circle" style="color: white;background-color: teal;padding: 6px;position: relative;right: 20px"></i>
-                                            </a>
-                                        </div>
-                                    {% else %}
-                                        <div class="center-align">
-                                            <img src="{{ asset('img/avatar.jpg') }}" alt="user_image" class="circle user_extra_small_picture" style="margin-left: 16px">
-                                            <a href="{{ path('editProfile') }}">
-                                                <i class="fa fa-edit circle" style="color: white;background-color: teal;padding: 6px;position: relative;right: 20px"></i>
-                                            </a>
-                                        </div>
-                                    {% endif %}
-                                {% endif %}
-                                <p class="white-text" style="text-align: center;">
-                                <span class="administration_level_txt">
+{% include('cas/partials/_topbar.html.twig') %}
 
-                                {% if app.user is defined and app.user is not null %}
-                                    {% if app.user.roles[0] == "ROLE_SUPER_ADMIN" %}
-                                        Administrateur
-                                    {%  elseif app.user.roles[0] == "ROLE_ADMIN_CONTROL" %}
-                                        Sécurité
-                                    {%  elseif app.user.roles[0] == "ROLE_SECRET" %}
-                                        Sécrétaire
-                                    {% endif %}
-                                {% else %}
-                                    {{ "Nothing to show" }}
-                                {% endif %}
-                                    </span>
-                                </p>
-                                <span class="middle-align white-text" style="margin-left: 0px; font-weight: bold; text-align: center;">
-                                        {% if app.user is defined and app.user is not null %}
-                                            {% if ("now" |date("H")) >=12 %}
-                                                {{ "Bonsoir, " }}
-                                            {% else %}
-                                                {{ "Bonjour, " }}
-                                            {% endif %}
-                                            {{ app.user.surname}}
-                                            {#<a href="{{ path('logout') }}" class="white-text" style="position: relative;left: 30px">#}
-                                            <a href="{{ path('logout') }}" style="position: relative; width: 50%;display: block!important;margin: 0 auto;padding-right: 3px;padding-left: 3px" class="white-text waves-effect waves-light btn">DÉCONNEXION</a>
-                                                {#<span class="fa fa-power-off"></span>#}
-                                            </a>
-                                        {% endif %}
-                                    </span>
-
-
-                            </div>
-                        </li>
-                        <br>
-                        <li>
-                            <div class="collapsible-header valign-wrapper singleton">
-                                <span class="fa fa-home icons"></span>
-                                <a href="{{ path('homepage') }}" style="margin-left: 4px;">Accueil</a>
-                            </div>
-                        </li>
-
-                        {% if is_granted('ROLE_ADMIN_CONTROL') %}
-                            <li class="">
-                                <div class="collapsible-header collapsible_historique valign-wrapper">
-                                    <span class="fa fa-file-alt icons"></span>
-                                    <span style="margin-left: 4px;">Présences</span>
-                                </div>
-                                <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
-                                    <a href="{{ path("today") }}" id="todayLink" class="collapsible-links cl_today">Aujourd'hui</a>
-                                </div>
-                                <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
-                                    <a href="{{ path("historique") }}" class="collapsible-links cl_history">Historiques</a>
-                                    <br/>
-                                    <a href="{{ path("historique_brute") }}" class="collapsible-links cl_history_brut">Historique brute</a>
-                                </div>
-                            </li>
-
-                            <li>
-                                <div class="collapsible-header valign-wrapper">
-                                    <span class="fa fa-chart-bar icons"></span>
-                                    <span style="margin-left: 4px;">Statistiques</span>
-                                </div>
-                                <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
-                                    <a href="{{ path("depStat") }}" class="collapsible-links cl_DepStats">Départements</a>
-                                    <br>
-                                    <a href="{{ path("persStat") }}" class="collapsible-links cl_PersStats">Personnelles</a>
-                                    <br>
-                                    <a href="{{ path("rapports") }}" class="collapsible-links cl_Rapports">Rapports (PDF)</a>
-                                    <br>
-                                    <a href="{{ path("rapports_excel") }}" class="collapsible-links cl_Rapports_excel">Rapports (Excel)</a>
-                                </div>
-                            </li>
-                        {% endif %}
-
-                        {% if is_granted('ROLE_SECRET') %}
-                            <li>
-                                <div class="collapsible-header valign-wrapper">
-                                    <span class="fa fa-file icons"></span>
-                                    <span style="margin-left: 4px;">Permissions</span>
-                                </div>
-                                <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
-                                    <a href="{{ path('viewPermission') }}" class="collapsible-links cl_PermList">Liste</a>
-                                    <br>
-                                    <a href="{{ path('addPermission') }}" class="collapsible-links cl_Perm">Demander</a>
-                                    <br>
-                                    <a href="{{ path('statistiquesPermissions') }}" class="collapsible-links stats_Permission">Traitement</a>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="collapsible-header valign-wrapper singleton">
-                                    <span class="fa fa-building icons"></span>
-                                    <a href="{{ path("departement") }}" style="margin-left: 4px;">Départements</a>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="collapsible-header valign-wrapper">
-                                    <span class="fa fa-user icons"></span>
-                                    <span style="margin-left: 4px;">Employés</span>
-                                </div>
-                                <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
-                                    <a href="{{ path("addEmployee") }}" class="collapsible-links cl_Emp">Ajouter</a>
-                                    <br>
-                                    <a href="{{ path("viewEmployee") }}" class="collapsible-links cl_vEmp">Informations</a>
-                                    <br>
-                                    <a href="{{ path("importEmployees") }}" class="collapsible-links cl_iEmp">Importation</a>
-                                    <br>
-                                    <a href="{{ path("exportEmployees") }}" class="collapsible-links cl_eEmp">Exportation</a>
-                                </div>
-                            </li>
-                        {% endif %}
-                        {% if is_granted('ROLE_ADMIN_CONTROL') %}
-                            <li>
-                                <div class="collapsible-header valign-wrapper">
-                                    <span class="fa fa-cog icons"></span>
-                                    <span style="margin-left: 4px;">Réglages</span>
-                                </div>
-                                <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
-                                    <a href="{{ path("addWorkingHour") }}" class="collapsible-links cl_WH">Ajouter heure de travail</a>
-                                    <br>
-                                    <a href="{{ path("addMachine") }}" class="collapsible-links cl_Mac">Machines enrégistrées</a>
-                                    <br>
-                                    <a href="{{ path("addNullDate") }}" class="collapsible-links cl_Null">Jour null</a>
-                                    <br>
-                                    <a href="{{ path("manage") }}" class="collapsible-links cl_Manage">Gestion du système</a>
-                                </div>
-                            </li>
-                        {% endif %}
-                        {% if is_granted('ROLE_SECRET') %}
-                            <li>
-                                <div class="collapsible-header valign-wrapper">
-                                    <span class="fa fa-wrench icons"></span>
-                                    <span style="margin-left: 4px;">Personnalisation</span>
-                                </div>
-                                <div class="collapsible-body collapsible-body-perso nav-collapsible-body">
-                                    <a href="{{ path("customizeCompanyInfos") }}" class="collapsible-links cl_WH">Informations</a>
-                                    <br>
-                                </div>
-                            </li>
-                        {% endif %}
-
-                    </ul>
-                </div>
-            </div>
-        </ul>
-    </div>
-
-    <div>
-        <nav class="col right l12 white black-text" style="position: fixed;z-index:998;height: 52.5px;line-height: 52.5px">
-            <div class="nav-wrapper">
-                <a href="#" class="black-text">
-                    <span data-activates="slide-out" class="button-collapse fa fa-bars fa-2x" style="margin-top: 10px"></span>
-                    {%  if app.session.get('companyLogo') is defined and app.session.get('companyLogo') is not null %}
-                        <img src="{{ asset("company_images/"~app.session.get('companyLogo')) }}" class="middle-align" style="height: 60%;width: auto;border-radius: 0%">
-                    {% endif %}
-                    <span class="black-text middle-align">{{ app.session.get('companyName') }}</span>
-                </a>
-                <ul id="theme_dropdown" class="dropdown-content">
-                    <li><a href="#!">Orange</a></li>
-                    <li><a href="#!">Teal</a></li>
-                    <li class="divider"></li>
-                    <li><a href="#!">Dark</a></li>
-                    <li><a href="#!">Default</a></li>
-                </ul>
-                <ul id="nav-mobile" class="right hide-on-med-and-down">
-                    <li><a href="#" class="black-text"><span class="fa fa-calendar-alt"></span> {{ 'now' | date("d/m/Y") }} <span class="fa fa-clock" style="padding-left: 20px"></span> <span id="currentTime"></span></a></li>
-                    {#<li><a href="#" class="black-text dropdown-trigger" data-activates="theme_dropdown">Theme : Default</a></li>#}
-                </ul>
-            </div>
-        </nav>
-    </div>
-</div>
 <br><br><br>
-<div class="container" style="min-height: 500px">
+<div class="" style="min-height: 500px">
     {% block body %}{% endblock %}
 </div>
 
-<footer class="page-footer" style="background-color: rgb(49, 59, 70)">
-    <div class="container">
-        <div class="row">
-            <div class="col l6 s12">
-                <h5 class="white-text">About CAS</h5>
-                <p class="grey-text text-lighten-4">CAS is the best way to manage your employees</p>
-            </div>
-            <div class="col l4 offset-l2 s12">
-                <h5 class="white-text">Contact</h5>
-                <ul>
-                    <li>
-                        <p class="grey-text text-lighten-3" href="#!">
-                            <span class="fa fa-phone"></span>
-                            +228 90 62 87 25
-                        </p>
-                    </li>
-                    <li>
-                        <p class="grey-text text-lighten-3" href="#!">
-                            <span class="fa fa-computer-alt"></span>
-                            Email: 2597434002@qq.com
-                        </p>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="footer-copyright">
-        <div class="container">
-            © 2018 C.A.S All rigths reserved
-            <a class="grey-text text-lighten-4 right" href="http://www.gscmanagment.com">www.gscmanagment.com</a>
-        </div>
-    </div>
-</footer>
+{% include('cas/partials/_footer.html.twig') %}
 
 <script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
-<script src="{{ asset('materialize/js/materialize.min.js') }}"></script>
+
+<script src="{{ asset('assets/js/vendor.min.js') }}"></script>
+<script src="{{ asset('assets/js/app.min.js') }}"></script>
+
+<!-- third party js -->
+<script src="{{ asset('assets/js/vendor/apexcharts.min.js') }}"></script>
+<script src="{{ asset('assets/js/vendor/jquery-jvectormap-1.2.2.min.js') }}"></script>
+<script src="{{ asset('assets/js/vendor/jquery-jvectormap-world-mill-en.js') }}"></script>
+<!-- third party js ends -->
+
+<!-- demo app -->
+<script src="{{ asset('assets/js/pages/demo.dashboard.js') }}"></script>
+<!-- end demo js-->
+
 <script>
     $(function () {
         var dt = new Date();

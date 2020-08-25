@@ -42,99 +42,116 @@
 {% block body %}
 
     <!-- Modal for ajax loading -->
-    <div id="modal_loading" class="modal ajax_modals">
-        <div class="modal-content">
-            <p class="center">
-                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
-            </p>
+    <div>
+        <!-- Modal for ajax loading -->
+        <div id="modal_loading" class="modal ajax_modals">
+            <div class="modal-content" style="width: 200px;display:table;position:relative;margin: 0 auto; top: calc(50% - 24px);">
+                <p class="center">
+                    <img class="mw-100 mh-100" src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+                </p>
+            </div>
         </div>
     </div>
 
-    <!-- Modal for details -->
-    <div id="modal_detail" class="modal">
-        <div class="modal-content">
-            <h5>Informations de cet employé</h5>
-            <hr>
-            <br>
-            <div class="row">
-                <div class="col l3">
-                    <img src="{{ asset('img/avatar.jpg') }}" id="modalItemPicture" width="100%">
-                </div>
-                <div class="col l5">
-                    <div class="row">
-                        <div class="col l12" id="modalItemName">
+<div class="container-fluid">
+    <div class="wrapper">
+
+        {% include('cas/partials/_sidebar.html.twig') %}
+
+
+        <!-- Modal for details -->
+        <div id="modal_detail" class="modal">
+            <div class="modal-content">
+                <h5>Informations de cet employé</h5>
+                <hr>
+                <br>
+                <div class="row">
+                    <div class="col l3">
+                        <img src="{{ asset('img/avatar.jpg') }}" id="modalItemPicture" width="100%">
+                    </div>
+                    <div class="col l5">
+                        <div class="row">
+                            <div class="col l12" id="modalItemName">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col l12" id="modalItemAddress">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col l12" id="modalItemContact">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col l12" id="modalItemDep">
+                            </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col l12" id="modalItemAddress">
+                    <div class="col l4">
+                        <div class="row">
+                            <div class="col l12" id="modalItemFunction">
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col l12" id="modalItemContact">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col l12" id="modalItemDep">
-                        </div>
-                    </div>
-                </div>
-                <div class="col l4">
-                    <div class="row">
-                        <div class="col l12" id="modalItemFunction">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col l12" id="modalItemHD">
+                        <div class="row">
+                            <div class="col l12" id="modalItemHD">
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="row">
-        <div class="col l12">
-            <h5 class="page-title">
-                <span class="fa fa-clock"></span>
-                Activités de ce jour
-            </h5>
-            <div class="row">
-                <br><br>
-                <p class="description_message">Choisissez une date et affichez l'historique des présences de cette période</p>
-                <div class="col l6">
-                    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Recherche par nom..">
+        <div class="content-page">
+            <div class="content">
+
+                <h2 class="page-title">
+                    <span class="uil-clock"></span>
+                    Activités de ce jour
+                </h2>
+
+                <div class="row card">
+                    <div class="col-lg-12 card-body">
+                        <p class="description_message">Choisissez une date et affichez l'historique des présences de cette période</p>
+
+                        <div class="row mb-3">
+                            <div class="col-lg-5">
+                                <input class="form-control" type="text" id="myInput" onkeyup="myFunction()" placeholder="Recherche par nom..">
+                            </div>
+                            <div class="col-lg-5">
+                                <input type="date" max="3000-12-31" min="1000-01-01" class="form-control datepicker input-customized" id="selectedDate"
+                                        placeholder="Choisissez une date">
+                            </div>
+                            <div class="col-lg-2">
+                                <button class="float-right btn btn-success btn-perso-historique" id="searchButton">
+                                    <span class="fa fa-search" style=""></span>
+                                    <span style="">Rechercher</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <table class='table table-striped table-responsive table-bordered' id="table myTable">
+                                    <tr class="header">
+                                        <th style="width:40%;">Employé</th>
+                                        <th style="width:20%;">Département</th>
+                                        <th style="width:40%;" id="historyTh">Historique de badges</th>
+                                    </tr>
+                                    <tbody id="tableContent">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col l4">
-                    <input type="text" class="datepicker input-customized" id="selectedDate"
-                           style="width: 98%;height: 3rem !important;" placeholder="Choisissez une date">
-                </div>
-                <div class="col l2">
-                    <button class="btn-perso-historique" id="searchButton">
-                        <span class="fa fa-search" style=""></span>
-                        <span style="">Rechercher</span>
-                    </button>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col l12">
-                    <table id="myTable">
-                        <tr class="header">
-                            <th style="width:40%;">Employé</th>
-                            <th style="width:20%;">Département</th>
-                            <th style="width:40%;" id="historyTh">Historique de badges</th>
-                        </tr>
-                        <tbody id="tableContent">
-                        </tbody>
-                    </table>
+
+                <div class="preview-section" style="position: fixed;right: 70px;top: 250px">
+                    <p>Proof picture</p>
+                    <img src="{{ asset('img/avatar.jpg') }}" id="previewImage" width="100"/>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="preview-section" style="position: fixed;right: 70px;top: 250px">
-        <p>Proof picture</p>
-        <img src="{{ asset('img/avatar.jpg') }}" id="previewImage" width="100"/>
-    </div>
+</div>
 {% endblock %}
 
 {% block javascripts %}

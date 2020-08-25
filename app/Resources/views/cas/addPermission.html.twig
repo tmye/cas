@@ -4,84 +4,100 @@
 {% block title %}C.A.S - Permission{% endblock %}
 
 {% block body %}
-    <div class="row">
-        <div class="col l12">
-            <h5 class="page-title"><span class="fa fa-calendar-plus"></span> Nouvelle permission</h5>
-            <p class="description_message">Vous pouvez enregistrer une nouvelle permission grâce à ce formulaire</p>
-            <div class="row">
-                <div class="col l12">
-                    <ul class="collapsible" data-collapsible="accordion">
-                        <li>
-                            <div class="collapsible-header active collapsible-header-title">Formulaire d'ajout d'une nouvelle permission </div>
-                            <div class="collapsible-body" style="padding-bottom: 0px">
-                                <div class="row">
-                                    <div class="col l12">
-                                        {% for message in  app.session.flashbag.get('notice') %}
+
+<div class="container-fluid">
+    <div class="wrapper">
+
+        {% include('cas/partials/_sidebar.html.twig') %}
+
+        <div class="content-page">
+            <div class="content">
+
+                <div class="col-lg-12">
+                    <h2 class="page-title"><span class="uil-calendar-alt"></span> Nouvelle permission</h2>
+                </div>
+                <div class="row card">
+                    <div class="col-lg-12 card-body">
+                        <p class="description_message">Vous pouvez enregistrer une nouvelle permission grâce à ce formulaire</p>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <ul class="collapsible" data-collapsible="accordion">
+                                    <li>
+                                        <div class="collapsible-header active collapsible-header-title">Formulaire d'ajout d'une nouvelle permission </div>
+                                        <div class="collapsible-body" style="padding-bottom: 0px">
                                             <div class="row">
-                                                <div class="col l12">
-                                                    <div class="operation_message">
-                                                        {{ message }}
+                                                <div class="col-lg-12">
+                                                    {% for message in  app.session.flashbag.get('notice') %}
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <div class="operation_message">
+                                                                    {{ message }}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {% endfor %}
+                                                    {% for message in  app.session.flashbag.get('error_notice') %}
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <div class="operation_error_message">
+                                                                    {{ message }}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {% endfor %}
+                                                    {{ form_start(form) }}
+                                                    <div class="row">
+                                                        <div class="input-field col s12">
+                                                            <span>Choisir l'employé</span>
+                                                            {{ form_row(form.employee, {'attr': {'class': 'form-control'}}) }}
+                                                        </div>
                                                     </div>
+                                                        <div class="row">
+                                                            <div class="input-field col s6">
+                                                                <span>Type de la permission</span>
+                                                                {{ form_row(form.type, {'attr': {'class': 'form-control'}}) }}
+                                                            </div>
+                                                            <div class="input-field col s6">
+                                                                <span>Description</span>
+                                                                {{ form_row(form.description, {'attr': {'class': 'form-control input-customized','placeholder':'Une petite description'}}) }}
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="input-field col s3">
+                                                                <span>Date de début</span>
+                                                                {{ form_row(form.dateFrom, {'type':'date','attr': {'class': 'form-control input-customized datepicker','placeholder':'Date de début'}}) }}
+                                                            </div>
+                                                            <div class="input-field col s3">
+                                                                <span>Heure de début</span>
+                                                                {{ form_row(form.timeFrom, {'type':'date','attr': {'class': 'form-control input-customized timepicker','placeholder':'Date de début'}}) }}
+                                                            </div>
+                                                            <div class="input-field col s3">
+                                                                <span>Date de fin</span>
+                                                                {{ form_row(form.dateTo, {'type':'date','attr': {'class': 'form-control input-customized datepicker','placeholder':'Date de fin'}}) }}
+                                                            </div>
+                                                            <div class="input-field col s3">
+                                                                <span>Heure de fin</span>
+                                                                {{ form_row(form.timeTo, {'type':'date','attr': {'class': 'form-control input-customized timepicker','placeholder':'Date de début'}}) }}
+                                                            </div>
+                                                        </div>
+
+                                                        {{ form_widget(form.creer, { 'label': 'Créer','attr': {'class':'btn'} }) }}
+                                                        {{ form_rest(form) }}
+                                                    {{ form_end(form) }}
                                                 </div>
-                                            </div>
-                                        {% endfor %}
-                                        {% for message in  app.session.flashbag.get('error_notice') %}
-                                            <div class="row">
-                                                <div class="col l12">
-                                                    <div class="operation_error_message">
-                                                        {{ message }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        {% endfor %}
-                                        {{ form_start(form) }}
-                                        <div class="row">
-                                            <div class="input-field col s12">
-                                                <span>Choisir l'employé</span>
-                                                {{ form_row(form.employee) }}
                                             </div>
                                         </div>
-                                            <div class="row">
-                                                <div class="input-field col s6">
-                                                    <span>Type de la permission</span>
-                                                    {{ form_row(form.type) }}
-                                                </div>
-                                                <div class="input-field col s6">
-                                                    <span>Description</span>
-                                                    {{ form_row(form.description, {'attr': {'class': 'input-customized','placeholder':'Une petite description'}}) }}
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="input-field col s3">
-                                                    <span>Date de début</span>
-                                                    {{ form_row(form.dateFrom, {'attr': {'class': 'input-customized datepicker','placeholder':'Date de début'}}) }}
-                                                </div>
-                                                <div class="input-field col s3">
-                                                    <span>Heure de début</span>
-                                                    {{ form_row(form.timeFrom, {'attr': {'class': 'input-customized timepicker','placeholder':'Date de début'}}) }}
-                                                </div>
-                                                <div class="input-field col s3">
-                                                    <span>Date de fin</span>
-                                                    {{ form_row(form.dateTo, {'attr': {'class': 'input-customized datepicker','placeholder':'Date de fin'}}) }}
-                                                </div>
-                                                <div class="input-field col s3">
-                                                    <span>Heure de fin</span>
-                                                    {{ form_row(form.timeTo, {'attr': {'class': 'input-customized timepicker','placeholder':'Date de début'}}) }}
-                                                </div>
-                                            </div>
-
-                                            {{ form_widget(form.creer, { 'label': 'Créer','attr': {'class':'btn'} }) }}
-                                            {{ form_rest(form) }}
-                                        {{ form_end(form) }}
-                                    </div>
-                                </div>
+                                    </li>
+                                </ul>
                             </div>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
                 </div>
+                
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
 
 {% block javascripts %}

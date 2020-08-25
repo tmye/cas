@@ -9,230 +9,244 @@
 {% block title %}C.A.S - Permission{% endblock %}
 
 {% block body %}
-    <div class="row">
-        <div class="col l12">
-            <h5 class="page-title"><span class="fa fa-plus-circle"></span> Gestion des Permissions</h5>
-            <p class="description_message">Vous avez accès à la liste des permissions.Vous pouvez choisir de les accorder ou de les annuler si vous avez les droits nécéssaires</p>
-            {% for message in  app.session.flashbag.get('error_notice') %}
-                <div class="row">
-                    <div class="col l12">
-                        <div class="operation_error_message">
-                            {{ message }}
+
+<div class="container-fluid">
+    <div class="wrapper">
+
+        {% include('cas/partials/_sidebar.html.twig') %}
+
+        <div class="content-page">
+            <div class="content">
+                <div class="col-lg-12">
+                    <h2 class="page-title"><span class="uil-plus-circle"></span> Gestion des Permissions</h2>
+                </div>
+                <div class="row card">
+                <div class="col-lg-12 card-body">
+                    <p class="description_message">Vous avez accès à la liste des permissions.Vous pouvez choisir de les accorder ou de les annuler si vous avez les droits nécéssaires</p>
+                    {% for message in  app.session.flashbag.get('error_notice') %}
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="operation_error_message">
+                                    {{ message }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="collapsible" data-collapsible="accordion">
+                                <li>
+                                    <div class="list-group collapsible-header collapsible-header-title active">Liste des permissions</div>
+                                    <div class="collapsible-body" style="padding-bottom: 0px">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <ul class="tabs">
+                                                    <li class="list-group-item tab col-lg-4">
+                                                        <a href="#pending" class="">
+                                                            En attentes
+                                                            <span class="badge badge-primary badge-pill float-right">
+                                                                {% if stack is defined and stack is not null %}
+                                                                    {{ stack }}
+                                                                {% endif %}
+                                                            </span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="list-group-item tab col-lg-4">
+                                                        <a href="#not_granted">
+                                                            Refusées
+                                                            <span class="badge badge-danger badge-pill float-right">
+                                                                {% if refused is defined and stack is not null %}
+                                                                    {{ refused }}
+                                                                {% endif %}
+                                                            </span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="list-group-item tab col-lg-4">
+                                                        <a href="#granted">
+                                                            Accordées
+                                                            <span class="badge badge-primary badge-pill float-right">
+                                                                {% if granted is defined and stack is not null %}
+                                                                    {{ granted }}
+                                                                {% endif %}
+                                                            </span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div id="pending">
+                                                    <div class="row">
+                                                        {%  set last_month = null %}
+                                                        {% for perm in listPerm %}
+                                                        {% if perm.state == 0 %}
+                                                        {% if perm.CreateTime | date('m')!=last_month %}
+                                                        <!-- juste pour fermer le row et en ouvrir un nouveau pour une séparation des éléments -->
+                                                    </div>
+                                                    <div class="row">
+                                                        <p class="permissionsSeparator">{{ perm.CreateTime | date('M')~" "~perm.CreateTime | date('Y') }}</p>
+                                                        {% endif %}
+                                                        {# en attente #}
+                                                        <div class="permission_card col-lg-6">
+                                                            <div class="card" style="background-color: #00b0ff;padding: 0px;">
+                                                                <div  style="margin-left: 5px;background-color: white;">
+                                                                    <div  style="padding:10px">
+                                                                        <span><span class="uil-user"></span> <b style="font-weight: bold;font-size: 1em;text-transform: uppercase;">{{ perm.employee.surname ~" "~ perm.employee.lastName }}</b></span>
+                                                                        <table class="permission_inner_table  table-striped" style="padding: 0;border: none;width: 90%;">
+                                                                            <tr>
+                                                                                <td><span style="font-size: 0.8em;">Raison : {{ permissions_type[perm.type] }}</span></td>
+                                                                                <td><span>Durée : </span><span style="font-size: 1em;color: red;font-weight: bold"> {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days + 1 %}
+                                                                                        {% set nbreHeures = date(perm.DateTo | date).diff(perm.DateFrom)|date('%h') %}
+                                                                                        {{ nbreJours~" Jours "~nbreHeures~" Heures" }}</span></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td><span style="font-size: 0.8em;">Début: </span><span style="font-size: 0.8em;" class="blue-text">{{ perm.DateFrom | date('d-M-Y')~" "~perm.TimeFrom }}</span></td>
+                                                                                <td><span style="font-size: 0.8em;">Fini: </span><span style="font-size: 0.8em;" class="blue-text">{{ perm.DateTo | date('d-M-Y')~" "~perm.TimeTo }}</span></td>
+                                                                            </tr>
+                                                                        </table>
+        
+        
+                                                                        <p style="font-size: 0.8em;"><span>Description : </span><span style="font-size: 1em;color: grey ;font-weight: bold">{{ perm.description }}</span></p>
+                                                                        {#<p> <span style="font-size: 0.8em;">Permission demandée le : </span><span class="blue-text">XX:XX:XX</span></p>#}
+        
+                                                                        <a href="{{ path('grantPermision',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light green"><i class="uil-check"></i></a>
+                                                                        <a href="{{ path('rejectPermision',{'id':perm.id})}}" class="deleteDep btn-floating btn-small waves-effect waves-light red"><i class="uil-times"></i></a>
+        
+        
+                                                                        <a style="position:absolute;right: 10px;bottom: 10px;" href="{{ path('generatePDFPermission',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light teal"><i class="uil-print"></i></a>
+        
+                                                                        <p style="font-size: 0.7em;color: teal;"><span class="uil-calendar-alt"></span>{{ perm.DateTo | date('d-M-Y H:i:s') }}</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+        
+        
+                                                        {% set last_month = perm.CreateTime | date('m') %}
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                                <div id="not_granted">
+                                                    <div class="row">
+                                                        {%  set last_month = null %}
+                                                        {% for perm in listPerm %}
+                                                        {% if perm.state == 2 %}
+                                                        {% if perm.CreateTime | date('m')!=last_month %}
+                                                        <!-- Loool + mdr juste pour fermer le row et en ouvrir un nouveau pour une séparation des éléments -->
+                                                    </div>
+                                                    <div class="row">
+                                                        <p class="permissionsSeparator">{{ perm.CreateTime | date('M')~" "~perm.CreateTime | date('Y') }}</p>
+                                                        {% endif %}
+                                                        {# refused #}
+                                                        <div class="permission_card col-lg-6">
+                                                            <div class="card" style="background-color: #C62828;padding: 0px;">
+                                                                <div  style="margin-left: 5px;background-color: white;">
+                                                                    <div  style="padding:10px">
+                                                                        <span><span class="uil-user"></span> <b style="font-weight: bold;font-size: 1em;text-transform: uppercase;">{{ perm.employee.surname ~" "~ perm.employee.lastName }}</b></span>
+                                                                        <table class="permission_inner_table  table-striped" style="padding: 0;border: none;width: 90%;">
+                                                                            <tr>
+                                                                                <td><span style="font-size: 0.8em;">Raison : {{ permissions_type[perm.type] }}</span></td>
+                                                                                <td><span>Durée : </span><span style="font-size: 1em;color: red;font-weight: bold"> {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days + 1 %}
+                                                                                        {% set nbreHeures = date(perm.DateTo | date).diff(perm.DateFrom)|date('%h') %}
+                                                                                        {{ nbreJours~" Jours "~nbreHeures~" Heures" }}</span></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td><span style="font-size: 0.8em;">Début: </span><span style="font-size: 0.8em;" class="blue-text">{{ perm.DateFrom | date('d-M-Y')~" "~perm.TimeFrom }}</span></td>
+                                                                                <td><span style="font-size: 0.8em;">Fini: </span><span style="font-size: 0.8em;" class="blue-text">{{ perm.DateTo | date('d-M-Y')~" "~perm.TimeTo }}</span></td>
+                                                                            </tr>
+                                                                        </table>
+        
+        
+                                                                        <p style="font-size: 0.8em;"><span>Description : </span><span style="font-size: 1em;color: grey ;font-weight: bold">{{ perm.description }}</span></p>
+                                                                        {#<p> <span style="font-size: 0.8em;">Permission demandée le : </span><span class="blue-text">XX:XX:XX</span></p>#}
+                                                                        {% if perm.state == 0 or perm.state == 2 %}
+                                                                            <a href="{{ path('grantPermision',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light green"><i class="uil-check"></i></a>
+                                                                        {% endif %}
+        
+                                                                        <a style="position:absolute;right: 10px;bottom: 10px;" href="{{ path('generatePDFPermission',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light teal"><i class="uil-print"></i></a>
+        
+                                                                        <p style="font-size: 0.7em;color: teal;"><span class="uil-calendar-alt"></span>{{ perm.DateTo | date('d-M-Y H:i:s') }}</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+        
+                                                        {% set last_month = perm.CreateTime | date('m') %}
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                                <div id="granted">
+                                                    <div class="row">
+                                                        {%  set last_month = null %}
+                                                        {% for perm in listPerm %}
+                                                        {% if perm.state == 1 %}
+                                                        {% if perm.CreateTime | date('m')!=last_month %}
+                                                        <!-- Loool + mdr juste pour fermer le row et en ouvrir un nouveau pour une séparation des éléments -->
+                                                    </div>
+                                                    <div class="row">
+                                                        <p class="permissionsSeparator">{{ perm.CreateTime | date('M')~" "~perm.CreateTime | date('Y') }}</p>
+                                                        {% endif %}
+                                                        {# accordees #}
+                                                        <div class="permission_card col-lg-6">
+                                                            <div class="card" style="background-color: #4CAF50;padding: 0px;">
+                                                                <div  style="margin-left: 5px;background-color: white;">
+                                                                    <div  style="padding:10px">
+                                                                        <span><span class="uil-user"></span> <b style="font-weight: bold;font-size: 1em;text-transform: uppercase;">{{ perm.employee.surname ~" "~ perm.employee.lastName }}</b></span>
+                                                                        <table class="table permission_inner_table" style="padding: 0;border: none;width: 90%;">
+                                                                            <tr>
+                                                                                <td><span style="font-size: 0.8em;">Raison : {{ permissions_type[perm.type] }}</span></td>
+                                                                                <td><span>Durée : </span><span style="font-size: 1em;color: red;font-weight: bold"> {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days +1 %}
+                                                                                        {% set nbreHeures = date(perm.DateTo | date).diff(perm.DateFrom)|date('%h') %}
+                                                                                        {{ nbreJours~" Jours "~nbreHeures~" Heures" }}</span></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td><span style="font-size: 0.8em;">Début: </span><span style="font-size: 0.8em;" class="blue-text">{{ perm.DateFrom | date('d-M-Y')~" "~perm.TimeFrom }}</span></td>
+                                                                                <td><span style="font-size: 0.8em;">Fini: </span><span style="font-size: 0.8em;" class="blue-text">{{ perm.DateTo | date('d-M-Y')~" "~perm.TimeTo }}</span></td>
+                                                                            </tr>
+                                                                        </table>
+        
+        
+                                                                        <p style="font-size: 0.8em;"><span>Description : </span><span style="font-size: 1em;color: grey ;font-weight: bold">{{ perm.description }}</span></p>
+                                                                        {#<p> <span style="font-size: 0.8em;">Permission demandée le : </span><span class="blue-text">XX:XX:XX</span></p>#}
+        
+                                                                        {# if the stat is not waiting, then we have nothing to do here #}
+                                                                        {% if perm.state == 0 %}
+                                                                            <a href="{{ path('grantPermision',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light green"><i class="uil-check"></i></a>
+                                                                        {% endif %}
+        
+                                                                        {% if perm.state == 0 or perm.state == 2 %}
+                                                                            <a href="{{ path('rejectPermision',{'id':perm.id})}}" class="deleteDep btn-floating btn-small waves-effect waves-light red"><i class="uil-times"></i></a>
+                                                                        {% endif %}
+        
+                                                                        <a style="position:absolute;right: 10px;bottom: 10px;" href="{{ path('generatePDFPermission',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light teal"><i class="uil-print"></i></a>
+        
+                                                                        <p style="font-size: 0.7em;color: teal;"><span class="uil-calendar-alt"></span>{{ perm.DateTo | date('d-M-Y H:i:s') }}</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+        
+                                                        {% set last_month = perm.CreateTime | date('m') %}
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-            {% endfor %}
-            <div class="row">
-                <div class="col l12">
-                    <ul class="collapsible" data-collapsible="accordion">
-                        <li>
-                            <div class="collapsible-header collapsible-header-title active">Liste des permissions</div>
-                            <div class="collapsible-body" style="padding-bottom: 0px">
-                                <div class="row">
-                                    <div class="col l12">
-                                        <ul class="tabs">
-                                            <li class="tab col s3">
-                                                <a href="#pending" class="active">
-                                                    En attentes
-                                                    <span class="badge blue white-text" style="position: relative;top: 12px">
-                                                        {% if stack is defined and stack is not null %}
-                                                            {{ stack }}
-                                                        {% endif %}
-                                                    </span>
-                                                </a>
-                                            </li>
-                                            <li class="tab col s3">
-                                                <a href="#not_granted">
-                                                    Refusées
-                                                    <span class="badge red darken-3 white-text" style="position: relative;top: 12px">
-                                                        {% if refused is defined and stack is not null %}
-                                                            {{ refused }}
-                                                        {% endif %}
-                                                    </span>
-                                                </a>
-                                            </li>
-                                            <li class="tab col s3">
-                                                <a href="#granted">
-                                                    Accordées
-                                                    <span class="badge teal white-text" style="position: relative;top: 12px; background-color: #4CAF50!important;">
-                                                        {% if granted is defined and stack is not null %}
-                                                            {{ granted }}
-                                                        {% endif %}
-                                                    </span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col l12">
-                                        <div id="pending">
-                                            <div class="row">
-                                                {%  set last_month = null %}
-                                                {% for perm in listPerm %}
-                                                {% if perm.state == 0 %}
-                                                {% if perm.CreateTime | date('m')!=last_month %}
-                                                <!-- juste pour fermer le row et en ouvrir un nouveau pour une séparation des éléments -->
-                                            </div>
-                                            <div class="row">
-                                                <p class="permissionsSeparator">{{ perm.CreateTime | date('M')~" "~perm.CreateTime | date('Y') }}</p>
-                                                {% endif %}
-                                                {# en attente #}
-                                                <div class="permission_card col l6">
-                                                    <div class="card" style="background-color: #00b0ff;padding: 0px;">
-                                                        <div  style="margin-left: 5px;background-color: white;">
-                                                            <div  style="padding:10px">
-                                                                <span><span class="fa fa-user"></span> <b style="font-weight: bold;font-size: 1em;text-transform: uppercase;">{{ perm.employee.surname ~" "~ perm.employee.lastName }}</b></span>
-                                                                <table class="permission_inner_table" style="padding: 0;border: none;width: 90%;">
-                                                                    <tr>
-                                                                        <td><span style="font-size: 0.8em;">Raison : {{ permissions_type[perm.type] }}</span></td>
-                                                                        <td><span>Durée : </span><span style="font-size: 1em;color: red;font-weight: bold"> {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days + 1 %}
-                                                                                {% set nbreHeures = date(perm.DateTo | date).diff(perm.DateFrom)|date('%h') %}
-                                                                                {{ nbreJours~" Jours "~nbreHeures~" Heures" }}</span></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td><span style="font-size: 0.8em;">Début: </span><span style="font-size: 0.8em;" class="blue-text">{{ perm.DateFrom | date('d-M-Y')~" "~perm.TimeFrom }}</span></td>
-                                                                        <td><span style="font-size: 0.8em;">Fini: </span><span style="font-size: 0.8em;" class="blue-text">{{ perm.DateTo | date('d-M-Y')~" "~perm.TimeTo }}</span></td>
-                                                                    </tr>
-                                                                </table>
-
-
-                                                                <p style="font-size: 0.8em;"><span>Description : </span><span style="font-size: 1em;color: grey ;font-weight: bold">{{ perm.description }}</span></p>
-                                                                {#<p> <span style="font-size: 0.8em;">Permission demandée le : </span><span class="blue-text">XX:XX:XX</span></p>#}
-
-                                                                <a href="{{ path('grantPermision',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light green"><i class="fa fa-check"></i></a>
-                                                                <a href="{{ path('rejectPermision',{'id':perm.id})}}" class="deleteDep btn-floating btn-small waves-effect waves-light red"><i class="fa fa-times"></i></a>
-
-
-                                                                <a style="position:absolute;right: 10px;bottom: 10px;" href="{{ path('generatePDFPermission',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light teal"><i class="fa fa-print"></i></a>
-
-                                                                <p style="font-size: 0.7em;color: teal;"><span class="fa fa-calendar-alt"></span>{{ perm.DateTo | date('d-M-Y H:i:s') }}</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-
-                                                {% set last_month = perm.CreateTime | date('m') %}
-                                                {% endif %}
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                        <div id="not_granted">
-                                            <div class="row">
-                                                {%  set last_month = null %}
-                                                {% for perm in listPerm %}
-                                                {% if perm.state == 2 %}
-                                                {% if perm.CreateTime | date('m')!=last_month %}
-                                                <!-- Loool + mdr juste pour fermer le row et en ouvrir un nouveau pour une séparation des éléments -->
-                                            </div>
-                                            <div class="row">
-                                                <p class="permissionsSeparator">{{ perm.CreateTime | date('M')~" "~perm.CreateTime | date('Y') }}</p>
-                                                {% endif %}
-                                                {# refused #}
-                                                <div class="permission_card col l6">
-                                                    <div class="card" style="background-color: #C62828;padding: 0px;">
-                                                        <div  style="margin-left: 5px;background-color: white;">
-                                                            <div  style="padding:10px">
-                                                                <span><span class="fa fa-user"></span> <b style="font-weight: bold;font-size: 1em;text-transform: uppercase;">{{ perm.employee.surname ~" "~ perm.employee.lastName }}</b></span>
-                                                                <table class="permission_inner_table" style="padding: 0;border: none;width: 90%;">
-                                                                    <tr>
-                                                                        <td><span style="font-size: 0.8em;">Raison : {{ permissions_type[perm.type] }}</span></td>
-                                                                        <td><span>Durée : </span><span style="font-size: 1em;color: red;font-weight: bold"> {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days + 1 %}
-                                                                                {% set nbreHeures = date(perm.DateTo | date).diff(perm.DateFrom)|date('%h') %}
-                                                                                {{ nbreJours~" Jours "~nbreHeures~" Heures" }}</span></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td><span style="font-size: 0.8em;">Début: </span><span style="font-size: 0.8em;" class="blue-text">{{ perm.DateFrom | date('d-M-Y')~" "~perm.TimeFrom }}</span></td>
-                                                                        <td><span style="font-size: 0.8em;">Fini: </span><span style="font-size: 0.8em;" class="blue-text">{{ perm.DateTo | date('d-M-Y')~" "~perm.TimeTo }}</span></td>
-                                                                    </tr>
-                                                                </table>
-
-
-                                                                <p style="font-size: 0.8em;"><span>Description : </span><span style="font-size: 1em;color: grey ;font-weight: bold">{{ perm.description }}</span></p>
-                                                                {#<p> <span style="font-size: 0.8em;">Permission demandée le : </span><span class="blue-text">XX:XX:XX</span></p>#}
-                                                                {% if perm.state == 0 or perm.state == 2 %}
-                                                                    <a href="{{ path('grantPermision',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light green"><i class="fa fa-check"></i></a>
-                                                                {% endif %}
-
-                                                                <a style="position:absolute;right: 10px;bottom: 10px;" href="{{ path('generatePDFPermission',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light teal"><i class="fa fa-print"></i></a>
-
-                                                                <p style="font-size: 0.7em;color: teal;"><span class="fa fa-calendar-alt"></span>{{ perm.DateTo | date('d-M-Y H:i:s') }}</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                {% set last_month = perm.CreateTime | date('m') %}
-                                                {% endif %}
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                        <div id="granted">
-                                            <div class="row">
-                                                {%  set last_month = null %}
-                                                {% for perm in listPerm %}
-                                                {% if perm.state == 1 %}
-                                                {% if perm.CreateTime | date('m')!=last_month %}
-                                                <!-- Loool + mdr juste pour fermer le row et en ouvrir un nouveau pour une séparation des éléments -->
-                                            </div>
-                                            <div class="row">
-                                                <p class="permissionsSeparator">{{ perm.CreateTime | date('M')~" "~perm.CreateTime | date('Y') }}</p>
-                                                {% endif %}
-                                                {# accordees #}
-                                                <div class="permission_card col l6">
-                                                    <div class="card" style="background-color: #4CAF50;padding: 0px;">
-                                                        <div  style="margin-left: 5px;background-color: white;">
-                                                            <div  style="padding:10px">
-                                                                <span><span class="fa fa-user"></span> <b style="font-weight: bold;font-size: 1em;text-transform: uppercase;">{{ perm.employee.surname ~" "~ perm.employee.lastName }}</b></span>
-                                                                <table class="permission_inner_table" style="padding: 0;border: none;width: 90%;">
-                                                                    <tr>
-                                                                        <td><span style="font-size: 0.8em;">Raison : {{ permissions_type[perm.type] }}</span></td>
-                                                                        <td><span>Durée : </span><span style="font-size: 1em;color: red;font-weight: bold"> {% set nbreJours = date(perm.DateTo | date).diff(perm.DateFrom).days +1 %}
-                                                                                {% set nbreHeures = date(perm.DateTo | date).diff(perm.DateFrom)|date('%h') %}
-                                                                                {{ nbreJours~" Jours "~nbreHeures~" Heures" }}</span></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td><span style="font-size: 0.8em;">Début: </span><span style="font-size: 0.8em;" class="blue-text">{{ perm.DateFrom | date('d-M-Y')~" "~perm.TimeFrom }}</span></td>
-                                                                        <td><span style="font-size: 0.8em;">Fini: </span><span style="font-size: 0.8em;" class="blue-text">{{ perm.DateTo | date('d-M-Y')~" "~perm.TimeTo }}</span></td>
-                                                                    </tr>
-                                                                </table>
-
-
-                                                                <p style="font-size: 0.8em;"><span>Description : </span><span style="font-size: 1em;color: grey ;font-weight: bold">{{ perm.description }}</span></p>
-                                                                {#<p> <span style="font-size: 0.8em;">Permission demandée le : </span><span class="blue-text">XX:XX:XX</span></p>#}
-
-                                                                {# if the stat is not waiting, then we have nothing to do here #}
-                                                                {% if perm.state == 0 %}
-                                                                    <a href="{{ path('grantPermision',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light green"><i class="fa fa-check"></i></a>
-                                                                {% endif %}
-
-                                                                {% if perm.state == 0 or perm.state == 2 %}
-                                                                    <a href="{{ path('rejectPermision',{'id':perm.id})}}" class="deleteDep btn-floating btn-small waves-effect waves-light red"><i class="fa fa-times"></i></a>
-                                                                {% endif %}
-
-                                                                <a style="position:absolute;right: 10px;bottom: 10px;" href="{{ path('generatePDFPermission',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light teal"><i class="fa fa-print"></i></a>
-
-                                                                <p style="font-size: 0.7em;color: teal;"><span class="fa fa-calendar-alt"></span>{{ perm.DateTo | date('d-M-Y H:i:s') }}</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                {% set last_month = perm.CreateTime | date('m') %}
-                                                {% endif %}
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
+            </div>                
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
 
 {% block javascripts %}
