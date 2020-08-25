@@ -162,7 +162,7 @@ class DefaultController extends StatsController
                 $e->setSurname($request->request->get("adminSurname"));
                 $e->setUsername($request->request->get("adminUsername"));
                 $e->setPassword(md5($request->request->get("adminPassword")));
-                $e->setRoles(array("ROLE_ADMIN"));
+                $e->setRoles(array("ROLE_SUPER_ADMIN"));
                 $e->setAddress($request->request->get("adminAdress"));
                 $e->setPhonenumber($request->request->get("adminPhoneNumber"));
 
