@@ -2,46 +2,56 @@
 {% block title %}C.A.S - Publicité{% endblock %}
 {% block body %}
 
-    <!-- Modal for ajax loading -->
-    <div id="modal_loading" class="modal ajax_modals">
-        <div class="modal-content">
-            <p class="center">
-                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
-            </p>
-        </div>
+<!-- Modal for ajax loading -->
+<div id="modal_loading" class="modal ajax_modals">
+    <div class="modal-content">
+        <p class="center">
+            <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+        </p>
     </div>
+</div>
+<div class="container-fluid">
+    <div class="wrapper">
 
-    <!-- hidden input -->
-    <div style="display: none">
-        <select id="depSelected">
-            {% for dep in departements %}
-                <option value="{{ dep.id }}">{{ dep.id }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="row">
-        <div class="col l12">
-            <h5>Changer les images de veille</h5>
+        {% include('cas/partials/_sidebar.html.twig') %}
 
-            <!-- Petites sections carrées -->
+        <div class="content-page">
+            <div class="content">
 
-            <div class="row">
-                <div class="col l12">
-                    <ul class="collapsible" data-collapsible="accordion">
-                        <li>
-                            <div class="collapsible-header collapsible-header-title active">Images de veille</div>
-                            <div class="collapsible-body" style="padding-bottom: 0px">
+                <div class="col-lg-12">
+                    <h2>Changer les images de veille</h2>
+                </div>
+                <div class="row card">
+                    <div class="col-lg-12 card-body">
+                        <!-- hidden input -->
+                        <div style="display: none">
+                            <select id="depSelected">
+                                {% for dep in departements %}
+                                    <option value="{{ dep.id }}">{{ dep.id }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col l12">
+                                <!-- Petites sections carrées -->
+
                                 <div class="row">
-                                    <form class="col l12" id="main_form">
-                                        <p>
-                                            <input name="group1" value="1" type="radio" id="el1" />
-                                            <label for="el1">Toutes les machines</label>
-                                            <input name="group1" value="2" type="radio" id="el2" />
-                                            <label for="el2">Par départements</label>
-                                            <input name="group1" value="3" type="radio" id="el3" />
-                                            <label for="el3">Sélection unique</label>
-                                        </p>
-                                        <span id="type1">
+                                    <div class="col l12">
+                                        <ul class="collapsible" data-collapsible="accordion">
+                                            <li>
+                                                <div class="collapsible-header collapsible-header-title active">Images de veille</div>
+                                                <div class="collapsible-body" style="padding-bottom: 0px">
+                                                    <div class="row">
+                                                        <form class="col l12" id="main_form">
+                                                            <p>
+                                                                <input name="group1" value="1" type="radio" id="el1" />
+                                                                <label for="el1">Toutes les machines</label>
+                                                                <input name="group1" value="2" type="radio" id="el2" />
+                                                                <label for="el2">Par départements</label>
+                                                                <input name="group1" value="3" type="radio" id="el3" />
+                                                                <label for="el3">Sélection unique</label>
+                                                            </p>
+                                                            <span id="type1">
                                             <div class="row firstOne">
                                                 <div class="col l12">
                                                     <h5>Toutes les machines</h5>
@@ -50,15 +60,15 @@
                                             </div>
 
                                             <div class="row secondOne_1">
-                                                <div class="col l4 card firstImage">
-                                                    <input type="file" id="first_image_input_1" style="display: none">
+                                                <div class="col-lg-4 card firstImage">
+                                                    <input type="file" id="first_image_input_1"  style="display: none">
                                                     {% if images[0].image1 is defined and images[0].image1 is not null %}
                                                         <img src="{{ asset("pub_covers/"~images[0].image1) }}" id="first_image_1" inputTag="first_image_input_1" class="preview preview2" alt="image">
                                                         {% else %}
                                                         <img src="{{ asset("img/image_placeholder.jpg") }}" id="first_image_1" inputTag="first_image_input_1" class="preview preview2" alt="image">
                                                     {% endif %}
                                                 </div>
-                                                <div class="col l4 card secondImage">
+                                                <div class="col-lg-4 card secondImage">
                                                     <input type="file" id="second_image_input_1" style="display: none">
                                                     {% if images[0].image2 is defined and images[0].image2 is not null %}
                                                         <img src="{{ asset("pub_covers/"~images[0].image2) }}" id="second_image_1" inputTag="second_image_input_1" class="preview preview2" alt="image">
@@ -66,7 +76,7 @@
                                                         <img src="{{ asset("img/image_placeholder.jpg") }}" id="second_image_1" inputTag="second_image_input_1" class="preview preview2" alt="image">
                                                     {% endif %}
                                                 </div>
-                                                <div class="col l4 card thirdImage">
+                                                <div class="col-lg-4 card thirdImage">
                                                     <input type="file" id="third_image_input_1" style="display: none">
                                                     {% if images[0].image3 is defined and images[0].image3 is not null %}
                                                         <img src="{{ asset("pub_covers/"~images[0].image3) }}" id="third_image_1" inputTag="third_image_input_1" class="preview preview2" alt="image">
@@ -76,14 +86,14 @@
                                                 </div>
                                             </div>
                                             <div class="row thirdOne">
-                                                <div class="col l12 center">
+                                                <div class="col-lg-12 center">
                                                     <input type="button" id="submit_button_1" value="Continuer" class="btn-perso-historique">
                                                 </div>
                                             </div>
                                         </span>
-                                        <span id="type2">
+                                                            <span id="type2">
                                             <div class="row firstOne">
-                                                <div class="col l12">
+                                                <div class="col-lg-12">
                                                     <h5>Par départements</h5>
                                                     <span>Choisissez le département</span>
                                                     <select multiple="multiple" id="depSelected2">
@@ -96,7 +106,7 @@
                                                 </div>
                                             </div>
                                             <div class="row secondOne_2">
-                                                <div class="col l4 card firstImage">
+                                                <div class="col-lg-4 card firstImage">
                                                     <input type="file" id="first_image_input_2" style="display: none">
                                                     {% if images[0].image1 is defined and images[0].image1 is not null %}
                                                         <img src="{{ asset("pub_covers/"~images[0].image1) }}" id="first_image_1" inputTag="first_image_input_1" class="preview preview2" alt="image">
@@ -106,7 +116,7 @@
 
                                                     <!-- <img src="{{ asset("img/image_placeholder.jpg") }}" id="first_image_2" inputTag="first_image_input_2" class="preview preview2" alt="image">-->
                                                 </div>
-                                                <div class="col l4 card secondImage">
+                                                <div class="col-lg-4 card secondImage">
                                                     <input type="file" id="second_image_input_2" style="display: none">
                                                     {% if images[0].image2 is defined and images[0].image2 is not null %}
                                                         <img src="{{ asset("pub_covers/"~images[0].image2) }}" id="second_image_1" inputTag="second_image_input_1" class="preview preview2" alt="image">
@@ -115,7 +125,7 @@
                                                     {% endif %}
                                                     <!-- <img src="{{ asset("img/image_placeholder.jpg") }}" id="second_image_2" inputTag="second_image_input_2" class="preview preview2" alt="image"> -->
                                                 </div>
-                                                <div class="col l4 card thirdImage">
+                                                <div class="col-lg-4 card thirdImage">
                                                     <input type="file" id="third_image_input_2" style="display: none">
                                                     {% if images[0].image3 is defined and images[0].image3 is not null %}
                                                         <img src="{{ asset("pub_covers/"~images[0].image3) }}" id="third_image_1" inputTag="third_image_input_1" class="preview preview2" alt="image">
@@ -126,14 +136,14 @@
                                                 </div>
                                             </div>
                                             <div class="row thirdOne">
-                                                <div class="col l12 center">
+                                                <div class="col-lg-12 center">
                                                     <input type="button" id="submit_button_2" value="Continuer" class="btn-perso-historique">
                                                 </div>
                                             </div>
                                         </span>
-                                        <span id="type3">
+                                                            <span id="type3">
                                             <div class="row firstOne">
-                                                <div class="col l12">
+                                                <div class="col-lg-12">
                                                     <h5>Sélection unique</h5>
                                                     <span>Choisissez la machine correspondante</span>
                                                     <select id="macSelected">
@@ -146,7 +156,7 @@
                                                 </div>
                                             </div>
                                             <div class="row secondOne_3">
-                                                <div class="col l4 card firstImage">
+                                                <div class="col-lg-4 card firstImage">
                                                     <input type="file" id="first_image_input_3" style="display: none">
                                                     {% if images[0].image1 is defined and images[0].image1 is not null %}
                                                         <img src="{{ asset("pub_covers/"~images[0].image1) }}" id="first_image_1" inputTag="first_image_input_1" class="preview preview2" alt="image">
@@ -155,7 +165,7 @@
                                                     {% endif %}
                                                     <!-- <img src="{{ asset("img/image_placeholder.jpg") }}" id="first_image_3" inputTag="first_image_input_3" class="preview preview2" alt="image"> -->
                                                 </div>
-                                                <div class="col l4 card secondImage">
+                                                <div class="col-lg-4 card secondImage">
                                                     <input type="file" id="second_image_input_3" style="display: none">
                                                     {% if images[0].image2 is defined and images[0].image2 is not null %}
                                                         <img src="{{ asset("pub_covers/"~images[0].image2) }}" id="second_image_1" inputTag="second_image_input_1" class="preview preview2" alt="image">
@@ -164,7 +174,7 @@
                                                     {% endif %}
                                                     <!-- <img src="{{ asset("img/image_placeholder.jpg") }}" id="second_image_3" inputTag="second_image_input_3" class="preview preview2" alt="image"> -->
                                                 </div>
-                                                <div class="col l4 card thirdImage">
+                                                <div class="col-lg-4 card thirdImage">
                                                     <input type="file" id="third_image_input_3" style="display: none">
                                                     {% if images[0].image3 is defined and images[0].image3 is not null %}
                                                         <img src="{{ asset("pub_covers/"~images[0].image3) }}" id="third_image_1" inputTag="third_image_input_1" class="preview preview2" alt="image">
@@ -175,20 +185,29 @@
                                                 </div>
                                             </div>
                                             <div class="row thirdOne">
-                                                <div class="col l12 center">
-                                                    <input type="button" id="submit_button_3" value="Continuer" class="btn-perso-historique">
+                                                <div class="col-lg-12 center">
+                                                    <input type="button" id="submit_button_3" value="Continuer" class="btn btn-success btn-perso-historique">
                                                 </div>
                                             </div>
                                         </span>
-                                    </form>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+
 {% endblock %}
 
 {% block stylesheets %}

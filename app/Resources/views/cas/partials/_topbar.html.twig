@@ -5,10 +5,10 @@
         <a href="/" class="topnav-logo">
             {%  if app.session.get('companyLogo') is defined and app.session.get('companyLogo') is not null %}
                 <span class="topnav-logo-lg">
-                    <img src="{{ asset("company_images/"~app.session.get('companyLogo')) }}" alt="{{ app.session.get('companyName') }}" height="16">
+                    <img src="{{ asset("company_images/"~app.session.get('companyLogo')) }}" alt="{{ app.session.get('companyName') }}" height="60px">
                 </span>
                 <span class="topnav-logo-sm">
-                    <img src="{{ asset("company_images/"~app.session.get('companyLogo')) }}" alt="{{ app.session.get('companyName') }}" height="16">
+                    <img src="{{ asset("company_images/"~app.session.get('companyLogo')) }}" alt="{{ app.session.get('companyName') }}" height="60px">
                 </span>
             {% endif %}
         </a>

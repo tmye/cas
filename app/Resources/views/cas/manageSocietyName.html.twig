@@ -2,27 +2,38 @@
 {% block title %}C.A.S - Société{% endblock %}
 {% block body %}
 
-    <!-- Modal for ajax loading -->
-    <div id="modal_loading" class="modal ajax_modals">
-        <div class="modal-content">
-            <p class="center">
-                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
-            </p>
-        </div>
+<!-- Modal for ajax loading -->
+<div id="modal_loading" class="modal ajax_modals">
+    <div class="modal-content">
+        <p class="center">
+            <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+        </p>
     </div>
+</div>
+<div class="container-fluid">
+    <div class="wrapper">
 
-    <div class="row">
-        <div class="col l12">
-            <h5>Changer le nom de la société</h5>
+        {% include('cas/partials/_sidebar.html.twig') %}
 
-            <div class="row">
-                <div class="col l12">
-                    <ul class="collapsible" data-collapsible="accordion">
-                        <li>
-                            <div class="collapsible-header collapsible-header-title active">Changement de nom</div>
-                            <div class="collapsible-body" style="padding-bottom: 0px">
+        <div class="content-page">
+            <div class="content">
+
+                <div class="col-lg-12">
+                    <h2>Changer le nom de la société</h2>
+                </div>
+
+                <div class="row card">
+                    <div class="col-lg-12 card-body">
+                        <div class="row">
+                            <div class="col l12">
                                 <div class="row">
-                                    <form class="col l12" id="main_form">
+                                    <div class="col l12">
+                                        <ul class="collapsible" data-collapsible="accordion">
+                                            <li>
+                                                <div class="collapsible-header collapsible-header-title active">Changement de nom</div>
+                                                <div class="collapsible-body" style="padding-bottom: 0px">
+                                                    <div class="row">
+                                                        <form class="col l12" id="main_form">
                                         <span id="type1">
                                             <div class="row firstOne">
                                                 <div class="col l12">
@@ -37,15 +48,15 @@
                                                 </div>
                                             </div>
                                             <div>
-                                                <input type="text" id="companyName" placeholder="Entrez le nouveau nom de la société">
+                                                <input type="text" id="companyName" class="form-control" placeholder="Entrez le nouveau nom de la société">
                                                 <br><br>
-                                                <input type="button" id="submitSocietyName" class="btn" value="Changer">
+                                                <input type="button" id="submitSocietyName" class="btn btn-success" value="Changer">
                                             </div>
                                         </span>
-                                    </form>
-                                </div>
-                                <div class="row">
-                                    <form class="col l12" id="main_form">
+                                                        </form>
+                                                    </div>
+                                                    <div class="row">
+                                                        <form class="col l12" id="main_form">
                                         <span id="type1">
                                             <div class="row firstOne">
                                                 <div class="col l12">
@@ -58,7 +69,7 @@
                                                     <div class="col l8">
                                                         <input type="file" class="fileInput" id="fileInput">
                                                         <br><br>
-                                                        <input type="button" id="submitSocietyLogo" class="btn" value="Changer">
+                                                        <input type="button" id="submitSocietyLogo" class="btn btn-success" value="Changer">
                                                     </div>
                                                     <div class="col l4">
                                                         <img src="" id="preview" alt="companyLogo" class="companyLogoPreview">
@@ -66,15 +77,23 @@
                                                 </div>
                                             </div>
                                         </span>
-                                    </form>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+
 {% endblock %}
 
 {% block stylesheets %}
@@ -84,14 +103,14 @@
     <script>
         $(function () {
             $("#submitSocietyName").click(function () {
-                $('#modal_loading').modal('open');
+                $('#modal_loading').modal('show');
                 $.ajax({
                     type: 'POST',
                     url: "changeSocietyName",
                     data: {'name':$("#companyName").val()},
                     success: function(data) {
                         alert(data);
-                        $('#modal_loading').modal('close');
+                        $('#modal_loading').modal('hide');
                     },
                     error: function () {
                     }
@@ -123,7 +142,7 @@
             // Requete ajax de soumission de l'image
 
             $("#submitSocietyLogo").click(function(){
-                $('#modal_loading').modal('open');
+                $('#modal_loading').modal('show');
                 var formdata = new FormData();
                 var fInput = document.getElementById("fileInput");
                 console.log(fInput);
@@ -139,11 +158,11 @@
                     processData: false,
                     success: function(data) {
                         alert(data);
-                        $('#modal_loading').modal('close');
+                        $('#modal_loading').modal('hide');
                     },
                     error: function() {
                         // Closing the loading box
-                        $('#modal_loading').modal('close');
+                        $('#modal_loading').modal('hide');
                         alert("Erreur");
                     }
                 });

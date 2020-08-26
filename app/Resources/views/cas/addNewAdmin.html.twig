@@ -5,18 +5,28 @@
 
 {% block body %}
 
+<!-- Modal for ajax loading -->
+<div>
     <!-- Modal for ajax loading -->
     <div id="modal_loading" class="modal ajax_modals">
-        <div class="modal-content">
+        <div class="modal-content" style="width: 200px;display:table;position:relative;margin: 0 auto; top: calc(50% - 24px);">
             <p class="center">
-                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+                <img class="mw-100 mh-100" src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
             </p>
         </div>
     </div>
+</div>
 
-    <div class="row">
+<div class="container-fluid">
+    <div class="wrapper">
+
+        {% include('cas/partials/_sidebar.html.twig') %}
+
+        <div class="content-page">
+            <div class="content">
+                <div class="row">
         <div class="col l12">
-            <h5 class="h5_title"><span class="fa fa-user-circle"></span> Ajouter un administrateur</h5>
+            <h2 class="h5_title"><span class="fa fa-user-circle"></span> Ajouter un administrateur</h2>
             <div class="row">
                 <div class="col l12">
                     <ul class="collapsible" data-collapsible="accordion">
@@ -25,7 +35,7 @@
                             <div class="collapsible-body" style="padding-bottom: 0px">
                                 {% for message in  app.session.flashbag.get('notice') %}
                                     <div class="row">
-                                        <div class="col l12">
+                                        <div class="col-lg-12 col-sm-12">
                                             <div class="operation_message">
                                                 {{ message }}
                                             </div>
@@ -34,41 +44,41 @@
                                 {% endfor %}
                                 {% for message in  app.session.flashbag.get('error_notice') %}
                                     <div class="row">
-                                        <div class="col l12">
+                                        <div class="col-lg-12 col-sm-12">
                                             <div class="operation_error_message">
                                                 {{ message }}
                                             </div>
                                         </div>
                                     </div>
                                 {% endfor %}
-                                <div class="row">
-                                    <div class="col l4">
-                                        <input type="text" id="adminSurname" placeholder="Nom">
+                                <div class="row mb-2">
+                                    <div class="col-lg-4 col-sm-12 mt-sm-2">
+                                        <input type="text" class="form-control" id="adminSurname" placeholder="Nom">
                                     </div>
-                                    <div class="col l4">
-                                        <input type="text" id="adminName" placeholder="Prénom(s)">
+                                    <div class="col-lg-4 col-sm-12 mt-sm-2">
+                                        <input type="text" class="form-control" id="adminName" placeholder="Prénom(s)">
                                     </div>
-                                    <div class="col l4">
-                                        <input type="text" id="adminAdress" placeholder="Adresse">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col l4">
-                                        <input type="number" min="1" id="adminPhoneNumber" placeholder="Numéro de téléphone">
-                                    </div>
-                                    <div class="col l4">
-                                        <input type="text" id="adminUsername" placeholder="Choisissez un pseudo">
-                                    </div>
-                                    <div class="col l4">
-                                        <input type="password" id="adminFirstPassword" placeholder="Mot de passe">
+                                    <div class="col-lg-4 col-sm-12 mt-sm-2">
+                                        <input type="text" class="form-control" id="adminAdress" placeholder="Adresse">
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col l4">
-                                        <input type="password" id="adminSecondPassword" placeholder="Confirmation du mot de passe">
+                                <div class="row mb-2">
+                                    <div class="col-lg-4 col-sm-12 mt-sm-2">
+                                        <input type="number" class="form-control" min="1" id="adminPhoneNumber" placeholder="Numéro de téléphone">
                                     </div>
-                                    <div class="col l4">
-                                        <select id="role">
+                                    <div class="col-lg-4 col-sm-12 mt-sm-2">
+                                        <input type="text" class="form-control" id="adminUsername" placeholder="Choisissez un pseudo">
+                                    </div>
+                                    <div class="col-lg-4 col-sm-12 mt-sm-2">
+                                        <input type="password" class="form-control" id="adminFirstPassword" placeholder="Mot de passe">
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-2">
+                                    <div class="col-lg-6 col-sm-12 mt-sm-2">
+                                        <input type="password" class="form-control" id="adminSecondPassword" placeholder="Confirmation du mot de passe">
+                                    </div>
+                                    <div class="col-lg-6 col-sm-12 mt-sm-2">
+                                        <select id="role" class="form-control">
                                             <option value="ROLE_ADMIN">ROLE_ADMIN</option>
                                             <option value="ROLE_ADMIN_CONTROL">ROLE_ADMIN_CONTROL</option>
                                             <option value="ROLE_SECRET">ROLE_SECRET</option>
@@ -76,8 +86,8 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col l12">
-                                        <input type="button" value="Ajouter" class="btn" id="submitButton">
+                                    <div class="col-lg-12 col-sm-12">
+                                        <input type="button" value="Ajouter" class="btn btn-success" id="submitButton">
                                     </div>
                                 </div>
                             </div>
@@ -87,6 +97,10 @@
             </div>
         </div>
     </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block javascripts %}

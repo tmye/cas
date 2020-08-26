@@ -2,62 +2,71 @@
 
 {% block body %}
 
-    <!-- Modal for ajax loading -->
-    <div id="modal_loading" class="modal ajax_modals">
-        <div class="modal-content">
-            <p class="center">
-                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
-            </p>
-        </div>
+<!-- Modal for ajax loading -->
+<div id="modal_loading" class="modal ajax_modals">
+    <div class="modal-content">
+        <p class="center">
+            <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+        </p>
     </div>
+</div>
+<div class="container-fluid">
+    <div class="wrapper">
 
-    <!-- hidden input -->
-    <div style="display: none">
-        <select id="depSelected">
-            {% for dep in departements %}
-                <option value="{{ dep.id }}">{{ dep.id }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="row">
-        <div class="col l12">
-            <h5>Changer l'état des machines</h5>
+        {% include('cas/partials/_sidebar.html.twig') %}
 
-            <div class="row">
-                <div class="col l12">
-                    <ul class="collapsible" data-collapsible="accordion">
-                        <li>
-                            <div class="collapsible-header collapsible-header-title active">Changement d'état</div>
-                            <div class="collapsible-body" style="padding-bottom: 0px">
+        <div class="content-page">
+            <div class="content">
+                
+                <div class="row card">
+                    <div class="col-lg-12 card-body">
+                        <!-- hidden input -->
+                        <div style="display: none">
+                            <select id="depSelected">
+                                {% for dep in departements %}
+                                    <option value="{{ dep.id }}">{{ dep.id }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h5>Changer l'état des machines</h5>
+
                                 <div class="row">
-                                    <form class="col l12" id="main_form">
-                                        <p>
-                                            <input name="group1" value="1" type="radio" id="el1" />
-                                            <label for="el1">Toutes les machines</label>
-                                            <input name="group1" value="2" type="radio" id="el2" />
-                                            <label for="el2">Par départements</label>
-                                            <input name="group1" value="3" type="radio" id="el3" />
-                                            <label for="el3">Sélection unique</label>
-                                        </p>
-                                        <span id="type1">
+                                    <div class="col-lg-12">
+                                        <ul class="collapsible" data-collapsible="accordion">
+                                            <li>
+                                                <div class="collapsible-header collapsible-header-title active">Changement d'état</div>
+                                                <div class="collapsible-body" style="padding-bottom: 0px">
+                                                    <div class="row">
+                                                        <form class="col-lg-12" id="main_form">
+                                                            <p>
+                                                                <input name="group1" value="1" type="radio" id="el1" />
+                                                                <label for="el1">Toutes les machines</label>
+                                                                <input name="group1" value="2" type="radio" id="el2" />
+                                                                <label for="el2">Par départements</label>
+                                                                <input name="group1" value="3" type="radio" id="el3" />
+                                                                <label for="el3">Sélection unique</label>
+                                                            </p>
+                                                            <span id="type1">
                                             <div class="row firstOne">
-                                                <div class="col l12">
+                                                <div class="col-lg-12">
                                                     <h5>Toutes les machines</h5>
                                                     <span>Changer l'état de toutes les machines du système</span>
                                                 </div>
                                             </div>
-                                            <div id="rebootForAll" class="btn-floating btn-large waves-effect waves-light center blue darken-4 white-text thirdImage" style="padding: ">
-                                                <span class="fa fa-sync"></span>
+                                            <div id="rebootForAll" class="btn btn-primary btn-circle btn-md">
+                                                <span class="fa fa-sync fa-2x"></span>
                                             </div>
                                             <span>Redémarrer les machines</span>
                                             <span style="margin-left: 70px">Dernier redémarrage : 13/07/2017 à 18h00</span>
                                         </span>
-                                        <span id="type2">
+                                                            <span id="type2">
                                             <div class="row firstOne">
-                                                <div class="col l12">
+                                                <div class="col-lg-12">
                                                     <h5>Par départements</h5>
                                                     <span>Choisissez le département</span>
-                                                    <select multiple="multiple" id="depSelected2">
+                                                    <select multiple="multiple" class="form-control" id="depSelected2">
                                                         {% for dep in departements %}
                                                             <option value="{{ dep.id }}">{{ dep.name }}</option>
                                                         {% endfor %}
@@ -66,18 +75,18 @@
                                                     Changer l'état de toutes les machines d'un département donné
                                                 </div>
                                             </div>
-                                            <div id="rebootForDep" class="btn-floating btn-large waves-effect waves-light center blue darken-4 white-text thirdImage" style="padding: ">
-                                                <span class="fa fa-sync"></span>
+                                            <div id="rebootForDep" class="btn btn-success btn-circle btn-md">
+                                                <span class="fa fa-sync fa-2x"></span>
                                             </div>
                                             <span>Redémarrer les machines</span>
                                             <span style="margin-left: 70px">Dernier redémarrage : 13/07/2017 à 18h00</span>
                                         </span>
-                                        <span id="type3">
+                                                            <span id="type3">
                                             <div class="row firstOne">
-                                                <div class="col l12">
+                                                <div class="col-lg-12">
                                                     <h5>Sélection unique</h5>
                                                     <span>Choisissez la machine correspondante</span>
-                                                    <select id="macSelected">
+                                                    <select id="macSelected" class="form-control">
                                                         {% for mac in machines %}
                                                             <option value="{{ mac.machineId }}">{{ mac.name }}</option>
                                                         {% endfor %}
@@ -86,21 +95,28 @@
                                                     Changer l'état d'une machine précise
                                                 </div>
                                             </div>
-                                            <div id="rebootForMac" class="btn-floating btn-large waves-effect waves-light center blue darken-4 white-text thirdImage" style="padding: ">
-                                                <span class="fa fa-sync"></span>
+                                            <div id="rebootForMac" class="btn btn-primary btn-circle btn-md">
+                                                <span class="fa fa-sync fa-2x"></span>
                                             </div>
                                             <span>Redémarrer les machines</span>
                                             <span style="margin-left: 70px">Dernier redémarrage : 13/07/2017 à 18h00</span>
                                         </span>
-                                    </form>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
 {% endblock %}
 
 {% block stylesheets %}

@@ -4,14 +4,17 @@
 {% block title %}C.A.S - Accueil{% endblock %}
 
 {% block body %}
+<!-- Modal for ajax loading -->
+<div>
     <!-- Modal for ajax loading -->
     <div id="modal_loading" class="modal ajax_modals">
-        <div class="modal-content">
+        <div class="modal-content" style="width: 200px;display:table;position:relative;margin: 0 auto; top: calc(50% - 24px);">
             <p class="center">
-                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+                <img class="mw-100 mh-100" src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
             </p>
         </div>
     </div>
+</div>
 <div class="container-fluid">
     <div class="wrapper">
 
@@ -34,12 +37,14 @@
                         <!-- Section du classement des tops -->
 
                         <div class="row">
-                            <div class="col-lg-5 card">
+                            <div class="col-lg-12 card">
                                 <h4>Top retardataires</h4>
                                 <br>
                                 <span class="info_container_retards"></span>
                             </div>
-                            <div class="offset-2 col-lg-5 card">
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 card">
                                 <h4>Top départs prématurés</h4>
                                 <br>
                                 <span class="info_container_departs"></span>
