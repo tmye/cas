@@ -86,10 +86,10 @@ class UpdateEntity
      *
      * @return int
      */
-/*    public function getId()
+    public function getId()
     {
         return $this->id;
-    }*/
+    }
 
     /**
      * Set creationDate
@@ -122,22 +122,22 @@ class UpdateEntity
      *
      * @return UpdateEntity
      */
-/*    public function setFunction($function)
+    public function setFunction($function)
     {
         $this->function = $function;
 
         return $this;
-    }*/
+    }
 
     /**
      * Get function
      *
      * @return string
      */
-/*    public function getFunction()
+    public function getFunction()
     {
         return $this->function;
-    }*/
+    }
 
 
     /**

@@ -41,11 +41,11 @@
                                                     {% if form is defined and form is not null %}
                                                         {{ form_start(form) }}
                                                         <div class="row">
-                                                            <div class="input-field col s4">
+                                                            <div class="input-field col-lg-4 col-sm-12 col-md-12">
                                                                 <span>Nom</span>
                                                                 {{ form_row(form.surname, {'attr': {'class': 'form-control input-customized','placeholder':'Votre Nom'}}) }}
                                                             </div>
-                                                            <div class="input-field col s8">
+                                                            <div class="input-field col-lg-8 col-sm-12 col-md-12">
                                                                 <span>Prénom</span>
                                                                 {{ form_row(form.last_name, {'attr': {'class': 'form-control input-customized','placeholder':'Prénom'}}) }}
                                                             </div>
@@ -55,17 +55,17 @@
                                                                 <span>Adresse</span>
                                                                 {{ form_row(form.adress, {'attr': {'class': 'form-control input-customized','placeholder':'Votre adresse'}}) }}
                                                             </div>
-                                                            <div class="input-field col s4">
+                                                            <div class="input-field col-lg-4 col-sm-12">
                                                                 <span>Contact</span>
                                                                 {{ form_row(form.contact, {'attr': {'min':'1','class':'form-control input-customized contact_field','placeholder':'Telephone'}}) }}
                                                             </div>
-                                                            <div class="input-field col s4">
+                                                            <div class="input-field col-lg-4 col-sm-12">
                                                                 <span>Fonction</span>
                                                                 {{ form_row(form.function, {'attr': {'class': 'form-control input-customized','placeholder':'Fonction occupee'}}) }}
                                                             </div>
                                                         </div>
                                                         <div class="row">
-                                                            <div class="input-field col s4">
+                                                            <div class="input-field col-lg-4 col-sm-12">
                                                                 <span>Salaire</span>
                                                                 {% if is_granted('ROLE_ADMIN') %}
                                                                     {{ form_row(form.salary, {'attr': {'min':'1','class':'form-control input-customized','placeholder':'Salaire actuel'}}) }}
@@ -73,26 +73,26 @@
                                                                     {{ form_row(form.salary, {'attr': {'min':'1','class':'form-control input-customized','placeholder':'Salaire actuel','disabled':'disabled'}}) }}
                                                                 {% endif %}
                                                             </div>
-                                                            <div class="input-field col s4">
+                                                            <div class="input-field col-lg-4 col-sm-12">
                                                                 <span>Date d'embauche</span>
                                                                 {{ form_row(form.hire_date, {'attr': {'class': 'form-control input-customized datepicker','placeholder':'Date d\'embauche'}}) }}
                                                             </div>
-                                                            <div class="input-field col s4">
+                                                            <div class="input-field col-lg-4 col-sm-12">
                                                                 <span>Département</span>
                                                                 {{ form_row(form.departement, {'attr': {'class': 'form-control input-customized datepicker'}}) }}
                                                             </div>
                                                         </div>
                                                         <div class="row">
-                                                            <div class="input-field col s4">
+                                                            <div class="input-field col-lg-4 col-sm-12">
                                                                 <span>Heure de travail</span>
                                                                 {{ form_row(form.workingHour, {'attr':{'class':'form-control selectWorkingHour'}}) }}
                                                             </div>
-                                                            <div class="input-field col s4 center">
+                                                            <div class="input-field col-lg-4 col-sm-12 center">
                                                                 <span>Photo de profil</span>
                                                                 {{ form_row(form.picture, {'attr': {'class':'fileInput','placeholder':'Le titre de la permission','style':'display:none'}}) }}
                                                                 <button id="previewButton" type="button" style="width: 180px;height: 30px;border: solid 1px rgba(0,0,0,0.2);margin-top: 20px">Choisir une image</button>
                                                             </div>
-                                                            <div class="input-field col s4 center">
+                                                            <div class="input-field col-lg-4 col-sm-12 center">
                                                                 {% if employe is defined and employe.picture is not null %}
                                                                     <img id="preview" src="{{ asset('/')~user_profile_pictures~'/'~employe.picture }}" alt="image_preview" class="employee_image_preview" width="100">
                                                                 {% else %}
