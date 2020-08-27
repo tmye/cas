@@ -40,14 +40,18 @@
                             <div class="col-lg-12 card">
                                 <h4>Top retardataires</h4>
                                 <br>
-                                <span class="info_container_retards"></span>
+                                <div class="row">
+                                    <span class="info_container_retards"></span>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-lg-12 card">
                                 <h4>Top départs prématurés</h4>
                                 <br>
-                                <span class="info_container_departs"></span>
+                                <div class="row">
+                                    <span class="info_container_departs"></span>
+                                </div>
                             </div>
                         </div>
 
@@ -262,7 +266,7 @@
                             image = "user_profile_pictures/"+tabR[arrayID][3];
                         }
                         $(".info_container_retards").append("" +
-                            "<div class='card' style='padding: 20px'>\n" +
+                            "<div class='card col-lg-3 col-sm-12' style='padding: 20px'>\n" +
                             "    <img src='"+image+"' class='circle' width='50' height='50'/>\n" +
                             "    <span class='top user-info-home'>\n" +
                             "        <span class='grey-text text-darken-2'><b>"+tabR[arrayID][0]+"</b></span>\n" +
