@@ -56,211 +56,245 @@
                                                             <input type="number" min="60" value="60" id="tolerance" class="form-control input-customized">
                                                         </div>
                                                     </div>
-                                                    <h5 class="permissionsSeparator whH5">Lundi</h5>
+                                                    <div class="row"><h5 class="permissionsSeparator whH5">Lundi</h5></div>
+
                                                     <div class="row">
-                                                        <div class="collapseSectionLundi">
-                                                            <div class="input-field">
-                                                                <span>Début</span>
-                                                                <input type="text" id="lundiBH" class="form-control input-customized timepicker">
+                                                        <div class="collapseSectionLundi col-lg-12">
+                                                            <div class="row">
+                                                                <div class="col-lg-3">
+                                                                    <span>Début</span>
+                                                                    <input type="time" id="lundiBH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-3">
+                                                                    <span>Fin</span>
+                                                                    <input type="time" id="lundiEH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-2">
+                                                                    <span>Début pause</span>
+                                                                    <input type="time" id="lundiPBH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-2">
+                                                                    <span>Fin pause</span>
+                                                                    <input type="time" id="lundiPEH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field quotaSectionLundi col-lg-2">
+                                                                    <span>Quota horraire</span>
+                                                                    <input type="number" id="lundiQuota" min="1" max="24" class="form-control input-customized">
+                                                                </div>
                                                             </div>
-                                                            <div class="input-field">
-                                                                <span>Fin</span>
-                                                                <input type="text" id="lundiEH" class="form-control input-customized timepicker">
-                                                            </div>
-                                                            <div class="input-field ">
-                                                                <span>Début pause</span>
-                                                                <input type="text" id="lundiPBH" class="form-control input-customized timepicker">
-                                                            </div>
-                                                            <div class="input-field ">
-                                                                <span>Fin pause</span>
-                                                                <input type="text" id="lundiPEH" class="form-control input-customized timepicker">
-                                                            </div>
+
                                                         </div>
-                                                        <div class="input-field quotaSectionLundi">
-                                                            <span>Quota horraire</span>
-                                                            <input type="number" id="lundiQuota" min="1" max="24" class="form-control input-customized">
-                                                        </div>
+
                                                     </div>
 
                                                     <!-- Formulaire pour mardi -->
 
-                                                    <h5 class="permissionsSeparator whH5">Mardi</h5>
+                                                    <div class="row"><h5 class="permissionsSeparator whH5">Mardi</h5></div>
+
                                                     <div class="row">
-                                                        <div class="collapseSectionMardi">
-                                                            <div class="input-field ">
-                                                                <span>Début</span>
-                                                                <input type="text" id="mardiBH" class="form-control input-customized timepicker">
-                                                            </div>
-                                                            <div class="input-field ">
-                                                                <span>Fin</span>
-                                                                <input type="text" id="mardiEH" class="form-control input-customized timepicker">
-                                                            </div>
-                                                            <div class="input-field ">
-                                                                <span>Début pause</span>
-                                                                <input type="text" id="mardiPBH" class="form-control input-customized timepicker">
-                                                            </div>
-                                                            <div class="input-field ">
-                                                                <span>Fin pause</span>
-                                                                <input type="text" id="mardiPEH" class="form-control input-customized timepicker">
+
+                                                        <div class="collapseSectionMardi col-lg-12">
+                                                            <div class="row">
+                                                                <div class="input-field col-lg-3">
+                                                                    <span>Début</span>
+                                                                    <input type="time" id="mardiBH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-3">
+                                                                    <span>Fin</span>
+                                                                    <input type="time" id="mardiEH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-2">
+                                                                    <span>Début pause</span>
+                                                                    <input type="time" id="mardiPBH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-2">
+                                                                    <span>Fin pause</span>
+                                                                    <input type="time" id="mardiPEH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field  quotaSectionMardi col-lg-2">
+                                                                    <span>Quota horraire</span>
+                                                                    <input type="number" id="mardiQuota" min="1" max="24" class="form-control input-customized">
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div class="input-field  quotaSectionMardi">
-                                                            <span>Quota horraire</span>
-                                                            <input type="number" id="mardiQuota" min="1" max="24" class="form-control input-customized">
-                                                        </div>
+
                                                     </div>
 
                                                     <!-- Formulaire pour mercredi -->
 
-                                                    <h5 class="permissionsSeparator whH5">Mercredi</h5>
+                                                    <div class="row"><h5 class="permissionsSeparator whH5">Mercredi</h5></div>
                                                     <div class="row">
-                                                        <div class="collapseSectionMercredi">
-                                                            <div class="input-field">
-                                                                <span>Début</span>
-                                                                <input type="text" id="mercrediBH" class="form-control input-customized timepicker">
+                                                        <div class="collapseSectionMercredi col-lg-12">
+
+                                                            <div class="row">
+                                                                <div class="input-field col-lg-3">
+                                                                    <span>Début</span>
+                                                                    <input type="time" id="mercrediBH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-3">
+                                                                    <span>Fin</span>
+                                                                    <input type="time" id="mercrediEH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-2">
+                                                                    <span>Fin pause</span>
+                                                                    <input type="time" id="mercrediPEH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-2">
+                                                                    <span>Début pause</span>
+                                                                    <input type="time" id="mercrediPBH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-2 quotaSectionMercredi">
+                                                                    <span>Quota horraire</span>
+                                                                    <input type="number" id="mercrediQuota" min="1" max="24" class="form-control input-customized">
+                                                                </div>
                                                             </div>
-                                                            <div class="input-field">
-                                                                <span>Fin</span>
-                                                                <input type="text" id="mercrediEH" class="form-control input-customized timepicker">
-                                                            </div>
-                                                            <div class="input-field">
-                                                                <span>Début pause</span>
-                                                                <input type="text" id="mercrediPBH" class="form-control input-customized timepicker">
-                                                            </div>
-                                                            <div class="input-field">
-                                                                <span>Fin pause</span>
-                                                                <input type="text" id="mercrediPEH" class="form-control input-customized timepicker">
-                                                            </div>
+
                                                         </div>
-                                                        <div class="input-field col s2 quotaSectionMercredi">
-                                                            <span>Quota horraire</span>
-                                                            <input type="number" id="mercrediQuota" min="1" max="24" class="form-control input-customized">
-                                                        </div>
+
                                                     </div>
 
                                                     <!-- Formulaire pour jeudi -->
 
-                                                    <h5 class="permissionsSeparator whH5">Jeudi</h5>
+                                                    <div class="row"><h5 class="permissionsSeparator whH5">Jeudi</h5></div>
                                                     <div class="row">
-                                                        <div class="collapseSectionJeudi">
-                                                            <div class="input-field">
-                                                                <span>Début</span>
-                                                                <input type="text" id="jeudiBH" class="form-control input-customized timepicker">
+                                                        <div class="collapseSectionJeudi col-lg-12">
+                                                            <div class="row">
+                                                                <div class="input-field col-lg-3">
+                                                                    <span>Début</span>
+                                                                    <input type="time" id="jeudiBH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-3">
+                                                                    <span>Fin</span>
+                                                                    <input type="time" id="jeudiEH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-2">
+                                                                    <span>Début pause</span>
+                                                                    <input type="time" id="jeudiPBH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-2">
+                                                                    <span>Fin pause</span>
+                                                                    <input type="time" id="jeudiPEH" class="form-control input-customized timepicker">
+                                                                </div>
+
+                                                                <div class="input-field col-lg-2 quotaSectionJeudi">
+                                                                    <span>Quota horraire</span>
+                                                                    <input type="number" id="jeudiQuota" min="1" max="24" class="form-control input-customized">
+                                                                </div>
                                                             </div>
-                                                            <div class="input-field ">
-                                                                <span>Fin</span>
-                                                                <input type="text" id="jeudiEH" class="form-control input-customized timepicker">
-                                                            </div>
-                                                            <div class="input-field ">
-                                                                <span>Début pause</span>
-                                                                <input type="text" id="jeudiPBH" class="form-control input-customized timepicker">
-                                                            </div>
-                                                            <div class="input-field">
-                                                                <span>Fin pause</span>
-                                                                <input type="text" id="jeudiPEH" class="form-control input-customized timepicker">
-                                                            </div>
+
                                                         </div>
-                                                        <div class="input-field col s2 quotaSectionJeudi">
-                                                            <span>Quota horraire</span>
-                                                            <input type="number" id="jeudiQuota" min="1" max="24" class="form-control input-customized">
-                                                        </div>
+
                                                     </div>
 
                                                     <!-- Formulaire pour Vendredi -->
 
-                                                    <h5 class="permissionsSeparator whH5">Vendredi</h5>
+                                                    <div class="row"><h5 class="permissionsSeparator whH5">Vendredi</h5></div>
                                                     <div class="row">
-                                                        <div class="collapseSectionVendredi">
-                                                            <div class="input-field">
-                                                                <span>Début</span>
-                                                                <input type="text" id="vendrediBH" class="form-control input-customized timepicker">
+                                                        <div class="collapseSectionVendredi col-lg-12">
+
+                                                            <div class="row">
+                                                                <div class="input-field col-lg-3">
+                                                                    <span>Début</span>
+                                                                    <input type="time" id="vendrediBH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-3">
+                                                                    <span>Fin</span>
+                                                                    <input type="time" id="vendrediEH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-2">
+                                                                    <span>Début pause</span>
+                                                                    <input type="time" id="vendrediPBH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-2">
+                                                                    <span>Fin pause</span>
+                                                                    <input type="time" id="vendrediPEH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-2 quotaSectionVendredi">
+                                                                    <span>Quota horraire</span>
+                                                                    <input type="number" id="vendrediQuota" min="1" max="24" class="form-control input-customized">
+                                                                </div>
                                                             </div>
-                                                            <div class="input-field">
-                                                                <span>Fin</span>
-                                                                <input type="text" id="vendrediEH" class="form-control input-customized timepicker">
-                                                            </div>
-                                                            <div class="input-field">
-                                                                <span>Début pause</span>
-                                                                <input type="text" id="vendrediPBH" class="form-control input-customized timepicker">
-                                                            </div>
-                                                            <div class="input-field">
-                                                                <span>Fin pause</span>
-                                                                <input type="text" id="vendrediPEH" class="form-control input-customized timepicker">
-                                                            </div>
+
                                                         </div>
-                                                        <div class="input-field col s2 quotaSectionVendredi">
-                                                            <span>Quota horraire</span>
-                                                            <input type="number" id="vendrediQuota" min="1" max="24" class="form-control input-customized">
-                                                        </div>
+
                                                     </div>
 
                                                     <!-- Formulaire pour Samedi -->
 
-                                                    <h5 class="permissionsSeparator whH5">Samedi</h5>
+                                                    <div class="row"><h5 class="permissionsSeparator whH5">Samedi</h5></div>
                                                     <p style="margin-top: 0px">
                                                         <input type="checkbox" class="checkItSamedi" id="filled-in-box-samedi" />
                                                         <label for="filled-in-box-samedi">Présence non requise</label>
                                                     </p>
                                                     <div class="row maybeHiddenSamedi">
-                                                        <div class="collapseSectionSamedi">
-                                                            <div class="input-field">
-                                                                <span>Début</span>
-                                                                <input type="text" id="samediBH" class="form-control input-customized timepicker">
+                                                        <div class="collapseSectionSamedi col-lg-12">
+                                                            <div class="row">
+                                                                <div class="input-field col-lg-3">
+                                                                    <span>Début</span>
+                                                                    <input type="time" id="samediBH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-3">
+                                                                    <span>Fin</span>
+                                                                    <input type="time" id="samediEH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-2">
+                                                                    <span>Début pause</span>
+                                                                    <input type="time" id="samediPBH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-2">
+                                                                    <span>Fin pause</span>
+                                                                    <input type="time" id="samediPEH" class="form-control input-customized timepicker">
+                                                                </div>
+
+                                                                <div class="input-field col-lg-2 quotaSectionSamedi">
+                                                                    <span>Quota horraire</span>
+                                                                    <input type="number" id="samediQuota" min="1" max="24" class="form-control input-customized">
+                                                                </div>
                                                             </div>
-                                                            <div class="input-field">
-                                                                <span>Fin</span>
-                                                                <input type="text" id="samediEH" class="form-control input-customized timepicker">
-                                                            </div>
-                                                            <div class="input-field">
-                                                                <span>Début pause</span>
-                                                                <input type="text" id="samediPBH" class="form-control input-customized timepicker">
-                                                            </div>
-                                                            <div class="input-field">
-                                                                <span>Fin pause</span>
-                                                                <input type="text" id="samediPEH" class="form-control input-customized timepicker">
-                                                            </div>
+
                                                         </div>
-                                                        <div class="input-field col s2 quotaSectionSamedi">
-                                                            <span>Quota horraire</span>
-                                                            <input type="number" id="samediQuota" min="1" max="24" class="form-control input-customized">
-                                                        </div>
+
                                                     </div>
 
                                                     <!-- Formulaire pour Dimanche -->
 
-                                                    <h5 class="permissionsSeparator whH5">Dimanche</h5>
+                                                    <div class="row"><h5 class="permissionsSeparator whH5">Dimanche</h5></div>
                                                     <p style="margin-top: 0px">
                                                         <input type="checkbox" class="checkItDimanche" id="filled-in-box-dimanche" />
                                                         <label for="filled-in-box-dimanche">Présence non requise</label>
                                                     </p>
                                                     <div class="row maybeHiddenDimanche">
-                                                        <div class="collapseSectionDimanche">
-                                                            <div class="input-field">
-                                                                <span>Début</span>
-                                                                <input type="text" id="dimancheBH" class="form-control input-customized timepicker">
+                                                        <div class="collapseSectionDimanche col-lg-12">
+                                                            <div class="row">
+                                                                <div class="input-field col-lg-3">
+                                                                    <span>Début</span>
+                                                                    <input type="time" id="dimancheBH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-3">
+                                                                    <span>Fin</span>
+                                                                    <input type="time" id="dimancheEH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-2">
+                                                                    <span>Début pause</span>
+                                                                    <input type="time" id="dimanchePBH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-2">
+                                                                    <span>Fin pause</span>
+                                                                    <input type="time" id="dimanchePEH" class="form-control input-customized timepicker">
+                                                                </div>
+                                                                <div class="input-field col-lg-2 quotaSectionDimanche">
+                                                                    <span>Quota horraire</span>
+                                                                    <input type="number" id="dimancheQuota" min="1" max="24" class="form-control input-customized">
+                                                                </div>
                                                             </div>
-                                                            <div class="input-field">
-                                                                <span>Fin</span>
-                                                                <input type="text" id="dimancheEH" class="form-control input-customized timepicker">
-                                                            </div>
-                                                            <div class="input-field">
-                                                                <span>Début pause</span>
-                                                                <input type="text" id="dimanchePBH" class="form-control input-customized timepicker">
-                                                            </div>
-                                                            <div class="input-field">
-                                                                <span>Fin pause</span>
-                                                                <input type="text" id="dimanchePEH" class="form-control input-customized timepicker">
-                                                            </div>
+
                                                         </div>
-                                                        <div class="input-field col s2 quotaSectionDimanche">
-                                                            <span>Quota horraire</span>
-                                                            <input type="number" id="dimancheQuota" min="1" max="24" class="form-control input-customized">
-                                                        </div>
+
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-lg-12 " >
+                                                <div class="col-lg-12 mb-2">
                                                     <button class="mt-3 btn btn-success" id="btnSave">Enregistrer</button>
                                                 </div>
                                             </div>
@@ -271,7 +305,7 @@
                                         <div class="collapsible-body" style="padding-bottom: 0px">
                                             <div class="row">
                                                 <div class="col-lg-12">
-                                                    <table class="table table-striped centered">
+                                                    <table class="table table-striped table-responsive table-bordered">
                                                         <thead>
                                                             <tr>
                                                                 <th>#</th>
@@ -399,9 +433,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="fixed-action-btn" style="margin-bottom: 30px">
-                        <a class="btn-floating tooltipped pulse blue btn-large" id="btnDuplicate" data-position="top" data-tooltip="Dupliquer">
-                            <span class="uil-copy"></span>
+                    <div class="fixed-action-btn">
+                        <a class="btn btn-primary btn-circle btn-md float" id="btnDuplicate" data-position="top" data-tooltip="Dupliquer">
+                            <span class="text-white fa fa-copy fa-2x"></span>
                         </a>
                     </div>
                 </div>

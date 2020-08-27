@@ -58,14 +58,14 @@
                                                         <label for="filled-in-box">Tous les départements</label>
                                                     </p>
                                                     <br><br>
-                                                    <div class="row" style="position: relative;top: -40px">
+                                                    <div class="row" >
                                                         <div class="input-field col s12">
-                                                            {{ form_row(form.departements, {'attr': {'class': 'form-control'}}) }}
+                                                            {{ form_row(form.departements, {'attr': { 'class': 'form-control selectpicker','multiple':'', 'data-live-search':'true' }}) }}
                                                         </div>
                                                     </div>
-                                                    <div class="row" style="position: relative;top: -40px">
+                                                    <div class="row mt-3">
                                                         <div class="input-field col s12">
-                                                            {{ form_widget(form.Ajouter, { 'label': 'Ajouter','attr': {'class':'btn'} }) }}
+                                                            {{ form_widget(form.Ajouter, { 'label': 'Ajouter','attr': {'class':'btn btn-lg btn-success'} }) }}
                                                         </div>
                                                     </div>
                                                     <div class="row" style="position: relative;top: -40px">
@@ -204,7 +204,16 @@
             $(".navigation_collapsible").collapsible('open',6);
         });
     </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+    <script>
+        $(function () {
+            $('select').selectpicker();
+        });
+    </script>
+
 {% endblock %}
 
 {% block stylesheets %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
 {% endblock %}
