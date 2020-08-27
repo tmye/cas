@@ -266,6 +266,7 @@
                             image = "user_profile_pictures/"+tabR[arrayID][3];
                         }
                         $(".info_container_retards").append("" +
+                            "<div class='row'>"+
                             "<div class='card col-lg-3 col-sm-12' style='padding: 20px'>\n" +
                             "    <img src='"+image+"' class='circle' width='50' height='50'/>\n" +
                             "    <span class='top user-info-home'>\n" +
@@ -275,6 +276,7 @@
                             "        <br>\n" +
                             "        <span><b>"+tabR[arrayID][2]+"</b></span>\n" +
                             "    </span>\n" +
+                            "</div>"+
                             "</div>"
                         );
                         console.log("Index : "+arrayID);
@@ -291,7 +293,8 @@
                             image = "user_profile_pictures/"+tabD[i][3];
                         }
                         $(".info_container_departs").append("" +
-                            "<div class='card' style='padding: 20px'>\n" +
+                            "<div class='row'>"+
+                            "<div class='card col-lg-3 col-sm-12' style='padding: 20px'>\n" +
                             "    <img src='"+image+"' class='circle' width='50' height='50'/>\n" +
                             "    <span class='top user-info-home'>\n" +
                             "        <span class='grey-text text-darken-2'><b>"+tabD[i][0]+"</b></span>\n" +
@@ -300,6 +303,7 @@
                             "        <br>\n" +
                             "        <span><b>"+tabD[i][2]+"</b></span>\n" +
                             "    </span>\n" +
+                            "</div>"+
                             "</div>"
                         );
                     }
