@@ -21,75 +21,84 @@
                 </p>
             </div>
         </div>
-        <div id="modal_detail" class="modal" style="overflow:hidden;padding-bottom:0px">
-            <div class="modal-content" style="padding-bottom:0px;overflow:hidden">
-                <div class="row">
-                    <div class="col s3 teal white-text" style="height:490px;margin:-30px 0px 0px -20px">
-                        <br/>
-                        <p class="center">MOIS CHOISI</p>
-                    </div>
-                    <div class="col s9">
-                        <table class="table table-striped table-condensed">
-                            <tbody>
-                            <p class="center" style="font-size:25px;margin-top:0px">
-                                <span class="fa fa-calendar-alt"></span>
-                                Choisissez un mois
-                            </p>
-                            </tbody>
-                            <div class="row">
-                                <div class="col l5 offset-l1 monthElement" tag="01">
-                                    Janvier
+        <div id="modal_detail" tabindex="-1" class="modal">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col s3 teal white-text mt-5" style="height:40%;">
+
+                            <p class="text-center font-weight-bold">MOIS CHOISI</p>
+                        </div>
+                        <div class="col s9">
+                            <table class="table table-striped table-condensed">
+                                <tbody>
+                                <p class="center" style="font-size:25px;margin-top:0px">
+                                    <span class="fa fa-calendar-alt"></span>
+                                    Choisissez un mois
+                                </p>
+                                </tbody>
+                                <div class="row">
+                                    <div class="col-lg-5 mr-2 mb-2 btn btn-lg btn-outline-success monthElement" tag="01">
+                                        Janvier
+                                    </div>
+                                    <div class="col-lg-5 mr-2 mb-2 btn btn-lg btn-outline-success monthElement" tag="02">
+                                        Février
+                                    </div>
                                 </div>
-                                <div class="col l5 offset-l1 monthElement" tag="02">
-                                    Février
+                                <div class="row">
+                                    <div class="col-lg-5 mr-2 mb-2 btn btn-lg btn-outline-success monthElement" tag="03">
+                                        Mars
+                                    </div>
+                                    <div class="col-lg-5 mr-2 mb-2 btn btn-lg btn-outline-success monthElement" tag="04">
+                                        Avril
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col l5 offset-l1 monthElement" tag="03">
-                                    Mars
+                                <div class="row">
+                                    <div class="col-lg-5 mr-2 mb-2 btn btn-lg btn-outline-success monthElement" tag="05">
+                                        Mai
+                                    </div>
+                                    <div class="col-lg-5 mr-2 mb-2 btn btn-lg btn-outline-success monthElement" tag="06">
+                                        Juin
+                                    </div>
                                 </div>
-                                <div class="col l5 offset-l1 monthElement" tag="04">
-                                    Avril
+                                <div class="row">
+                                    <div class="col-lg-5 mr-2 mb-2 btn btn-lg btn-outline-success monthElement" tag="07">
+                                        Juillet
+                                    </div>
+                                    <div class="col-lg-5 mr-2 mb-2 btn btn-lg btn-outline-success monthElement" tag="08">
+                                        Août
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col l5 offset-l1 monthElement" tag="05">
-                                    Mai
+                                <div class="row">
+                                    <div class="col-lg-5 mr-2 mb-2 btn btn-lg btn-outline-success monthElement" tag="09">
+                                        Septembre
+                                    </div>
+                                    <div class="col-lg-5 mr-2 mb-2 btn btn-lg btn-outline-success monthElement" tag="10">
+                                        Octobre
+                                    </div>
                                 </div>
-                                <div class="col l5 offset-l1 monthElement" tag="06">
-                                    Juin
+                                <div class="row">
+                                    <div class="col-lg-5 mr-2 mb-2 btn btn-lg btn-outline-success monthElement" tag="11">
+                                        Novembre
+                                    </div>
+                                    <div class="col-lg-5 mr-2 mb-2 btn btn-lg btn-outline-success monthElement" tag="12">
+                                        Décembre
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col l5 offset-l1 monthElement" tag="07">
-                                    Juillet
-                                </div>
-                                <div class="col l5 offset-l1 monthElement" tag="08">
-                                    Août
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col l5 offset-l1 monthElement" tag="09">
-                                    Septembre
-                                </div>
-                                <div class="col l5 offset-l1 monthElement" tag="10">
-                                    Octobre
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col l5 offset-l1 monthElement" tag="11">
-                                    Novembre
-                                </div>
-                                <div class="col l5 offset-l1 monthElement" tag="12">
-                                    Décembre
-                                </div>
-                            </div>
-                        </table>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
         <div class="content-page">
             <div class="content">
 
@@ -225,7 +234,7 @@
         $(function(){
             $(".monthElement").click(function(){
                 $("#dateType").val($(this).attr("tag"));
-                $('#modal_detail').modal('close');
+                $('#modal_detail').modal('hide');
                 $('#choosenMonthSection').show();
                 $('#choosenMonth').text($(this).text());
             });
@@ -296,15 +305,15 @@
 
                                 // Closing the loading box
 
-                                $('#modal_loading').modal('close');
+                                $('#modal_loading').modal('hide');
                             },
                             error: function (msg) {
                                 // Closing the loading box
-                                $('#modal_loading').modal('close');
+                                $('#modal_loading').modal('hide');
                                 alert("Erreur : "+msg);
                             }
                         });
-                        $('#modal_loading').modal('close');
+                        $('#modal_loading').modal('hide');
                     },
                     error: function(msg) {
                         alert("Erreur : "+msg);
@@ -345,24 +354,24 @@
                 var dateTo = new Date($("#toDate").val()).getTime();
                 if($("#destination").val()!=""){
                     if($("#dateType").val() != "0"){
-                        $('#modal_loading').modal('open');
+                        $('#modal_loading').modal('show');
                         console.log($("#destination").val());
                         $("#errorContainer").hide();
                         //console.log($("#destination").val());
                         $("#type").val("0");
                         $("#form").submit();
-                        $('#modal_loading').modal('close');
+                        $('#modal_loading').modal('hide');
                     }else{
                         if($("#fromDate").val()!=""){
                             if($("#toDate").val()!=""){
                                 //if(dateFrom < dateTo || dateFrom == dateTo){
-                                    $('#modal_loading').modal('open');
+                                    $('#modal_loading').modal('show');
                                     console.log($("#destination").val());
                                     $("#errorContainer").hide();
                                         //console.log($("#destination").val());
                                     $("#type").val("1");
                                     $("#form").submit();
-                                    $('#modal_loading').modal('close');
+                                    $('#modal_loading').modal('hide');
                                 /*}else {
                                     $("#errorContainer").show();
                                     $("#errorContainer div span").text("Erreur : La date de début ne peut pas etre superieur à la date de fin");
@@ -391,7 +400,7 @@
         // On s'attaque aux collapsibles
         $(function () {
             $(".stats_Permission").addClass("collapsible_element_active");
-            $(".navigation_collapsible").collapsible('open',3);
+            $(".navigation_collapsible").collapsible('show',3);
 
             $('.datepicker').on('mousedown',function(event){
                 event.preventDefault();

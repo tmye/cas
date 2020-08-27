@@ -484,8 +484,8 @@
                     </div>
                 </div>
                 <div class="fixed-action-btn" style="margin-bottom: 30px">
-                    <a class="btn-floating tooltipped pulse green btn-large" id="btnPrint" data-position="top" data-tooltip="Imprimer">
-                        <span class="uil-print"></span>
+                    <a class="btn btn-success btn-circle btn-md float" id="btnPrint" data-position="top" data-tooltip="Imprimer">
+                        <span class="uil-print fa fa-2x text-white"></span>
                     </a>
                 </div>
             </div>
@@ -2222,11 +2222,11 @@
 
                                 // Closing the loading box
 
-                                $('#modal_loading').modal('close');
+                                $('#modal_loading').modal('hide');
                             },
                             error: function (msg) {
                                 // Closing the loading box
-                                $('#modal_loading').modal('close');
+                                $('#modal_loading').modal('hide');
                                 alert("Erreur : "+msg);
                             }
                         });
