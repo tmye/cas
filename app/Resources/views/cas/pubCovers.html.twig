@@ -3,11 +3,14 @@
 {% block body %}
 
 <!-- Modal for ajax loading -->
-<div id="modal_loading" class="modal ajax_modals">
-    <div class="modal-content">
-        <p class="center">
-            <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
-        </p>
+<div>
+    <!-- Modal for ajax loading -->
+    <div id="modal_loading" class="modal ajax_modals">
+        <div class="modal-content" style="width: 200px;display:table;position:relative;margin: 0 auto; top: calc(50% - 24px);">
+            <p class="center">
+                <img class="mw-100 mh-100" src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+            </p>
+        </div>
     </div>
 </div>
 <div class="container-fluid">
@@ -60,34 +63,34 @@
                                             </div>
 
                                             <div class="row secondOne_1">
-                                                <div class="col-lg-4 card firstImage">
+                                                <div class="col-lg-4 card firstImage ">
                                                     <input type="file" id="first_image_input_1"  style="display: none">
                                                     {% if images[0].image1 is defined and images[0].image1 is not null %}
-                                                        <img src="{{ asset("pub_covers/"~images[0].image1) }}" id="first_image_1" inputTag="first_image_input_1" class="preview preview2" alt="image">
+                                                        <img src="{{ asset("pub_covers/"~images[0].image1) }}" id="first_image_1" style="height: 100px" inputTag="first_image_input_1" class="preview preview2" alt="image">
                                                         {% else %}
-                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="first_image_1" inputTag="first_image_input_1" class="preview preview2" alt="image">
+                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="first_image_1" style="height: 100px" inputTag="first_image_input_1" class="preview preview2" alt="image">
                                                     {% endif %}
                                                 </div>
                                                 <div class="col-lg-4 card secondImage">
                                                     <input type="file" id="second_image_input_1" style="display: none">
                                                     {% if images[0].image2 is defined and images[0].image2 is not null %}
-                                                        <img src="{{ asset("pub_covers/"~images[0].image2) }}" id="second_image_1" inputTag="second_image_input_1" class="preview preview2" alt="image">
+                                                        <img src="{{ asset("pub_covers/"~images[0].image2) }}" id="second_image_1" style="height: 100px" inputTag="second_image_input_1" class="preview preview2" alt="image">
                                                         {% else %}
-                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="second_image_1" inputTag="second_image_input_1" class="preview preview2" alt="image">
+                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="second_image_1" style="height: 100px" inputTag="second_image_input_1" class="preview preview2" alt="image">
                                                     {% endif %}
                                                 </div>
                                                 <div class="col-lg-4 card thirdImage">
                                                     <input type="file" id="third_image_input_1" style="display: none">
                                                     {% if images[0].image3 is defined and images[0].image3 is not null %}
-                                                        <img src="{{ asset("pub_covers/"~images[0].image3) }}" id="third_image_1" inputTag="third_image_input_1" class="preview preview2" alt="image">
+                                                        <img src="{{ asset("pub_covers/"~images[0].image3) }}" style="height: 100px" id="third_image_1" inputTag="third_image_input_1" class="preview preview2" alt="image">
                                                     {% else %}
-                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="third_image_1" inputTag="third_image_input_1" class="preview preview2" alt="image">
+                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" style="height: 100px" id="third_image_1" inputTag="third_image_input_1" class="preview preview2" alt="image">
                                                     {% endif %}
                                                 </div>
                                             </div>
                                             <div class="row thirdOne">
                                                 <div class="col-lg-12 center">
-                                                    <input type="button" id="submit_button_1" value="Continuer" class="btn-perso-historique">
+                                                    <input type="button" id="submit_button_1" value="Continuer" class="btn-perso-historique btn btn-lg btn-success">
                                                 </div>
                                             </div>
                                         </span>
@@ -96,7 +99,7 @@
                                                 <div class="col-lg-12">
                                                     <h5>Par départements</h5>
                                                     <span>Choisissez le département</span>
-                                                    <select multiple="multiple" id="depSelected2">
+                                                    <select multiple="multiple" class="form-control" id="depSelected2">
                                                         {% for dep in departements %}
                                                             <option value="{{ dep.id }}">{{ dep.name }}</option>
                                                         {% endfor %}
@@ -109,35 +112,35 @@
                                                 <div class="col-lg-4 card firstImage">
                                                     <input type="file" id="first_image_input_2" style="display: none">
                                                     {% if images[0].image1 is defined and images[0].image1 is not null %}
-                                                        <img src="{{ asset("pub_covers/"~images[0].image1) }}" id="first_image_1" inputTag="first_image_input_1" class="preview preview2" alt="image">
+                                                        <img src="{{ asset("pub_covers/"~images[0].image1) }}" id="first_image_1" style="height: 100px" inputTag="first_image_input_1" class="preview preview2" alt="image">
                                                         {% else %}
-                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="first_image_1" inputTag="first_image_input_1" class="preview preview2" alt="image">
+                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="first_image_1" style="height: 100px" inputTag="first_image_input_1" class="preview preview2" alt="image">
                                                     {% endif %}
 
                                                     <!-- <img src="{{ asset("img/image_placeholder.jpg") }}" id="first_image_2" inputTag="first_image_input_2" class="preview preview2" alt="image">-->
                                                 </div>
-                                                <div class="col-lg-4 card secondImage">
-                                                    <input type="file" id="second_image_input_2" style="display: none">
-                                                    {% if images[0].image2 is defined and images[0].image2 is not null %}
-                                                        <img src="{{ asset("pub_covers/"~images[0].image2) }}" id="second_image_1" inputTag="second_image_input_1" class="preview preview2" alt="image">
-                                                        {% else %}
-                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="second_image_1" inputTag="second_image_input_1" class="preview preview2" alt="image">
+                                                <div class="col-lg-4 card secondImage" >
+                                                    <input type="file" id="third_image_input_2" style="display: none">
+                                                    {% if images[0].image3 is defined and images[0].image3 is not null %}
+                                                        <img src="{{ asset("pub_covers/"~images[0].image3) }}" id="second_image_1" style="height: 100px" inputTag="second_image_input_1" class="preview preview2" alt="image">
+                                                    {% else %}
+                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="second_image_1" style="height: 100px" inputTag="second_image_input_1" class="preview preview2" alt="image">
                                                     {% endif %}
-                                                    <!-- <img src="{{ asset("img/image_placeholder.jpg") }}" id="second_image_2" inputTag="second_image_input_2" class="preview preview2" alt="image"> -->
+
                                                 </div>
                                                 <div class="col-lg-4 card thirdImage">
                                                     <input type="file" id="third_image_input_2" style="display: none">
                                                     {% if images[0].image3 is defined and images[0].image3 is not null %}
-                                                        <img src="{{ asset("pub_covers/"~images[0].image3) }}" id="third_image_1" inputTag="third_image_input_1" class="preview preview2" alt="image">
+                                                        <img src="{{ asset("pub_covers/"~images[0].image3) }}" id="third_image_1" style="height: 100px" inputTag="third_image_input_1" class="preview preview2" alt="image">
                                                     {% else %}
-                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="third_image_1" inputTag="third_image_input_1" class="preview preview2" alt="image">
+                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="third_image_1" style="height: 100px" inputTag="third_image_input_1" class="preview preview2" alt="image">
                                                     {% endif %}
                                                     <!-- <img src="{{ asset("img/image_placeholder.jpg") }}" id="third_image_2" inputTag="third_image_input_2" class="preview preview2" alt="image"> -->
                                                 </div>
-                                            </div>
+
                                             <div class="row thirdOne">
                                                 <div class="col-lg-12 center">
-                                                    <input type="button" id="submit_button_2" value="Continuer" class="btn-perso-historique">
+                                                    <input type="button" id="submit_button_2" value="Continuer" class="btn-perso-historique btn btn-lg btn-success">
                                                 </div>
                                             </div>
                                         </span>
@@ -146,7 +149,7 @@
                                                 <div class="col-lg-12">
                                                     <h5>Sélection unique</h5>
                                                     <span>Choisissez la machine correspondante</span>
-                                                    <select id="macSelected">
+                                                    <select id="macSelected" class="form-control">
                                                         {% for mac in machines %}
                                                             <option value="{{ mac.machineId }}">{{ mac.name }}</option>
                                                         {% endfor %}
@@ -159,27 +162,27 @@
                                                 <div class="col-lg-4 card firstImage">
                                                     <input type="file" id="first_image_input_3" style="display: none">
                                                     {% if images[0].image1 is defined and images[0].image1 is not null %}
-                                                        <img src="{{ asset("pub_covers/"~images[0].image1) }}" id="first_image_1" inputTag="first_image_input_1" class="preview preview2 img-thumbnail" alt="image">
+                                                        <img  src="{{ asset("pub_covers/"~images[0].image1) }}" style="height: 100px" id="first_image_1" inputTag="first_image_input_1" class="preview preview2 img-thumbnail" alt="image">
                                                         {% else %}
-                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="first_image_1" inputTag="first_image_input_1" class="preview preview2 img-thumbnail" alt="image">
+                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" style="height: 100px" id="first_image_1" inputTag="first_image_input_1" class="preview preview2 img-thumbnail" alt="image">
                                                     {% endif %}
                                                     <!-- <img src="{{ asset("img/image_placeholder.jpg") }}" id="first_image_3" inputTag="first_image_input_3" class="preview preview2" alt="image"> -->
                                                 </div>
                                                 <div class="col-lg-4 card secondImage">
                                                     <input type="file" id="second_image_input_3" style="display: none">
                                                     {% if images[0].image2 is defined and images[0].image2 is not null %}
-                                                        <img src="{{ asset("pub_covers/"~images[0].image2) }}" id="second_image_1" inputTag="second_image_input_1" class="preview preview2 img-thumbnail" alt="image">
+                                                        <img src="{{ asset("pub_covers/"~images[0].image2) }}" style="height: 100px" id="second_image_1" inputTag="second_image_input_1" class="preview preview2 img-thumbnail" alt="image">
                                                         {% else %}
-                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="second_image_1" inputTag="second_image_input_1" class="preview preview2 img-thumbnail" alt="image">
+                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" style="height: 100px" id="second_image_1" inputTag="second_image_input_1" class="preview preview2 img-thumbnail" alt="image">
                                                     {% endif %}
                                                     <!-- <img src="{{ asset("img/image_placeholder.jpg") }}" id="second_image_3" inputTag="second_image_input_3" class="preview preview2" alt="image"> -->
                                                 </div>
                                                 <div class="col-lg-4 card thirdImage">
                                                     <input type="file" id="third_image_input_3" style="display: none">
                                                     {% if images[0].image3 is defined and images[0].image3 is not null %}
-                                                        <img src="{{ asset("pub_covers/"~images[0].image3) }}" id="third_image_1" inputTag="third_image_input_1" class="preview preview2 img-thumbnail" alt="image">
+                                                        <img src="{{ asset("pub_covers/"~images[0].image3) }}" style="height: 100px" id="third_image_1" inputTag="third_image_input_1" class="preview preview2 img-thumbnail" alt="image">
                                                     {% else %}
-                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" id="third_image_1" inputTag="third_image_input_1" class="preview preview2 img-thumbnail" alt="image">
+                                                        <img src="{{ asset("img/image_placeholder.jpg") }}" style="height: 100px" id="third_image_1" inputTag="third_image_input_1" class="preview preview2 img-thumbnail" alt="image">
                                                     {% endif %}
                                                     <!-- <img src="{{ asset("img/image_placeholder.jpg") }}" id="third_image_3" inputTag="third_image_input_3" class="preview preview2" alt="image"> -->
                                                 </div>
@@ -274,7 +277,7 @@
                 var temp = document.getElementById("first_image_input_QBC45");
                 $("#submit_button_1").click(function(){
 
-                    $('#modal_loading').modal('open');
+                    $('#modal_loading').modal('show');
 
                     var formdata = new FormData();
                     var tab = [];
@@ -313,12 +316,12 @@
                             alert("OK");
                             // Closing the loading box
 
-                            $('#modal_loading').modal('close');
+                            $('#modal_loading').modal('hide');
                             window.location.href = "{{ path('pubCovers') }}";
                         },
                         error: function() {
                             // Closing the loading box
-                            $('#modal_loading').modal('close');
+                            $('#modal_loading').modal('hide');
                             alert("Erreur");
                         }
                     });
@@ -331,7 +334,7 @@
 
                 $("#submit_button_2").click(function(){
 
-                    $('#modal_loading').modal('open');
+                    $('#modal_loading').modal('show');
 
                     var dep = $("#depSelected2").val();
                     var formdata = new FormData();
@@ -367,12 +370,12 @@
                         success: function(data) {
                             alert("OK");
                             // Closing the loading box
-                            $('#modal_loading').modal('close');
+                            $('#modal_loading').modal('hide');
                             window.location.href = "{{ path('pubCovers') }}";
                         },
                         error: function() {
                             // Closing the loading box
-                            $('#modal_loading').modal('close');
+                            $('#modal_loading').modal('hide');
                             alert("Erreur");
                         }
                     });
@@ -386,7 +389,7 @@
 
                 $("#submit_button_3").click(function(){
 
-                    $('#modal_loading').modal('open');
+                    $('#modal_loading').modal('show');
 
                     var mac = $("#macSelected").val();
                     var formdata = new FormData();
@@ -422,13 +425,13 @@
                         success: function(data) {
                             alert("OK");
                             // Closing the loading box
-                            $('#modal_loading').modal('close');
+                            $('#modal_loading').modal('hide');
                             window.location.href = "{{ path('pubCovers') }}";
 
                         },
                         error: function() {
                             // Closing the loading box
-                            $('#modal_loading').modal('close');
+                            $('#modal_loading').modal('hide');
                             alert("Erreur");
                         }
                     });
@@ -457,7 +460,7 @@
                         },
                         error: function() {
                             // Closing the loading box
-                            $('#modal_loading').modal('close');
+                            $('#modal_loading').modal('hide');
                             alert("Erreur");
                         }
                     });
