@@ -4,254 +4,291 @@
 {% block title %}C.A.S - Heure de Travail{% endblock %}
 
 {% block body %}
-    <div class="row">
-        <div class="col l12">
-            <h5>Gestion des heures de travail</h5>
-            <p class="description_message">Modifiez une heure de travail</p>
-            <div class="row">
-                <div class="col l12">
-                    <ul class="collapsible" data-collapsible="accordion">
-                        <li>
-                            <div class="collapsible-header active collapsible-header-title">Modification d'une heure de travail de travail ({{ wh.code }})</div>
-                            <div class="collapsible-body" style="padding-bottom: 0px">
-                                <div class="row">
-                                    <div class="col l12">
-                                        <!-- Formulaire pour lundi -->
 
-                                        <h5 class="permissionsSeparator whH5">Lundi</h5>
-                                        <div class="row">
-                                            <div class="input-field col s4">
-                                                <span>Nom de code</span>
-                                                <input type="text" value="{{ wh.code }}" id="code" class="input-customized">
-                                            </div>
-                                            <div class="input-field col s4">
-                                                <span>Type</span>
-                                                <select id="form_type_all" name="form[type]">
-                                                    <option value="1">Heures figées</option>
-                                                    <option value="2">Quota horraire</option>
-                                                    <option value="3">Présence</option>
-                                                    <option value="4">Heures figées sans pause</option>
-                                                </select>
-                                            </div>
-                                            <div class="input-field col s4">
-                                                <span>Tolérance (en minutes)</span>
-                                                <input type="number" min="60" value="{{ wh.tolerance }}" id="tolerance" class="input-customized">
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="collapseSectionLundi">
-                                                <div class="input-field col l3">
-                                                    <span>Début</span>
-                                                    <input type="text" value='{{ whJson["lundi"][0]["beginHour"] }}' id="lundiBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l3">
-                                                    <span>Fin</span>
-                                                    <input type="text" value='{{ whJson["lundi"][0]["endHour"] }}' id="lundiEH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Début pause</span>
-                                                    <input type="text" value='{{ whJson["lundi"][0]["pauseBeginHour"] }}' id="lundiPBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Fin pause</span>
-                                                    <input type="text" value='{{ whJson["lundi"][0]["pauseEndHour"] }}' id="lundiPEH" class="input-customized timepicker">
-                                                </div>
-                                            </div>
-                                            <div class="input-field col l2 quotaSectionLundi">
-                                                <span>Quota horraire</span>
-                                                <input type="number" value='{{ whJson["lundi"][0]["quota"] }}' id="lundiQuota" min="1" max="8" class="input-customized">
-                                            </div>
-                                        </div>
+<div class="container-fluid">
+    <div class="wrapper">
 
-                                        <!-- Formulaire pour mardi -->
+        {% include('cas/partials/_sidebar.html.twig') %}
 
-                                        <h5 class="permissionsSeparator whH5">Mardi</h5>
-                                        <div class="row">
-                                            <div class="collapseSectionMardi">
-                                                <div class="input-field col l3">
-                                                    <span>Début</span>
-                                                    <input type="text" value='{{ whJson["mardi"][0]["beginHour"] }}' id="mardiBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l3">
-                                                    <span>Fin</span>
-                                                    <input type="text" value='{{ whJson["mardi"][0]["endHour"] }}' id="mardiEH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Début pause</span>
-                                                    <input type="text" value='{{ whJson["mardi"][0]["pauseBeginHour"] }}' id="mardiPBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Fin pause</span>
-                                                    <input type="text" value='{{ whJson["mardi"][0]["pauseEndHour"] }}' id="mardiPEH" class="input-customized timepicker">
-                                                </div>
-                                            </div>
-                                            <div class="input-field col l2 quotaSectionMardi">
-                                                <span>Quota horraire</span>
-                                                <input type="number" value='{{ whJson["mardi"][0]["quota"] }}' id="mardiQuota" min="1" max="8" class="input-customized">
-                                            </div>
-                                        </div>
+        <div class="content-page">
+            <div class="content">
+                <div class="col-lg-12"><h2 class="page-title"><span class="uil-calendar-alt"></span> Gestion des heures de travail</h2></div>
+                    <div class="row card">
+                        <div class="col-lg-12 card-body">
+                            <p class="description_message">Sur ce formulaire vous pouvez définir les heures de travail. Faites attention à entrer les informations correctement car une erreur dans l'heure de travail peut affecter le calcul de vos statistiques.</p>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <ul class="collapsible" data-collapsible="accordion">
+                                                <li>
+                                                    <div class="collapsible-header active collapsible-header-title">Modification d'une heure de travail de travail ({{ wh.code }})</div>
+                                                    <div class="collapsible-body" style="padding-bottom: 0px">
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <!-- Formulaire pour lundi -->
 
-                                        <!-- Formulaire pour mercredi -->
+                                                                <h5 class="permissionsSeparator whH5">Lundi</h5>
+                                                                <div class="row">
+                                                                    <div class="input-field col-lg-4 col-sm-12">
+                                                                        <span>Nom de code</span>
+                                                                        <input type="text" value="{{ wh.code }}" id="code" class="form-control input-customized">
+                                                                    </div>
+                                                                    <div class="input-field col-lg-4 col-sm-12">
+                                                                        <span>Type</span>
+                                                                        <select id="form_type_all" class="form-control" name="form[type]">
+                                                                            <option value="1">Heures figées</option>
+                                                                            <option value="2">Quota horraire</option>
+                                                                            <option value="3">Présence</option>
+                                                                            <option value="4">Heures figées sans pause</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="input-field col-lg-4 col-sm-12">
+                                                                        <span>Tolérance (en minutes)</span>
+                                                                        <input type="number" min="60" value="{{ wh.tolerance }}" id="tolerance" class="input-customized form-control">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="collapseSectionLundi col-lg-12">
+                                                                        <div class="row">
+                                                                            <div class="input-field col-lg-3 col-sm-12">
+                                                                                <span>Début</span>
+                                                                                <input type="time" value='{{ whJson["lundi"][0]["beginHour"] }}' id="lundiBH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-3 col-sm-12">
+                                                                                <span>Fin</span>
+                                                                                <input type="time" value='{{ whJson["lundi"][0]["endHour"] }}' id="lundiEH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-2 col-sm-12">
+                                                                                <span>Début pause</span>
+                                                                                <input type="time" value='{{ whJson["lundi"][0]["pauseBeginHour"] }}' id="lundiPBH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-2 col-sm-12">
+                                                                                <span>Fin pause</span>
+                                                                                <input type="time" value='{{ whJson["lundi"][0]["pauseEndHour"] }}' id="lundiPEH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-2 col-sm-12 quotaSectionLundi">
+                                                                                <span>Quota horraire</span>
+                                                                                <input type="number" value='{{ whJson["lundi"][0]["quota"] }}' id="lundiQuota" min="1" max="8" class="input-customized form-control">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
 
-                                        <h5 class="permissionsSeparator whH5">Mercredi</h5>
-                                        <div class="row">
-                                            <div class="collapseSectionMercredi">
-                                                <div class="input-field col l3">
-                                                    <span>Début</span>
-                                                    <input type="text" value='{{ whJson["mercredi"][0]["beginHour"] }}' id="mercrediBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l3">
-                                                    <span>Fin</span>
-                                                    <input type="text" value='{{ whJson["mercredi"][0]["endHour"] }}' id="mercrediEH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Début pause</span>
-                                                    <input type="text" value='{{ whJson["mercredi"][0]["pauseBeginHour"] }}' id="mercrediPBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Fin pause</span>
-                                                    <input type="text" value='{{ whJson["mercredi"][0]["pauseEndHour"] }}' id="mercrediPEH" class="input-customized timepicker">
-                                                </div>
-                                            </div>
-                                            <div class="input-field col s2 quotaSectionMercredi">
-                                                <span>Quota horraire</span>
-                                                <input type="number" value='{{ whJson["mercredi"][0]["quota"] }}' id="mercrediQuota" min="1" max="8" class="input-customized">
-                                            </div>
-                                        </div>
+                                                                </div>
 
-                                        <!-- Formulaire pour jeudi -->
+                                                                <!-- Formulaire pour mardi -->
 
-                                        <h5 class="permissionsSeparator whH5">Jeudi</h5>
-                                        <div class="row">
-                                            <div class="collapseSectionJeudi">
-                                                <div class="input-field col l3">
-                                                    <span>Début</span>
-                                                    <input type="text" value='{{ whJson["jeudi"][0]["beginHour"] }}' id="jeudiBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l3">
-                                                    <span>Fin</span>
-                                                    <input type="text" value='{{ whJson["jeudi"][0]["endHour"] }}' id="jeudiEH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Début pause</span>
-                                                    <input type="text" value='{{ whJson["jeudi"][0]["pauseBeginHour"] }}' id="jeudiPBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Fin pause</span>
-                                                    <input type="text" value='{{ whJson["jeudi"][0]["pauseEndHour"] }}' id="jeudiPEH" class="input-customized timepicker">
-                                                </div>
-                                            </div>
-                                            <div class="input-field col s2 quotaSectionJeudi">
-                                                <span>Quota horraire</span>
-                                                <input type="number" value='{{ whJson["jeudi"][0]["quota"] }}' id="jeudiQuota" min="1" max="8" class="input-customized">
-                                            </div>
-                                        </div>
+                                                                <div class="row"><h5 class="permissionsSeparator whH5">Mardi</h5></div>
+                                                                <div class="row">
+                                                                    <div class="collapseSectionMardi col-lg-12">
+                                                                        <div class="row">
+                                                                            <div class="input-field col-lg-3 col-sm-12">
+                                                                                <span>Début</span>
+                                                                                <input type="time" value='{{ whJson["mardi"][0]["beginHour"] }}' id="mardiBH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col l3">
+                                                                                <span>Fin</span>
+                                                                                <input type="time" value='{{ whJson["mardi"][0]["endHour"] }}' id="mardiEH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-2 col-sm-12">
+                                                                                <span>Début pause</span>
+                                                                                <input type="time" value='{{ whJson["mardi"][0]["pauseBeginHour"] }}' id="mardiPBH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-2 col-sm-12">
+                                                                                <span>Fin pause</span>
+                                                                                <input type="time" value='{{ whJson["mardi"][0]["pauseEndHour"] }}' id="mardiPEH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-2 col-sm-12 quotaSectionMardi">
+                                                                                <span>Quota horraire</span>
+                                                                                <input type="number" value='{{ whJson["mardi"][0]["quota"] }}' id="mardiQuota" min="1" max="8" class="input-customized form-control">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
 
-                                        <!-- Formulaire pour Vendredi -->
+                                                                <!-- Formulaire pour mercredi -->
 
-                                        <h5 class="permissionsSeparator whH5">Vendredi</h5>
-                                        <div class="row">
-                                            <div class="collapseSectionVendredi">
-                                                <div class="input-field col l3">
-                                                    <span>Début</span>
-                                                    <input type="text" value='{{ whJson["vendredi"][0]["beginHour"] }}' id="vendrediBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l3">
-                                                    <span>Fin</span>
-                                                    <input type="text" value='{{ whJson["vendredi"][0]["endHour"] }}' id="vendrediEH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Début pause</span>
-                                                    <input type="text" value='{{ whJson["vendredi"][0]["pauseBeginHour"] }}' id="vendrediPBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Fin pause</span>
-                                                    <input type="text" value='{{ whJson["vendredi"][0]["pauseEndHour"] }}' id="vendrediPEH" class="input-customized timepicker">
-                                                </div>
-                                            </div>
-                                            <div class="input-field col s2 quotaSectionVendredi">
-                                                <span>Quota horraire</span>
-                                                <input type="number" value='{{ whJson["vendredi"][0]["quota"] }}' id="vendrediQuota" min="1" max="8" class="input-customized">
-                                            </div>
-                                        </div>
+                                                                <div class="row"><h5 class="permissionsSeparator whH5">Mercredi</h5></div>
+                                                                <div class="row">
+                                                                    <div class="collapseSectionMercredi col-lg-12">
+                                                                        <div class="row">
+                                                                            <div class="input-field col-lg-3 col-sm-12">
+                                                                                <span>Début</span>
+                                                                                <input type="time" value='{{ whJson["mercredi"][0]["beginHour"] }}' id="mercrediBH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-3 col-sm-12">
+                                                                                <span>Fin</span>
+                                                                                <input type="time" value='{{ whJson["mercredi"][0]["endHour"] }}' id="mercrediEH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-2 col-sm-12">
+                                                                                <span>Début pause</span>
+                                                                                <input type="time" value='{{ whJson["mercredi"][0]["pauseBeginHour"] }}' id="mercrediPBH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-2 col-sm-12">
+                                                                                <span>Fin pause</span>
+                                                                                <input type="time" value='{{ whJson["mercredi"][0]["pauseEndHour"] }}' id="mercrediPEH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-2 col-sm-12 quotaSectionMercredi">
+                                                                                <span>Quota horraire</span>
+                                                                                <input type="number" value='{{ whJson["mercredi"][0]["quota"] }}' id="mercrediQuota" min="1" max="8" class="input-customized form-control">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
 
-                                        <!-- Formulaire pour Samedi -->
+                                                                <!-- Formulaire pour jeudi -->
 
-                                        <h5 class="permissionsSeparator whH5">Samedi</h5>
-                                        <p style="margin-top: 0px">
-                                            <input type="checkbox" class="checkItSamedi" id="filled-in-box-samedi" />
-                                            <label for="filled-in-box-samedi">Présence non requise</label>
-                                        </p>
-                                        <div class="row maybeHiddenSamedi">
-                                            <div class="collapseSectionSamedi">
-                                                <div class="input-field col l3">
-                                                    <span>Début</span>
-                                                    <input type="text" value='{{ whJson["samedi"][0]["beginHour"] }}' id="samediBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l3">
-                                                    <span>Fin</span>
-                                                    <input type="text" value='{{ whJson["samedi"][0]["endHour"] }}' id="samediEH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Début pause</span>
-                                                    <input type="text" value='{{ whJson["samedi"][0]["pauseBeginHour"] }}' id="samediPBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Fin pause</span>
-                                                    <input type="text" value='{{ whJson["samedi"][0]["pauseEndHour"] }}' id="samediPEH" class="input-customized timepicker">
-                                                </div>
-                                            </div>
-                                            <div class="input-field col s2 quotaSectionSamedi">
-                                                <span>Quota horraire</span>
-                                                <input type="number" value='{{ whJson["samedi"][0]["quota"] }}' id="samediQuota" min="1" max="8" class="input-customized">
-                                            </div>
-                                        </div>
+                                                                <div class="row"><h5 class="permissionsSeparator whH5">Jeudi</h5></div>
+                                                                <div class="row">
+                                                                    <div class="collapseSectionJeudi col-lg-12">
+                                                                        <dv class="row">
+                                                                            <div class="input-field col-lg-3 col-sm-12">
+                                                                                <span>Début</span>
+                                                                                <input type="time" value='{{ whJson["jeudi"][0]["beginHour"] }}' id="jeudiBH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-3 col-sm-12">
+                                                                                <span>Fin</span>
+                                                                                <input type="time" value='{{ whJson["jeudi"][0]["endHour"] }}' id="jeudiEH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-2 col-sm-12">
+                                                                                <span>Début pause</span>
+                                                                                <input type="time" value='{{ whJson["jeudi"][0]["pauseBeginHour"] }}' id="jeudiPBH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-2 col-sm-12">
+                                                                                <span>Fin pause</span>
+                                                                                <input type="time" value='{{ whJson["jeudi"][0]["pauseEndHour"] }}' id="jeudiPEH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col s2 quotaSectionJeudi">
+                                                                                <span>Quota horraire</span>
+                                                                                <input type="number" value='{{ whJson["jeudi"][0]["quota"] }}' id="jeudiQuota" min="1" max="8" class="input-customized form-control">
+                                                                            </div>
+                                                                        </dv>
+                                                                    </div>
 
-                                        <!-- Formulaire pour Dimanche -->
+                                                                </div>
 
-                                        <h5 class="permissionsSeparator whH5">Dimanche</h5>
-                                        <p style="margin-top: 0px">
-                                            <input type="checkbox" class="checkItDimanche" id="filled-in-box-dimanche" />
-                                            <label for="filled-in-box-dimanche">Présence non requise</label>
-                                        </p>
-                                        <div class="row maybeHiddenDimanche">
-                                            <div class="collapseSectionDimanche">
-                                                <div class="input-field col l3">
-                                                    <span>Début</span>
-                                                    <input type="text" value='{{ whJson["dimanche"][0]["beginHour"] }}' id="dimancheBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l3">
-                                                    <span>Fin</span>
-                                                    <input type="text" value='{{ whJson["dimanche"][0]["endHour"] }}' id="dimancheEH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Début pause</span>
-                                                    <input type="text" value='{{ whJson["dimanche"][0]["pauseBeginHour"] }}' id="dimanchePBH" class="input-customized timepicker">
-                                                </div>
-                                                <div class="input-field col l2">
-                                                    <span>Fin pause</span>
-                                                    <input type="text" value='{{ whJson["dimanche"][0]["pauseEndHour"] }}' id="dimanchePEH" class="input-customized timepicker">
-                                                </div>
-                                            </div>
-                                            <div class="input-field col s2 quotaSectionDimanche">
-                                                <span>Quota horraire</span>
-                                                <input type="number" value='{{ whJson["dimanche"][0]["quota"] }}' id="dimancheQuota" min="1" max="8" class="input-customized">
-                                            </div>
+                                                                <!-- Formulaire pour Vendredi -->
+
+                                                                <div class="row"><h5 class="permissionsSeparator whH5">Vendredi</h5></div>
+                                                                <div class="row">
+                                                                    <div class="collapseSectionVendredi col-lg-12">
+                                                                        <div class="row">
+                                                                            <div class="input-field col-lg-3 col-sm-12">
+                                                                                <span>Début</span>
+                                                                                <input type="time" value='{{ whJson["vendredi"][0]["beginHour"] }}' id="vendrediBH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-3 col-sm-12">
+                                                                                <span>Fin</span>
+                                                                                <input type="time" value='{{ whJson["vendredi"][0]["endHour"] }}' id="vendrediEH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-2 col-sm-12">
+                                                                                <span>Début pause</span>
+                                                                                <input type="time" value='{{ whJson["vendredi"][0]["pauseBeginHour"] }}' id="vendrediPBH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-2 col-sm-12">
+                                                                                <span>Fin pause</span>
+                                                                                <input type="time" value='{{ whJson["vendredi"][0]["pauseEndHour"] }}' id="vendrediPEH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col s2 quotaSectionVendredi">
+                                                                                <span>Quota horraire</span>
+                                                                                <input type="number" value='{{ whJson["vendredi"][0]["quota"] }}' id="vendrediQuota" min="1" max="8" class="input-customized form-control">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+
+                                                                <!-- Formulaire pour Samedi -->
+
+                                                                <div class="row"><h5 class="permissionsSeparator whH5">Samedi</h5></div>
+                                                                <p style="margin-top: 0px">
+                                                                    <input type="checkbox" class="checkItSamedi" id="filled-in-box-samedi" />
+                                                                    <label for="filled-in-box-samedi">Présence non requise</label>
+                                                                </p>
+                                                                <div class="row maybeHiddenSamedi">
+                                                                    <div class="collapseSectionSamedi col-lg-12">
+                                                                        <div class="row">
+                                                                            <div class="input-field col-lg-3 col-sm-12">
+                                                                                <span>Début</span>
+                                                                                <input type="time" value='{{ whJson["samedi"][0]["beginHour"] }}' id="samediBH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-3 col-sm-12">
+                                                                                <span>Fin</span>
+                                                                                <input type="time" value='{{ whJson["samedi"][0]["endHour"] }}' id="samediEH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-2 col-sm-12">
+                                                                                <span>Début pause</span>
+                                                                                <input type="time" value='{{ whJson["samedi"][0]["pauseBeginHour"] }}' id="samediPBH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-2 col-sm-12">
+                                                                                <span>Fin pause</span>
+                                                                                <input type="time" value='{{ whJson["samedi"][0]["pauseEndHour"] }}' id="samediPEH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col s2 quotaSectionSamedi">
+                                                                                <span>Quota horraire</span>
+                                                                                <input type="number" value='{{ whJson["samedi"][0]["quota"] }}' id="samediQuota" min="1" max="8" class="input-customized form-control">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+
+                                                                <!-- Formulaire pour Dimanche -->
+
+                                                                <div class="row"><h5 class="permissionsSeparator whH5">Dimanche</h5></div>
+                                                                <p style="margin-top: 0px">
+                                                                    <input type="checkbox" class="checkItDimanche" id="filled-in-box-dimanche" />
+                                                                    <label for="filled-in-box-dimanche">Présence non requise</label>
+                                                                </p>
+                                                                <div class="row maybeHiddenDimanche">
+                                                                    <div class="collapseSectionDimanche col-lg-12">
+
+                                                                        <div class="row">
+                                                                            <div class="input-field col-lg-3 col-sm-12">
+                                                                                <span>Début</span>
+                                                                                <input type="time" value='{{ whJson["dimanche"][0]["beginHour"] }}' id="dimancheBH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-3 col-sm-12">
+                                                                                <span>Fin</span>
+                                                                                <input type="time" value='{{ whJson["dimanche"][0]["endHour"] }}' id="dimancheEH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-2 col-sm-12">
+                                                                                <span>Début pause</span>
+                                                                                <input type="time" value='{{ whJson["dimanche"][0]["pauseBeginHour"] }}' id="dimanchePBH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-2 col-sm-12">
+                                                                                <span>Fin pause</span>
+                                                                                <input type="time" value='{{ whJson["dimanche"][0]["pauseEndHour"] }}' id="dimanchePEH" class="input-customized form-control timepicker">
+                                                                            </div>
+                                                                            <div class="input-field col-lg-2 col-sm-12 quotaSectionDimanche">
+                                                                                <span>Quota horraire</span>
+                                                                                <input type="number" value='{{ whJson["dimanche"][0]["quota"] }}' id="dimancheQuota" min="1" max="8" class="input-customized form-control">
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mt-3">
+                                                            <div class="col-lg-12">
+                                                                <button class="btn btn-lg btn-success" id="btnSave">Modifier</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col l12">
-                                        <button id="btnSave">Modifier</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
 
 {% block javascripts %}
