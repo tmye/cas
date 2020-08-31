@@ -130,7 +130,7 @@
                                         if($("#adminFirstPassword").val()){
                                             if($("#adminFirstPassword").val().length >= 6){
                                                 if($("#adminFirstPassword").val() == $("#adminSecondPassword").val()){
-                                                    $('#modal_loading').modal('open');
+                                                    $('#modal_loading').modal('show');
                                                     // After the verifications we can deal with the ajax queries
                                                     var formdata = new FormData();
                                                     var fInput = document.getElementById("fileInput");
@@ -154,12 +154,12 @@
                                                             if(data == 1){
                                                                 window.location.href = "{{ path('addNewAdmin') }}";
                                                             }
-                                                            $('#modal_loading').modal('close');
+                                                            $('#modal_loading').modal('hide');
                                                         },
                                                         error: function() {
                                                             alert("Erreur");
 
-                                                            $('#modal_loading').modal('close');
+                                                            $('#modal_loading').modal('hide');
 
                                                         }
                                                     });

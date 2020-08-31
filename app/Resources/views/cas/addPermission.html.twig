@@ -3,6 +3,8 @@
 
 {% block title %}C.A.S - Permission{% endblock %}
 
+
+
 {% block body %}
 
 <div class="container-fluid">
@@ -49,13 +51,14 @@
                                                     <div class="row mt-2">
                                                         <div class="input-field col-lg-12 col-sm-12">
                                                             <span>Choisir l'employé</span>
-                                                            {{ form_row(form.employee, {'attr': {'class': 'form-control'}}) }}
+                                                            {{ form_row(form.employee, {'attr': {'class': 'form-control selectpicker', 'data-live-search':'true'}}) }}
                                                         </div>
                                                     </div>
                                                         <div class="row mt-2">
                                                             <div class="input-field col-lg-6 col-sm-12 mt-3">
                                                                 <span>Type de la permission</span>
-                                                                {{ form_row(form.type, {'attr': {'class': 'form-control'}}) }}
+
+                                                                {{ form_row(form.type, {'attr': {'class': 'form-control selectpicker', 'data-live-search':'true'}}) }}
                                                             </div>
                                                             <div class="input-field col-lg-6 col-sm-12">
                                                                 <span>Description</span>
@@ -101,9 +104,19 @@
 {% endblock %}
 
 {% block javascripts %}
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.min.css" rel="stylesheet" />
+
     <script>
         // On s'attaque aux collapsibles
         $(function () {
+            $(function() {
+                $('.selectpicker').selectpicker('render');
+            });
+
             $(".cl_Perm").addClass("collapsible_element_active");
             $(".navigation_collapsible").collapsible('open',3);
 
@@ -115,9 +128,10 @@
                 event.preventDefault();
             });
 
+            $(function() {
+                $('.selectpicker').selectpicker('render');
+            });
+
         });
     </script>
-{% endblock %}
-
-{% block stylesheets %}
 {% endblock %}

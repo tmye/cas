@@ -152,7 +152,7 @@
             });
             console.log(tab);
             $("#deleteForAll").click(function () {
-                $('#modal_loading').modal('open');
+                $('#modal_loading').modal('show');
                 $.ajax({
                     type: 'POST',
                     url: "{{ path('syncDeleteForAll') }}",
@@ -161,7 +161,7 @@
                         console.log(data);
                         // Closing the loading box
 
-                        $('#modal_loading').modal('close');
+                        $('#modal_loading').modal('hide');
                     },
                     error: function (msg) {
                         alert("erreur");
@@ -174,7 +174,7 @@
     <script>
         $(function () {
             $("#deleteForMac").click(function () {
-                $('#modal_loading').modal('open');
+                $('#modal_loading').modal('show');
                 var el = $("#macSelected").val();
                 console.log("Element : "+el);
                 $.ajax({
@@ -185,7 +185,7 @@
                         console.log(data);
                         // Closing the loading box
 
-                        $('#modal_loading').modal('close');
+                        $('#modal_loading').modal('hide');
                     },
                     error: function (msg) {
                         alert("erreur");

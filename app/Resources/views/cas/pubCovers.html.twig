@@ -99,7 +99,7 @@
                                                 <div class="col-lg-12">
                                                     <h5>Par départements</h5>
                                                     <span>Choisissez le département</span>
-                                                    <select multiple="multiple" class="form-control" id="depSelected2">
+                                                    <select multiple="multiple" name="depSelected2" class="form-control" id="depSelected2">
                                                         {% for dep in departements %}
                                                             <option value="{{ dep.id }}">{{ dep.name }}</option>
                                                         {% endfor %}
@@ -217,6 +217,8 @@
 {% endblock %}
 
 {% block javascripts %}
+
+
     <script>
         $(function () {
             var selected = 0;
@@ -224,6 +226,15 @@
             $("#type1").show();
             $("#type2").hide();
             $("#type3").hide();
+
+            var select_element = document.getElementById('depSelected2');
+            multi( select_element, {
+                'enable_search': true,
+                'search_placeholder': 'Search...',
+                'non_selected_header': 'All options',
+                'selected_header': 'Selected options'
+            });
+
             $("input[type=radio][name=group1]").change(function () {
                 switch (this.value){
                     case "1":
@@ -316,12 +327,12 @@
                             alert("OK");
                             // Closing the loading box
 
-                            $('#modal_loading').modal('hide');
+                            $('#modal_loading').modal('close');
                             window.location.href = "{{ path('pubCovers') }}";
                         },
                         error: function() {
                             // Closing the loading box
-                            $('#modal_loading').modal('hide');
+                            $('#modal_loading').modal('close');
                             alert("Erreur");
                         }
                     });
@@ -389,7 +400,7 @@
 
                 $("#submit_button_3").click(function(){
 
-                    $('#modal_loading').modal('show');
+                    $('#modal_loading').modal('open');
 
                     var mac = $("#macSelected").val();
                     var formdata = new FormData();
@@ -469,4 +480,6 @@
             });
         });
     </script>
+
+
 {% endblock %}

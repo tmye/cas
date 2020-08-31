@@ -666,7 +666,9 @@ class StatsController extends ClockinReccordController
 
                         //print_r("\n Passage 3 FALSE condition departPremature diff\n");
 
-                        $ct = date('H:i',$retardDiff[1]);
+                        //dump($retardDiff); die();
+                        //$ct = date('H:i',$retardDiff[1]);
+
                         if($type == 1 || $type == "1"){
                             if( ($_fpa == 0 || $_fpa == null) || ($_dep == 0 || $_dep == null) || (($_fpa == 0 || $_fpa == null) && ($_dep == 0 || $_dep == null)) ){
                                 if($controlNowTime2 != $nowTime){

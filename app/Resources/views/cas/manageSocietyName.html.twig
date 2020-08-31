@@ -3,13 +3,17 @@
 {% block body %}
 
 <!-- Modal for ajax loading -->
-<div id="modal_loading" class="modal ajax_modals">
-    <div class="modal-content">
-        <p class="center">
-            <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
-        </p>
+<div>
+    <!-- Modal for ajax loading -->
+    <div id="modal_loading" class="modal ajax_modals">
+        <div class="modal-content" style="width: 200px;display:table;position:relative;margin: 0 auto; top: calc(50% - 24px);">
+            <p class="center">
+                <img class="mw-100 mh-100" src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+            </p>
+        </div>
     </div>
 </div>
+
 <div class="container-fluid">
     <div class="wrapper">
 

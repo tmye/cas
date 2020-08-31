@@ -8,9 +8,9 @@ $(function(){
         return Math.round(number * factor) / factor;
     }
 
-    $('.collapsible').collapsible();
-    $('.tap-target').tapTarget('open');
-    $('.tap-target').tapTarget('close');
+    //$('.collapsible').collapsible();
+    $('.tap-target').tapTarget('show');
+    $('.tap-target').tapTarget('hide');
     $('select').material_select();
     $(".button-collapse").sideNav();
     $('.datepicker').pickadate({

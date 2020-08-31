@@ -18,7 +18,9 @@
                             <div class="col-lg-12">
                                 <ul class="collapsible" data-collapsible="accordion">
                                     <li>
-                                        <div class="collapsible-header active collapsible-header-title">Définissez un jour null</div>
+                                        <div class="collapsible-header active collapsible-header-title">
+                                            <h3>Définissez un jour null</h3>
+                                        </div>
                                         <div class="collapsible-body" style="padding-bottom: 0px">
                                             {% for message in  app.session.flashbag.get('notice') %}
                                                 <div class="row">
@@ -52,6 +54,8 @@
                                                     {{ form_row(form.motif, {'attr': {'class': 'mb-2 form-control input-customized','placeholder':'Motif de la nullité'}}) }}
                                                 </div>
                                                 <div class="col-lg-12">
+                                                    {{ form_widget(form.Ajouter, { 'label': 'Ajouter','attr': {'class':'mt-2 btn btn-lg btn-success'} }) }}
+
                                                     {{ form_rest(form) }}
                                                 </div>
                                                 {{ form_end(form) }}
