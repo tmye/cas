@@ -211,6 +211,7 @@ class DefaultController extends StatsController
     public function persistNewAdminAction(Request $request)
     {
         $admins = $this->getDoctrine()->getManager()->getRepository("AppBundle:Admin");
+        //dump($admins); die();
 
         // Searching for already used username
         $i = 0;
@@ -298,10 +299,9 @@ class DefaultController extends StatsController
         return $this->render("cas/expiryPage.html.twig");
     }
 
-    /**
-     * @Route("/expiryDate", name="expiryDate")
-     */
-    public function expiryDateAction(Request $request)
+    //@Route("/expiryDate", name="expiryDate")
+
+/*    public function expiryDateAction(Request $request)
     {
         $date = $request->request->get("date");
         $ex = $this->getDoctrine()->getManager()->getRepository("AppBundle:Expiration")->findAll();
@@ -323,7 +323,7 @@ class DefaultController extends StatsController
             $session->set("expiryDate", $date);
         }
         return new Response("OK");
-    }
+    }*/
 
     /**
      * @Route("/changeSocietyLogo", name="changeSocietyLogo")

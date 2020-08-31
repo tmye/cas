@@ -93,9 +93,9 @@ class AdminController extends Controller
         }
     }
 
-    /**
-     * @Route("/superAdmin/expiry",name="expiry")
-     */
+/*
+     @Route("/superAdmin/expiry",name="expiry")
+
     public function expiryAction(Request $request)
     {
         if($this->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')){
@@ -104,6 +104,7 @@ class AdminController extends Controller
             throw new AccessDeniedException("Accès limité aux super-administrateurs");
         }
     }
+    */
 
     /**
      * @Route("/admin/roleChange",name="roleChange")
