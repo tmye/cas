@@ -1033,6 +1033,7 @@ class MachinesController extends Controller
          * Must do a test
          * In case that we call this function in syncAll()
         */
+
         if($request->request->get("deps") != null && !empty($request->request->get("deps"))){
             $tabDeps = $request->request->get("deps");
         }else{
@@ -1045,9 +1046,11 @@ class MachinesController extends Controller
         // Pour éviter la duplication des données
         $len = sizeof($tab);
 
+
         // Variables d'élimination de doublons
         // Anciennes données
         $donnees = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
+
         //print_r($donnees);
         $found = 0;
         $i = 0;
@@ -1074,6 +1077,7 @@ class MachinesController extends Controller
 
 
             foreach ($finalTab as $mac){
+
                 $found = 0;
 //                echo "\n J'arrive meme ici et le found est : ".$found;
                 while($found == 0 && $i < sizeof($donnees)){
@@ -1095,6 +1099,7 @@ class MachinesController extends Controller
                     $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
                     $updateE->setIsactive(true);
                     $updateE->setType("pub");
+
 
                     $em->persist($updateE);
                     $em->flush();
