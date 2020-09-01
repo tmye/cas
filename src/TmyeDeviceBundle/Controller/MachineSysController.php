@@ -38,6 +38,13 @@ class MachineSysController extends BaseController
             ['priority' => 'DESC', 'id' => 'ASC']
         );
 
+        $last_device_pub_pic = $this->PubsRepo()->findOneBy(['deviceid' => $sn ], ['id' => 'desc']);
+        $number_of_image = 0;
+        if($last_device_pub_pic->getImage1()){$number_of_image +=1;}
+        if($last_device_pub_pic->getImage2()){$number_of_image +=1;}
+        if($last_device_pub_pic->getImage3()){$number_of_image +=1;}
+
+
 //        echo $this->serialize($all);
 //        var_dump($all);
 //        exit;
@@ -51,6 +58,7 @@ class MachineSysController extends BaseController
 
 
         $start_memory = memory_get_usage();
+
 
         for ($z = 0; $z < sizeof($all); $z++) {
 
@@ -112,10 +120,13 @@ class MachineSysController extends BaseController
 //                        break(2);
                     }
                     $tmp = json_decode($item->getContent(), true);
-                    if ($tmp != []) {
-                        $tmp = $this->getPubSetupContent($sn, intval($tmp['index']));
-                        $tmp['id'] = $item->getId();
-                        array_push($res['data'], $tmp);
+
+                    if ($tmp != [] && isset($number_of_image)) {
+                        for($i=1; $i<$number_of_image+1; $i++){
+                            $tmp = $this->getPubSetupContent($sn, $i);
+                            $tmp['id'] = $item->getId();
+                            array_push($res['data'], $tmp);
+                        }
                     }
                     break;
             }

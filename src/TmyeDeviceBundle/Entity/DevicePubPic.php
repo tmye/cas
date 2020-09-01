@@ -155,5 +155,7 @@ class DevicePubPic
     {
         return $this->image3;
     }
+
+
 }
 
