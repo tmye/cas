@@ -113,7 +113,7 @@ class MachineSysController extends BaseController
                     }
                     $tmp = json_decode($item->getContent(), true);
                     if ($tmp != []) {
-                        $tmp = $this->getPubSetupContent(intval($tmp['index']));
+                        $tmp = $this->getPubSetupContent($sn, intval($tmp['index']));
                         $tmp['id'] = $item->getId();
                         array_push($res['data'], $tmp);
                     }
@@ -570,10 +570,10 @@ class MachineSysController extends BaseController
         return $tmp;
     }
 
-    private function getPubSetupContent($id)
+    private function getPubSetupContent($sn, $id)
     {
 //        {id:”1005”,do:”update”,data:”advert”,index:1,advert:”base64”}
-        $pubsetup = $this->PubsRepo()->findOneBy(array("deviceid"=>"X_X"));
+        $pubsetup = $this->PubsRepo()->findOneBy(array("deviceid"=>"$sn"));
 
         if ($pubsetup == null)
             return;
