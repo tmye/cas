@@ -245,7 +245,7 @@ class BaseController extends Controller
 
         $rootWebDir = $this->getParameter('web_dir');
         $path = $rootWebDir . DIRECTORY_SEPARATOR . $pathtopic;
-        if (file_exists($path) && !is_dir($path)) {
+        if (!is_dir($path) || file_exists($path)) {
             $data = file_get_contents($path);
         } else {
             $data = file_get_contents("img/default-profile.png");

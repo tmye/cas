@@ -124,10 +124,12 @@ class MachineSysController extends BaseController
                     if ($tmp != [] && isset($number_of_image)) {
                         for($i=1; $i<$number_of_image+1; $i++){
                             $tmp = $this->getPubSetupContent($sn, $i);
+                            dump($tmp);
                             $tmp['id'] = $item->getId();
                             array_push($res['data'], $tmp);
                         }
                     }
+                    die();
                     break;
             }
 
@@ -588,6 +590,7 @@ class MachineSysController extends BaseController
 
         if ($pubsetup == null)
             return;
+
 
         $pic_slide_1 = [
             'id' => $this->iRandom(0),
