@@ -244,7 +244,7 @@ class BaseController extends Controller
     {
 
         $rootWebDir = $this->getParameter('web_dir');
-        $path = $rootWebDir . DIRECTORY_SEPARATOR . $pathtopic;
+        $path = $rootWebDir . DIRECTORY_SEPARATOR .'pub_covers/' . $pathtopic;
         if (!is_dir($path) || file_exists($path)) {
             $data = file_get_contents($path);
         } else {
