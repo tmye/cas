@@ -210,7 +210,7 @@ class DefaultController extends StatsController
      */
     public function persistNewAdminAction(Request $request)
     {
-        $admins = $this->getDoctrine()->getManager()->getRepository("AppBundle:Admin");
+        $admins = $this->getDoctrine()->getManager()->getRepository("AppBundle:Admin")->findAll();
         //dump($admins); die();
 
         // Searching for already used username
