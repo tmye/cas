@@ -1020,6 +1020,35 @@ class MachinesController extends Controller
         }
     }
 
+    protected function getLastImagesArray($found, $device_id){
+        $em = $this->getDoctrine()->getManager();
+        $last_device_pub_pic = $em->getRepository("TmyeDeviceBundle:DevicePubPic")
+            ->findOneBy(['deviceid' => $device_id ], ['id' => 'desc']);
+        $images_to_update = [];
+        if($last_device_pub_pic){
+            if($last_device_pub_pic->getImage1()){array_push($images_to_update, 1);}
+            if($last_device_pub_pic->getImage2()){array_push($images_to_update, 2);}
+            if($last_device_pub_pic->getImage3()){array_push($images_to_update, 3);}
+        }else{
+            array_push($images_to_update, 1);
+        }
+
+        for($k=1; $k < count($images_to_update)+1 ; $k++){
+            if ($found == 0){
+                $updateE = new UpdateEntity();
+                $updateE->setDeviceId($device_id);
+                $updateE->setContent($images_to_update[$k-1]);
+                $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
+                $updateE->setIsactive(true);
+                $updateE->setType("pub");
+                $em->persist($updateE);
+                $em->flush();
+            }
+        }
+
+        return $images_to_update;
+    }
+
     /**
      * @Route("/syncPubCoverAll",name="syncPubCoverAll")
      */
@@ -1093,17 +1122,7 @@ class MachinesController extends Controller
                     $i++;
                 }
 //                echo "\n Found = :".$found;
-                if ($found == 0){
-                    $updateE = new UpdateEntity();
-                    $updateE->setDeviceId($mac);
-                    $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
-                    $updateE->setIsactive(true);
-                    $updateE->setType("pub");
-
-
-                    $em->persist($updateE);
-                    $em->flush();
-                }
+                $images_to_update = $this->getLastImagesArray($found, $mac);
             }
             //return new Response(json_encode($finalTab));
             return new Response("OK");
@@ -1118,17 +1137,10 @@ class MachinesController extends Controller
                     //$session->getFlashBag()->add('passage : ',$donnees[$i]->getDeviceId());
                     $i++;
                 }
-                echo "Found2 = :".$found;
-                if ($found == 0){
-                    $updateE = new UpdateEntity();
-                    $updateE->setDeviceId($mac);
-                    $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
-                    $updateE->setIsactive(true);
-                    $updateE->setType("pub");
 
-                    $em->persist($updateE);
-                    $em->flush();
-                }
+                $images_to_update = $this->getLastImagesArray($found, $mac);
+
+                echo "Found2 = :".$found;
             }
 
             //return new Response(json_encode($tab));
@@ -1196,16 +1208,7 @@ class MachinesController extends Controller
                     $i++;
                 }
                 echo "\n Found = :".$found;
-                if ($found == 0){
-                    $updateE = new UpdateEntity();
-                    $updateE->setDeviceId($mac);
-                    $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
-                    $updateE->setIsactive(true);
-                    $updateE->setType("pub");
-
-                    $em->persist($updateE);
-                    $em->flush();
-                }
+                $images_to_update = $this->getLastImagesArray($found, $mac);
             }
             //return new Response(json_encode($finalTab));
             return new Response("OK");
@@ -1221,16 +1224,7 @@ class MachinesController extends Controller
                     $i++;
                 }
                 echo "Found2 = :".$found;
-                if ($found == 0){
-                    $updateE = new UpdateEntity();
-                    $updateE->setDeviceId($mac);
-                    $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
-                    $updateE->setIsactive(true);
-                    $updateE->setType("pub");
-
-                    $em->persist($updateE);
-                    $em->flush();
-                }
+                $images_to_update = $this->getLastImagesArray($found, $mac);
             }
 
             //return new Response(json_encode($tab));
@@ -1274,16 +1268,7 @@ class MachinesController extends Controller
             $i++;
         }
         echo "\n Found = :".$found;
-        if ($found == 0){
-            $updateE = new UpdateEntity();
-            $updateE->setDeviceId($mac);
-            $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
-            $updateE->setIsactive(true);
-            $updateE->setType("pub");
-
-            $em->persist($updateE);
-            $em->flush();
-        }
+        $images_to_update = $this->getLastImagesArray($found, $mac);
         //return new Response(json_encode($finalTab));
         return new Response("OK");
     }
