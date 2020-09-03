@@ -125,8 +125,8 @@
                                                                         <p style="font-size: 0.8em;"><span>Description : </span><span style="font-size: 1em;color: grey ;font-weight: bold">{{ perm.description }}</span></p>
                                                                         {#<p> <span style="font-size: 0.8em;">Permission demandée le : </span><span class="blue-text">XX:XX:XX</span></p>#}
         
-                                                                        <a href="{{ path('grantPermision',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light green"><i class="uil-check"></i></a>
-                                                                        <a href="{{ path('rejectPermision',{'id':perm.id})}}" class="deleteDep btn-floating btn-small waves-effect waves-light red"><i class="uil-times"></i></a>
+                                                                        <a href="{{ path('grantPermision',{'id':perm.id}) }}" class="btn btn-success btn-circle btn-md"><i class="fa fa-check"></i></a>
+                                                                        <a href="{{ path('rejectPermision',{'id':perm.id})}}" class="deleteDep btn btn-danger btn-circle btn-md"><i class="fa fa-window-close"></i></a>
         
         
                                                                         <a style="position:absolute;right: 10px;bottom: 10px;" href="{{ path('generatePDFPermission',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light teal"><i class="uil-print"></i></a>
@@ -177,10 +177,10 @@
                                                                         <p style="font-size: 0.8em;"><span>Description : </span><span style="font-size: 1em;color: grey ;font-weight: bold">{{ perm.description }}</span></p>
                                                                         {#<p> <span style="font-size: 0.8em;">Permission demandée le : </span><span class="blue-text">XX:XX:XX</span></p>#}
                                                                         {% if perm.state == 0 or perm.state == 2 %}
-                                                                            <a href="{{ path('grantPermision',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light green"><i class="uil-check"></i></a>
+                                                                            <a href="{{ path('grantPermision',{'id':perm.id}) }}" class="btn btn-outline-success btn-circle btn-md"><i class="fa fa-check fa-2x"></i></a>
                                                                         {% endif %}
         
-                                                                        <a style="position:absolute;right: 10px;bottom: 10px;" href="{{ path('generatePDFPermission',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light teal"><i class="uil-print"></i></a>
+                                                                        <a style="position:absolute;right: 10px;bottom: 10px;" href="{{ path('generatePDFPermission',{'id':perm.id}) }}" class="btn btn-outline-primary btn-circle btn-md"><i class="fa fa-print fa-2x"></i></a>
         
                                                                         <p style="font-size: 0.7em;color: teal;"><span class="uil-calendar-alt"></span>{{ perm.DateTo | date('d-M-Y H:i:s') }}</p>
                                                                     </div>
@@ -229,14 +229,14 @@
         
                                                                         {# if the stat is not waiting, then we have nothing to do here #}
                                                                         {% if perm.state == 0 %}
-                                                                            <a href="{{ path('grantPermision',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light green"><i class="uil-check"></i></a>
+                                                                            <a href="{{ path('grantPermision',{'id':perm.id}) }}" class="btn btn-outline-success btn-circle btn-md"><i class="fa fa-check fa-2x"></i></a>
                                                                         {% endif %}
         
                                                                         {% if perm.state == 0 or perm.state == 2 %}
-                                                                            <a href="{{ path('rejectPermision',{'id':perm.id})}}" class="deleteDep btn-floating btn-small waves-effect waves-light red"><i class="uil-times"></i></a>
+                                                                            <a href="{{ path('rejectPermision',{'id':perm.id})}}" class="deleteDep btn btn-outline-danger btn-circle btn-md"><i class="fa fa-window-close fa-2x"></i></a>
                                                                         {% endif %}
         
-                                                                        <a style="position:absolute;right: 10px;bottom: 10px;" href="{{ path('generatePDFPermission',{'id':perm.id}) }}" class="btn-floating btn-small waves-effect waves-light teal"><i class="uil-print"></i></a>
+                                                                        <a style="position:absolute;right: 10px;bottom: 10px;" href="{{ path('generatePDFPermission',{'id':perm.id}) }}" class="btn btn-outline-primary btn-circle btn-md"><i class="fa fa-print fa-2x"></i></a>
         
                                                                         <p style="font-size: 0.7em;color: teal;"><span class="uil-calendar-alt"></span>{{ perm.DateTo | date('d-M-Y H:i:s') }}</p>
                                                                     </div>

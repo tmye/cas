@@ -31,19 +31,45 @@ security:
         entity:
           class:    AppBundle\Entity\Admin
           property: username
+      jwt:
+        lexik_jwt: ~
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
         dev:
           pattern: ^/(_(profiler|wdt)|css|images|js)/
           security: false
 
+        login:
+          pattern: ^/api/login
+          stateless: true
+          anonymous: true
+          json_login:
+            provider: chain_provider
+            check_path: /api/login_check
+            success_handler: lexik_jwt_authentication.handler.authentication_success
+            failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            require_previous_session: false
+
+        api:
+          pattern: ^/api
+          stateless: true
+          guard:
+            authenticators:
+              - lexik_jwt_authentication.jwt_token_authenticator
+          provider: jwt
+
         main:
           pattern: ^/
-          anonymous:    true
+          anonymous: true
           provider: chain_provider
           form_login:
             login_path: login
             check_path: login_check
           logout:
-            path:       logout
-            target:     login
+            path: logout
+            target: login
+
+    access_control:
+        - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY}
+        - { path: ^/api/login_check, roles: IS_AUTHENTICATED_ANONYMOUSLY}
+        - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY}
