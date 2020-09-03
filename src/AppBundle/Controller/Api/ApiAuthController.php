@@ -51,5 +51,11 @@ class ApiAuthController extends Controller
 //        $event = new InteractiveLoginEvent($request, $token);
 //        $this->get("event_dispatcher")->dispatch("security.interactive_login", $event);
         $jwtManager = $this->container->get('lexik_jwt_authentication.jwt_manager');
-        return new JsonResponse(['token' => $jwtManager->create($user)]);    }
+        if($user){
+            return new JsonResponse(['token' => $jwtManager->create($user)]);
+        }else{
+            return new JsonResponse(['error'=>['code'=>404, 'message'=>'Bad credential']]);
+        }
+    }
+
 }

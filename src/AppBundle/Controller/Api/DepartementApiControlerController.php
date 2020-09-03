@@ -23,11 +23,19 @@ class DepartementApiControlerController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $departements = $em->getRepository('AppBundle:Departement')->findAll();
+        $response = new Response();
 
-        $data = $this->get('jms_serializer')->serialize($departements, 'json');
-        $response = new Response($data);
-        $response->headers->set('Content-Type', 'application/json');
-
+        if(count($departements)<0){
+            $data = $this->get('jms_serializer')->serialize([
+                'error'=>['code'=>405, 'message'=>'Pas de departement']
+            ], 'json');
+            $response = new Response($data);
+            $response->headers->set('Content-Type', 'application/json');
+        }else{
+            $data = $this->get('jms_serializer')->serialize($departements, 'json');
+            $response = new Response($data);
+            $response->headers->set('Content-Type', 'application/json');
+        }
         return $response;
     }
 
@@ -46,16 +54,15 @@ class DepartementApiControlerController extends Controller
 
         if($departement){
             $data = $this->get('jms_serializer')->serialize($departement, 'json');
-            $response->setContent($data);
             $response->setStatusCode(200);
 
         }else{
             $data = $this->get('jms_serializer')->serialize([
                 'error'=>['code'=>405, 'message'=>'Departement inéxistant']
             ], 'json');
-            $response->setContent($data);
             $response->setStatusCode(405);
         }
+        $response->setContent($data);
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }

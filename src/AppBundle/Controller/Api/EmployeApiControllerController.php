@@ -19,10 +19,20 @@ class EmployeApiControllerController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $employes = $em->getRepository('AppBundle:Employe')->findAll();
+        $response = new Response();
 
-        $data = $this->get('jms_serializer')->serialize($employes, 'json');
-        $response = new Response($data);
-        $response->headers->set('Content-Type', 'application/json');
+        if(count($employes)<=0){
+            $data = $this->get('jms_serializer')->serialize([
+                'error'=>['code'=>405, 'message'=>"Pas d'employé"]
+            ], 'json');
+            $response->setStatusCode(405);
+        }else{
+            $data = $this->get('jms_serializer')->serialize($employes, 'json');
+            $response = new Response($data);
+            $response->headers->set('Content-Type', 'application/json');
+        }
+
+
 
         return $response;
     }
@@ -44,7 +54,7 @@ class EmployeApiControllerController extends Controller
 
         if(count($employes)<=0){
             $data = $this->get('jms_serializer')->serialize([
-                'error'=>['code'=>405, 'message'=>"Ce Departement n'a pas d'employé"]
+                'error'=>['code'=>405, 'message'=>"Ce departement n'a pas d'employé"]
             ], 'json');
             $response->setStatusCode(405);
         }else{
