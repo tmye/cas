@@ -10,10 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AlertApiController extends Controller
 {
-    public function __construct()
-    {
-    }
-
     /**
      * @Route("/api/v1/top-retard",name="topretard")/
      */
