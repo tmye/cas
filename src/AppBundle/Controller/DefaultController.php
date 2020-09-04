@@ -290,16 +290,20 @@ class DefaultController extends StatsController
         return new Response("OK");
     }
 
-    //@Route("/expiryPage", name="expiryPage")
+    /**
+     * @Route("/expiryPage", name="expiryPage")
+     */
 
-/*    public function expiryPageAction(Request $request)
+    public function expiryPageAction(Request $request)
     {
         return $this->render("cas/expiryPage.html.twig");
-    }*/
+    }
 
-    //@Route("/expiryDate", name="expiryDate")
+    /**
+     * @Route("/expiryDate", name="expiryDate")
+     */
 
-/*    public function expiryDateAction(Request $request)
+    public function expiryDateAction(Request $request)
     {
         $date = $request->request->get("date");
         $ex = $this->getDoctrine()->getManager()->getRepository("AppBundle:Expiration")->findAll();
@@ -321,7 +325,7 @@ class DefaultController extends StatsController
             $session->set("expiryDate", $date);
         }
         return new Response("OK");
-    }*/
+    }
 
     /**
      * @Route("/changeSocietyLogo", name="changeSocietyLogo")
