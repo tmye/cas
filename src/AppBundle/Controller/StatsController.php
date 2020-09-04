@@ -1228,6 +1228,7 @@ class StatsController extends ClockinReccordController
         }else{
             return "Erreur";
         }
+
     }
 
     /**

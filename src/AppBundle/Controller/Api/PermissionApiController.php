@@ -30,7 +30,7 @@ class PermissionApiController extends Controller
 
         $response = new Response();
 
-        if(count($permissions)<0){
+        if(count($permissions)<=0){
             $data = $this->get('jms_serializer')->serialize(['error'=>[
                 'code'=>405,
                 'message'=>"Pas de permission en cours"

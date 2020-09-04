@@ -42,20 +42,25 @@ class ApiAuthController extends Controller
         $password = $request->get('password');
         $user = $this->getDoctrine()->getManager()->getRepository("AppBundle:Admin")
             ->findOneBy(array('username' => $username));
-//        $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-//        $this->get('security.token_storage')->setToken($token);
-//        // If the firewall name is not main, then the set value would be instead:
-//        // $this->get('session')->set('_security_XXXFIREWALLNAMEXXX', serialize($token));
-//        $this->get('session')->set('_security_main', serialize($token));
-//        // Fire the login event manually
-//        $event = new InteractiveLoginEvent($request, $token);
-//        $this->get("event_dispatcher")->dispatch("security.interactive_login", $event);
         $jwtManager = $this->container->get('lexik_jwt_authentication.jwt_manager');
         if($user){
             return new JsonResponse(['token' => $jwtManager->create($user)]);
         }else{
             return new JsonResponse(['error'=>['code'=>404, 'message'=>'Bad credential']]);
         }
+    }
+
+
+    /**
+     * @POST(
+     *     path = "/api/logout",
+     *     name = "api_logout",
+     *     requirements = {"token"="\w+"}
+     * )
+     */
+    public function logout(Request $request)
+    {
+        return $this->redirectToRoute('logout');
     }
 
 }

@@ -106,4 +106,56 @@ $response->setStatusCode(200);
         return $response;
     }
 
+
+    /**
+     * @Rest\Get(
+     *     path="/api/v1/clocking/{begin_at}/{end_at}",
+     *     name="api_clocking_date"
+     * )
+     */
+    public function ClockinRecordByDateIntervalAction($begin_at, $end_at){
+
+        $em = $this->getDoctrine()->getManager();
+        $date_start = new \DateTime($begin_at." 00:00:00");
+        $date_end = new \DateTime($end_at." 23:59:59");
+
+        $response = new Response();
+        if($date_start > $date_end){
+            $data = $this->get('jms_serializer')->serialize(['error'=>[
+                'code'=>405,
+                'message'=>"L'intervalle de date est incorrect"
+            ]], 'json');
+            $response->setStatusCode(200);
+        }else{
+            $qb = $em->createQueryBuilder()
+                ->select('clockin_record')
+                ->from('AppBundle:ClockinRecord', 'clockin_record')
+                ->where('clockin_record.createTime BETWEEN :firstDate AND :lastDate')
+                ->setParameter('firstDate', $date_start)
+                ->setParameter('lastDate', $date_end);
+
+            $clockings = $qb->getQuery()->getResult();
+
+            if(count($clockings)<0){
+                $data = $this->get('jms_serializer')->serialize(['error'=>[
+                    'code'=>405,
+                    'message'=>"Pas de valeur"
+                ]], 'json');
+
+                $response->setStatusCode(200);
+
+            }else{
+                $data = $this->get('jms_serializer')->serialize($clockings, 'json');
+                $response->setStatusCode(200);
+            }
+
+        }
+
+
+        $response->setContent($data);
+        $response->headers->set('content-type', 'application/json');
+
+        return $response;
+    }
+
 }

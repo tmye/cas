@@ -8,7 +8,6 @@ use AppBundle\Entity\CompanyInfos;
 use AppBundle\Entity\Setting;
 use AppBundle\fpdf181\fpdf;
 use AppBundle\Entity\CompanyConfig;
-use AppBundle\Entity\Expiration;
 use AppBundle\Entity\WorkingHours;
 use AppBundle\fpdf181\tablepdf;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
@@ -291,13 +290,12 @@ class DefaultController extends StatsController
         return new Response("OK");
     }
 
-    /**
-     * @Route("/expiryPage", name="expiryPage")
-     */
-    public function expiryPageAction(Request $request)
+    //@Route("/expiryPage", name="expiryPage")
+
+/*    public function expiryPageAction(Request $request)
     {
         return $this->render("cas/expiryPage.html.twig");
-    }
+    }*/
 
     //@Route("/expiryDate", name="expiryDate")
 
