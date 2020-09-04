@@ -146,4 +146,32 @@ class PermissionApiController extends Controller
         return $response;
     }
 
+    /**
+     * @Rest\Get(
+     *     path="/api/v1/permission/{id}",
+     *     name="api_permission",
+     *     requirements={"id":"\d"}
+     * )
+     */
+    public function permissionAction($id){
+
+        $em = $this->getDoctrine()->getManager();
+
+        $permission = $em->getRepository('AppBundle:Permission')->find($id);
+        $response = new Response();
+
+        if(!$permission){
+            $data = $this->get('jms_serializer')->serialize(['error'=>[
+                'code'=>405,
+                'message'=>"Cette permission n'existe pas"
+            ]], 'json');
+        }else{
+            $data = $this->get('jms_serializer')->serialize($permission, 'json');
+        }
+        $response->setContent($data);
+        $response->headers->set('content-type', 'application/json');
+
+        return $response;
+    }
+
 }
