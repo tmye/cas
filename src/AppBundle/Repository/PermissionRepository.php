@@ -155,4 +155,60 @@ class PermissionRepository extends EntityRepository
         return false;
     }
 
+    public function currentPermissions($nowTime) {
+        // check if this employee permission in this time.
+        $queryBuilder = $this->createQueryBuilder("p");
+//        $queryBuilder->select($queryBuilder->expr()->count("p"));
+        $queryBuilder->where("p.state =:state ")->setParameter("state", 1);
+
+        $results = $queryBuilder->getQuery()->getResult();
+        $permissions = [];
+
+        foreach ($results as $result){
+            if($result->getDateFrom()->getTimestamp() <= $nowTime &&
+                $result->getDateTo()->getTimestamp() >= $nowTime) {
+                array_push($permissions, $result);
+            }
+        }
+        return $permissions;
+    }
+
+    public function terminatedPermissions($nowTime) {
+
+        // check if this employee permission in this time.
+        $queryBuilder = $this->createQueryBuilder("p");
+//        $queryBuilder->select($queryBuilder->expr()->count("p"));
+        $queryBuilder->where("p.state =:state ")->setParameter("state", 1);
+
+        $results = $queryBuilder->getQuery()->getResult();
+        $permissions = [];
+
+        foreach ($results as $result){
+            if($result->getDateFrom()->getTimestamp() <= $nowTime &&
+                $result->getDateTo()->getTimestamp() <=  $nowTime) {
+                array_push($permissions, $result);
+            }
+        }
+        return $permissions;
+    }
+
+    public function incomingPermissions($nowTime) {
+
+        // check if this employee permission in this time.
+        $queryBuilder = $this->createQueryBuilder("p");
+//        $queryBuilder->select($queryBuilder->expr()->count("p"));
+        $queryBuilder->where("p.state =:state ")->setParameter("state", 1);
+
+        $results = $queryBuilder->getQuery()->getResult();
+        $permissions = [];
+
+        foreach ($results as $result){
+            if($result->getDateFrom()->getTimestamp() >= $nowTime &&
+                $result->getDateTo()->getTimestamp() >  $nowTime) {
+                array_push($permissions, $result);
+            }
+        }
+        return $permissions;
+    }
+
 }

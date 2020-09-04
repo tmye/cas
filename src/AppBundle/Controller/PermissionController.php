@@ -240,6 +240,8 @@ class PermissionController extends BaseController {
             $numberOfRefused = $this->getDoctrine()->getManager()->getRepository("AppBundle:Permission")->countPermission(2);
 
             $listPerm = $permRep->findByOrder();
+
+
             return $this->render('cas/viewPermission.html.twig', array(
                 'listPerm' => $listPerm,
                 'stack'=>$numberOfStack,
