@@ -24,7 +24,7 @@ class Expiry extends Controller
         $timeExpiry = strtotime($expiryDate);
         $nowTime = strtotime(date("Y").'-'.date('m').'-'.date("d"));
         if ($nowTime > $timeExpiry){
-            return true;
+            return false;
         }else{
             return False;
         }
