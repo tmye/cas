@@ -18,6 +18,9 @@ class Expiry extends Controller
     public function hasExpired(){
         $session = new Session();
         $expiryDate = $session->get('expiryDate');
+        if(!$expiryDate){
+            return false;
+        }
         $timeExpiry = strtotime($expiryDate);
         $nowTime = strtotime(date("Y").'-'.date('m').'-'.date("d"));
         if ($nowTime > $timeExpiry){
