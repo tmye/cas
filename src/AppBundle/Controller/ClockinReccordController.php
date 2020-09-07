@@ -440,7 +440,7 @@ class ClockinReccordController extends EmployeController
             $pEH = $wH[$day][0]["pauseEndHour"];
             $eH = $wH[$day][0]["endHour"];
 
-            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"name"=>$c->getEmploye()->getSurname()." ".$c->getEmploye()->getLastName(),"time_arrive"=>$c->getClockinTime(),"time_depart"=>0,"time_pause"=>0,"time_fin_pause"=>0,"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"bH"=>$bH,"pBH"=>$pBH,"pEH"=>$pEH,"eH"=>$eH,"arrive"=>$arrive,"depart"=>0,"pause"=>0,"finPause"=>0);
+            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"name"=>$c->getEmploye()->getSurname()." ".$c->getEmploye()->getLastName(),"time_arrive"=>$c->getClockinTime(),"time_depart"=>0,"time_pause"=>0,"time_fin_pause"=>0,"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"beginHour"=>$bH,"perteBeginHour"=>$pBH,"perteEndHour"=>$pEH,"endHour"=>$eH,"arrive"=>$arrive,"depart"=>0,"pause"=>0,"finPause"=>0);
         }elseif($this->pause($c,$day,$request)){
             $nom = $c->getEmploye()->getLastName();
             $prenom = $c->getEmploye()->getSurname();
@@ -461,7 +461,7 @@ class ClockinReccordController extends EmployeController
             $pEH = $wH[$day][0]["pauseEndHour"];
             $eH = $wH[$day][0]["endHour"];
 
-            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"name"=>$c->getEmploye()->getSurname()." ".$c->getEmploye()->getLastName(),"time_arrive"=>0,"time_depart"=>0,"time_pause"=>$c->getClockinTime(),"time_fin_pause"=>0,"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"bH"=>$bH,"pBH"=>$pBH,"pEH"=>$pEH,"eH"=>$eH,"arrive"=>0,"depart"=>0,"pause"=>$pause,"finPause"=>0);
+            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"name"=>$c->getEmploye()->getSurname()." ".$c->getEmploye()->getLastName(),"time_arrive"=>0,"time_depart"=>0,"time_pause"=>$c->getClockinTime(),"time_fin_pause"=>0,"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"beginHour"=>$bH,"perteBeginHour"=>$pBH,"perteEndHour"=>$pEH,"endHour"=>$eH,"arrive"=>0,"depart"=>0,"pause"=>$pause,"finPause"=>0);
         }elseif($this->finPause($c,$day,$request)){
             $nom = $c->getEmploye()->getLastName();
             $prenom = $c->getEmploye()->getSurname();
@@ -482,7 +482,7 @@ class ClockinReccordController extends EmployeController
             $pEH = $wH[$day][0]["pauseEndHour"];
             $eH = $wH[$day][0]["endHour"];
 
-            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"name"=>$c->getEmploye()->getSurname()." ".$c->getEmploye()->getLastName(),"time_arrive"=>0,"time_depart"=>0,"time_pause"=>0,"time_fin_pause"=>$c->getClockinTime(),"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"bH"=>$bH,"pBH"=>$pBH,"pEH"=>$pEH,"eH"=>$eH,"arrive"=>0,"depart"=>0,"pause"=>0,"finPause"=>$finPause);
+            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"name"=>$c->getEmploye()->getSurname()." ".$c->getEmploye()->getLastName(),"time_arrive"=>0,"time_depart"=>0,"time_pause"=>0,"time_fin_pause"=>$c->getClockinTime(),"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"beginHour"=>$bH,"perteBeginHour"=>$pBH,"perteEndHour"=>$pEH,"endHour"=>$eH,"arrive"=>0,"depart"=>0,"pause"=>0,"finPause"=>$finPause);
         }elseif($this->depart($c,$day,$request)){
             $nom = $c->getEmploye()->getLastName();
             $prenom = $c->getEmploye()->getSurname();
@@ -503,7 +503,7 @@ class ClockinReccordController extends EmployeController
             $pEH = $wH[$day][0]["pauseEndHour"];
             $eH = $wH[$day][0]["endHour"];
 
-            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"name"=>$c->getEmploye()->getSurname()." ".$c->getEmploye()->getLastName(),"time_arrive"=>0,"time_depart"=>$c->getClockinTime(),"time_pause"=>0,"time_fin_pause"=>0,"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"bH"=>$bH,"pBH"=>$pBH,"pEH"=>$pEH,"eH"=>$eH,"arrive"=>0,"depart"=>$depart,"pause"=>0,"finPause"=>0);
+            $recordTab[$c->getEmploye()->getId()] = array("id"=>$c->getEmploye()->getId(),"name"=>$c->getEmploye()->getSurname()." ".$c->getEmploye()->getLastName(),"time_arrive"=>0,"time_depart"=>$c->getClockinTime(),"time_pause"=>0,"time_fin_pause"=>0,"nom"=>$nom,"prenom"=>$prenom,"function"=>$function,"type"=>$type,"quota"=>$quota,"quota_en_minuite"=>null,"quota_fait"=>null,"beginHour"=>$bH,"perteBeginHour"=>$pBH,"perteEndHour"=>$pEH,"endHour"=>$eH,"arrive"=>0,"depart"=>$depart,"pause"=>0,"finPause"=>0);
         }
         return $recordTab;
     }
@@ -908,10 +908,10 @@ class ClockinReccordController extends EmployeController
                     $pause = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["pause"];
                     $finPause = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["finPause"];
 
-                    $bH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["bH"];
-                    $eH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["eH"];
-                    $pBH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["pBH"];
-                    $pEH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["pEH"];
+                    $bH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["beginHour"];
+                    $eH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["endHour"];
+                    $pBH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["perteBeginHour"];
+                    $pEH = json_decode($content["content"],true)["clockinRecord"][0][$emplo]["perteEndHour"];
                 }else{
                     if($type == "2" || $type == 2){
                         $quota_en_minuite = ((int)$empWH[$day][0]["quota"])*60;
@@ -940,10 +940,10 @@ class ClockinReccordController extends EmployeController
                 $array_of_data["pause"] = $pause;
                 $array_of_data["finPause"] = $finPause;
 
-                $array_of_data["bH"] = $bH;
-                $array_of_data["eH"] = $eH;
-                $array_of_data["pBH"] = $pBH;
-                $array_of_data["pEH"] = $pEH;
+                $array_of_data["beginHour"] = $bH;
+                $array_of_data["endHour"] = $eH;
+                $array_of_data["perteBeginHour"] = $pBH;
+                $array_of_data["perteEndHour"] = $pEH;
 
                 return new JsonResponse($array_of_data);
             }else{

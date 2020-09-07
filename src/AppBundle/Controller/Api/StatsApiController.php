@@ -16,6 +16,12 @@ use Symfony\Component\HttpFoundation\Response;
 class StatsApiController extends ClockinReccordController
 {
 
+    /**
+     * @Rest\Get(
+     *  path="/api/v1/personal-statistics/{employe_id}/{begin_at}/{end_at}",
+     *  name="api_personal_statistics"
+     * )
+     */
     public function persStatAction(Request $request)
     {
         if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
@@ -69,6 +75,17 @@ class StatsApiController extends ClockinReccordController
 
         $nowTime = $timeFrom;
         $employe = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->find($emp);
+
+        if(!$employe){
+            $data = $this->get('jms_serializer')->serialize([
+                'error'=>['code'=>405, 'message'=>"Cet employé n'existe pas"]
+            ], 'json');
+            $response = new Response($data);
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+
+        }
+
         $interval = ($employe->getWorkingHour()->getTolerance())*60;
         $empWH = json_decode($employe->getWorkingHour()->getWorkingHour(),true);
         $taux = (float)$employe->getWorkingHour()->getTaux();
@@ -926,8 +943,8 @@ class StatsApiController extends ClockinReccordController
 
             $historiques[] = $his;
             $donneesPermission = array("retardStats"=>$tabRetardsPermission,"retardPauseStats"=>$tabRetardsPausePermission,"pauseStats"=>$tabDepartsPausePermission,"finStats"=> $tabDepartsPermission,"absenceStats"=>$tabAbsencesPermission);
-            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"tpa"=>$sommeAbsences,"tpr"=>$tempsPerdusRetards,"tpd"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType,"permissionData"=>$donneesPermission,"lost_time"=>$lost_time,"inc_auth"=>$inc_auth,"historique"=>$historiques,"sommePerduQuota"=>$sommePerduQuota
-            ,"quota_1_4"=>$quota_emp_1_4,"spd"=>$sommePerduDepart,"spr"=>$sommePerduRetard,"spa"=>$sommePerduAbsence,"nbreJourTravail"=>$j,"spAuth"=>$sommePerduAuth,"nbreBonus"=>$bonus_retards,"sommeBonus"=>$bonusSommeRetards,"tempsBonus"=>$bonusTempsGagneRetards,"sommeArgentBonus"=>$bonusSommeGagneRetard,"nbrePermission"=>$nbrePermission,"jourFeries"=>$jourFeries);
+            $donnees = array("nbreAbsences"=>$absences,"absences"=>$absences,"retards"=>$retards,"departs"=>$departs,"temps_perdu_abscence"=>$sommeAbsences,"temps_perdu_retard"=>$tempsPerdusRetards,"temps_perdu_depart"=>$tempsPerdusDeparts,"type"=>$type,"retardStats"=>$tabRetards,"retardPauseStats"=>$tabRetardsPause,"pauseStats"=>$tabDepartsPause,"finStats"=> $tabDeparts,"quota_total"=>$quota_total,"quota_fait"=>$quota_fait,"tabType"=>$tabType,"permissionData"=>$donneesPermission,"lost_time"=>$lost_time,"inc_auth"=>$inc_auth,"historique"=>$historiques,"sommePerduQuota"=>$sommePerduQuota
+            ,"quota_1_4"=>$quota_emp_1_4,"somme_perdu_depart"=>$sommePerduDepart,"somme_perdu_retard"=>$sommePerduRetard,"spa"=>$sommePerduAbsence,"nbreJourTravail"=>$j,"somme_perdu_auth"=>$sommePerduAuth,"nbreBonus"=>$bonus_retards,"sommeBonus"=>$bonusSommeRetards,"tempsBonus"=>$bonusTempsGagneRetards,"sommeArgentBonus"=>$bonusSommeGagneRetard,"nbrePermission"=>$nbrePermission,"jourFeries"=>$jourFeries);
             $nowTime = $nowTime+86400;
         }
 
@@ -942,17 +959,12 @@ class StatsApiController extends ClockinReccordController
     }
 
 
-    /**
-     * @Rest\Get(
-     *  path="/api/v1/personal-statistics/{employe_id}/{begin_at}/{end_at}",
-     *  name="api_personal_statistics"
-     * )
-     */
+
 
     /**
      * @Rest\Get(
      *  path="/api/v1/departements-statistics/{begin_at}/{end_at}",
-     *  name="api_employe_statistics"
+     *  name="api_departement_statistics"
      * )
      */
     public function depStatsAction(Request $request, $begin_at=null, $end_at=null)
@@ -1009,16 +1021,16 @@ class StatsApiController extends ClockinReccordController
                 // Cette variable doit contenir les stats de l'employé courant
                 //$stats = $this->_userStatsAction($e, $dateFrom, $dateTo, $interval);
 
-                $sommePerdueRetard = $stats["spr"];
-                $sommePerdueDepart = $stats["spd"];
+                $sommePerdueRetard = $stats["somme_perte_retard"];
+                $sommePerdueDepart = $stats["somme_perte_depart"];
 
-                $perteRetardTemps += $stats ["tpr"];
-                $perteDepartTemps += $stats ["tpd"];
+                $perteRetardTemps += $stats ["perte_retard"];
+                $perteDepartTemps += $stats ["perte_depard"];
 
                 $sommeTotaleRetard += $sommePerdueRetard;
                 $sommeTotaleDepart += $sommePerdueDepart;
             }
-            $tabStats[]= array("departementId"=>$dep->getId(),"departement"=>$dep->getName(),"tpr"=>$perteRetardTemps,"tpd"=>$perteDepartTemps,"spr"=>$sommeTotaleRetard,"spd"=>$sommeTotaleDepart,"nbre"=>$nbreEmploye);
+            $tabStats[]= array("departementId"=>$dep->getId(),"departement"=>$dep->getName(),"temps_perdu_retard"=>$perteRetardTemps,"temps_perdu_depart"=>$perteDepartTemps,"somme_perdu_retard"=>$sommeTotaleRetard,"somme_perdu_depart"=>$sommeTotaleDepart,"nbre"=>$nbreEmploye);
         }
         return new JsonResponse($tabStats);
     }
