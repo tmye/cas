@@ -111,3 +111,22 @@ lexik_jwt_authentication:
         query_parameter:
             enabled: false
             name:    bearer
+
+nelmio_api_doc:
+    documentation:
+        #        schemes: [http, https]
+        info:
+            title: CAS API
+            description: CAS API
+            version: 1.0.0
+        securityDefinitions:
+            Bearer:
+                type: apiKey
+                description: 'Authorization: Bearer {jwt}'
+                name: Authorization
+                in: header
+        security:
+            - Bearer: []
+    areas: # to filter documented areas
+        path_patterns:
+            - ^/api(?!/doc/v1$) # Accepts routes under /api except /api/doc
