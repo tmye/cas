@@ -5,86 +5,90 @@
 
 {% block body %}
 
-    <!-- Modal for ajax loading -->
-    <div id="modal_loading" class="modal ajax_modals">
-        <div class="modal-content">
-            <p class="center">
-                <img src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
-            </p>
-        </div>
-    </div>
+<div class="container-fluid">
+    <div class="wrapper">
 
-    <div class="row">
-        <div class="col l12">
-            <h5 class="h5_title"><span class="fa fa-user-secret"></span> Modification des informations personnelles</h5>
-            <div class="row">
-                <div class="col l12">
-                    <ul class="collapsible" data-collapsible="accordion">
-                        <li>
-                            <div class="collapsible-header active collapsible-header-title">Modifiez vos informations</div>
-                            <div class="collapsible-body" style="padding-bottom: 0px">
+        {% include('cas/partials/_sidebar.html.twig') %}
 
-                                {% for message in  app.session.flashbag.get('notice') %}
-                                    <div class="row">
-                                        <div class="col l12">
-                                            <div class="operation_message">
-                                                {{ message }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
+        <div class="content-page">
+            <div class="content">
+                <!-- Modal for details -->
+                <h2 class="h5_title"><span class="fa fa-user-secret"></span> Modification des informations personnelles</h2>
 
-                                {% if form is defined and form is not null %}
-                                    {{ form_start(form) }}
-                                        <div class="row">
-                                            <div class="col l3 center">
-                                                {% if app.user.picture is defined and app.user.picture is not null %}
-                                                    <img src="{{ asset('user_profile_pictures/'~app.user.picture) }}" id="preview" alt="preview" style="width: 100%">
-                                                    {% else %}
-                                                    <img src="{{ asset('img/avatar.jpg') }}" id="preview" alt="preview" style="width: 100%">
-                                                {% endif %}
-                                                <p class="center">Photo de profil</p>
-                                            </div>
-                                            <div class="col l9">
-                                                {{ form_row(form.picture, {'attr': {'class':'fileInput','id':'fileInput','style':'display:block'}}) }}
-                                            </div>
+                <div class="row card">
+                    <div class="col-lg-12 card-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <ul class="collapsible" data-collapsible="accordion">
+                                    <li>
+                                        <div class="collapsible-header active collapsible-header-title">Modifiez vos informations</div>
+                                        <div class="collapsible-body" style="padding-bottom: 0px">
+
+                                            {% for message in  app.session.flashbag.get('notice') %}
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="operation_message">
+                                                            {{ message }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+
+                                            {% if form is defined and form is not null %}
+                                                {{ form_start(form) }}
+                                                    <div class="row">
+                                                        <div class="col l3 center">
+                                                            {% if app.user.picture is defined and app.user.picture is not null %}
+                                                                <img src="{{ asset('user_profile_pictures/'~app.user.picture) }}" id="preview" alt="preview" style="width: 100%">
+                                                                {% else %}
+                                                                <img src="{{ asset('img/avatar.jpg') }}" id="preview" alt="preview" style="width: 100%">
+                                                            {% endif %}
+                                                            <p class="center">Photo de profil</p>
+                                                        </div>
+                                                        <div class="col l9">
+                                                            {{ form_row(form.picture, {'attr': {'class':'fileInput form-control','id':'fileInput','style':'display:block'}}) }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-4">
+                                                            {{ form_row(form.surname, {'attr': {'class':'form-control', 'placeholder':'Nom'}}) }}
+                                                        </div>
+                                                        <div class="col-lg-4">
+                                                            {{ form_row(form.name, {'attr': {'class':'form-control', 'placeholder':'Prénom(s)'}}) }}
+                                                        </div>
+                                                        <div class="col-lg-4">
+                                                            {{ form_row(form.address, {'attr': {'class':'form-control', 'placeholder':'Adresse'}}) }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-4">
+                                                            {{ form_row(form.phonenumber, {'attr': {'class':'form-control', 'placeholder':'Numéro de téléphone','min':'1'}}) }}
+                                                        </div>
+                                                        <div class="col-lg-4">
+                                                            {{ form_row(form.password.first, {'attr': {'class':'form-control', 'placeholder':'Mot de passe'}}) }}
+                                                        </div>
+                                                        <div class="col-lg-4">
+                                                            {{ form_row(form.password.second, {'attr': {'class':'form-control', 'placeholder':'Confirmation du mot de passe'}}) }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            {{ form_widget(form.Modifier, { 'label': 'Modifier','attr': {'class':'mt-3 btn btn-success btn-lg'} }) }}
+                                                        </div>
+                                                    </div>
+                                                {{ form_end(form) }}
+                                            {% endif %}
                                         </div>
-                                        <div class="row">
-                                            <div class="col l4">
-                                                {{ form_row(form.surname, {'attr': {'placeholder':'Nom'}}) }}
-                                            </div>
-                                            <div class="col l4">
-                                                {{ form_row(form.name, {'attr': {'placeholder':'Prénom(s)'}}) }}
-                                            </div>
-                                            <div class="col l4">
-                                                {{ form_row(form.address, {'attr': {'placeholder':'Adresse'}}) }}
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col l4">
-                                                {{ form_row(form.phonenumber, {'attr': {'placeholder':'Numéro de téléphone','min':'1'}}) }}
-                                            </div>
-                                            <div class="col l4">
-                                                {{ form_row(form.password.first, {'attr': {'placeholder':'Mot de passe'}}) }}
-                                            </div>
-                                            <div class="col l4">
-                                                {{ form_row(form.password.second, {'attr': {'placeholder':'Confirmation du mot de passe'}}) }}
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col l12">
-                                                {{ form_widget(form.Modifier, { 'label': 'Modifier','attr': {'class':'btn'} }) }}
-                                            </div>
-                                        </div>
-                                    {{ form_end(form) }}
-                                {% endif %}
+                                    </li>
+                                </ul>
                             </div>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
 
 {% block javascripts %}
