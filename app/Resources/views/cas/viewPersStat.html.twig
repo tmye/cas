@@ -68,7 +68,7 @@
                                                     <div class="col-lg-6">
                                                         <span>Veuillez sélectionner le département de votre choix</span>
                                                         <br>
-                                                        <select id="depSelect" class="form-control input-customized browser-default">
+                                                        <select id="depSelect" class="form-control input-customized selectpicker" data-live-search="true">
                                                             <option value="" selected>Département</option>
                                                             {% for dep in listDep %}
                                                                 <option value="{{ dep.id }}">{{ dep.name }}</option>
@@ -78,7 +78,7 @@
                                                     <div class="col-lg-6">
                                                         <span>Veuillez sélectionner l'employé</span>
                                                         <br>
-                                                        <select name="destination[]" id="empSelect" class="form-control input-customized browser-default">
+                                                        <select name="destination[]" id="empSelect" class="form-control input-customized selectpicker" data-live-search="true">
                                                             <option value='' selected>Employé</option>
                                                         </select>
                                                     </div>
@@ -2248,6 +2248,7 @@
                 $("#empSelect").html("");
                 /* On récupère le département sélectionné */
                 var selectedDep = $("#depSelect").val();
+
                 for(var i=0;i<len;i++){
                     //alert("L'id dep est "+res.employees[i].departement.id);
                     /* On vérifie si oui ou nom cet employé appartient au département
@@ -2256,10 +2257,13 @@
                      */
                     var currentEmpDepId = tab[i].depId;
                     if(currentEmpDepId == selectedDep){
+                        $("#empSelect").hide();
                         $("#empSelect").append("" +
                             "<option value="+tab[i].id+">" +tab[i].ccid+" "+tab[i].lastName+" "+tab[i].surname+"</option>"
                         );
                     }
+
+                    $("#empSelect").selectpicker('refresh')
                 }
             });
 
@@ -2315,6 +2319,16 @@
                 event.preventDefault();
             });
 
+            $(function() {
+                $('.selectpicker').selectpicker('render');
+            });
+
         });
     </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.min.css" rel="stylesheet" />
+
 {% endblock %}

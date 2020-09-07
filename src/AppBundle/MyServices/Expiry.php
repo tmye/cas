@@ -23,7 +23,7 @@ class Expiry extends Controller
         if ($nowTime > $timeExpiry){
             return true;
         }else{
-            return null;
+            return False;
         }
     }
 
