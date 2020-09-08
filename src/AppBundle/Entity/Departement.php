@@ -4,6 +4,8 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Swagger\Annotations as SWG;
 
 /**
  * Departement
@@ -16,6 +18,8 @@ class Departement
     /**
      * @var int
      *
+     * @SWG\Property(description="The unique identifier of the user.")
+     *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -25,6 +29,8 @@ class Departement
     /**
      * @var string
      *
+     * @SWG\Property(type="string", maxLength=255)
+     *
      * @ORM\Column(name="name", type="string", length=45, unique=true)
      * @Assert\NotBlank()
      */
@@ -32,6 +38,8 @@ class Departement
 
     /**
      * @var string
+     *
+     * @SWG\Property(type="string")
      *
      * @ORM\Column(name="max_count", type="string", length=45)
      * @Assert\NotBlank()
@@ -41,6 +49,8 @@ class Departement
 
     /**
      * @var \DateTime
+     *
+     * @SWG\Property(type="date")
      *
      * @ORM\Column(name="create_date", type="datetime")
      */
@@ -62,6 +72,9 @@ class Departement
     private $lastUpdate;
 
 
+    /**
+     * @var int
+     */
     public $depEmployeeCount;
 
     /**

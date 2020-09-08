@@ -11,8 +11,7 @@ use FOS\RestBundle\Controller\Annotations\Get;
 use Symfony\Component\HttpFoundation\Response;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
-use Swagger\Annotations as OA;
-use Swagger\Annotations\Xml as OAXml;
+use Swagger\Annotations as SWG;
 
 
 class DepartementApiControlerController extends Controller
@@ -22,6 +21,17 @@ class DepartementApiControlerController extends Controller
      *     path = "/api/v1/departements",
      *     name = "api_departements",
      * )
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns the all departments",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Departement::class, groups={"full"}))
+     *     )
+     * )
+     * @SWG\Tag(name="Departements")
+     * @Security(name="Bearer")
      */
     public function departementsAction(){
 
@@ -50,6 +60,17 @@ class DepartementApiControlerController extends Controller
      *     name = "api_departement",
      *     requirements = {"id"="\d+"}
      * )
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns department",
+     *     @SWG\Schema(
+     *         type="object",
+     *         @SWG\Items(ref=@Model(type=Departement::class, groups={"full"}))
+     *     )
+     * )
+     * @SWG\Tag(name="Departement")
+     * @Security(name="Bearer")
      */
     public function departementsByIDAction($id){
         $em = $this->getDoctrine()->getManager();

@@ -5,6 +5,9 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Swagger\Annotations as SWG;
+
 
 /**
  * Employe
@@ -16,6 +19,10 @@ class Employe implements UserInterface
 {
 
     /**
+     * @var Model
+     *
+     *
+     *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Departement")
      * @ORM\JoinColumn(nullable=false)
      * @Assert\Valid()
