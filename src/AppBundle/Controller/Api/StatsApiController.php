@@ -8,10 +8,15 @@ use AppBundle\Controller\ClockinReccordController;
 use AppBundle\Controller\HomeStatsController;
 use AppBundle\Controller\StatsController;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use Swagger\Annotations as SWG;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use AppBundle\Entity\Machine;
 
 class StatsApiController extends ClockinReccordController
 {
@@ -21,6 +26,9 @@ class StatsApiController extends ClockinReccordController
      *  path="/api/v1/personal-statistics/{employe_id}/{begin_at}/{end_at}",
      *  name="api_personal_statistics"
      * )
+     *
+
+     *
      */
     public function persStatAction(Request $request)
     {
@@ -47,6 +55,7 @@ class StatsApiController extends ClockinReccordController
      *  path="/api/v1/employe-statistics/{employe_id}/{begin_at}/{end_at}",
      *  name="api_employe_statistics"
      * )
+     *
      */
     public function userStatsAction(Request $request, $employe_id=null,$begin_at=null, $end_at=null){
 
@@ -966,6 +975,7 @@ class StatsApiController extends ClockinReccordController
      *  path="/api/v1/departements-statistics/{begin_at}/{end_at}",
      *  name="api_departement_statistics"
      * )
+     *
      */
     public function depStatsAction(Request $request, $begin_at=null, $end_at=null)
     {

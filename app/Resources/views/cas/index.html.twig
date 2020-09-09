@@ -24,8 +24,82 @@
             <div class="content">
 
                 <div class="row">
+                    <div class="col-lg-6 card">
+                     <div class="col-lg-12">
+                            <h4 class="text-center" >Top retardataires</h4>
+                        </div>
+                        <div class="col-lg-12">
+                            <br>
+                            <div class="row">
+                                <div class="card-columns info_container_retards"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 card">
+                        <div class="col-lg-12">
+                            <h4 class="text-center">Top départs prématurés</h4>
+                        </div>
+                        <div class="col-lg-12">
+                            <br>
+                            <div class="row">
+                                <div class="card-columns info_container_departs"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3 class="text-center">Retards</h3>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="foo1"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3 class="text-center">Abscences</h3>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="foo2"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3 class="text-center">Permissions</h3>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="c3"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3 class="text-center">Departs</h3>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="c4"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <div class="row">
                     <div class="col-lg-12">
-                        <h2><i class="fa fa-home"></i> Accueil</h2>
 
 {#                        <a href="{{ path('historique_brute') }}" class="badge" style="padding: 2px 10px">#}
 {#                            <h4>Aujourd'hui</h4>#}
@@ -36,29 +110,7 @@
 
                         <!-- Section du classement des tops -->
 
-                        <div class="row card">
-                            <div class="col-lg-12">
-                                <h4>Top retardataires</h4>
-                            </div>
-                            <div class="col-lg-12">
-                                <br>
-                                <div class="row">
-                                    <div class="card-columns info_container_retards"></div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="row card">
-                            <div class="col-lg-12">
-                                <h4>Top départs prématurés</h4>
-                            </div>
-                            <div class="col-lg-12">
-                                <br>
-                                <div class="row">
-                                    <div class="card-columns info_container_departs"></div>
-                                </div>
-                            </div>
-                        </div>
 
                         <div class="fixed-action-btn" style="margin-bottom: 30px">
                             {% if is_granted('ROLE_ADMIN') %}
@@ -338,6 +390,72 @@
             }
         });
     </script>
+    <script src="{{ asset('js/gauge.min.js') }}"></script>
+    <script>
+
+        var opts = {
+            angle: 0.04, // The span of the gauge arc
+            lineWidth: 0.4, // The line thickness
+            radiusScale: 1, // Relative radius
+            pointer: {
+                length: 0.73, // // Relative to gauge radius
+                strokeWidth: 0.024, // The thickness
+                color: '#000000' // Fill color
+            },
+            limitMax: false,     // If false, max value increases automatically if value > maxValue
+            limitMin: false,     // If true, the min value of the gauge will be fixed
+            colorStart: '#a10512',   // Colors
+            colorStop: '#27862c',    // just experiment with them
+            strokeColor: '#e8784d',  // to see which ones work best for you
+            generateGradient: true,
+            highDpiSupport: true,     // High resolution support
+            // renderTicks is Optional
+            renderTicks: {
+                divisions: 0,
+                divWidth: 1,
+                divLength: 0.7,
+                divColor: '#333333',
+                subDivisions: 3,
+                subLength: 0.5,
+                subWidth: 0.6,
+                subColor: '#666666'
+            }
+
+        };
+
+        var target1 = document.getElementById('foo1'); // your canvas element
+        var gauge1 = new Gauge(target1).setOptions(opts); // create sexy gauge!
+        gauge1.maxValue = 3000; // set max gauge value
+        gauge1.setMinValue(0);  // Prefer setter over gauge.minValue = 0
+        gauge1.animationSpeed = 1; // set animation speed (32 is default value)
+        gauge1.set(215); // set actual value
+
+        var target2 = document.getElementById('foo2'); // your canvas element
+        var gauge2 = new Gauge(target2).setOptions(opts); // create sexy gauge!
+        gauge2.maxValue = 3000; // set max gauge value
+        gauge2.setMinValue(0);  // Prefer setter over gauge.minValue = 0
+        gauge2.animationSpeed = 1; // set animation speed (32 is default value)
+        gauge2.set(215); // set actual value
+
+
+        var target3 = document.getElementById('c3'); // your canvas element
+        var gauge3 = new Gauge(target3).setOptions(opts); // create sexy gauge!
+        gauge3.maxValue = 3000; // set max gauge value
+        gauge3.setMinValue(0);  // Prefer setter over gauge.minValue = 0
+        gauge3.animationSpeed = 1; // set animation speed (32 is default value)
+        gauge3.set(215); // set actual value
+
+        var target4 = document.getElementById('c4'); // your canvas element
+        var gauge4 = new Gauge(target4).setOptions(opts); // create sexy gauge!
+        gauge4.maxValue = 3000; // set max gauge value
+        gauge4.setMinValue(0);  // Prefer setter over gauge.minValue = 0
+        gauge4.animationSpeed = 1; // set animation speed (32 is default value)
+        gauge4.set(215); // set actual value
+
+    </script>
+
+
+
 
 {% endblock %}
 
