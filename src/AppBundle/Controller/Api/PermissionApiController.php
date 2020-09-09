@@ -5,10 +5,14 @@ namespace AppBundle\Controller\Api;
 
 
 use FOS\RestBundle\Controller\Annotations as Rest;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
+use Swagger\Annotations as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use AppBundle\Entity\Permission;
 
 class PermissionApiController extends Controller
 {
@@ -18,6 +22,18 @@ class PermissionApiController extends Controller
      *     path="/api/v1/current-permissions",
      *     name="api_current_permissions"
      * )
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Return all current permissions",
+     *     @SWG\Schema(
+     *         type="array",
+     *          @SWG\Items(ref=@Model(type=Permission::class, groups={"full"}))
+     *   )
+     * )
+     * @SWG\Tag(name="Current permissions")
+     * @Security(name="Bearer")
+     *
      */
     public function currentsPermissionsAction(){
 
@@ -55,6 +71,18 @@ class PermissionApiController extends Controller
      *     name="api_terminated_permissions",
      *     requirements={"id":"\d", "state":"\d"}
      * )
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Return terminated permissions depend on state and date",
+     *     @SWG\Schema(
+     *         type="array",
+     *          @SWG\Items(ref=@Model(type=Permission::class, groups={"full"}))
+     *   )
+     * )
+     * @SWG\Tag(name="Terminated permissions")
+     * @Security(name="Bearer")
+     *
      */
     public function terminatedPermissionsAction(Request $request, $month_ago=2, $state=1){
 
@@ -100,6 +128,18 @@ class PermissionApiController extends Controller
      *     path="/api/v1/incoming-permissions/{month}/{state}",
      *     name="api_incoming_permissions"
      * )
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Return Incomming permissions depend on state and date",
+     *     @SWG\Schema(
+     *         type="array",
+     *          @SWG\Items(ref=@Model(type=Permission::class, groups={"full"}))
+     *   )
+     * )
+     * @SWG\Tag(name="Incoming permissions")
+     * @Security(name="Bearer")
+     *
      */
     public function incomingPermissionsAction(Request $request, $month=0, $state=1){
 
@@ -152,6 +192,16 @@ class PermissionApiController extends Controller
      *     name="api_permission",
      *     requirements={"id":"\d"}
      * )
+     * @SWG\Response(
+     *     response=200,
+     *     description="Return a permission",
+     *     @SWG\Schema(
+     *         type="object",
+     *          @SWG\Items(ref=@Model(type=Permission::class, groups={"full"}))
+     *   )
+     * )
+     * @SWG\Tag(name="Permission")
+     * @Security(name="Bearer")
      */
     public function permissionAction($id){
 

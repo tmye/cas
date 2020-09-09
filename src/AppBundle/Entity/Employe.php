@@ -84,11 +84,10 @@ class Employe implements UserInterface
     private $salt;
 
     /**
-
-     * @ORM\Column(name="roles", type="array")
-
+     * @var string[]
+     *
+     * @ORM\Column(name="roles", type="string")
      */
-
     private $roles = array();
 
     /* Les autres propriétés */
@@ -608,7 +607,7 @@ class Employe implements UserInterface
 
     /**
      * Get roles.
-     *
+     * @var string[]
      * @return array
      */
     public function getRoles()

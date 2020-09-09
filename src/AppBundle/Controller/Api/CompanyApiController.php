@@ -3,8 +3,11 @@
 
 namespace AppBundle\Controller\Api;
 
-
+use AppBundle\Entity\CompanyInfos;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use Swagger\Annotations as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,6 +19,17 @@ class CompanyApiController extends Controller
      *     name="api_company"
      *
      * )
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns the all company infos",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=CompanyInfos::class, groups={"full"}))
+     *     )
+     * )
+     * @SWG\Tag(name="company infos")
+     * @Security(name="Bearer")
      */
     public function companyInfosAction(){
         $em = $this->getDoctrine()->getManager();

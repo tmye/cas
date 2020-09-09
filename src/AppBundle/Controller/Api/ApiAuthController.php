@@ -15,6 +15,9 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
 
 class ApiAuthController extends Controller
 {
@@ -22,7 +25,7 @@ class ApiAuthController extends Controller
      * @POST(
      *     path = "/api/v1/login", name="api_login",
      *     name = "api_login",
-     *     requirements = {"username"="\w+"}
+     *     requirements = {"username"="\w+", "password"="\w+"}
      * )
      */
     public function loginApiAction(){
@@ -35,6 +38,14 @@ class ApiAuthController extends Controller
      *     name = "api_login",
      *     requirements = {"username"="\w+", "password"="\w+"}
      * )
+     *
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns authentification token",
+     * )
+     * @SWG\Tag(name="login check")
+     * @Security(name="Bearer")
      */
     public function loginCheckAction(Request $request)
     {

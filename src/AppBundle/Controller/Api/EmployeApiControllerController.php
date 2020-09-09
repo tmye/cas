@@ -6,6 +6,10 @@ use FOS\RestBundle\Controller\Annotations\Get;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Response;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use AppBundle\Entity\Employe;
+use Swagger\Annotations as SWG;
 
 class EmployeApiControllerController extends Controller
 {
@@ -14,6 +18,22 @@ class EmployeApiControllerController extends Controller
      *     path = "/api/v1/employes",
      *     name = "api_employes",
      * )
+     *
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns list of all employes",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(
+     *          type="array",
+     *          @SWG\Items(ref=@Model(type=Employe::class, groups={"full"}))
+     *     )
+     *   )
+     * )
+     * @SWG\Tag(name="employes")
+     * @Security(name="Bearer")
+     *
      */
     public function employeesAction(){
         $em = $this->getDoctrine()->getManager();
@@ -32,8 +52,6 @@ class EmployeApiControllerController extends Controller
             $response->headers->set('Content-Type', 'application/json');
         }
 
-
-
         return $response;
     }
 
@@ -43,6 +61,21 @@ class EmployeApiControllerController extends Controller
      *     name = "api_employes_departement",
      *     requirements = {"departement"="\d+"}
      * )
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Return a department's employes",
+     *     @SWG\Schema(
+     *         type="object",
+     *         @SWG\Items(
+     *          type="object",
+     *          @SWG\Items(ref=@Model(type=Employe::class, groups={"full"}))
+     *     )
+     *   )
+     * )
+     * @SWG\Tag(name="department's employe")
+     * @Security(name="Bearer")
+     *
      */
     public function employeesByDepartementAction($departement){
         $em = $this->getDoctrine()->getManager();
@@ -74,6 +107,17 @@ class EmployeApiControllerController extends Controller
      *     name = "api_employe",
      *     requirements = {"id"="\d+"}
      * )
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Return an employe",
+     *     @SWG\Schema(
+     *         type="array",
+     *          @SWG\Items(ref=@Model(type=Employe::class, groups={"full"}))
+     *   )
+     * )
+     * @SWG\Tag(name="employe")
+     * @Security(name="Bearer")
      */
     public function employeesByIdAction($id){
         $em = $this->getdoctrine()->getmanager();

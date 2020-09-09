@@ -5,9 +5,13 @@ namespace AppBundle\Controller\Api;
 
 
 use FOS\RestBundle\Controller\Annotations as Rest;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Swagger\Annotations as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use AppBundle\Entity\Machine;
 
 class MachineApiController extends Controller
 {
@@ -17,6 +21,18 @@ class MachineApiController extends Controller
      *     path="/api/v1/machines",
      *     name="api_machines"
      * )
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Return all Machines",
+     *     @SWG\Schema(
+     *         type="array",
+     *          @SWG\Items(ref=@Model(type=Machine::class, groups={"full"}))
+     *   )
+     * )
+     * @SWG\Tag(name="Machines")
+     * @Security(name="Bearer")
+     *
      */
     public function machines(){
 
@@ -49,6 +65,18 @@ class MachineApiController extends Controller
      *     name="api_machine_id",
      *     requirements={"id"="\d+"}
      * )
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Return a Machine",
+     *     @SWG\Schema(
+     *         type="array",
+     *          @SWG\Items(ref=@Model(type=Machine::class, groups={"full"}))
+     *   )
+     * )
+     * @SWG\Tag(name="Machine")
+     * @Security(name="Bearer")
+     *
      */
     public function machineByIdAction($id){
 
@@ -81,6 +109,18 @@ class MachineApiController extends Controller
      *     path="/api/v1/machine",
      *     name="api_machine",
      * )
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Return a Machine by giving parameter",
+     *     @SWG\Schema(
+     *         type="array",
+     *          @SWG\Items(ref=@Model(type=Machine::class, groups={"full"}))
+     *   )
+     * )
+     * @SWG\Tag(name="Machine by attribute")
+     * @Security(name="Bearer")
+     *
      */
     public function machineAction(Request $request){
 
