@@ -1972,7 +1972,7 @@ $done = false;
                 }
 
                 if($request->get('departure') != ''){
-                    $company_config->setDepartureAllowed($request->get('departure'));
+                    $company_config->setDepartureHoursAllowed($request->get('departure'));
                 }
 
                 $em->flush();
