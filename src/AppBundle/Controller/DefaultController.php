@@ -630,9 +630,14 @@ class DefaultController extends StatsController
             } else {
                 $ci = null;
             }
+            $company_config = $this->getDoctrine()->getManager()->getRepository('AppBundle:CompanyConfig')->findBy([
+                'companyName'=> $session->get('companyName'),
+            ])[0];
+
             $employes = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
             return $this->render('cas/index.html.twig', array(
                 'ci' => $ci,
+                'company_config' => $company_config,
                 'employes' => $employes,
                 'base_dir' => realpath($this->container->getParameter('kernel.root_dir') . '/..') . DIRECTORY_SEPARATOR,
             ));
@@ -1916,6 +1921,69 @@ $done = false;
         return $settingTime - $realTime < 0 ? 0 : $settingTime - $realTime;
     }
 
+    /**
+     * @Route("/manageDoors",name="manageDoors")
+     */
+    public function manageDoorsAction(Request $request)
+    {
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            // Token Sent
+            $token = $request->query->get("badConfig");
+            if ($expiry_service->hasExpired()) {
+                return $this->redirectToRoute("expiryPage");
+            }
+            return $this->render('cas/manageDoors.html.twig', array("token" => $token));
+        } else {
+            return $this->redirectToRoute("login");
+        }
+    }
 
+    /**
+     * @Route("/manageQuota",name="manageQuota")
+     */
+    public function manageQuotaAction(Request $request)
+    {
+
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            $expiry_service = $this->container->get('app_bundle_expired');
+            // Token Sent
+            $token = $request->query->get("badConfig");
+            if ($expiry_service->hasExpired()) {
+                return $this->redirectToRoute("expiryPage");
+            }
+
+            $em = $this->getDoctrine()->getManager();
+
+            $session = new Session();
+
+            $company_config = $em->getRepository('AppBundle:CompanyConfig')->findBy([
+                'companyName'=> $session->get('companyName'),
+            ])[0];
+
+            if($company_config){
+
+                if($request->get('late') != ''){
+                    $company_config->setLateHoursAllowed($request->get('late'));
+                }
+
+                if($request->get('absent') != ''){
+                    $company_config->setAbsentHoursAllowed($request->get('absent'));
+                }
+
+                if($request->get('departure') != ''){
+                    $company_config->setDepartureAllowed($request->get('departure'));
+                }
+
+                $em->flush();
+
+            }
+
+
+            return $this->render('cas/manageQuota.html.twig', array("token" => $token, "company_config"=>$company_config));
+        } else {
+            return $this->redirectToRoute("login");
+        }
+    }
 
 }

@@ -424,44 +424,36 @@
                 subColor: '#666666'
             },
             staticZones: [
-                {strokeStyle: "rgb(255,0,0)", min: 2000, max: 3100},
-                {strokeStyle: "rgb(200,100,0)", min: 1500, max: 2000},
-                {strokeStyle: "rgb(150,150,0)", min: 1000, max: 1500},
-                {strokeStyle: "rgb(100,200,0)", min: 500, max: 1000},
-                {strokeStyle: "rgb(0,255,0)", min: 0, max: 500}
+                {strokeStyle: "rgb(255,0,0)", min: 40, max: 56},
+                {strokeStyle: "rgb(200,100,0)", min: 30, max: 40},
+                {strokeStyle: "rgb(150,150,0)", min: 20, max: 30},
+                {strokeStyle: "rgb(100,200,0)", min: 10, max: 20},
+                {strokeStyle: "rgb(0,255,0)", min: 0, max: 10}
             ],
 
         };
 
         var target1 = document.getElementById('foo1'); // your canvas element
         var gauge1 = new Gauge(target1).setOptions(opts); // create sexy gauge!
-        gauge1.maxValue = 3000; // set max gauge value
+        gauge1.maxValue = {{ company_config.getLateHoursAllowed()|default(0) }}; // set max gauge value
         gauge1.setMinValue(0);  // Prefer setter over gauge.minValue = 0
         gauge1.animationSpeed = 1; // set animation speed (32 is default value)
-        gauge1.set(215); // set actual value
+        gauge1.set(10); // set actual value
 
         var target2 = document.getElementById('foo2'); // your canvas element
         var gauge2 = new Gauge(target2).setOptions(opts); // create sexy gauge!
-        gauge2.maxValue = 3000; // set max gauge value
+        gauge2.maxValue = {{ company_config.getAbsentHoursAllowed()|default(0) }}; // set max gauge value
         gauge2.setMinValue(0);  // Prefer setter over gauge.minValue = 0
         gauge2.animationSpeed = 1; // set animation speed (32 is default value)
-        gauge2.set(215); // set actual value
+        gauge2.set(30); // set actual value
 
 
         var target3 = document.getElementById('c3'); // your canvas element
         var gauge3 = new Gauge(target3).setOptions(opts); // create sexy gauge!
-        gauge3.maxValue = 3000; // set max gauge value
+        gauge3.maxValue = {{ company_config.getDepartureHoursAllowed()|default(0) }}; // set max gauge value
         gauge3.setMinValue(0);  // Prefer setter over gauge.minValue = 0
         gauge3.animationSpeed = 1; // set animation speed (32 is default value)
-        gauge3.set(215); // set actual value
-
-        var target4 = document.getElementById('c4'); // your canvas element
-        var gauge4 = new Gauge(target4).setOptions(opts); // create sexy gauge!
-        gauge4.maxValue = 3000; // set max gauge value
-        gauge4.setMinValue(0);  // Prefer setter over gauge.minValue = 0
-        gauge4.animationSpeed = 1; // set animation speed (32 is default value)
-        gauge4.set(215); // set actual value
-
+        gauge3.set(45); // set actual value
     </script>
 
 {% endblock %}

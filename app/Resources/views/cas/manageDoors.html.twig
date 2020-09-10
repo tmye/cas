@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+{% block title %}C.A.S - Portes{% endblock %}
+{% block body %}
+
+    <!-- Modal for ajax loading -->
+    <div>
+        <!-- Modal for ajax loading -->
+        <div id="modal_loading" class="modal ajax_modals">
+            <div class="modal-content" style="width: 200px;display:table;position:relative;margin: 0 auto; top: calc(50% - 24px);">
+                <p class="center">
+                    <img class="mw-100 mh-100" src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="wrapper">
+
+            {% include('cas/partials/_sidebar.html.twig') %}
+
+            <div class="content-page">
+                <div class="content">
+
+                    <div class="col-lg-12">
+                        <h2>Gérer les portes</h2>
+                    </div>
+
+                    <div class="row card">
+                        <div class="col-lg-12 card-body">
+                            <div class="row">
+                                <div class="col l12">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

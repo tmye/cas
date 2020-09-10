@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+{% block title %}C.A.S - Portes{% endblock %}
+{% block body %}
+
+    <!-- Modal for ajax loading -->
+    <div>
+        <!-- Modal for ajax loading -->
+        <div id="modal_loading" class="modal ajax_modals">
+            <div class="modal-content" style="width: 200px;display:table;position:relative;margin: 0 auto; top: calc(50% - 24px);">
+                <p class="center">
+                    <img class="mw-100 mh-100" src="{{ asset('img/ajax_loaders/ajax-loading.gif') }}">
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="wrapper">
+
+            {% include('cas/partials/_sidebar.html.twig') %}
+
+            <div class="content-page">
+                <div class="content">
+
+                    <div class="col-lg-12">
+                        <h2>Gérer les quotas</h2>
+                    </div>
+
+                    <div class="row card">
+                        <div class="col-lg-12 card-body">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="row">
+
+                                        <div class="col-lg-12">
+                                            <form class="row" action="{{ path('manageQuota') }}" method="post">
+                                                <div class="col-lg-4 form-group">
+                                                    <label for="">Quata de retard</label>
+                                                    <input type="number" max="56" name="late" value="{{ company_config.getLateHoursAllowed() }}" class="form-control" id="" aria-describedby="">
+                                                    <small id="emailHelp" class="form-text text-muted">Quota d'heure de retard pour les 30 derniers jours </small>
+                                                </div>
+                                                <div class="col-lg-4 form-group">
+                                                    <label for="">Quata d'abscence</label>
+                                                    <input type="number" max="56" name="absent" value="{{ company_config.getAbsentHoursAllowed() }}" class="form-control" id="">
+                                                    <small id="emailHelp" class="form-text text-muted">Quota d'heure d'abscence pour les 30 derniers jours </small>
+                                                </div>
+                                                <div class="col-lg-4 form-group">
+                                                    <label for="">Quata de permission</label>
+                                                    <input type="number" max="56" name="departure" value="{{ company_config.getDepartureHoursAllowed() }}" class="form-control" id="">
+                                                    <small id="emailHelp" class="form-text text-muted">Quota d'heure de permission pour les 30 derniers jours </small>
+                                                </div>
+                                                <button type="submit" class="btn btn-success btn-lg">Valider</button>
+                                            </form>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}

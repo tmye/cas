@@ -21,7 +21,6 @@
     <div class="wrapper">
 
         {% include('cas/partials/_sidebar.html.twig') %}
-
         <div class="content-page">
             <div class="content">
                 <div class="col-lg-12"><h2 class="page-title"><span class="uil-cog"></span> Gestion globale du système</h2></div>
@@ -31,8 +30,7 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <ul class="collapsible" data-collapsible="accordion">
-                                    <li>
-                                        <div class="collapsible-header collapsible-header-title active"><h4>Gestion du système</h4></div>
+                                    <li class="">
                                         <div class="collapsible-body" style="padding-bottom: 0px">
                                             <div class="row">
                                                 <form class="col-lg-12" id="main_form">
@@ -96,6 +94,7 @@
                                                                 </a>
                                                             </div>
                                                         </div>
+
                                                         <div class="row list-group list-group-horizontal">
 
                                                             <div class="col-lg-6 bg-primary text-center text-white text-center list-group-item">
@@ -115,6 +114,28 @@
                                                                 </a>
                                                             </div>
                                                         </div>
+
+
+                                                        <div class="row list-group list-group-horizontal">
+                                                            <div class="col-lg-6 text-white text-center bg-primary list-group-item">
+                                                                <a href="{{ path("manageQuota") }}" style="color: inherit">
+                                                                    <p class="manageActions red">
+                                                                        <i class="fa fa-badge-percent fa-3x left" style="position: relative;top: 2px"></i>
+                                                                        <h5>Gérer les quota</h5>
+                                                                    </p>
+                                                                </a>
+                                                            </div>
+                                                            <div class="col-lg-6 text-white text-center bg-primary list-group-item">
+                                                                <a href="{{ path("manageDoors") }}" style="color: inherit">
+                                                                    <p class="manageActions red">
+                                                                        <span class="fa fa-door-open fa-3x left" style="position: relative;top: 2px"></span>
+                                                                        <h5>Gérer l'access aux portes</h5>
+                                                                    </p>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+
+
                                                         <div class="row list-group list-group-horizontal">
                                                             <div class="col-lg-3 text-white text-center bg-danger list-group-item">
                                                                 <a href="{{ path("manageDeleteData") }}" style="color: inherit">
@@ -141,6 +162,9 @@
                                                                 </a>
                                                             </div>
                                                         </div>
+
+
+
                                                         <div class="fixed-action-btn" >
                                                           <a class="btn btn-circle btn-md btn-success float tooltipped" id="btnSyncAll" data-position="top" data-tooltip="Tout mettre à jour">
                                                             <span class="text-white fa fa-sync fa-2x"></span>
