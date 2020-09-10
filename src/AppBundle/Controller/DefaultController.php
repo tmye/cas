@@ -1617,8 +1617,6 @@ $done = false;
      */
     public function editProfileAction(Request $request)
     {
-        dump($this->getUser());
-
         if ($this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             $expiry_service = $this->container->get('app_bundle_expired');
             if ($expiry_service->hasExpired()) {
