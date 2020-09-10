@@ -18,19 +18,6 @@ use Symfony\Component\HttpFoundation\Response;
 class HomeStatsApiController extends Controller
 {
     // fonction qui renvoi la date du premier jour de la semaine
-    private function jourSemaine($date){
-        $time = strtotime($date."00:00:00");
-        $j = date('N',$time);
-        $dayToSubstract = 0;
-        if($j > 1){
-            $dayToSubstract = $j-1;
-        }
-        $timeToSubstract = 60*60*24*$dayToSubstract;
-        $timeAfterSubstract = $time - $timeToSubstract;
-        $dateAfterSubstract = date('d-m-Y',$timeAfterSubstract);
-
-        return array($j,$dayToSubstract,$dateAfterSubstract);
-    }
 
     private function lastMonth($date){
 
@@ -114,7 +101,8 @@ class HomeStatsApiController extends Controller
         $timeTo = strtotime($jour." 00:00:00");
 
         // On initialise le $nowTime par $timeFrom
-        $nowTime = $timeFrom;
+        $nowTime = strtotime($tab[2]);
+
 
         // Les variables
         $absences=0;
@@ -145,7 +133,9 @@ class HomeStatsApiController extends Controller
         // On boucle sur les jours
         for ($cpt=0;$cpt<30;$cpt++){
             $theDay = date('N',$nowTime);
+
             $theDay = $this->dateDayNameFrench($theDay);
+
             foreach ($listEmp as $emp){
 
                 $tempsPerdusRetards=0;
@@ -282,6 +272,7 @@ class HomeStatsApiController extends Controller
             "pauseStats"=>$tabDepartsPause,
             "finStats"=> $tabDeparts
         ];
+
 
         return new JsonResponse($donnees);
     }
