@@ -41,48 +41,79 @@
 
                     <div class="row">
                         <div class="col-lg-4">
-                            <div class="card">
+                            <div class="card" data-toggle="modal" data-target="#modal-retard">
                                 <h5 class="text-center">Retards</h5>
                                 <div class="card-body">
                                     <canvas id="foo1"></canvas>
                                 </div>
                             </div>
                         </div>
+                        <div class="modal fade" id="modal-retard" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Detail des retards</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-footer">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="col-lg-4">
-                            <div class="card">
+                            <div class="card" data-toggle="modal" data-target="#modal-abscence">
                                 <h5 class="text-center">Abscences</h5>
                                 <div class="card-body">
                                     <canvas id="foo2"></canvas>
                                 </div>
                             </div>
                         </div>
+                        <div class="modal fade" id="modal-abscence" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Detail des abcences</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-footer">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="col-lg-4">
-                            <div class="card">
+                            <div class="card" data-toggle="modal" data-target="#modal-permission">
                                 <h5 class="text-center">Permissions</h5>
                                 <div class="card-body">
                                     <canvas id="c3"></canvas>
                                 </div>
                             </div>
                         </div>
+                        <div class="modal fade" id="modal-permission" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Detail des permissions</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-footer">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-lg-12">
-
-{#                        <a href="{{ path('historique_brute') }}" class="badge" style="padding: 2px 10px">#}
-{#                            <h4>Aujourd'hui</h4>#}
-{#                        </a>#}
-
-                        <!-- Petites sections carrées -->
-
-
-                        <!-- Section du classement des tops -->
-
-
-
                         <div class="fixed-action-btn" style="margin-bottom: 30px">
                             {% if is_granted('ROLE_ADMIN') %}
                                 <a href="{{ path("manage") }}" class="text-center btn-circle btn-md btn-success btn-lg float" id="btnVerify" data-position="top" data-toggle="Vérifier les mises à jours">
@@ -153,7 +184,6 @@
                                 </div>
                             </div>
                         </div>
-
 
                         <div class="row">
                             <div class="col-lg-12">
@@ -390,7 +420,14 @@
                 subLength: 0.5,
                 subWidth: 0.6,
                 subColor: '#666666'
-            }
+            },
+            staticZones: [
+                {strokeStyle: "rgb(255,0,0)", min: 2000, max: 3100},
+                {strokeStyle: "rgb(200,100,0)", min: 1500, max: 2000},
+                {strokeStyle: "rgb(150,150,0)", min: 1000, max: 1500},
+                {strokeStyle: "rgb(100,200,0)", min: 500, max: 1000},
+                {strokeStyle: "rgb(0,255,0)", min: 0, max: 500}
+            ],
 
         };
 
