@@ -1,12 +1,78 @@
+<div class="bg-transparent">
 
+    <div class="card bg-primary text-white row">
 
-<div>
-    <div style="position: absolute;right: 30px;">
-        {%  if app.session.get('companyLogo') is defined and app.session.get('companyLogo') is not null %}
-            <img src="{{ asset("company_images/"~app.session.get('companyLogo')) }}" style="display:inline-block;vertical-align:middle;height: 60px;width: auto;border-radius: 0%">
-        {% endif %}
+        <div class="col-lg-12">
+            <h1 class="text-center"> {{ app.session.get('companyName') }} </h1>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-lg-4 text-center">
+                <i class="fa fa-bullseye-arrow fa-5x"></i>
+                <h2 class="">Mission</h2>
+                <h5>
+                    {% if ci is defined and ci is not null %}
+                        {{ ci.mission }}
+                    {% else %}
+                    {% endif %}
+                </h5>
+            </div>
+            <div class="col-lg-4 text-center">
+                <i class="fa fa-binoculars fa-5x"></i>
+                <h2 class="">Vision</h2>
+                <h5>
+                    {% if ci is defined and ci is not null %}
+                        {{ ci.vision }}
+                    {% else %}
+                    {% endif %}
+                </h5>
+            </div>
+            <div class="col-lg-4 text-center">
+                <i class="fa fa-hand-receiving fa-5x"></i>
+                <h2 class="">Valeurs</h2>
+            </div>
+        </div>
+
+        <div class="row text-center">
+            <div class="col-lg-4 ">
+                <p>
+                    {% if employes is defined %}
+                        {% set nbreEmployes = 0 %}
+                        {% set employeesFingerprint = 0 %}
+                        {% for emp in employes %}
+                            {% set nbreEmployes = nbreEmployes+1 %}
+                            {% if emp.fingerprints is not null %}
+                                {% set employeesFingerprint = employeesFingerprint + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                        {{ nbreEmployes }} Employés ({{ employeesFingerprint }} ont des empreintes)
+
+                    {% else %}
+                    {% endif %}
+                </p>
+            </div>
+            <div class="col-lg-4">
+                <p>
+                    {% if ci is defined and ci is not null %}
+                        {{ ci.director }}
+                    {% else %}
+                    {% endif %}
+                </p>
+            </div>
+            <div class="col-lg-4">
+                <p>
+                    {% if ci is defined and ci is not null %}
+                        {{ ci.headoffice }}
+                    {% else %}
+                    {% endif %}
+                </p>
+            </div>
+
+        </div>
+
     </div>
 
+{#
     <table class="table table-bordered table-centered"  style="border: none;">
         <tr>
             <td style="min-width:180px"><span style="color: black;font-weight: bold;">Nom de la societé</span></td>
@@ -93,6 +159,7 @@
         </tr>
 
     </table>
+#}
 
 
 

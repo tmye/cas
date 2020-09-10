@@ -5,7 +5,7 @@
         <div class="leftbar-user">
 
 
-            <a href="javascript: void(0);">
+            <a href="{{ path("editProfile") }}">
                 {% if app.user.picture is defined and app.user.picture is not null %}
                     <img src="{{ asset('/')~user_profile_pictures~'/'~app.user.picture }}" alt="user-image" height="42" class="rounded-circle shadow-sm">
                 {% else %}
@@ -24,7 +24,7 @@
     <ul class="metismenu side-nav">
 
         <li class="side-nav-item">
-            <a href="javascript: void(0);" class="side-nav-link">
+            <a href="/" class="side-nav-link">
                 <i class="uil-dashboard"></i>
                 <span> Tabeau de board </span>
             </a>
