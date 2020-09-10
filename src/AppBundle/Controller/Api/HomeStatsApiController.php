@@ -28,7 +28,34 @@ class HomeStatsApiController extends Controller
         $timeToSubstract = 60*60*24*$dayToSubstract;
         $timeAfterSubstract = $time - $timeToSubstract;
         $dateAfterSubstract = date('d-m-Y',$timeAfterSubstract);
+
         return array($j,$dayToSubstract,$dateAfterSubstract);
+    }
+
+    private function lastMonth($date){
+
+        $today_date = date($date);
+
+        $month_ago_timestamp = strtotime($today_date .'- 30 days');
+
+        $month_ago = date('Y-m-d', $month_ago_timestamp);
+
+        $time = strtotime($date."00:00:00");
+
+        $j = date('N',$time);
+
+        $dayToSubstract = 0;
+
+        if($j > 1){
+            $dayToSubstract = $j-1;
+        }
+
+        $timeToSubstract = 730*$dayToSubstract;
+        $timeAfterSubstract = $time - $timeToSubstract;
+
+        $data = array($j,$dayToSubstract,$month_ago);
+
+        return $data;
     }
 
     /**
@@ -70,16 +97,20 @@ class HomeStatsApiController extends Controller
 
     /**
      * @Rest\Get(
-     *     path = "/api/v1/home_stats",
+     *     path = "/api/v1/home_stats/{date}",
      *     name = "api_home_stats",
      * )
      */
-    public function homeStatsAction(Request $request)
+    public function homeStatsAction(Request $request, $date=null)
     {
-        $jour = date("Y").'-'.date("m").'-'.date("d");
-        $tab = $this->jourSemaine($jour);
+        if(!$date){
+            $jour = date("Y").'-'.date("m").'-'.date("d");
+            $date = $jour;
+        }
+
+        $tab = $this->lastMonth($date);
         //echo "<br><br> Jour : $tab[0] <br><br>";
-        $timeFrom = strtotime($tab[2]."00:00:00");
+        $timeFrom = strtotime($date."00:00:00");
         $timeTo = strtotime($jour." 00:00:00");
 
         // On initialise le $nowTime par $timeFrom
@@ -101,9 +132,6 @@ class HomeStatsApiController extends Controller
         $tabDeparts = array();
         $tabClassementRetard = array();
         $tabClassementDepart = array();
-        //$temp = [];
-        //$temp["retard"] = [];
-        //$temp["depart"] = [];
 
         // On récupère les clockinRecord pour une fois
         $cr = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord");
@@ -115,7 +143,7 @@ class HomeStatsApiController extends Controller
         // On récupère tous les employés
         $listEmp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeSafe();
         // On boucle sur les jours
-        for ($cpt=0;$cpt<$tab[0];$cpt++){
+        for ($cpt=0;$cpt<30;$cpt++){
             $theDay = date('N',$nowTime);
             $theDay = $this->dateDayNameFrench($theDay);
             foreach ($listEmp as $emp){
