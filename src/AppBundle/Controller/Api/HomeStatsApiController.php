@@ -12,7 +12,7 @@ use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
+use Symfony\Component\HttpFoundation\Session\Session;
 
 
 class HomeStatsApiController extends Controller
@@ -192,7 +192,7 @@ class HomeStatsApiController extends Controller
                         $absences++;
                     }else{
                         $retardDiff = $cr->retard($emp,$nowTime,$interval,$heureNormaleArrive);
-                        if ($retardDiff[0] != null) {
+                        if ($retardDiff && $retardDiff[0] != null) {
                             $retards++;
                             $sommeRetards += $retardDiff[0];
                             $tempsPerdusRetards += $retardDiff[0] / (60);
@@ -206,7 +206,7 @@ class HomeStatsApiController extends Controller
                             }
                         }
                         $retardPauseDiff = $cr->retardPause($emp,$nowTime,$interval_pause,$heureNormaleArrivePause);
-                        if ($retardPauseDiff[0] != null) {
+                        if ($retardPauseDiff && $retardPauseDiff[0] != null) {
                             $retards++;
                             $sommeRetards += $retardPauseDiff[0];
                             $tempsPerdusRetards += $retardPauseDiff[0] / (60);
@@ -220,7 +220,7 @@ class HomeStatsApiController extends Controller
                             }
                         }
                         $departDiff = $cr->departPremature($emp, $nowTime, $interval,$heureNormaleDepart);
-                        if ($departDiff[0] != null) {
+                        if ($departDiff && $departDiff[0] != null) {
                             $departs++;
                             $sommeDeparts += $departDiff[0];
                             $tempsPerdusDeparts += ($departDiff[0]) / (60);
@@ -234,7 +234,7 @@ class HomeStatsApiController extends Controller
                             }
                         }
                         $departPauseDiff = $cr->departPausePremature($emp, $nowTime, $interval_pause,$heureNormaleDepartPause);
-                        if ($departPauseDiff[0] != null) {
+                        if ($departPauseDiff && $departPauseDiff[0] != null) {
                             $i++;
                             $nowDate = date('d/m/Y', $nowTime);
                             $departsPause++;
@@ -272,7 +272,20 @@ class HomeStatsApiController extends Controller
             "pauseStats"=>$tabDepartsPause,
             "finStats"=> $tabDeparts
         ];
+        $retard_employes = 0;
+        $depart_employes = 0;
+        foreach ($donnees['classementRetard'] as $retard_employe){
 
+            $retard_employes += $retard_employe['cumul'];
+        }
+
+        foreach ($donnees['classementDepart'] as $retard_employe){
+
+            $depart_employes += $retard_employe['cumul'];
+        }
+        $s = new Session(); $s->start();
+
+        array_push($donnees, ['total_cumul_retard'=>$retard_employes, 'total_cumul_depart'=>$depart_employes]);
 
         return new JsonResponse($donnees);
     }

@@ -14,6 +14,7 @@ use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class HomeStatsController extends Controller
 {
@@ -170,7 +171,7 @@ class HomeStatsController extends Controller
                         $absences++;
                     }else{
                         $retardDiff = $cr->retard($emp,$nowTime,$interval,$heureNormaleArrive);
-                        if ($retardDiff[0] != null) {
+                        if ($retardDiff and ($retardDiff[0] != null)) {
                             $retards++;
                             $sommeRetards += $retardDiff[0];
                             $tempsPerdusRetards += $retardDiff[0] / (60);
@@ -184,7 +185,7 @@ class HomeStatsController extends Controller
                             }
                         }
                         $retardPauseDiff = $cr->retardPause($emp,$nowTime,$interval_pause,$heureNormaleArrivePause);
-                        if ($retardPauseDiff[0] != null) {
+                        if ($retardPauseDiff && $retardPauseDiff[0] != null) {
                             $retards++;
                             $sommeRetards += $retardPauseDiff[0];
                             $tempsPerdusRetards += $retardPauseDiff[0] / (60);
@@ -198,7 +199,7 @@ class HomeStatsController extends Controller
                             }
                         }
                         $departDiff = $cr->departPremature($emp, $nowTime, $interval,$heureNormaleDepart);
-                        if ($departDiff[0] != null) {
+                        if ($departDiff && $departDiff[0] != null) {
                             $departs++;
                             $sommeDeparts += $departDiff[0];
                             $tempsPerdusDeparts += ($departDiff[0]) / (60);
@@ -212,7 +213,7 @@ class HomeStatsController extends Controller
                             }
                         }
                         $departPauseDiff = $cr->departPausePremature($emp, $nowTime, $interval_pause,$heureNormaleDepartPause);
-                        if ($departPauseDiff[0] != null) {
+                        if ($departPauseDiff && $departPauseDiff[0] != null) {
                             $i++;
                             $nowDate = date('d/m/Y', $nowTime);
                             $departsPause++;
@@ -247,6 +248,7 @@ class HomeStatsController extends Controller
 
         return new JsonResponse($donnees);
     }
+
 
     private function permissionSelect(){
         $i=0;
@@ -292,4 +294,239 @@ class HomeStatsController extends Controller
         }
         return $tableau;
     }
+
+
+    private function lastMonth($date){
+
+        $today_date = date($date);
+
+        $month_ago_timestamp = strtotime($today_date .'- 30 days');
+
+        $month_ago = date('Y-m-d', $month_ago_timestamp);
+
+        $time = strtotime($date."00:00:00");
+
+        $j = date('N',$time);
+
+        $dayToSubstract = 0;
+
+        if($j > 1){
+            $dayToSubstract = $j-1;
+        }
+
+        $timeToSubstract = 730*$dayToSubstract;
+        $timeAfterSubstract = $time - $timeToSubstract;
+
+        $data = array($j,$dayToSubstract,$month_ago);
+
+        return $data;
+    }
+
+    /**
+     *
+     * @Route("/homeMonthStats",name="homeMonthStats")
+     *
+     */
+    public function homeMonthStatsAction(Request $request, $date=null)
+    {
+        if(!$date){
+            $jour = date("Y").'-'.date("m").'-'.date("d");
+            $date = $jour;
+        }
+
+        $tab = $this->lastMonth($date);
+        //echo "<br><br> Jour : $tab[0] <br><br>";
+        $timeFrom = strtotime($date."00:00:00");
+        $timeTo = strtotime($jour." 00:00:00");
+
+        // On initialise le $nowTime par $timeFrom
+        $nowTime = strtotime($tab[2]);
+
+
+        // Les variables
+        $absences=0;
+        $retards = 0;
+
+        $departs = 0;
+        $departsPause = 0;
+
+        $sommeAbsences =0;
+        $sommeRetards =0;
+        $sommeDeparts =0;
+        $sommeDepartsPause =0;
+
+        $tabDepartsPause = array();
+        $tabDeparts = array();
+        $tabClassementRetard = array();
+        $tabClassementDepart = array();
+
+        // On récupère les clockinRecord pour une fois
+        $cr = $this->getDoctrine()->getManager()->getRepository("AppBundle:ClockinRecord");
+        $clockinR = $cr->findAll();
+        // On boucle sur les jours sélectionnés
+        $i=0;
+        $interval = 3000; // 30 Minuites
+
+        // On récupère tous les employés
+        $listEmp = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->employeeSafe();
+        // On boucle sur les jours
+        for ($cpt=0;$cpt<30;$cpt++){
+            $theDay = date('N',$nowTime);
+
+            $theDay = $this->dateDayNameFrench($theDay);
+
+            foreach ($listEmp as $emp){
+
+                $tempsPerdusRetards=0;
+                $tempsPerdusDeparts=0;
+
+                $empWH = json_decode($emp->getWorkingHour()->getWorkingHour(),true);
+                $type = $empWH[$theDay][0]["type"];
+                $name = $emp->getSurname()." ".$emp->getLastName();
+                $picture = $emp->getPicture();
+                $dep = $emp->getDepartement()->getName();
+
+                // Pour le calcul d'un depart prématuré de pause,Calculons l'intervalle
+                $heureDebutNormal = $empWH[$theDay][0]["beginHour"];
+                $heureFinNormal = $empWH[$theDay][0]["endHour"];
+                $heureDebutNormalPause = $empWH[$theDay][0]["pauseBeginHour"];
+                $heureFinNormalPause = $empWH[$theDay][0]["pauseEndHour"];
+
+                $beginHourExploded = explode(":",$heureDebutNormal);
+                $endHourExploded = explode(":",$heureFinNormal);
+                $pauseBeginHourExploded = explode(":",$heureDebutNormalPause);
+                $pauseEndHourExploded = explode(":",$heureFinNormalPause);
+
+                $interval = ($emp->getWorkingHour()->getTolerance())*60;
+
+
+                if(sizeof($pauseBeginHourExploded)>1){
+                    $pauseBeginHourInMinutes = (((int)$pauseBeginHourExploded[0])*60)+((int)$pauseBeginHourExploded[1]);
+                    $pauseEndHourInMinutes = (((int)$pauseEndHourExploded[0])*60)+((int)$pauseEndHourExploded[1]);
+
+                    $interval_pause = (($pauseEndHourInMinutes - $pauseBeginHourInMinutes)/2)*60;
+                    $heureNormaleArrivePause = $pauseEndHourInMinutes*60;
+                    $heureNormaleDepartPause = $pauseBeginHourInMinutes*60;
+                }else{
+                    $interval_pause = 0;
+                    $heureNormaleArrivePause = 0;
+                    $heureNormaleDepartPause = 0;
+                }
+
+                if(sizeof($beginHourExploded)>1){
+                    $beginHourInMinutes = (((int)$beginHourExploded[0])*60)+((int)$beginHourExploded[1]);
+                    $endHourInMinutes = (((int)$endHourExploded[0])*60)+((int)$endHourExploded[1]);
+                }else{
+                    $heureNormaleArrive = 0;
+                    $heureNormaleDepart = 0;
+                }
+                $heureNormaleArrive = $beginHourInMinutes*60;
+                $heureNormaleDepart = $endHourInMinutes*60;
+
+                //print_r(date("d-m-Y H:i:s",$nowTime+$heureNormaleArrive+$interval)."\n");
+
+                if ($type == "1" || $type == 1 || $type == "2" || $type == 2 || $type == "4" || $type == 4) {
+
+                    if(!$cr->present($emp,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
+                        $absences++;
+                    }else{
+                        $retardDiff = $cr->retard($emp,$nowTime,$interval,$heureNormaleArrive);
+                        if ($retardDiff && $retardDiff[0] != null) {
+                            $retards++;
+                            $sommeRetards += $retardDiff[0];
+                            $tempsPerdusRetards += $retardDiff[0] / (60);
+
+                            if ($this->exist($tabClassementRetard, $emp->getId())) {
+                                $lastNumber = $tabClassementRetard[$emp->getId()]["nombre"];
+                                $lastCumul = $tabClassementRetard[$emp->getId()]["cumul"];
+                                $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusRetards,"picture"=>$picture);
+                            } else {
+                                $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusRetards,"picture"=>$picture);
+                            }
+                        }
+                        $retardPauseDiff = $cr->retardPause($emp,$nowTime,$interval_pause,$heureNormaleArrivePause);
+                        if ($retardPauseDiff && $retardPauseDiff[0] != null) {
+                            $retards++;
+                            $sommeRetards += $retardPauseDiff[0];
+                            $tempsPerdusRetards += $retardPauseDiff[0] / (60);
+
+                            if ($this->exist($tabClassementRetard, $emp->getId())) {
+                                $lastNumber = $tabClassementRetard[$emp->getId()]["nombre"];
+                                $lastCumul = $tabClassementRetard[$emp->getId()]["cumul"];
+                                $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusRetards,"picture"=>$picture);
+                            } else {
+                                $tabClassementRetard[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusRetards,"picture"=>$picture);
+                            }
+                        }
+                        $departDiff = $cr->departPremature($emp, $nowTime, $interval,$heureNormaleDepart);
+                        if ($departDiff && $departDiff[0] != null) {
+                            $departs++;
+                            $sommeDeparts += $departDiff[0];
+                            $tempsPerdusDeparts += ($departDiff[0]) / (60);
+
+                            if ($this->exist($tabClassementDepart, $emp->getId())) {
+                                $lastNumber = $tabClassementDepart[$emp->getId()]["nombre"];
+                                $lastCumul = $tabClassementDepart[$emp->getId()]["cumul"];
+                                $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusDeparts,"picture"=>$picture);
+                            } else {
+                                $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusDeparts,"picture"=>$picture);
+                            }
+                        }
+                        $departPauseDiff = $cr->departPausePremature($emp, $nowTime, $interval_pause,$heureNormaleDepartPause);
+                        if ($departPauseDiff && $departPauseDiff[0] != null) {
+                            $i++;
+                            $nowDate = date('d/m/Y', $nowTime);
+                            $departsPause++;
+                            $departs++;
+                            $sommeDepartsPause += $departPauseDiff[0];
+                            $tempsPerdusDeparts += ($departPauseDiff[0]) / (60);
+
+                            if ($this->exist($tabClassementDepart, $emp->getId())) {
+                                $lastNumber = $tabClassementDepart[$emp->getId()]["nombre"];
+                                $lastCumul = $tabClassementDepart[$emp->getId()]["cumul"];
+                                $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => $lastNumber + 1, "cumul" => $lastCumul+$tempsPerdusDeparts,"picture"=>$picture);
+                            } else {
+                                $tabClassementDepart[$emp->getId()] = array("name" => $name, "dep" => $dep, "nombre" => 1, "cumul" => $tempsPerdusDeparts,"picture"=>$picture);
+                            }
+                        }
+                    }
+                }elseif ($type == 3 || $type == "3"){
+                    if(!$cr->present($emp,$nowTime,$nowTime+$heureNormaleArrive-$interval,$nowTime+$heureNormaleArrive+$interval,$nowTime+$heureNormaleDepartPause-$interval_pause,$nowTime+$heureNormaleDepartPause+$interval_pause,$nowTime+$heureNormaleArrivePause-$interval_pause,$nowTime+$heureNormaleArrivePause+$interval_pause,$nowTime+$heureNormaleDepart-$interval,$nowTime+$heureNormaleDepart+$interval)){
+                        $absences++;
+                    }
+                }
+            }
+            // On incrémente la date d'un jour
+            $nowTime = $nowTime+86400;
+        }
+        $permissionsData = $this->permissionSelect();
+
+        $donnees = [
+            "classementRetard"=>$tabClassementRetard,
+            "classementDepart"=>$tabClassementDepart,
+            "permissions"=>$permissionsData,
+            "absences"=>$absences,
+            "retards"=>$retards,
+            "departs"=>$departs,
+            "pauseStats"=>$tabDepartsPause,
+            "finStats"=> $tabDeparts
+        ];
+        $retard_employes = 0;
+        $depart_employes = 0;
+        foreach ($donnees['classementRetard'] as $retard_employe){
+
+            $retard_employes += $retard_employe['cumul'];
+        }
+
+        foreach ($donnees['classementDepart'] as $retard_employe){
+
+            $depart_employes += $retard_employe['cumul'];
+        }
+
+        array_push($donnees, ['total_cumul_retard'=>$retard_employes, 'total_cumul_depart'=>$depart_employes]);
+
+        return new JsonResponse($donnees);
+    }
+
+
 }

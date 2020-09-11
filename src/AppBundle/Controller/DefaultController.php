@@ -630,11 +630,15 @@ class DefaultController extends StatsController
             } else {
                 $ci = null;
             }
-            $company_config = $this->getDoctrine()->getManager()->getRepository('AppBundle:CompanyConfig')->findBy([
+            $company_configs = $this->getDoctrine()->getManager()->getRepository('AppBundle:CompanyConfig')->findBy([
                 'companyName'=> $session->get('companyName'),
-            ])[0];
+            ]);
+
+            $company_config = count($company_configs) >0  ? $company_configs[0] : null;
 
             $employes = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
+
+
             return $this->render('cas/index.html.twig', array(
                 'ci' => $ci,
                 'company_config' => $company_config,
@@ -1957,9 +1961,11 @@ $done = false;
 
             $session = new Session();
 
-            $company_config = $em->getRepository('AppBundle:CompanyConfig')->findBy([
+            $company_configs = $this->getDoctrine()->getManager()->getRepository('AppBundle:CompanyConfig')->findBy([
                 'companyName'=> $session->get('companyName'),
-            ])[0];
+            ]);
+
+            $company_config = count($company_configs) >0  ? $company_configs[0] : null;
 
             if($company_config){
 
@@ -1978,7 +1984,6 @@ $done = false;
                 $em->flush();
 
             }
-
 
             return $this->render('cas/manageQuota.html.twig', array("token" => $token, "company_config"=>$company_config));
         } else {

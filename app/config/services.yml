@@ -7,5 +7,7 @@ services:
     app_bundle_expired:
         class: AppBundle\MyServices\Expiry
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    home_stats_controller:
+        class: AppBundle\Controller\Api\HomeStatsApiController
     stats_controller:
         class: AppBundle\Controller\StatsController

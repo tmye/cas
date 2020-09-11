@@ -42,7 +42,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-lg-4">
+                        <div class="col-lg-4 col-md-12" >
                             <div class="card" data-toggle="modal" data-target="#modal-retard">
                                 <h5 class="text-center">Retards</h5>
                                 <div class="card-body">
@@ -59,17 +59,46 @@
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
+                                    <div class="modal-body">
+                                        <div id="modal-retard-content"></div>
+                                    </div>
                                     <div class="modal-footer">
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-lg-4">
-                            <div class="card" data-toggle="modal" data-target="#modal-abscence">
-                                <h5 class="text-center">Abscences</h5>
+                        <div class="col-lg-4 col-md-12">
+                            <div class="card" data-toggle="modal" data-target="#modal-depart">
+                                <h5 class="text-center">Départ</h5>
                                 <div class="card-body">
                                     <canvas id="foo2"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="modal-depart" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Detail des retards</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div id="modal-depart-content"></div>
+                                    </div>
+                                    <div class="modal-footer">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-12">
+                            <div class="card" data-toggle="modal" data-target="#modal-depart">
+                                <h5 class="text-center">Abscence</h5>
+                                <div class="card-body">
+                                    <canvas id="foo3"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -77,10 +106,13 @@
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Detail des abcences</h5>
+                                        <h5 class="modal-title" id="exampleModalLabel">Detail des retards</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div id="modal-depart-content"></div>
                                     </div>
                                     <div class="modal-footer">
                                     </div>
@@ -88,28 +120,6 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-4">
-                            <div class="card" data-toggle="modal" data-target="#modal-permission">
-                                <h5 class="text-center">Permissions</h5>
-                                <div class="card-body">
-                                    <canvas id="c3"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal fade" id="modal-permission" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Detail des permissions</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-footer">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
                     </div>
                 </div>
@@ -258,13 +268,17 @@
 
                 // First of all we must convert the json object to an array
                 var tabR = [];
+                var cumulRetards = 0;
                 $.each(data.classementRetard,function (arrayID) {
                     tabR.push([data.classementRetard[arrayID]["name"],data.classementRetard[arrayID]["cumul"],data.classementRetard[arrayID]["dep"],data.classementRetard[arrayID]["picture"]]);
                 });
+                var cumulRetards = tabR[1];
                 var tabD = [];
                 $.each(data.classementDepart,function (arrayID) {
                     tabD.push([data.classementDepart[arrayID]["name"],data.classementDepart[arrayID]["cumul"],data.classementDepart[arrayID]["dep"],data.classementDepart[arrayID]["picture"]]);
                 });
+
+                var cumulDeparts = tabD[1];
 
                 // Sorting the data to obtain just three entries
                 var tempTab = [];
@@ -392,68 +406,123 @@
                 console.log(msg);
             }
         });
+
+        var cumul_retard = 1;
+        var cumul_depart = 1;
+        $.ajax({
+            type: 'POST',
+            url: "{{ path('homeMonthStats') }}",
+            success: function (data) {
+                cumuls = data[0];
+                var cumul_retard = cumuls['total_cumul_retard'];
+                var cumul_depart = cumuls['total_cumul_depart'];
+                var cumul_abscence = data['absences'];
+
+                var opts = {
+                    angle: 0.04, // The span of the gauge arc
+                    lineWidth: 0.4, // The line thickness
+                    radiusScale: 1, // Relative radius
+                    pointer: {
+                        length: 0.73, // // Relative to gauge radius
+                        strokeWidth: 0.024, // The thickness
+                        color: '#000000' // Fill color
+                    },
+                    limitMax: false,     // If false, max value increases automatically if value > maxValue
+                    limitMin: false,     // If true, the min value of the gauge will be fixed
+
+                    generateGradient: true,
+                    highDpiSupport: true,     // High resolution support
+                    // renderTicks is Optional
+                };
+
+                var target1 = document.getElementById('foo1'); // your canvas element
+                var gauge1 = new Gauge(target1).setOptions(opts); // create sexy gauge!
+                gauge1.setOptions(
+                    {
+                        staticZones: [
+                            {strokeStyle: "rgb(255,0,0)", min: {{ company_config? company_config.getLateHoursAllowed()/2 : 6 }}, max: {{ company_config? company_config.getLateHoursAllowed() : 7 }} },
+                            {strokeStyle: "rgb(200,100,0)", min: {{ company_config? company_config.getLateHoursAllowed()/3 : 4 }}, max: {{ company_config? company_config.getLateHoursAllowed()/2 : 5 }} },
+                            {strokeStyle: "rgb(100,200,0)", min: {{ company_config? company_config.getLateHoursAllowed()/4 : 2 }}, max: {{ company_config? company_config.getLateHoursAllowed()/3 : 3 }} },
+                            {strokeStyle: "rgb(0,255,0)", min: 0, max: {{ company_config? company_config.getLateHoursAllowed()/4 : 1 }} }
+                        ],
+                    }
+                )
+                gauge1.maxValue = {{ company_config? company_config.getLateHoursAllowed()|default(0) }}; // set max gauge value
+                gauge1.setMinValue(0);  // Prefer setter over gauge.minValue = 0
+                gauge1.animationSpeed = 1; // set animation speed (32 is default value)
+                if((cumul_retard/60) > {{ company_config? company_config.getLateHoursAllowed() }} ){
+                    gauge1.set( {{company_config.getLateHoursAllowed()}} );
+                }else{
+                    gauge1.set(cumul_retard/60); // set actual value
+
+                }
+                $("#modal-retard-content").html(cumul_retard/60)
+
+                console.log("cumul retard here ", cumul_retard/60);
+
+                var target2 = document.getElementById('foo2'); // your canvas element
+                var gauge2 = new Gauge(target2).setOptions(opts); // create sexy gauge!
+                gauge2.maxValue = {{ company_config? company_config.getDepartureHoursAllowed() |default(0) }}; // set max gauge value
+                gauge2.setMinValue(0);  // Prefer setter over gauge.minValue = 0
+                gauge2.animationSpeed = 1; // set animation speed (32 is default value)
+
+                gauge2.setOptions(
+                    {
+                        staticZones: [
+                            {strokeStyle: "rgb(255,0,0)", min: {{ company_config? company_config.getDepartureHoursAllowed()/2 : 6 }}, max: {{ company_config? company_config.getDepartureHoursAllowed() : 7 }} },
+                            {strokeStyle: "rgb(200,100,0)", min: {{ company_config? company_config.getDepartureHoursAllowed()/3 : 4 }}, max: {{ company_config? company_config.getDepartureHoursAllowed()/2 : 5 }} },
+                            {strokeStyle: "rgb(100,200,0)", min: {{ company_config? company_config.getDepartureHoursAllowed()/4 : 2 }}, max: {{ company_config? company_config.getDepartureHoursAllowed()/3 : 3 }} },
+                            {strokeStyle: "rgb(0,255,0)", min: 0, max: {{ company_config? company_config.getDepartureHoursAllowed()/4 : 1 }} }
+                        ],
+                    }
+                )
+
+                if((cumul_depart/60) > {{ company_config? company_config.getLateHoursAllowed() }} ){
+                    gauge2.set( {{company_config.getLateHoursAllowed()}} );
+                }else{
+                    gauge2.set(cumul_depart/60); // set actual value
+                }
+                $("#modal-depart-content").html(cumul_depart/60)
+                console.log("cumul depart here ", cumul_depart/60);
+
+
+                var target3 = document.getElementById('foo3'); // your canvas element
+                var gauge3 = new Gauge(target3).setOptions(opts); // create sexy gauge!
+                gauge3.maxValue = {{ company_config? company_config.getAbsentHoursAllowed() |default(0) }}; // set max gauge value
+                gauge3.setMinValue(0);  // Prefer setter over gauge.minValue = 0
+                gauge3.animationSpeed = 1; // set animation speed (32 is default value)
+
+                gauge3.setOptions(
+                    {
+                        staticZones: [
+                            {strokeStyle: "rgb(255,0,0)", min: {{ company_config? company_config.getAbsentHoursAllowed()/2 : 6 }}, max: {{ company_config? company_config.getAbsentHoursAllowed() : 7 }} },
+                            {strokeStyle: "rgb(200,100,0)", min: {{ company_config? company_config.getAbsentHoursAllowed()/3 : 4 }}, max: {{ company_config? company_config.getAbsentHoursAllowed()/2 : 5 }} },
+                            {strokeStyle: "rgb(100,200,0)", min: {{ company_config? company_config.getAbsentHoursAllowed()/4 : 2 }}, max: {{ company_config? company_config.getAbsentHoursAllowed()/3 : 3 }} },
+                            {strokeStyle: "rgb(0,255,0)", min: 0, max: {{ company_config? company_config.getAbsentHoursAllowed()/4 : 1 }} }
+                        ],
+                    }
+                )
+
+                if((cumul_abscence/60) > {{ company_config? company_config.getAbsentHoursAllowed() }} ){
+                    gauge3.set( {{company_config.getAbsentHoursAllowed()}} );
+                }else{
+                    gauge3.set(cumul_abscence); // set actual value
+                }
+                $("#modal-depart-content").html(cumul_depart/60)
+                console.log("cumul depart here ", cumul_depart/60);
+            },
+            error: function(msg) {
+                //alert(msg);
+                console.log(msg);
+            }
+        });
+
+
+
     </script>
     <script src="{{ asset('js/gauge.min.js') }}"></script>
     <script>
 
-        var opts = {
-            angle: 0.04, // The span of the gauge arc
-            lineWidth: 0.4, // The line thickness
-            radiusScale: 1, // Relative radius
-            pointer: {
-                length: 0.73, // // Relative to gauge radius
-                strokeWidth: 0.024, // The thickness
-                color: '#000000' // Fill color
-            },
-            limitMax: false,     // If false, max value increases automatically if value > maxValue
-            limitMin: false,     // If true, the min value of the gauge will be fixed
-            colorStart: '#a10512',   // Colors
-            colorStop: '#27862c',    // just experiment with them
-            strokeColor: '#e8784d',  // to see which ones work best for you
-            generateGradient: true,
-            highDpiSupport: true,     // High resolution support
-            // renderTicks is Optional
-            renderTicks: {
-                divisions: 0,
-                divWidth: 1,
-                divLength: 0.7,
-                divColor: '#333333',
-                subDivisions: 3,
-                subLength: 0.5,
-                subWidth: 0.6,
-                subColor: '#666666'
-            },
-            staticZones: [
-                {strokeStyle: "rgb(255,0,0)", min: 40, max: 56},
-                {strokeStyle: "rgb(200,100,0)", min: 30, max: 40},
-                {strokeStyle: "rgb(150,150,0)", min: 20, max: 30},
-                {strokeStyle: "rgb(100,200,0)", min: 10, max: 20},
-                {strokeStyle: "rgb(0,255,0)", min: 0, max: 10}
-            ],
-
-        };
-
-        var target1 = document.getElementById('foo1'); // your canvas element
-        var gauge1 = new Gauge(target1).setOptions(opts); // create sexy gauge!
-        gauge1.maxValue = {{ company_config.getLateHoursAllowed()|default(0) }}; // set max gauge value
-        gauge1.setMinValue(0);  // Prefer setter over gauge.minValue = 0
-        gauge1.animationSpeed = 1; // set animation speed (32 is default value)
-        gauge1.set(10); // set actual value
-
-        var target2 = document.getElementById('foo2'); // your canvas element
-        var gauge2 = new Gauge(target2).setOptions(opts); // create sexy gauge!
-        gauge2.maxValue = {{ company_config.getAbsentHoursAllowed()|default(0) }}; // set max gauge value
-        gauge2.setMinValue(0);  // Prefer setter over gauge.minValue = 0
-        gauge2.animationSpeed = 1; // set animation speed (32 is default value)
-        gauge2.set(30); // set actual value
-
-
-        var target3 = document.getElementById('c3'); // your canvas element
-        var gauge3 = new Gauge(target3).setOptions(opts); // create sexy gauge!
-        gauge3.maxValue = {{ company_config.getDepartureHoursAllowed()|default(0) }}; // set max gauge value
-        gauge3.setMinValue(0);  // Prefer setter over gauge.minValue = 0
-        gauge3.animationSpeed = 1; // set animation speed (32 is default value)
-        gauge3.set(45); // set actual value
     </script>
 
 {% endblock %}
