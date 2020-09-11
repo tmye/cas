@@ -413,7 +413,7 @@
             success: function (data) {
                 cumuls = data[0];
                 var cumul_retard = cumuls['total_cumul_retard'];
-                var cumul_depart = cumuls['total_cumul_depart'];
+                var cumul_depart = Math.abs(cumuls['total_cumul_depart']);
                 var cumul_abscence = data['absences'];
 
                 var opts = {
@@ -501,7 +501,7 @@
                     }
                 )
 
-                if((cumul_abscence/60) > {{ company_config? company_config.getAbsentHoursAllowed() }} ){
+                if((cumul_abscence) > {{ company_config? company_config.getAbsentHoursAllowed() }} ){
                     gauge3.set( {{company_config.getAbsentHoursAllowed()}} );
                 }else{
                     gauge3.set(cumul_abscence); // set actual value
