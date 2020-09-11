@@ -413,7 +413,7 @@
             success: function (data) {
                 cumuls = data[0];
                 var cumul_retard = cumuls['total_cumul_retard'];
-                var cumul_depart = cumuls['total_cumul_depart'];
+                var cumul_depart = Math.abs(cumuls['total_cumul_depart']);
                 var cumul_abscence = data['absences'];
 
                 var opts = {
