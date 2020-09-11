@@ -36,17 +36,17 @@
                                             <form class="row" action="{{ path('manageQuota') }}" method="post">
                                                 <div class="col-lg-4 form-group">
                                                     <label for="">Quata de retard</label>
-                                                    <input type="number" max="56" name="late" value="{{ company_config ? company_config.getLateHoursAllowed() : 0 }}" class="form-control" id="" aria-describedby="">
+                                                    <input type="number" name="late" value="{{ company_config ? company_config.getLateHoursAllowed() : 0 }}" class="form-control" id="" aria-describedby="">
                                                     <small id="emailHelp" class="form-text text-muted">Quota d'heure de retard pour les 30 derniers jours </small>
                                                 </div>
                                                 <div class="col-lg-4 form-group">
                                                     <label for="">Quata de départ</label>
-                                                    <input type="number" max="56" name="departure" value="{{ company_config ? company_config.getDepartureHoursAllowed() : 0 }}" class="form-control" id="">
+                                                    <input type="number" name="departure" value="{{ company_config ? company_config.getDepartureHoursAllowed() : 0 }}" class="form-control" id="">
                                                     <small id="emailHelp" class="form-text text-muted">Quota d'heure de depart pour les 30 derniers jours </small>
                                                 </div>
                                                 <div class="col-lg-4 form-group">
                                                     <label for="">Quata d'abscence</label>
-                                                    <input type="number" max="" name="absent" value="{{ company_config ? company_config.getAbsentHoursAllowed() : 0 }}" class="form-control" id="">
+                                                    <input type="number" name="absent" value="{{ company_config ? company_config.getAbsentHoursAllowed() : 0 }}" class="form-control" id="">
                                                     <small id="emailHelp" class="form-text text-muted">Quota de nombre d'abscence pour les 30 derniers jours </small>
                                                 </div>
                                                 <button type="submit" class="btn btn-success btn-lg">Valider</button>
