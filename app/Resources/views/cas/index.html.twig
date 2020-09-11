@@ -54,7 +54,7 @@
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Detail des retards</h5>
+                                        <h5 class="modal-title" id="exampleModalLabel">Detail des départs</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
@@ -95,7 +95,7 @@
                         </div>
 
                         <div class="col-lg-4 col-md-12">
-                            <div class="card" data-toggle="modal" data-target="#modal-depart">
+                            <div class="card" data-toggle="modal" data-target="#modal-abscence">
                                 <h5 class="text-center">Abscence</h5>
                                 <div class="card-body">
                                     <canvas id="foo3"></canvas>
@@ -106,13 +106,13 @@
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Detail des retards</h5>
+                                        <h5 class="modal-title" id="exampleModalLabel">Detail des abscences</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <div id="modal-depart-content"></div>
+                                        <div id="modal-abscence-content"></div>
                                     </div>
                                     <div class="modal-footer">
                                     </div>
@@ -407,8 +407,6 @@
             }
         });
 
-        var cumul_retard = 1;
-        var cumul_depart = 1;
         $.ajax({
             type: 'POST',
             url: "{{ path('homeMonthStats') }}",
@@ -456,7 +454,7 @@
                     gauge1.set(cumul_retard/60); // set actual value
 
                 }
-                $("#modal-retard-content").html(cumul_retard/60)
+                $("#modal-retard-content").html(convertInHour(precisionRound(cumul_retard, 0)) + " heures de retard ")
 
                 console.log("cumul retard here ", cumul_retard/60);
 
@@ -477,12 +475,12 @@
                     }
                 )
 
-                if((cumul_depart/60) > {{ company_config? company_config.getLateHoursAllowed() }} ){
-                    gauge2.set( {{company_config.getLateHoursAllowed()}} );
+                if((cumul_depart/60) > {{ company_config? company_config.getDepartureHoursAllowed() }} ){
+                    gauge2.set( {{company_config.getDepartureHoursAllowed()}} );
                 }else{
                     gauge2.set(cumul_depart/60); // set actual value
                 }
-                $("#modal-depart-content").html(cumul_depart/60)
+                $("#modal-depart-content").html(convertInHour(precisionRound(cumul_depart/60, 0)) + " heures de départ prématuré ")
                 console.log("cumul depart here ", cumul_depart/60);
 
 
@@ -508,8 +506,8 @@
                 }else{
                     gauge3.set(cumul_abscence); // set actual value
                 }
-                $("#modal-depart-content").html(cumul_depart/60)
-                console.log("cumul depart here ", cumul_depart/60);
+                $("#modal-abscence-content").html(cumul_abscence + " abscences")
+                console.log("cumul abscence here ", cumul_abscence);
             },
             error: function(msg) {
                 //alert(msg);
