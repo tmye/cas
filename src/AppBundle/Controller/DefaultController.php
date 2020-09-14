@@ -894,6 +894,7 @@ class DefaultController extends StatsController
             $formBuilder
                 ->add('vision', TextType::class, array('label' => ' '))
                 ->add('mission', TextType::class, array('label' => ' '))
+                ->add('value', TextType::class, array('label' => ' '))
                 ->add('foundation', TextType::class, array('label' => ' '))
                 ->add('headoffice', TextType::class, array('label' => ' '))
                 ->add('employees', IntegerType::class, array('required' => false, 'label' => ' ',))

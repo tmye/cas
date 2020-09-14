@@ -38,6 +38,13 @@ class CompanyInfos
     /**
      * @var string
      *
+     * @ORM\Column(name="value", type="string", length=255, nullable=true)
+     */
+    private $value;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="foundation", type="string", length=255, nullable=true)
      */
     private $foundation;
@@ -120,6 +127,30 @@ class CompanyInfos
     public function getMission()
     {
         return $this->mission;
+    }
+
+    /**
+     * Set value
+     *
+     * @param string $value
+     *
+     * @return CompanyInfos
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+
+        return $this;
+    }
+
+    /**
+     * Get value
+     *
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->value;
     }
 
     /**

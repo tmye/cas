@@ -43,35 +43,40 @@
                                             {% if form is defined and form is not null %}
                                                 {{ form_start(form) }}
                                                 <div class="row" >
-                                                    <div class="form-group mt-2 col s4">
+                                                    <div class="form-group mt-2 col-lg-6 col-sm-12">
                                                         <label>Vision</label>
                                                         {{ form_row(form.vision, {'attr': {'class': 'form-control input-customized','placeholder':'Vision    '}}) }}
                                                     </div>
                                                     <div class="form-group mt-2 col s8">
                                                         <span>Mission</span>
-                                                        {{ form_row(form.mission, {'attr': {'class': 'form-control input-customized','placeholder':'Mission'}}) }}
-                                                    </div>
+                                                            {{ form_row(form.mission, {'attr': {'class': 'form-control input-customized','placeholder':'Mission'}}) }}
+                                                        </div>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="form-group mt-2 col s4">
+                                                    <div class="form-group mt-2 col-lg-6 col-sm-12">
                                                         <span>Fondation</span>
                                                         {{ form_row(form.foundation, {'attr': {'class': 'form-control input-customized','placeholder':'Fondation'}}) }}
                                                     </div>
-                                                    <div class="form-group mt-2 col s4">
+                                                    <div class="form-group mt-2 col-lg-6 col-sm-12">
                                                         <span>Siège</span>
                                                         {{ form_row(form.headoffice, {'attr': {'min':'1','class':'form-control input-customized contact_field','placeholder':'Siège'}}) }}
                                                     </div>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="form-group mt-2 col s4">
+                                                    <div class="form-group mt-2 col-lg-6 col-sm-12">
                                                         <span>Directeur</span>
                                                         {{ form_row(form.director, {'attr': {'min':'1','class':'form-control input-customized','placeholder':'Directeur'}}) }}
+                                                    </div>
+
+                                                    <div class="form-group mt-2 col-lg-6 col-sm-12">
+                                                        <span>Valeurs</span>
+                                                        {{ form_row(form.value, {'attr': {'min':'1','class':'form-control input-customized','placeholder':'Valeurs'}}) }}
                                                     </div>
                                                 </div>
 
                                                 {{ form_widget(form.creer, { 'label': 'Créer','attr': {'class':'mt-3 btn btn-success'} }) }}
                                                 <br/><br/>
-                                                {{ form_rest(form) }}
+
                                                 {{ form_end(form) }}
                                             {% endif %}
                                         </div>
