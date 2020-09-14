@@ -32,6 +32,19 @@
                                 <div class="col l12">
                                     <div class="row">
                                         <div class="col-lg-12">
+                                            <form action="{{ path('manageDoors') }}" method="post">
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <label for="">Heure d'ouverture</label>
+                                                        <input type="time"  class="form-control" name="open" value="{{ company_config ? company_config.getOpenDoorAt() : 0 }}">
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <label for="">Heure de fermeture</label>
+                                                        <input type="time" class="form-control" name="close" value="{{ company_config ? company_config.getCloseDoorAt() : 0 }}">
+                                                    </div>
+                                                </div>
+                                                <button class="btn btn-success mt-3" type="submit">Valider</button>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>

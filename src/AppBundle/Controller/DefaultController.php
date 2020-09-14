@@ -1938,7 +1938,33 @@ $done = false;
             if ($expiry_service->hasExpired()) {
                 return $this->redirectToRoute("expiryPage");
             }
-            return $this->render('cas/manageDoors.html.twig', array("token" => $token));
+
+            $em = $this->getDoctrine()->getManager();
+
+            $session = new Session();
+
+            $company_configs = $this->getDoctrine()->getManager()->getRepository('AppBundle:CompanyConfig')->findBy([
+                'companyName'=> $session->get('companyName'),
+            ]);
+
+            $company_config = count($company_configs) >0  ? $company_configs[0] : null;
+
+
+
+            if($company_config){
+
+                if($request->get('open') != ''){
+                    $company_config->setOpenDoorAt($request->get('open'));
+                }
+
+                if($request->get('close') != ''){
+                    $company_config->setCloseDoorAt($request->get('close'));
+                }
+
+                $em->flush();
+            }
+
+            return $this->render('cas/manageDoors.html.twig', array("token" => $token, 'company_config'=>$company_config));
         } else {
             return $this->redirectToRoute("login");
         }

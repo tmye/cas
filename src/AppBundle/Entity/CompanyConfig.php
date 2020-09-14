@@ -231,4 +231,56 @@ class CompanyConfig
     {
         return $this->departure_hours_allowed;
     }
+
+
+
+    /**
+     * Set close_door_at
+     *
+     * @param string $close_door_at
+     *
+     * @return CompanyConfig
+     */
+    public function setCloseDoorAt($close_door_at)
+    {
+        $this->close_door_at = $close_door_at;
+
+        return $this;
+    }
+
+    /**
+     * Get close_door_at
+     *
+     * @return string
+     */
+    public function getCloseDoorAt()
+    {
+        return $this->close_door_at;
+    }
+
+
+    /**
+     * Set open_door_at
+     *
+     * @param string $open_door_at
+     *
+     * @return CompanyConfig
+     */
+    public function setOpenDoorAt($open_door_at)
+    {
+        $this->open_door_at = $open_door_at;
+
+        return $this;
+    }
+
+    /**
+     * Get open_door_at
+     *
+     * @return string
+     */
+    public function getOpenDoorAt()
+    {
+        return $this->open_door_at;
+    }
+
 }
