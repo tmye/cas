@@ -33,14 +33,37 @@
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <form action="{{ path('manageDoors') }}" method="post">
+
+                                                <div class="row mb-3">
+                                                    <div class="col-lg-6">
+                                                        <select name="device_id" required id="" class="form-control">
+                                                            <option value="">Selectionez une machine</option>
+                                                            {% if machines is defined %}
+                                                                {% for machine in machines %}
+                                                                    <option value="{{ machine.id }}"> {{ machine.name }} </option>
+                                                                {% endfor %}
+                                                            {% endif %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <select required name="time_frame" id="" class="form-control">
+                                                            <option value="">Selectionez une durée </option>
+                                                            <option value="day">Jour</option>
+                                                            <option value="week">Semaine</option>
+                                                            <option value="month">Month</option>
+                                                            <option value="year">Year</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
                                                 <div class="row">
                                                     <div class="col-lg-6">
                                                         <label for="">Heure d'ouverture</label>
-                                                        <input type="time"  class="form-control" name="open" value="{{ company_config ? company_config.getOpenDoorAt() : 0 }}">
+                                                        <input type="time"  class="form-control" name="open">
                                                     </div>
                                                     <div class="col-lg-6">
                                                         <label for="">Heure de fermeture</label>
-                                                        <input type="time" class="form-control" name="close" value="{{ company_config ? company_config.getCloseDoorAt() : 0 }}">
+                                                        <input type="time" class="form-control" name="close">
                                                     </div>
                                                 </div>
                                                 <button class="btn btn-success mt-3" type="submit">Valider</button>

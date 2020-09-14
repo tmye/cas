@@ -60,23 +60,10 @@ class CompanyConfig
     /**
      * @var string
      *
-     * @ORM\Column(name="open_door_at", type="string", length=255, nullable=true)
-     */
-    private $open_door_at;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="departure_hours_allowed", type="string", length=255, nullable=true)
      */
     private $departure_hours_allowed;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="close_door_at", type="string", length=255, nullable=true)
-     */
-    private $close_door_at;
 
     /**
      * Get id
@@ -230,57 +217,6 @@ class CompanyConfig
     public function getDepartureHoursAllowed()
     {
         return $this->departure_hours_allowed;
-    }
-
-
-
-    /**
-     * Set close_door_at
-     *
-     * @param string $close_door_at
-     *
-     * @return CompanyConfig
-     */
-    public function setCloseDoorAt($close_door_at)
-    {
-        $this->close_door_at = $close_door_at;
-
-        return $this;
-    }
-
-    /**
-     * Get close_door_at
-     *
-     * @return string
-     */
-    public function getCloseDoorAt()
-    {
-        return $this->close_door_at;
-    }
-
-
-    /**
-     * Set open_door_at
-     *
-     * @param string $open_door_at
-     *
-     * @return CompanyConfig
-     */
-    public function setOpenDoorAt($open_door_at)
-    {
-        $this->open_door_at = $open_door_at;
-
-        return $this;
-    }
-
-    /**
-     * Get open_door_at
-     *
-     * @return string
-     */
-    public function getOpenDoorAt()
-    {
-        return $this->open_door_at;
     }
 
 }

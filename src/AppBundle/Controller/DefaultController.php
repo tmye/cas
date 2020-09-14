@@ -30,6 +30,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use TmyeDeviceBundle\Entity\DoorEntity;
 
 class DefaultController extends StatsController
 {
@@ -1941,30 +1942,33 @@ $done = false;
 
             $em = $this->getDoctrine()->getManager();
 
-            $session = new Session();
+            $machines = $em->getRepository("AppBundle:Machine")->findAll();
 
-            $company_configs = $this->getDoctrine()->getManager()->getRepository('AppBundle:CompanyConfig')->findBy([
-                'companyName'=> $session->get('companyName'),
-            ]);
+            $door_entity = new DoorEntity();
 
-            $company_config = count($company_configs) >0  ? $company_configs[0] : null;
-
-
-
-            if($company_config){
+            if($door_entity){
 
                 if($request->get('open') != ''){
-                    $company_config->setOpenDoorAt($request->get('open'));
+                    $door_entity->setOpenedAt($request->get('open'));
                 }
 
                 if($request->get('close') != ''){
-                    $company_config->setCloseDoorAt($request->get('close'));
+                    $door_entity->setclosedAt($request->get('close'));
+                }
+
+                if($request->get('time_frame') != ''){
+                    $door_entity->setTimeFrame($request->get('time_frame'));
+                }
+
+                if($request->get('device_id') != ''){
+                    $door_entity->setDeviceId($request->get('device_id'));
                 }
 
                 $em->flush();
+                $this->persist($door_entity);
             }
 
-            return $this->render('cas/manageDoors.html.twig', array("token" => $token, 'company_config'=>$company_config));
+            return $this->render('cas/manageDoors.html.twig', array("token" => $token, 'machines'=>$machines));
         } else {
             return $this->redirectToRoute("login");
         }
