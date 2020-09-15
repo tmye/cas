@@ -1944,28 +1944,32 @@ $done = false;
 
             $machines = $em->getRepository("AppBundle:Machine")->findAll();
 
-            $door_entity = new DoorEntity();
+            if ($request->isMethod('POST')) {
 
-            if($door_entity){
+                $door_entity = new DoorEntity();
 
-                if($request->get('open') != ''){
-                    $door_entity->setOpenedAt($request->get('open'));
+                if($door_entity){
+
+                    if($request->get('open') != ''){
+                        $door_entity->setOpenedAt($request->get('open'));
+                    }
+
+                    if($request->get('close') != ''){
+                        $door_entity->setclosedAt($request->get('close'));
+                    }
+
+                    if($request->get('time_frame') != ''){
+                        $door_entity->setTimeFrame($request->get('time_frame'));
+                    }
+
+                    if($request->get('device_id') != ''){
+                        $door_entity->setDeviceId($request->get('device_id'));
+                    }
+
+                    $em->flush();
+
+                    $this->persist($door_entity);
                 }
-
-                if($request->get('close') != ''){
-                    $door_entity->setclosedAt($request->get('close'));
-                }
-
-                if($request->get('time_frame') != ''){
-                    $door_entity->setTimeFrame($request->get('time_frame'));
-                }
-
-                if($request->get('device_id') != ''){
-                    $door_entity->setDeviceId($request->get('device_id'));
-                }
-
-                $em->flush();
-                $this->persist($door_entity);
             }
 
             return $this->render('cas/manageDoors.html.twig', array("token" => $token, 'machines'=>$machines));
