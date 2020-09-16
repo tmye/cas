@@ -1289,4 +1289,41 @@ class MachinesController extends Controller
         return new Response("OK");
 
     }
+
+
+    /**
+     * @Route("/synDoor",name="synDoor")
+     */
+    public function syncDoorAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $device_id = $request->get('device_id');
+
+        $update_entities = $em->getRepository("TmyeDeviceBundle:UpdateEntity")->findAll();
+
+        $found = 0;
+        $i = 0;
+        while($found == 0 && $i < sizeof($update_entities)){
+
+            if($update_entities[$i]->getDeviceId() == $device_id && $update_entities[$i]->getType()=="reboot" && $update_entities[$i]->getIsactive()==1){
+                $found = 1;
+            }
+            $i++;
+        }
+
+        if ($found == 0){
+            $updateE = new UpdateEntity();
+
+            $updateE->setDeviceId($device_id);
+            $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
+            $updateE->setIsactive(true);
+            $updateE->setType("door");
+
+            $em->persist($updateE);
+            $em->flush();
+        }
+        return new Response("OK");
+    }
+
 }

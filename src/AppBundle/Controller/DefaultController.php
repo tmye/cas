@@ -1940,6 +1940,8 @@ $done = false;
                 return $this->redirectToRoute("expiryPage");
             }
 
+//            dump($request); die();
+
             $em = $this->getDoctrine()->getManager();
 
             $machines = $em->getRepository("AppBundle:Machine")->findAll();
@@ -1950,16 +1952,27 @@ $done = false;
 
                 if($door_entity){
 
+
+//                    dump($request->get('test')); die();
+
                     if($request->get('open') != ''){
                         $door_entity->setOpenedAt($request->get('open'));
                     }
+
+
+
+
 
                     if($request->get('close') != ''){
                         $door_entity->setclosedAt($request->get('close'));
                     }
 
-                    if($request->get('time_frame') != ''){
+                    if($request->get('time_frame') != ""){
                         $door_entity->setTimeFrame($request->get('time_frame'));
+                    }
+
+                    if($request->get('time_frame_value') != ''){
+                        $door_entity->setTimeFrame($request->get('time_frame_value'));
                     }
 
                     if($request->get('device_id') != ''){

@@ -35,6 +35,16 @@ class DoorEntity
      */
     private $time_frame;
 
+
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="time_frame_value", type="integer")
+     * @ORM\Id
+     */
+    private $time_frame_value;
+
     /**
      * @return string
      */
@@ -51,6 +61,22 @@ class DoorEntity
     public function setTimeFrame($time_frame)
     {
         $this->time_frame = $time_frame;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTimeFrameValue()
+    {
+        return $this->time_frame_value;
+    }
+
+    /**
+     * @param int $time_frame_value
+     */
+    public function setTimeFrameValue($time_frame_value)
+    {
+        $this->time_frame_value = $time_frame_value;
     }
 
     /**

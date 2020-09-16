@@ -61,7 +61,7 @@
                                             <div class="input-field col s12">
                                                 <div class="row" id="errorContainer">
                                                     <div class="col-lg-12">
-                                                        <span class="red-text"></span>
+                                                        <span class="red-text text-danger"></span>
                                                     </div>
                                                 </div>
                                                 <div class="row row-no-margin">
@@ -117,8 +117,8 @@
             <h5 class="table-title">Statistiques de l'employé</h5>
                 <div class="row" style='width:100%'>
                     <div class="col-lg-12">
-                        <table class="card table table-striped">
-                            <tr class="blue lighten-2 white-text">
+                        <table class="text-center card table table-centered table-bordered table-responsive-sm">
+                            <tr class="text-white" style="background-color: darkblue">
                                 <td colspan="2">Nom : <span id="nameSpan"></span></td>
                                 <td>Fonction : <span id="fonctionSpan"></span></td>
                                 <td colspan="2">Salaire : <span id="salarySpan"></span></td>
@@ -179,7 +179,7 @@
                                 <td><span id="spdSpan"></span> FCFA</td>
                                 <td colspan="2"><span id="spAuthSpan">-</span></td>
                             </tr>
-                            <tr class="red lighten-2 white-text">
+                            <tr class="text-white" style="background-color: red">
                                 <td colspan="2">Total temps perdu : <span id="ttpSpan"></span> H</td>
                                 <td colspan="3">Total d'argent perdu : <span id="tapSpan"></span> FCFA (<span id="papSpan"></span>%)</td>
                             </tr>
@@ -190,7 +190,7 @@
                     <div class="col-lg-12">
                         <h5 class="table-title">Historique des présences</h5>
                         <br><br>
-                        <table class=" table table-bordered table-striped">
+                        <table class="table table-bordered table-striped table-centered table-responsive-sm text-center">
                             <thead>
                             <tr>
                                 <th>Date</th>
@@ -221,7 +221,7 @@
 
                 <div class="row">
                     <h5 class="table-title">Permissions</h5>
-                    <table class="table table-centered table-bordered table-striped">
+                    <table class="table table-centered table-bordered table-striped table-centered text-center">
                         <thead>
                             <tr>
                                 <th>Date de la permission</th>
@@ -257,7 +257,7 @@
                 <div class="row">
                     <div class="col-lg-6">
                         <span>Retards début de journée</span>
-                        <table class="card table bordered centered striped highlight responsive-table">
+                        <table class="card table-bordered table-centered table-striped  table-responsive-sm text-center">
                             <thead>
                             <tr>
                                 <th>Date</th>
@@ -274,7 +274,7 @@
                     </div>
                     <div class="col-lg-6">
                         <span>Départs prématurés de fin d'après-midi</span>
-                        <table class="card table bordered centered striped highlight responsive-table">
+                        <table class="card table-bordered table-centered table-striped  table-responsive-sm">
                             <thead>
                             <tr>
                                 <th>Date</th>
@@ -293,7 +293,7 @@
                 <div class="row">
                     <div class="col-lg-6">
                         <span>Départs prématurés de midi</span>
-                        <table class="card table bordered centered striped highlight responsive-table">
+                        <table class="card table-bordered table-centered table-striped  table-responsive-sm text-center">
                             <thead>
                             <tr>
                                 <th>Date</th>
@@ -310,7 +310,7 @@
                     </div>
                     <div class="col-lg-6">
                         <span>Retards début d'après-midi</span>
-                        <table class="card table bordered centered striped highlight responsive-table">
+                        <table class="table-bordered table-centered table-striped  table-responsive-sm text-center">
                             <thead>
                             <tr>
                                 <th>Date</th>
@@ -327,10 +327,10 @@
                     </div>
                 </div>
 
-                <h5 class="table-title">Diagrammes</h5>
+                <h2 class="table-title">Diagrammes</h2>
 
                 <span class="CContainer lundiCContainer">
-                    <p class="legend">Lundi</p>
+                    <h2 class="legend">Lundi</h2>
                     <div class="row chartsContainer">
                         <div class="col-lg-6 lundiDiagDep12">
                             <span>Diagramme des départs prématurés de 12H00</span>
@@ -351,7 +351,7 @@
                     </div>
                 </span>
                 <span class="CContainer mardiCContainer">
-                    <p class="legend">Mardi</p>
+                    <h2 class="legend">Mardi</h2>
                     <div class="row chartsContainer" id="chartsContainer">
                         <div class="col-lg-6 mardiDiagDep12">
                             <span>Diagramme des départs prématurés de 12H00</span>
@@ -372,7 +372,7 @@
                     </div>
                 </span>
                 <span class="CContainer mercrediCContainer">
-                    <p class="legend">Mercredi</p>
+                    <h2 class="legend">Mercredi</h2>
                     <div class="row chartsContainer" id="chartsContainer">
                         <div class="col-lg-6 mercrediDiagDep12">
                             <span>Diagramme des départs prématurés de 12H00</span>
@@ -393,7 +393,7 @@
                     </div>
                 </span>
                 <span class="CContainer jeudiCContainer">
-                    <p class="legend">Jeudi</p>
+                    <h2 class="legend">Jeudi</h2>
                     <div class="row chartsContainer" id="chartsContainer">
                         <div class="col-lg-6 jeudiDiagDep12">
                             <span>Diagramme des départs prématurés de 12H00</span>
@@ -414,7 +414,7 @@
                     </div>
                 </span>
                 <span class="CContainer vendrediCContainer">
-                    <p class="legend">Vendredi</p>
+                    <h2 class="legend">Vendredi</h2>
                     <div class="row chartsContainer" id="chartsContainer">
                         <div class="col-lg-6 vendrediDiagDep12">
                             <span>Diagramme des départs prématurés de 12H00</span>
@@ -435,7 +435,7 @@
                     </div>
                 </span>
                 <span class="CContainer samediCContainer">
-                    <p class="legend">Samedi</p>
+                    <h2 class="legend">Samedi</h2>
                     <div class="row chartsContainer" id="chartsContainer">
                         <div class="col-lg-6 samediDiagDep12">
                             <span>Diagramme des départs prématurés de 12H00</span>
@@ -456,7 +456,7 @@
                     </div>
                 </span>
                 <span class="CContainer dimancheCContainer">
-                    <p class="legend">Dimanche</p>
+                    <h2 class="legend">Dimanche</h2>
                     <div class="row chartsContainer" id="chartsContainer">
                         <div class="col-lg-6 dimancheDiagDep12">
                             <span>Diagramme des départs prématurés de 12H00</span>

@@ -127,6 +127,17 @@ class MachineSysController extends BaseController
                         array_push($res['data'], $tmp);
                     }
                     break;
+                case "door":
+                    if (sizeof($res["data"]) > 0) {
+                    }
+                    $tmp = json_decode($item->getContent(), true);
+
+                    if ($tmp != []) {
+                        $tmp = $this->getDoorEntityContent($sn, $tmp);
+                        $tmp['id'] = $item->getId();
+                        array_push($res['data'], $tmp);
+                    }
+                    break;
             }
 
             if ( (memory_get_usage() - $start_memory - PHP_INT_SIZE * 8 ) >= MachineSysController::MAX_MEMORY_PER_CALL){
@@ -388,7 +399,6 @@ class MachineSysController extends BaseController
      */
     public function updateCompanyname (Request $request) {
 
-
         $companyName = $request->query->get("cn"); // company name
         if ($companyName != null)
         {
@@ -453,7 +463,6 @@ class MachineSysController extends BaseController
     }
 
     private function OkStatus ($sn, $mainId, $returnObj = null) {
-
 
         if ($returnObj != null)
             foreach ($returnObj as &$ret) {
@@ -918,6 +927,41 @@ class MachineSysController extends BaseController
         }
     }
 
+
+    private function getDoorEntityContent($sn, $id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $door_setup = $em->getRepository('AppBundle:DoorEntity')->findOneBy(['device_id'=>"$sn"]);
+
+        if ($door_setup == null){
+            return;
+        }
+
+        $do_update = [
+            'id' => $this->iRandom(0),
+            'do' => 'update',
+            'data' => 'doortime',
+            'doortime' => [
+                $door_setup->getTimeFrame()=>$door_setup->getTimeFrameValue(),
+                'from'=>$door_setup->getOpenedAt(),
+                'to'=>$door_setup->getclosedAt(),
+            ],
+        ];
+
+        if ($id == 1)
+            return $do_update;
+
+        $do_cmd = [
+            'id' => $this->iRandom(0),
+            'do' => 'cmd',
+            'cmd' => 'unlock',
+            'delay' => 10,
+        ];
+
+        if ($id == 2)
+            return $do_cmd;
+
+    }
 
 }
 
