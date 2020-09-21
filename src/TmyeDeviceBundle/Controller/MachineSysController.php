@@ -932,7 +932,7 @@ class MachineSysController extends BaseController
     private function getDoorEntityContent($sn, $id)
     {
         $em = $this->getDoctrine()->getManager();
-        $door_setup = $em->getRepository('AppBundle:DoorEntity')->findOneBy(['device_id'=>"$sn"]);
+        $door_setup = $em->getRepository('TmyeDeviceBundle:DoorEntity')->findOneBy(['device_id'=>"$sn"]);
 
         if ($door_setup == null){
             return;
