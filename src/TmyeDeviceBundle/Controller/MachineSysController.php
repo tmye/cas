@@ -38,6 +38,8 @@ class MachineSysController extends BaseController
             ['priority' => 'DESC', 'id' => 'ASC']
         );
 
+        dump($all); die();
+
 //        $last_device_pub_pic = $this->PubsRepo()->findOneBy(['deviceid' => $sn ], ['id' => 'desc']);
 //        $number_of_image = 0;
 //        if($last_device_pub_pic->getImage1()){$number_of_image +=1;}
@@ -948,7 +950,7 @@ class MachineSysController extends BaseController
             ],
         ];
 
-        if ($id == 1)
+        if($id == 1)
             return $do_update;
 
         $do_cmd = [

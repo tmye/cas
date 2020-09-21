@@ -36,12 +36,10 @@ class DoorEntity
     private $time_frame;
 
 
-
     /**
      * @var int
      *
-     * @ORM\Column(name="time_frame_value", type="integer")
-     * @ORM\Id
+     * @ORM\Column(name="time_frame_value", type="integer", nullable=true)
      */
     private $time_frame_value;
 

@@ -15,6 +15,7 @@
     <!-- App css -->
     <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/app-modern.min.css') }}" rel="stylesheet" type="text/css" id="light-style" />
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
 
     {% block stylesheets %}{% endblock %}
 
@@ -37,7 +38,7 @@
 
 
 <!-- demo app -->
-<script src="{{ asset('assets/js/pages/demo.dashboard.js') }}"></script>
+{#<script src="{{ asset('assets/js/pages/demo.dashboard.js') }}"></script>#}
 <!-- end demo js-->
 
 <script>
@@ -79,7 +80,8 @@
     });
 </script>
 
-<script src="{{ asset('js/script.js') }}"></script>
+{#<script src="{{ asset('js/script.js') }}"></script>#}
+<script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 {% block javascripts %}{% endblock %}
 </body>
 </html>

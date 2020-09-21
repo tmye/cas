@@ -1940,51 +1940,83 @@ $done = false;
                 return $this->redirectToRoute("expiryPage");
             }
 
-//            dump($request); die();
 
+            $door_day_configs = $request->get('door_day_configs');
+            $door_days_configs = $request->get('door_days_configs');
             $em = $this->getDoctrine()->getManager();
 
             $machines = $em->getRepository("AppBundle:Machine")->findAll();
 
             if ($request->isMethod('POST')) {
 
-                $door_entity = new DoorEntity();
+                if(isset($door_day_configs) && $door_day_configs){
+                    foreach ($door_day_configs as $day_config ){
+                        $door_entity = new DoorEntity();
 
-                if($door_entity){
+                        if($door_entity){
 
+                            if($day_config['open'] != ''){
+                                $door_entity->setOpenedAt($day_config['open']);
+                            }
 
-//                    dump($request->get('test')); die();
+                            if($day_config['close'] != ''){
+                                $door_entity->setclosedAt($day_config['close']);
+                            }
 
-                    if($request->get('open') != ''){
-                        $door_entity->setOpenedAt($request->get('open'));
+                            if($request->get('time_frame') != ""){
+                                $door_entity->setTimeFrame($request->get('time_frame'));
+                            }
+
+                            if($day_config['time_frame_value'] != ''){
+                                $door_entity->setTimeFrameValue($day_config['time_frame_value']);
+                            }
+
+                            if($request->get('device_id') != ''){
+                                $door_entity->setDeviceId($request->get('device_id'));
+                            }
+
+                            try{
+                                $this->persist($door_entity);
+                            }catch(\Exception $e ){
+                                //echo $e;
+                            };
+                        }
                     }
-
-
-
-
-
-                    if($request->get('close') != ''){
-                        $door_entity->setclosedAt($request->get('close'));
-                    }
-
-                    if($request->get('time_frame') != ""){
-                        $door_entity->setTimeFrame($request->get('time_frame'));
-                    }
-
-                    if($request->get('time_frame_value') != ''){
-                        $door_entity->setTimeFrame($request->get('time_frame_value'));
-                    }
-
-                    if($request->get('device_id') != ''){
-                        $door_entity->setDeviceId($request->get('device_id'));
-                    }
-
-                    $em->flush();
-
-                    $this->persist($door_entity);
                 }
-            }
 
+                if(isset($door_days_configs) && $door_days_configs){
+                    foreach ($door_days_configs as $days_config ){
+                        $door_entity = new DoorEntity();
+                        if($door_entity){
+                            if($days_config['open'] != ''){
+                                $door_entity->setOpenedAt($days_config['open']);
+                            }
+
+                            if($days_config['close'] != ''){
+                                $door_entity->setclosedAt($days_config['close']);
+                            }
+
+                            if($request->get('time_frame') != ""){
+                                $door_entity->setTimeFrame($request->get('time_frame'));
+                            }
+
+                            if($days_config['time_frame_value'] != ''){
+                                $door_entity->setTimeFrameValue($days_config['time_frame_value']);
+                            }
+
+                            if($request->get('device_id') != ''){
+                                $door_entity->setDeviceId($request->get('device_id'));
+                            }
+
+                            try{
+                                $this->persist($door_entity);
+                            }catch(\Exception $e ){
+                                //echo $e;
+                            };                        }
+                    }
+                }
+
+            }
             return $this->render('cas/manageDoors.html.twig', array("token" => $token, 'machines'=>$machines));
         } else {
             return $this->redirectToRoute("login");

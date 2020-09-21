@@ -1306,7 +1306,7 @@ class MachinesController extends Controller
         $i = 0;
         while($found == 0 && $i < sizeof($update_entities)){
 
-            if($update_entities[$i]->getDeviceId() == $device_id && $update_entities[$i]->getType()=="reboot" && $update_entities[$i]->getIsactive()==1){
+            if($update_entities[$i]->getDeviceId() == $device_id && $update_entities[$i]->getType()=="door" && $update_entities[$i]->getIsactive()==1){
                 $found = 1;
             }
             $i++;
@@ -1314,12 +1314,12 @@ class MachinesController extends Controller
 
         if ($found == 0){
             $updateE = new UpdateEntity();
-
             $updateE->setDeviceId($device_id);
             $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
             $updateE->setIsactive(true);
             $updateE->setType("door");
-
+            $updateE->setPriority(5);
+            $updateE->setContent(1);
             $em->persist($updateE);
             $em->flush();
         }
