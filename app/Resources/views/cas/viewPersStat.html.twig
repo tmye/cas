@@ -211,16 +211,16 @@
                             </tbody>
                         </table>
                         <br>
-                        <span class="uil-circle" style="color: red"></span>
+                        <span class="fa fa-circle" style="color: red"></span>
                         <span style="color: red">Retards ou départs prématurés</span>
                         <br>
-                        <span class="uil-circle" style="color: black"></span>
+                        <span class="fa fa-circle" style="color: black"></span>
                         <span style="color: black">Heures conformes</span>
                     </div>
                 </div>
 
                 <div class="row">
-                    <h5 class="table-title">Permissions</h5>
+                    <h2 class="table-title">Permissions</h2>
                     <table class="table table-centered table-bordered table-striped table-centered text-center">
                         <thead>
                             <tr>
@@ -257,7 +257,7 @@
                 <div class="row">
                     <div class="col-lg-6">
                         <span>Retards début de journée</span>
-                        <table class="card table-bordered table-centered table-striped  table-responsive-sm text-center">
+                        <table class="table card table-bordered table-centered table-striped  table-responsive-sm text-center">
                             <thead>
                             <tr>
                                 <th>Date</th>
@@ -274,7 +274,7 @@
                     </div>
                     <div class="col-lg-6">
                         <span>Départs prématurés de fin d'après-midi</span>
-                        <table class="card table-bordered table-centered table-striped  table-responsive-sm">
+                        <table class=" table card table-bordered table-centered table-striped  table-responsive-sm">
                             <thead>
                             <tr>
                                 <th>Date</th>
@@ -293,7 +293,7 @@
                 <div class="row">
                     <div class="col-lg-6">
                         <span>Départs prématurés de midi</span>
-                        <table class="card table-bordered table-centered table-striped  table-responsive-sm text-center">
+                        <table class="table card table-bordered table-centered table-striped  table-responsive-sm text-center">
                             <thead>
                             <tr>
                                 <th>Date</th>
@@ -310,7 +310,7 @@
                     </div>
                     <div class="col-lg-6">
                         <span>Retards début d'après-midi</span>
-                        <table class="table-bordered table-centered table-striped  table-responsive-sm text-center">
+                        <table class="table table-bordered table-centered table-striped  table-responsive-sm text-center">
                             <thead>
                             <tr>
                                 <th>Date</th>
@@ -682,17 +682,17 @@
                                                 $("#rowsContainer").append("" +
                                                     "<tr>" +
                                                     "<td><span class='redSpan_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
-                                                    "<td><span class='redSpan_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
-                                                    "<td><span class='redSpanPauseBegin_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["pause"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["pBH"]+"</span></td>" +
-                                                    "<td><span class='redSpanPauseEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["finPause"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["pEH"]+"</span></td>" +
+                                                    "<td><span class='redSpan_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["beginHour"]+"</span></td>" +
+                                                    "<td><span class='redSpanPauseBegin_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["pause"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["perteBeginHour"]+"</span></td>" +
+                                                    "<td><span class='redSpanPauseEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["finPause"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["perteEndHour"]+"</span></td>" +
                                                     "<td><span class='redSpanEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
                                                     "</tr>"
                                                 );
-                                                if(data.historique[arrayID]["arrive"] > data.historique[arrayID]["bH"]){
+                                                if(data.historique[arrayID]["arrive"] > data.historique[arrayID]["beginHour"]){
                                                     $(".redSpan_1_"+i).css("color","red");
-                                                }if(data.historique[arrayID]["pause"] < data.historique[arrayID]["pBH"]){
+                                                }if(data.historique[arrayID]["pause"] < data.historique[arrayID]["perteBeginHour"]){
                                                     $(".redSpanPauseBegin_1_"+i).css("color","red");
-                                                }if(data.historique[arrayID]["finPause"] > data.historique[arrayID]["pEH"]){
+                                                }if(data.historique[arrayID]["finPause"] > data.historique[arrayID]["perteEndHour"]){
                                                     $(".redSpanPauseEnd_1_"+i).css("color","red");
                                                 }if(data.historique[arrayID]["depart"] < data.historique[arrayID]["eH"]){
                                                     $(".redSpanEnd_1_"+i).css("color","red");
@@ -702,19 +702,19 @@
                                                 $("#rowsContainer").append("" +
                                                     "<tr>" +
                                                     "<td><span style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
-                                                    "<td><span class='redSpan_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
+                                                    "<td><span class='redSpan_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["beginHour"]+"</span></td>" +
                                                     "<td><span class='redSpanPauseBegin_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
                                                     "<td><span class='redSpanPauseEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
                                                     "<td><span class='redSpanEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
                                                     "</tr>"
                                                 );
-                                                if(data.historique[arrayID]["arrive"] > data.historique[arrayID]["bH"]){
+                                                if(data.historique[arrayID]["arrive"] > data.historique[arrayID]["beginHour"]){
                                                     $(".redSpan_2_"+i).css("color","red");
-                                                }if(data.historique[arrayID]["pause"] < data.historique[arrayID]["pBH"]){
+                                                }if(data.historique[arrayID]["pause"] < data.historique[arrayID]["perteBeginHour"]){
                                                     $(".redSpanPauseBegin_2_"+i).css("color","red");
-                                                }if(data.historique[arrayID]["finPause"] > data.historique[arrayID]["pEH"]){
+                                                }if(data.historique[arrayID]["finPause"] > data.historique[arrayID]["perteEndHour"]){
                                                     $(".redSpanPauseEnd_2_"+i).css("color","red");
-                                                }if(data.historique[arrayID]["depart"] < data.historique[arrayID]["eH"]){
+                                                }if(data.historique[arrayID]["depart"] < data.historique[arrayID]["endHour"]){
                                                     $(".redSpanEnd_2_"+i).css("color","red");
                                                 }
                                                 break;
@@ -729,19 +729,19 @@
                                                 $("#rowsContainer").append("" +
                                                     "<tr>" +
                                                     "<td><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
-                                                    "<td><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["bH"]+"</span></td>" +
+                                                    "<td><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["beginHour"]+"</span></td>" +
                                                     "<td><span class='redSpanPauseBegin_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
                                                     "<td><span class='redSpanPauseEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
-                                                    "<td><span class='redSpanEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
+                                                    "<td><span class='redSpanEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["endHour"]+"</span></td>" +
                                                     "</tr>"
                                                 );
-                                                if(data.historique[arrayID]["arrive"] > data.historique[arrayID]["bH"]){
+                                                if(data.historique[arrayID]["arrive"] > data.historique[arrayID]["beginHour"]){
                                                     $(".redSpan_3_"+i).css("color","red");
-                                                }if(data.historique[arrayID]["pause"] < data.historique[arrayID]["pBH"]){
+                                                }if(data.historique[arrayID]["pause"] < data.historique[arrayID]["perteBeginHour"]){
                                                     $(".redSpanPauseBegin_3_"+i).css("color","red");
-                                                }if(data.historique[arrayID]["finPause"] > data.historique[arrayID]["pEH"]){
+                                                }if(data.historique[arrayID]["finPause"] > data.historique[arrayID]["perteEndHour"]){
                                                     $(".redSpanPauseEnd_3_"+i).css("color","red");
-                                                }if(data.historique[arrayID]["depart"] < data.historique[arrayID]["eH"]){
+                                                }if(data.historique[arrayID]["depart"] < data.historique[arrayID]["endHour"]){
                                                     $(".redSpanEnd_3_"+i).css("color","red");
                                                 }
                                                 break;
