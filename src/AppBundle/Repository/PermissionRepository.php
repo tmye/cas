@@ -71,8 +71,6 @@ class PermissionRepository extends EntityRepository
     }*/
 
     public function enPermission($emp,$date){
-
-
         // The hours are on the H:i format
         $qb = $this->createQueryBuilder('p');
         $qb->where('p.state = :state');

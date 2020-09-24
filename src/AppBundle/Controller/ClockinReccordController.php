@@ -43,12 +43,13 @@ class ClockinReccordController extends EmployeController
     /**
      * @Route("/randomClockinRecord", name="randomClockinRecord")
      */
-    public function randomClockinRecordAction(Request $request)
+    public function randomClockinRecordAction(Request $request, $dateFrom=null, $dateTo=null )
     {
         //date_default_timezone_set('Africa/Lome');
 
-        $dateFrom = "2019-01-01";
-        $dateTo = "2019-06-30";
+        if(!$dateFrom){$dateFrom = "2020-01-01";}
+        if(!$dateTo){$dateTo = "2020-09-31";}
+
         $employees = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
         $timeFrom = strtotime($dateFrom." 00:00:00");
         $timeTo = strtotime($dateTo." 00:00:00");

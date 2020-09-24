@@ -270,20 +270,20 @@
                                                     "<td>" + res.clockinRecord[arrayID][empId].function + "</td>" +
                                                     "<td>" + convertType(res.clockinRecord[arrayID][empId].type) + "</td>" +
                                                     "<td>" + res.clockinRecord[arrayID][empId].quota + "</td>" +
-                                                    "<td><span class='redSpan_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].bH+"</span></td>" +
-                                                    "<td><span class='redSpanPauseBegin_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].pause +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].pBH+"</span></td>" +
-                                                    "<td><span class='redSpanPauseEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].finPause +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].pEH+"</span></td>" +
-                                                    "<td><span class='redSpanEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].eH+"</span></td>" +
+                                                    "<td><span class='redSpan_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].beginHour+"</span></td>" +
+                                                    "<td><span class='redSpanPauseBegin_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].pause +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].perteBeginHour+"</span></td>" +
+                                                    "<td><span class='redSpanPauseEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].finPause +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].perteEndHour+"</span></td>" +
+                                                    "<td><span class='redSpanEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].endHour+"</span></td>" +
                                                     "<td><button data-target='modal1' class='btn btn-primary detail_button modal-trigger' onclick='demander("+(i-1)+")' tag='"+(i-1)+"' style=''>Détails</button></td>" +
                                                     "</tr>"
                                                 );
-                                                if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
+                                                if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].beginHour){
                                                     $(".redSpan_1_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
+                                                }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].perteBeginHour){
                                                 $(".redSpanPauseBegin_1_"+i).css("color","red");
-                                            }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
+                                            }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].perteEndHour){
                                                 $(".redSpanPauseEnd_1_"+i).css("color","red");
-                                            }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
+                                            }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].endHour){
                                                 $(".redSpanEnd_1_"+i).css("color","red");
                                             }
                                                 break;
@@ -295,20 +295,20 @@
                                                     "<td>" + res.clockinRecord[arrayID][empId].function + "</td>" +
                                                     "<td>" + convertType(res.clockinRecord[arrayID][empId].type) + "</td>" +
                                                     "<td>" + precisionRound(res.clockinRecord[arrayID][empId].quota_fait/60,2) + "/" +res.clockinRecord[arrayID][empId].quota + "</td>" +
-                                                    "<td><span class='redSpan_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].bH+"</span></td>" +
+                                                    "<td><span class='redSpan_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].beginHour+"</span></td>" +
                                                     "<td><span class='redSpanPauseBegin_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
                                                     "<td><span class='redSpanPauseEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
-                                                    "<td><span class='redSpanEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].eH+"</span></td>" +
+                                                    "<td><span class='redSpanEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].endHour+"</span></td>" +
                                                     "<td><button data-target='modal1' class='detail_button modal-trigger' onclick='demander("+(i-1)+")' tag='"+(i-1)+"' style=''>Détails</button></td>" +
                                                     "</tr>"
                                                 );
-                                                if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
+                                                if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].beginHour){
                                                     $(".redSpan_2_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
+                                                }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].perteBeginHour){
                                                 $(".redSpanPauseBegin_2_"+i).css("color","red");
-                                            }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
+                                            }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].perteEndHour){
                                                 $(".redSpanPauseEnd_2_"+i).css("color","red");
-                                            }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
+                                            }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].endHour){
                                                 $(".redSpanEnd_2_"+i).css("color","red");
                                             }
                                                 break;
@@ -331,20 +331,20 @@
                                                     "<td>" + res.clockinRecord[arrayID][empId].function + "</td>" +
                                                     "<td>" + convertType(res.clockinRecord[arrayID][empId].type) + "</td>" +
                                                     "<td>" + res.clockinRecord[arrayID][empId].quota + "</td>" +
-                                                    "<td><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].bH+"</span></td>" +
+                                                    "<td><span class='redSpan_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].arrive +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].beginHour+"</span></td>" +
                                                     "<td><span class='redSpanPauseBegin_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
                                                     "<td><span class='redSpanPauseEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
-                                                    "<td><span class='redSpanEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].eH+"</span></td>" +
+                                                    "<td><span class='redSpanEnd_3_"+i+"' style='font-size: 17px;font-weight: 500'>" + res.clockinRecord[arrayID][empId].depart +"</span> <span style='margin-left: 4px;font-size: 12px'>"+res.clockinRecord[arrayID][empId].endHour+"</span></td>" +
                                                     "<td><button data-target='modal1' class='detail_button modal-trigger btn btn-primary' onclick='demander("+(i-1)+")' tag='"+(i-1)+"' style=''>Détails</button></td>" +
                                                     "</tr>"
                                                 );
-                                                if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].bH){
+                                                if(res.clockinRecord[arrayID][empId].arrive > res.clockinRecord[arrayID][empId].beginHour){
                                                     $(".redSpan_3_"+i).css("color","red");
-                                                }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].pBH){
+                                                }if(res.clockinRecord[arrayID][empId].pause < res.clockinRecord[arrayID][empId].perteBeginHour){
                                                 $(".redSpanPauseBegin_3_"+i).css("color","red");
-                                            }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].pEH){
+                                            }if(res.clockinRecord[arrayID][empId].finPause > res.clockinRecord[arrayID][empId].perteEndHour){
                                                 $(".redSpanPauseEnd_3_"+i).css("color","red");
-                                            }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].eH){
+                                            }if(res.clockinRecord[arrayID][empId].depart < res.clockinRecord[arrayID][empId].endHour){
                                                 $(".redSpanEnd_3_"+i).css("color","red");
                                             }
                                                 break;
