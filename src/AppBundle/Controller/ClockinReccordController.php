@@ -47,10 +47,13 @@ class ClockinReccordController extends EmployeController
     {
         //date_default_timezone_set('Africa/Lome');
 
-        if(!$dateFrom){$dateFrom = "2020-01-01";}
-        if(!$dateTo){$dateTo = "2020-09-31";}
+        if(!$dateFrom){$dateFrom = "2020-09-01";}
+        if(!$dateTo){$dateTo = "2020-12-31";}
 
-        $employees = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
+//        $employees = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findAll();
+        $employees = $this->getDoctrine()->getManager()->getRepository("AppBundle:Employe")->findBy([
+            'departement'=>1
+        ]);
         $timeFrom = strtotime($dateFrom." 00:00:00");
         $timeTo = strtotime($dateTo." 00:00:00");
         $timeDays = $timeTo-$timeFrom;

@@ -91,12 +91,12 @@
                                         </div>
                                         <table class="table table-bordered table-striped table-centered mt-5" id="presenceTable">
                                             <thead>
-                                            <tr>
-                                                <th>Heure</th>
-                                                <th>Employé</th>
-                                                <th>Fonction</th>
-                                                <th>Type</th>
-                                            </tr>
+                                                <tr>
+                                                    <th>Heure</th>
+                                                    <th>Employé</th>
+                                                    <th>Fonction</th>
+                                                    <th>Type</th>
+                                                </tr>
                                             </thead>
 
                                             <tbody id="rowsContainer">
@@ -122,21 +122,11 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
-
-
-
             </div>
         </div>
-
     </div>
-
-
-
-
-
 
 {% endblock %}
 
@@ -161,8 +151,10 @@
                 $("#rowsContainer").html("");
                 /* On récupère le département sélectionné */
                 var selectedDep = $("#depSelect").val();
+                //var table = $("#presenceTable").DataTable();
+
                 for(var i=0;i<savedData.length;i++){
-                    if(savedData[i].departement == selectedDep){
+                    if(savedData[i].departement == selectedDep && savedData[i].type){
 
                         $("#rowsContainer").append("" +
                             "<tr>" +
@@ -226,13 +218,13 @@
 */
         }
         // On s'attaque aux collapsibles
-        $(function () {
+/*        $(function () {
             $("#sortInput").on('change', function (e){
                 sortTable('presenceTable', $(this).val())
                 $('#presenceTable').DataTable();
             })
 
-        });
+        });*/
 
         $(document).ready( function () {
             $('#presenceTable').DataTable();

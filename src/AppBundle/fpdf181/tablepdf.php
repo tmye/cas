@@ -37,7 +37,7 @@ class tablepdf extends fpdf
         // Numéro de page
         $this->Cell(0,10,'* Salaire de l\'employe sur la duree choisie',0,0,'L');
         $this->Ln();
-        $this->Cell(0,10,'Rapport genere par le '.date('d').'/'.date('m').'/'.date('Y'),0,0,'C');
+        $this->Cell(0,10,'Rapport genere le '.date('d').'/'.date('m').'/'.date('Y'),0,0,'C');
     }
 
     public function convertInHour($value){

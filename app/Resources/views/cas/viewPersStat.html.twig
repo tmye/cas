@@ -61,7 +61,7 @@
                                             <div class="input-field col s12">
                                                 <div class="row" id="errorContainer">
                                                     <div class="col-lg-12">
-                                                        <span class="red-text text-danger"></span>
+                                                        <span class="text-danger"></span>
                                                     </div>
                                                 </div>
                                                 <div class="row row-no-margin">
@@ -676,25 +676,48 @@
                                 $("#rowsContainer").html("");
                                     $.each(data.historique,function (arrayID) {
                                     i++;
+
                                     if((data.historique[arrayID]["arrive"] != "" && data.historique[arrayID]["arrive"] != null) || (data.historique[arrayID]["depart"] != "" && data.historique[arrayID]["depart"] != null) || (data.historique[arrayID]["pause"] != "" && data.historique[arrayID]["pause"] != null) || (data.historique[arrayID]["finPause"] != "" && data.historique[arrayID]["finPause"] != null)){
+
                                         switch (data.historique[arrayID]["type"]){
                                             case "1":
+
                                                 $("#rowsContainer").append("" +
                                                     "<tr>" +
-                                                    "<td><span class='redSpan_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
+                                                    "<td><span class='redSpanDate_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["date"] +"</span></td>" +
                                                     "<td><span class='redSpan_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["beginHour"]+"</span></td>" +
                                                     "<td><span class='redSpanPauseBegin_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["pause"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["perteBeginHour"]+"</span></td>" +
                                                     "<td><span class='redSpanPauseEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["finPause"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["perteEndHour"]+"</span></td>" +
                                                     "<td><span class='redSpanEnd_1_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["endHour"]+"</span></td>" +
                                                     "</tr>"
                                                 );
+
+
+                                                if(data.historique[arrayID]['arrive'] === 0 ){
+                                                    $(".redSpan_1_"+i).css("color","red");
+                                                    $(".redSpan_1_"+i).html('X');
+                                                }
+                                                if(data.historique[arrayID]['pause'] === 0 ){
+                                                    $(".redSpanPauseBegin_1_"+i).css("color","red");
+                                                    $(".redSpanPauseBegin_1_"+i).html('X');
+                                                }
+                                                if(data.historique[arrayID]['finPause'] === 0 ){
+                                                    $(".redSpanPauseEnd_1_"+i).css("color","red");
+                                                    $(".redSpanPauseEnd_1_"+i).html('X');
+                                                }
+                                                if(data.historique[arrayID]['depart'] === 0 ){
+                                                    $(".redSpanEnd_1_"+i).css("color","red");
+                                                    $(".redSpanEnd_1_"+i).html('X');
+                                                }
+
+
                                                 if(data.historique[arrayID]["arrive"] > data.historique[arrayID]["beginHour"]){
                                                     $(".redSpan_1_"+i).css("color","red");
                                                 }if(data.historique[arrayID]["pause"] < data.historique[arrayID]["perteBeginHour"]){
                                                     $(".redSpanPauseBegin_1_"+i).css("color","red");
                                                 }if(data.historique[arrayID]["finPause"] > data.historique[arrayID]["perteEndHour"]){
                                                     $(".redSpanPauseEnd_1_"+i).css("color","red");
-                                                }if(data.historique[arrayID]["depart"] < data.historique[arrayID]["eH"]){
+                                                }if(data.historique[arrayID]["depart"] < data.historique[arrayID]["endHour"]){
                                                     $(".redSpanEnd_1_"+i).css("color","red");
                                                 }
                                                 break;
@@ -705,12 +728,13 @@
                                                     "<td><span class='redSpan_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["arrive"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["beginHour"]+"</span></td>" +
                                                     "<td><span class='redSpanPauseBegin_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
                                                     "<td><span class='redSpanPauseEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'> - </span></td>" +
-                                                    "<td><span class='redSpanEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["eH"]+"</span></td>" +
+                                                    "<td><span class='redSpanEnd_2_"+i+"' style='font-size: 17px;font-weight: 500'>" + data.historique[arrayID]["depart"] +"</span> <span style='margin-left: 4px;font-size: 12px'>"+data.historique[arrayID]["endHour"]+"</span></td>" +
                                                     "</tr>"
                                                 );
                                                 if(data.historique[arrayID]["arrive"] > data.historique[arrayID]["beginHour"]){
                                                     $(".redSpan_2_"+i).css("color","red");
-                                                }if(data.historique[arrayID]["pause"] < data.historique[arrayID]["perteBeginHour"]){
+                                                }
+                                                if(data.historique[arrayID]["pause"] < data.historique[arrayID]["perteBeginHour"]){
                                                     $(".redSpanPauseBegin_2_"+i).css("color","red");
                                                 }if(data.historique[arrayID]["finPause"] > data.historique[arrayID]["perteEndHour"]){
                                                     $(".redSpanPauseEnd_2_"+i).css("color","red");
