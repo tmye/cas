@@ -361,24 +361,25 @@
                         processData: false,
                         success: function(data) {
                             //console.log(data);
+                            $.ajax({
+                                url: "{{ path('syncPubCoverByDep') }}",
+                                type: "POST",
+                                data: {"deps":dep},
+                                success: function(data) {
+                                    alert("OK");
+                                    // Closing the loading box
+                                    $('#modal_loading').modal('hide');
+                                    window.location.href = "{{ path('pubCovers') }}";
+                                },
+                                error: function() {
+                                    // Closing the loading box
+                                    $('#modal_loading').modal('hide');
+                                    alert("Erreur");
+                                }
+                            });
+
                         },
                         error: function() {
-                            alert("Erreur");
-                        }
-                    });
-                    $.ajax({
-                        url: "{{ path('syncPubCoverByDep') }}",
-                        type: "POST",
-                        data: {"deps":dep},
-                        success: function(data) {
-                            alert("OK");
-                            // Closing the loading box
-                            $('#modal_loading').modal('hide');
-                            window.location.href = "{{ path('pubCovers') }}";
-                        },
-                        error: function() {
-                            // Closing the loading box
-                            $('#modal_loading').modal('hide');
                             alert("Erreur");
                         }
                     });
