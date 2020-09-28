@@ -1120,6 +1120,19 @@ class MachinesController extends Controller
                     //$session->getFlashBag()->add('passage : ',$donnees[$i]->getDeviceId());
                     $i++;
                 }
+
+                echo "\n Found = :".$found;
+                if ($found == 0){
+                    $updateE = new UpdateEntity();
+                    $updateE->setDeviceId($mac);
+                    $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
+                    $updateE->setIsactive(true);
+                    $updateE->setType("pub");
+
+                    $em->persist($updateE);
+                    $em->flush();
+                }
+
 //                echo "\n Found = :".$found;
                 $images_to_update = $this->getLastImagesArray($found, $mac);
             }
@@ -1140,6 +1153,16 @@ class MachinesController extends Controller
                 $images_to_update = $this->getLastImagesArray($found, $mac);
 
                 echo "Found2 = :".$found;
+                if ($found == 0){
+                    $updateE = new UpdateEntity();
+                    $updateE->setDeviceId($mac);
+                    $updateE->setCreationDate(date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'));
+                    $updateE->setIsactive(true);
+                    $updateE->setType("pub");
+
+                    $em->persist($updateE);
+                    $em->flush();
+                }
             }
             //return new Response(json_encode($tab));
             return new Response("OK pour le second cas");
