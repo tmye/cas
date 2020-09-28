@@ -1104,7 +1104,6 @@ class MachinesController extends Controller
              * déjà ces memes données dans la table.
             */
 
-
             foreach ($finalTab as $mac){
 
                 $found = 0;
