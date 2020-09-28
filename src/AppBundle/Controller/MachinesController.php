@@ -1030,7 +1030,6 @@ class MachinesController extends Controller
             if($last_device_pub_pic->getImage2()){array_push($images_to_update, 2);}
             if($last_device_pub_pic->getImage3()){array_push($images_to_update, 3);}
         }
-        echo $images_to_update;
 
         for($k=1; $k < count($images_to_update)+1 ; $k++){
             if ($found == 0){
@@ -1124,6 +1123,7 @@ class MachinesController extends Controller
 
 //                echo "\n Found = :".$found;
                 $images_to_update = $this->getLastImagesArray($found, $mac);
+                dump($images_to_update); die();
             }
             //return new Response(json_encode($finalTab));
             return new Response("OK");
