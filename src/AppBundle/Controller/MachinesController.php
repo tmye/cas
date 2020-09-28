@@ -1123,7 +1123,6 @@ class MachinesController extends Controller
 
 //                echo "\n Found = :".$found;
                 $images_to_update = $this->getLastImagesArray($found, $mac);
-                dump($images_to_update); die();
             }
             //return new Response(json_encode($finalTab));
             return new Response("OK");
