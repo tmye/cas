@@ -31,7 +31,6 @@ class MachineSysController extends BaseController
      * @Method("GET")
      */
     public function index_getAction (Request $request) {
-
         $sn = trim($request->query->get("sn"));
         $all = $this->UpdateEntityRepo()->findBy(
             ['deviceId' => $sn ],

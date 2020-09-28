@@ -1029,8 +1029,6 @@ class MachinesController extends Controller
             if($last_device_pub_pic->getImage1()){array_push($images_to_update, 1);}
             if($last_device_pub_pic->getImage2()){array_push($images_to_update, 2);}
             if($last_device_pub_pic->getImage3()){array_push($images_to_update, 3);}
-        }else{
-            array_push($images_to_update, 1);
         }
         echo $images_to_update;
 
