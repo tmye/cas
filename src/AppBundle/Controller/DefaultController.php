@@ -1609,6 +1609,7 @@ $done = false;
 
         $writer->save('cache/' . $this->getUser()->getUsername() . '_rapport_' . $now_date . '.xlsx');
 
+
         //sleep(10);
 
         $filePath = $this->getParameter("web_dir") . "/cache/" . $this->getUser()->getUsername() . "_rapport_" . $now_date . ".xlsx";

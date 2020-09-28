@@ -1142,7 +1142,6 @@ class MachinesController extends Controller
 
                 echo "Found2 = :".$found;
             }
-
             //return new Response(json_encode($tab));
             return new Response("OK pour le second cas");
         }else{

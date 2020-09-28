@@ -39,11 +39,11 @@ class MachineSysController extends BaseController
         );
 
 
-//        $last_device_pub_pic = $this->PubsRepo()->findOneBy(['deviceid' => $sn ], ['id' => 'desc']);
-//        $number_of_image = 0;
-//        if($last_device_pub_pic->getImage1()){$number_of_image +=1;}
-//        if($last_device_pub_pic->getImage2()){$number_of_image +=1;}
-//        if($last_device_pub_pic->getImage3()){$number_of_image +=1;}
+/*        $last_device_pub_pic = $this->PubsRepo()->findOneBy(['deviceid' => $sn ], ['id' => 'desc']);
+        $number_of_image = 0;
+        if($last_device_pub_pic->getImage1()){$number_of_image +=1;}
+        if($last_device_pub_pic->getImage2()){$number_of_image +=1;}
+        if($last_device_pub_pic->getImage3()){$number_of_image +=1;}*/
 
 
 //        echo $this->serialize($all);
