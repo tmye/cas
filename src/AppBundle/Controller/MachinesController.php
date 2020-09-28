@@ -1032,6 +1032,7 @@ class MachinesController extends Controller
         }else{
             array_push($images_to_update, 1);
         }
+        echo $images_to_update;
 
         for($k=1; $k < count($images_to_update)+1 ; $k++){
             if ($found == 0){
